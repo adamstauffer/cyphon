@@ -28,6 +28,7 @@ after_success:
   - cd django
   - pwd
   - ls -a
+  - cat .coverage
   - mv .coverage .coverage.123
   - coverage combine --append
   - coveralls
