@@ -16,11 +16,10 @@ before_script:
 script:
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
-  - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
-  # - docker exec cyphon_cyphon_1 coverage run --source='.' --omit=*migrations*,*test* --branch manage.py test --noinput --keepdb
-  # - docker exec cyphon_cyphon_1 coveralls --output=coverage.json
+  # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
+  - docker exec cyphon_cyphon_1 coverage run --source='.' --omit=*migrations*,*test* --branch manage.py test --noinput --keepdb
+  - docker exec cyphon_cyphon_1 coverage report > coverage.txt
 
 after_script:
-  # - cd ./django
-  # - coveralls --merge=coverage.json
+  - coveralls --data_file=./django/coverage.txt
   - docker-compose down
