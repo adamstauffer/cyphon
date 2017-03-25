@@ -9,6 +9,7 @@ python:
   - 3.6
 
 install:
+  - pip install -r requirements.txt
   - pip install coveralls
 
 before_script:
@@ -20,17 +21,19 @@ script:
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
   # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
-  - docker exec cyphon_cyphon_1 coverage run manage.py test --noinput --keepdb
+  # - docker exec cyphon_cyphon_1 coverage run manage.py test --noinput --keepdb
+  - coverage run manage.py test --noinput --keepdb
 
 after_success:
-  - pwd
-  - ls -a
-  - cd django
-  - pwd
-  - ls -a
-  - cat .coverage
-  - mv .coverage .coverage.123
-  - coverage combine --append
+  # - pwd
+  # - ls -a
+  # - cd django
+  # - pwd
+  # - ls -a
+  # - cat .coverage
+  # - mv .coverage .coverage.123
+  # - coverage combine --append
+  - coverage
   - coveralls
 
 after_script:
