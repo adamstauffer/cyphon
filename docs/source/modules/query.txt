@@ -1,0 +1,16 @@
+query
+=====
+
+.. image:: ../_static/images/icons/query.png
+    :width: 100px
+    :align: left
+
+.. include:: ../summaries/query.summary.txt
+
+Subpackages
+-----------
+
+.. toctree::
+
+    query.collectionqueries
+    query.reservoirqueries

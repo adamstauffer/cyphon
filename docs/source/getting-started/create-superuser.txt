@@ -1,0 +1,15 @@
+.. _create-superuser:
+
+####################
+Creating a Superuser
+####################
+
+To create a Cyphon superuser, enter the shell of the Django container::
+
+    $ sudo docker exec -it cyphondock_cyphon_1 /bin/sh
+
+Then create the superuser::
+
+    $ python manage.py createsuperuser
+
+You can use this user to log in to Cyphon and create other user accounts.

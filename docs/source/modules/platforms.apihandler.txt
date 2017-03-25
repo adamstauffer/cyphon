@@ -1,0 +1,7 @@
+platforms.apihandler
+====================
+
+.. automodule:: platforms.apihandler
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,26 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+python:
+  - 3.6
+
+before_script:
+  - docker-compose -f docker-compose.travis.yml up --build -d 
+  - docker ps -a
+  - sleep 15  # wait for PostgreSQl and Elasticsearch to start
+
+script:
+  # use --keepdb to avoid OperationalError during teardown in case any
+  # db connections are still open from threads in TransactionTestCases
+  - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
+  # - docker exec cyphon_cyphon_1 coverage run --source='.' --omit=*migrations*,*test* --branch manage.py test --noinput --keepdb
+  # - docker exec cyphon_cyphon_1 coveralls --output=coverage.json
+
+after_script:
+  # - cd ./django
+  # - coveralls --merge=coverage.json
+  - docker-compose down

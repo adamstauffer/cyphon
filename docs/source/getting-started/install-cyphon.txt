@@ -1,0 +1,61 @@
+.. _install-cyphon:
+
+#################
+Installing Cyphon
+#################
+
+How you install Cyphon depends on whether you want to use it in a production environment, a development environment, or both.
+
+
+.. _file-structure:
+
+**************
+File Structure
+**************
+
+If you plan on using Cyphon in a production environment, we recommend creating specific directories for your data stores. This will make it easier to locate and backup your data.
+
+The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ Git repository.
+
+First, create directories for the project::
+
+    $ sudo mkdir -p /opt/cyphon /opt/cyphon/data
+    $ cd /opt/cyphon/data
+    $ sudo mkdir elasticsearch mongodb postgresql
+
+Give the current user ownership of the ``/opt/cyphon`` directory and 
+its subdirectories::
+
+    $ sudo chown -R $(whoami):$(whoami) /opt/cyphon
+
+Next, create users and groups for the data storage services::
+
+    $ sudo groupadd -r elasticsearch && sudo useradd -r -g elasticsearch elasticsearch
+    $ sudo groupadd -r mongodb && sudo useradd -r -g mongodb mongodb
+    $ sudo groupadd -r postgres && sudo useradd -r -g postgres postgres
+
+.. warning:: For greater security, be sure to change the default 
+             passwords of these users and groups using the 
+             ``sudo passwd <account name>`` and 
+             ``sudo passwd -g <group name>`` commands.
+
+Give these new users ownership of their respective directories::
+
+    $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
+    $ sudo chown mongodb:mongodb /opt/cyphon/data/mongodb
+    $ sudo chown postgres:postgres /opt/cyphon/data/postgresql
+
+
+.. _git-repositories:
+
+****************
+Git Repositories
+****************
+
+If you intend to deploy your Cyphon instance using Docker Compose, you can clone our Cyphon dock Git repository::
+
+    $ git clone https://github.com/dunbarcyber/cyphondock.git /opt/cyphon/cyphondock
+
+If you prefer not to use Docker to deploy your Cyphon instance, or if you want to use Cyphon in a development environment, you can clone the Git repository for Cyphon itself::
+
+    $ git clone https://github.com/dunbarcyber/cyphon.git /opt/cyphon/cyphon

@@ -1,0 +1,7 @@
+appusers.registration
+=====================
+
+.. automodule:: appusers.registration
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,49 @@
+.. Cyphon documentation master file, created by
+   sphinx-quickstart on Tue Feb  2 12:50:11 2016.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. image:: _static/images/cyphon-logo.png
+    :width: 500px
+    :align: center
+    :alt: Cyphon
+
+####################
+Cyphon Documentation
+####################
+
+Cyphon is a big data platform that aggregates, standardizes,
+and enhances data for easier analysis. With Cyphon you can:
+
+* **Collect** data from a variety of sources, 
+  including email, social media, and logs
+
+* **Filter** data as it comes in, so it can be 
+  parsed, analyzed, and easily searched
+
+* **Enhance** data with automated analyses
+
+* **Create** alerts for important data as it arrives
+
+********
+Contents
+********
+
+.. toctree::
+   :maxdepth: 1
+
+   What is Cyphon? <intro>
+   getting-started/getting-started
+   user-manual/user-manual
+   dev-guide/dev-guide
+   api
+   contributing/contributing
+   license
+
+******************
+Indices and tables
+******************
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

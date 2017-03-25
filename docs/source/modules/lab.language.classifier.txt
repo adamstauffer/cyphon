@@ -1,0 +1,7 @@
+lab.language.classifier
+=======================
+
+.. automodule:: lab.language.classifier
+    :members:
+    :undoc-members:
+    :show-inheritance:

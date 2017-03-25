@@ -1,0 +1,25 @@
+.. _tags-graph:
+
+Tags Graph
+==========
+
+.. figure:: ../_static/images/graphs/tags-graph.png
+    :target: ../_static/images/graphs/tags-graph.png
+    :alt: Tags model graph
+
+    Graph of models in the :ref:`tags` app and related apps.
+
+Overview
+--------
+
+.. include:: ../summaries/tags.summary.txt
+
+To graph these models::
+
+    $ python manage.py graph_models tags alerts -g -o tags-graph.png
+
+Related Graphs
+--------------
+
+* :ref:`alerts-graph`
+* :ref:`taxonomies-graph`

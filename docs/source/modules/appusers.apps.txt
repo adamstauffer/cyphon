@@ -1,0 +1,7 @@
+appusers.apps
+=============
+
+.. automodule:: appusers.apps
+    :members:
+    :undoc-members:
+    :show-inheritance:

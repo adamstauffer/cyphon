@@ -1,0 +1,20 @@
+###########
+User Manual
+###########
+
+.. toctree::
+   :maxdepth: 2
+
+   checklist
+   data-storage
+   data-collection
+   data-processing
+   data-enhancement
+   configuring-alarms
+   investigating-alerts
+   acting-on-alerts
+   provisioning-users
+   jira-setup
+   jira-example
+   twitter-setup
+   mail-handler

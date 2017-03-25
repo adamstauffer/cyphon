@@ -1,0 +1,111 @@
+Name                                         Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------------
+aggregator/invoices/models.py                   16      3      0      0    81%   42, 48-49
+aggregator/pumproom/faucet.py                   40      3     12      2    90%   61, 67, 75, 49->exit, 58->61
+aggregator/pumproom/pump.py                     64      1     14      1    97%   214, 204->214
+aggregator/pumproom/pumproom.py                 28      1      6      1    94%   59, 58->59
+aggregator/pumproom/streamcontroller.py         31      3      2      0    91%   45-51
+aggregator/samples/apps.py                       3      3      0      0     0%   1-5
+aggregator/samples/views.py                      1      1      0      0     0%   1
+aggregator/streams/apps.py                      15      5      2      1    65%   28-32, 27->28
+aggregator/streams/models.py                    36      1      0      0    97%   34
+alerts/filters.py                               61      5     16      2    91%   38, 118, 132-134, 37->38, 111->118
+alerts/models.py                               184      4     44      5    96%   80, 103, 109, 403, 77->80, 100->103, 105->109, 387->394, 400->403
+alerts/views.py                                172      3     34      2    98%   104-105, 328, 119->122, 323->328
+ambassador/emissary.py                          72     11     10      1    83%   194, 284-301, 191->194
+ambassador/passports/models.py                  20      1      2      0    95%   81
+ambassador/record.py                            14      3      0      0    79%   58, 74-75
+ambassador/stamps/models.py                     35      8      4      0    69%   81, 100-106
+ambassador/stamps/serializers.py                 7      7      0      0     0%   6-20
+ambassador/transport.py                         76     21      8      3    71%   118, 152-156, 167, 209, 232, 275, 302-303, 327-331, 359-362, 115->118, 268->275, 271->277
+appusers/forms.py                               42     16      6      0    54%   33, 57-63, 83-89, 109-115
+appusers/models.py                              59      7      4      1    84%   40, 48-49, 108-110, 135, 39->40
+appusers/registration.py                        19     12      4      0    30%   63-90
+appusers/serializers.py                         61     30     16      0    40%   43-47, 71-79, 85-103, 130-143
+appusers/urls.py                                 9      0      2      1    91%   19->exit
+appusers/views.py                               93     47     20      0    41%   33-36, 117-158, 175-180, 211-225, 252
+contexts/filters.py                             17      6      8      2    52%   21-26, 43-48, 20->21, 42->43
+contexts/models.py                             153      0     50      1    99%   190->exit
+custom/filters.py                               30      4     10      2    85%   56, 76-78, 52->56, 75->76
+custom/permissions.py                           21      1      8      1    93%   38, 37->38
+cyphon/admin.py                                125      4     32      1    96%   216, 292-295, 213->216
+cyphon/autocomplete.py                          13      0      6      1    95%   44->exit
+cyphon/baseclass.py                             13      4      0      0    69%   43-49
+cyphon/celeryapp.py                             11      1      4      2    80%   31, 22->exit, 30->31
+cyphon/filters.py                               68     11     24      3    83%   127, 142, 269-280, 126->127, 141->142, 226->229
+cyphon/settings/dev.py                          10     10      0      0     0%   12-32
+cyphon/tasks.py                                 19      3      4      1    83%   29, 53-54, 28->29
+cyphon/transaction.py                           32      1      4      1    94%   41, 40->41
+cyphon/views.py                                 24      3      2      0    88%   43-46
+cyphon/wsgi.py                                   4      4      0      0     0%   11-19
+distiller/datafields/models.py                  42      2     14      2    93%   67, 76, 65->67, 74->76
+distiller/distilleries/models.py               134      8     30      3    93%   172-174, 200, 228, 283-284, 384, 163->165, 381->383, 383->384
+distiller/distilleries/views.py                 21      2      2      1    87%   44-45, 40->44
+engines/elasticsearch/engine.py                148      2     30      1    98%   46, 182, 181->182
+engines/elasticsearch/mapper.py                 48      6     20      4    82%   14, 124-127, 144, 206, 12->14, 123->124, 143->144, 203->206
+engines/elasticsearch/queries.py               134      5     56      5    94%   48, 182-185, 298, 47->48, 161->166, 180->182, 283->298, 506->509
+engines/elasticsearch/sorter.py                 11      0      4      1    93%   30->26
+engines/mongodb/engine.py                      116      2     26      2    97%   45, 120, 78->exit, 119->120
+engines/mongodb/results.py                      21      0     12      1    97%   35->exit
+engines/queries.py                              88     12     20      6    83%   143-144, 172-173, 193, 218, 226, 263, 334-335, 346, 362, 142->143, 171->172, 192->193, 333->334, 345->346, 378->370
+engines/sorter.py                               11      1      0      0    91%   38
+inspections/models.py                           28      2      4      1    91%   41, 89, 38->41
+lab/geoip/geoip.py                              22      6      2      0    75%   42-51
+lab/language/classifier.py                       7      7      2      0     0%   6-28
+lab/procedures/models.py                        45      6      2      1    85%   32-35, 74, 134, 130->134
+manage.py                                        6      0      2      1    88%   5->exit
+monitors/views.py                               17      2      2      1    84%   35-36, 31->35
+notifications/signals.py                        41      3     14      3    89%   68-69, 80, 53->exit, 79->80, 86->exit
+notifications/views.py                          48      2      6      0    96%   116-117
+parsers/models.py                              123     17     32      5    81%   129-130, 139-141, 178-179, 186-189, 198, 263, 298, 300, 315-318, 197->198, 258->263, 297->298, 299->300, 313->315
+platforms/instagram/__init__.py                  2      2      0      0     0%   1-4
+platforms/jira/app.py                           70     70     12      0     0%   6-130
+platforms/jira/handlers.py                      97      1     18      4    96%   122, 119->122, 157->160, 193->196, 206->209
+platforms/twitter/handlers.py                  140     27     48      3    83%   35-44, 201-204, 211-220, 299-308, 148->152, 152->156, 156->160
+platforms/twitter/listener.py                   90     65     20      1    24%   22, 31-36, 45-55, 63-88, 92, 96, 100-103, 109-110, 114, 118, 125, 129-130, 134-138, 142-145, 153-156, 160-161, 19->22
+platforms/twitter/streaming.py                 230    198    112      0     9%   40-43, 46-53, 61-71, 74-76, 84-111, 114-116, 120-186, 189-190, 193-250, 253-258, 262, 272-291, 294-300, 303-307, 310-318, 322-344, 348-360, 363-365
+platforms/youtube/__init__.py                    2      2      0      0     0%   1-4
+query/collectionqueries/forms.py                     39     39      4      0     0%   6-145
+query/collectionqueries/models.py                    21      2      0      0    90%   28, 50
+query/collectionqueries/urls.py                       2      2      0      0     0%   6-9
+query/collectionqueries/views.py                     37     19      8      0    40%   30-38, 46-52, 63-67
+query/reservoirqueries/forms.py                 13     13      0      0     0%   6-39
+query/reservoirqueries/models.py                64      7     14      3    85%   139-141, 147-157, 72->75, 116->118, 118->120
+query/reservoirqueries/reservoirquery.py        97      1     46      0    99%   49
+query/reservoirqueries/urls.py                   3      3      0      0     0%   6-12
+query/reservoirqueries/views.py                 19     19      4      0     0%   2-51
+receiver.py                                     77     26     14      3    66%   46-85, 144-146, 150-155, 101->104, 120->exit, 149->150
+responder/actions/filters.py                     5      5      0      0     0%   6-45
+responder/actions/models.py                     18      6      2      0    60%   55-57, 78-80
+responder/actions/views.py                      29     12      2      0    55%   35, 42-57
+responder/carrier.py                             5      1      0      0    80%   45
+responder/dispatches/models.py                  35     12      0      0    66%   32, 39, 46, 53, 60, 66, 74-75, 83, 92-96
+sifter/chutes/models.py                         34     10      8      0    67%   28-31, 50-53, 93-95
+sifter/condensers/autocomplete.py               50      2     20      5    90%   74, 127, 69->73, 73->74, 95->exit, 122->126, 126->127
+sifter/condensers/models.py                     72      3     16      2    94%   137, 145, 214, 136->137, 141->145
+sifter/datasifter/datachutes/models.py          24      2      2      0    85%   61-62
+sifter/mailsifter/accessors.py                  69      3     28      0    95%   73-75
+sifter/mailsifter/attachments.py                56      2     10      0    97%   44-45
+sifter/mailsifter/mailcondensers/models.py      49     15     16      2    55%   48-54, 69-72, 78-82, 91, 96, 90->91, 95->96
+sifter/mungers/models.py                        19      1      0      0    95%   36
+sifter/sieves/models.py                        150     25     28      4    81%   83, 86-89, 94, 103, 115, 124, 153-154, 175, 268-269, 275, 281-291, 395, 403, 102->103, 112->115, 174->175, 350->353
+targets/followees/models.py                     43      4      4      0    91%   29, 42, 48, 61
+targets/followees/serializers.py                 6      6      0      0     0%   6-18
+targets/locations/models.py                     60      1     24      0    99%   40
+targets/locations/serializers.py                 6      6      0      0     0%   6-18
+targets/locations/views.py                       7      7      0      0     0%   6-19
+targets/searchterms/models.py                   46      5     10      1    86%   21-25, 100, 87->100
+targets/searchterms/serializers.py               6      6      0      0     0%   6-18
+targets/services.py                             18     18      6      0     0%   6-42
+targets/timeframes/models.py                     8      2      0      0    75%   23-24
+targets/timeframes/serializers.py                6      6      0      0     0%   6-18
+teasers/models.py                              108      5     38      4    92%   145-147, 240, 260, 173->exit, 206->exit, 237->240, 259->260
+utils/choices/choices.py                        42      6     22      8    78%   66, 78, 85, 91, 97, 103, 65->66, 77->78, 84->85, 90->91, 96->97, 102->103, 125->exit, 126->125
+utils/dateutils/dateutils.py                    97      5     22      0    94%   256-261
+utils/dbutils/dbutils.py                        22      3     10      1    75%   46-48, 42->46
+utils/geometry/shapes.py                       103      6     26      2    92%   252-257, 160->157, 250->252
+utils/parserutils/parserutils.py               113      1     40      1    99%   144, 128->144
+----------------------------------------------------------------------------------------
+TOTAL                                         8190   1015   1550    117    85%
+
+253 files skipped due to complete coverage.

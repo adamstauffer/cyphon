@@ -1,0 +1,70 @@
+/**
+ * Copyright 2017 Dunbar Security Solutions, Inc.
+ * 
+ * This file is part of Cyphon Engine.
+ * 
+ * Cyphon Engine is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Cyphon Engine is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Fixes for Admin pages.
+ */
+
+/* ensure autocomplete-light fields are clickable in grappelli UI */
+.autocomplete-light-widget {
+    z-index: 10;
+}
+
+/* hide help_text for tabular inline fields in grappelli UI */
+.tabular.inline-related .grp-help {
+    display: none;
+}
+
+/* show help_text for first inline row in grappelli UI */
+.inline-related .grp-thead + .form-row .grp-help {
+    display: block;
+}
+
+input {
+    max-width: 300px;
+}
+
+.grp-module-login input {
+    max-width: 100%;
+}
+
+.pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+#grp-admin-title {
+    display: none;
+}
+
+header#grp-header #grp-navigation div#grp-branding {
+    margin: 9px 10px 6px 0px;
+    max-height: 40px;
+}
+
+header#grp-header #grp-navigation ul#grp-user-tools>li a {
+    padding: 15px;
+}
+
+body.grp-login .grp-module-login h1 {
+    padding: 10px 0 0;
+}

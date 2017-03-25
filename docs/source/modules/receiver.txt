@@ -1,0 +1,13 @@
+.. _receiver:
+
+receiver
+========
+
+.. image:: ../_static/images/icons/receiver.png
+    :width: 60px
+    :align: left
+
+.. automodule:: receiver
+    :members:
+    :undoc-members:
+    :show-inheritance:

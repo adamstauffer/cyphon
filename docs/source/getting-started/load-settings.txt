@@ -1,0 +1,11 @@
+.. _load-settings:
+
+######################
+Loading Basic Settings
+######################
+
+If you would like to start Cyphon with a basic configuration, you can load a set of default fixtures. If you've followed the previous instructions and started a Docker Container for cyphon using Cyphondock, you can use this command::  
+
+    $ sudo docker exec cyphondock_cyphon_1 python manage.py loaddata fixtures/starter-fixtures.json
+
+For more information on fixtures, see Django's `documentation <https://docs.djangoproject.com/en/1.10/howto/initial-data/>`_.

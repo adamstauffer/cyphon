@@ -1,0 +1,108 @@
+.. _configure-project:
+
+#####################
+Project Configuration
+#####################
+
+Generic settings for the project are contained in the ``./config-COPYME`` 
+directory. Copy this directory to a new directory called ``config``, which 
+will be used by your project instance::
+
+    $ cd /opt/cyphon/cyphondock/
+    $ cp -R config-COPYME config
+
+The ``config`` directory contains settings for:
+
+    * :ref:`environmental-variables`
+    * :ref:`django-config`
+    * :ref:`nginx-config`
+    * :ref:`logstash-config`
+    * :ref:`elasticsearch-config`
+
+
+.. _environmental-variables:
+
+*********************
+Environment Variables
+*********************
+
+The ``./config/cyphon.env`` file contains default settings for 
+superusers created for various services. Use a text editor to 
+change the usernames and passwords to more secure options.
+
+You can read more about environment variables in `Docker's documentation <https://docs.docker.com/compose/environment-variables/>`_.
+
+
+.. _django-config:
+
+******
+Django
+******
+
+Cyphon's backend is based on the Django_ web framework. Settings for the 
+Cyphon Django project are found in the ``./config/django/settings`` 
+directory.
+
+The ``conf.py`` file contains settings specific to your Cyphon instance. 
+Using your favorite text editor, edit the ``conf.py`` file with the IP 
+address and/or domain name for your host machine::
+
+    HOST_SETTINGS = {
+       'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
+       'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
+       'HOSTNAME': 'example.com',
+    }
+
+You should also change the Django ``SECRET_KEY`` to something unique. 
+You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`_.
+
+The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general 
+settings for Django and other third party apps used by Cyphon. At a 
+minimum, you should configure the `BASE_URL` setting in the ``dev.py`` 
+and ``prod.py`` files. You can read more about Django's settings in  
+`Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`_.
+
+
+.. _nginx-config:
+
+*****
+Nginx
+*****
+
+Settings for the `Nginx <https://www.nginx.com/>`_ web server are in the
+``./config/nginx/nginx.conf`` file. You can use the default settings if 
+you like.
+
+
+.. _logstash-config:
+
+********
+Logstash
+********
+
+Cyphon receives data from logs using `Logstash`_ and `RabbitMQ`_. Logstash receives the logs and passes them to RabbitMQ, where Cyphon consumes them.
+
+To configure Logstash, choose one of the example configuration files in ``./etc/logstash/conf`` and copy it to a new file in the same directory, e.g.::
+
+    $ cd /opt/cyphon/cyphondock/etc/logstash/conf
+    $ cp logstash-bro.example.conf logstash.conf
+
+Using your favorite text editor, you can customize the newly created 
+``./etc/logstash/conf/logstash.conf`` file to suit your needs.
+
+.. warning:: If you changed the RabbitMQ settings in the ``cyphon.env`` 
+             file, you will need to make sure your ``logstash.conf`` 
+             file reflects those changes.
+
+See `Logstash's documentation <https://www.elastic.co/guide/en/logstash/current/configuration.html>`_ for more info on its configuration file.
+
+
+.. _elasticsearch-config:
+
+*************
+Elasticsearch
+*************
+
+Settings for the Elasticsearch_ search engine are in the 
+``./config/elasticsearch/`` folder. You can use the default settings 
+if you like.

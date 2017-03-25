@@ -1,0 +1,1 @@
+|Tags| are used to classify and filter :ref:`Alerts<alerts>`.

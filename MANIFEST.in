@@ -1,0 +1,7 @@
+include README.txt
+include LICENSE
+include MANIFEST.in
+include requirements.txt
+recursive-include docs *
+recursive-include django *
+recursive-exclude django *.pyc

@@ -1,0 +1,75 @@
+.. _configure-server:
+
+####################
+Server Configuration
+####################
+
+Cyphon is most easily deployed using `Docker`_. This requires installing Docker Engine and Docker Compose, and configuring virtual memory on the host machine.
+
+
+.. _install-docker-engine:
+
+*********************
+Install Docker Engine
+*********************
+
+The following instructions are for Ubuntu 14.04 LTS (Trusty). 
+To install Docker Engine on other operating systems, see `Docker documentation <https://docs.docker.com/engine/installation/>`_.
+
+To install and start Docker Engine::
+
+    $ sudo apt-get update
+    $ sudo apt-get install apt-transport-https ca-certificates
+
+    $ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 \
+                     --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+    $ sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-trusty main'
+
+    $ sudo apt-get update
+
+    $ sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
+    sudo apt-get install docker-engine
+
+    $ sudo service docker start
+
+See Docker's `Ubuntu documentation <https://docs.docker.com/engine/installation/linux/ubuntulinux/>`_ for more information on the installation procedure. 
+You can also refer to Digital Ocean's `tutorial <https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04>`_ for Ubuntu 16.04.
+
+.. note:: If you have problems adding the GPG key, try using 
+          ``--keyserver hkp://p80.pool.sks-keyservers.net:80`` instead.
+
+
+.. _install-docker-compose:
+
+**********************
+Install Docker Compose
+**********************
+
+To install Docker Compose on Ubuntu, first install ``pip``::
+
+    $ sudo apt-get install python-pip
+
+Then install Docker Compose::
+
+    $ sudo pip install docker-compose
+
+To install Docker Compose on other operating systems, see `Docker's documentation <https://docs.docker.com/compose/install/>`_.
+
+
+.. _configure-virtual-memory:
+
+************************
+Configure Virtual Memory
+************************
+
+This project uses the official `Elasticsearch docker repository <https://hub.docker.com/_/elasticsearch/>`_. These images require a Linux host to 
+allow a process to have at least 262,144 memory-mapped areas (see `Elasticsearch's documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/_maximum_map_count_check.html/>`_ for more info). 
+
+To increase the memory map count::
+
+    $ sudo sysctl -w vm.max_map_count=262144
+
+Make this setting permanent by editing ``/etc/sysctl.conf``::
+
+    $ echo "vm.max_map_count = 262144" | sudo tee -a /etc/sysctl.conf

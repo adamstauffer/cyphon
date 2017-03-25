@@ -1,0 +1,11 @@
+.. _mail-handler:
+
+####################
+Default Mail Handler
+####################
+
+To define a default path for incoming mail, you can create a 
+MailMunger for this purpose. The Munger will send data to a
+default Distillery. This Munger will be used for mail that is not
+captured by any MailChutes.
+ 

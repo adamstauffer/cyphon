@@ -1,0 +1,27 @@
+.. _appusers:
+
+appusers
+========
+
+.. image:: ../_static/images/icons/users.png
+    :width: 100px
+    :align: left
+
+.. include:: ../summaries/appusers.summary.txt
+
+:ref:`appusers-graph`
+
+Submodules
+----------
+
+.. toctree::
+
+   appusers.admin
+   appusers.apps
+   appusers.forms
+   appusers.models
+   appusers.registration
+   appusers.serializers
+   appusers.signals
+   appusers.urls
+   appusers.views

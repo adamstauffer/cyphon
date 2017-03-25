@@ -1,0 +1,15 @@
+.. _getting-started:
+
+###############
+Getting Started
+###############
+
+.. toctree::
+   :maxdepth: 2
+
+   configure-server
+   install-cyphon
+   configure-project
+   start-docker
+   load-settings
+   create-superuser
