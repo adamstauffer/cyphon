@@ -8,6 +8,9 @@ services:
 python:
   - 3.6
 
+install:
+  - pip install coveralls
+
 before_script:
   - docker-compose -f docker-compose.travis.yml up --build -d 
   - docker ps -a
