@@ -22,7 +22,15 @@ script:
   # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
   - docker exec cyphon_cyphon_1 coverage run manage.py test --noinput --keepdb
 
-after_script:
+after_success:
+  - pwd
+  - ls -a
   - cd django
+  - pwd
+  - ls -a
+  - mv .coverage .coverage.123
+  - coverage combine --append
   - coveralls
+
+after_script:
   - docker-compose down
