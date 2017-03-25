@@ -8,6 +8,11 @@ omit =
 
 data_file = .coverage
 
+[paths]
+source =
+    /usr/src/app/cyphon
+    .
+
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
