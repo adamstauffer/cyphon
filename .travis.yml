@@ -4,6 +4,9 @@ language: python
 
 services:
   - docker
+  - elasticsearch
+  - mongodb
+  - postgresql
 
 python:
   - 3.6
@@ -14,7 +17,6 @@ install:
 
 before_script:
   - docker-compose -f docker-compose.travis.yml up --build -d 
-  - docker ps -a
   - sleep 15  # wait for PostgreSQl and Elasticsearch to start
 
 script:
