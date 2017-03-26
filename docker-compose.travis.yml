@@ -35,18 +35,20 @@ services:
   #     - mongo
   #     - postgres
 
-  # elasticsearch:
-  #   image: elasticsearch:latest
-  #   ports:
-  #     - "9200:9200"
+  elasticsearch:
+    image: elasticsearch:latest
+    ports:
+      - "9200:9200"
 
   geoip:
     image: dunbar/geoip:latest
+    volumes:
+      - /usr/share/GeoIP/:/usr/share/GeoIP
 
-  # mongo:
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
 
   # postgres:
   #   image: mdillon/postgis:latest

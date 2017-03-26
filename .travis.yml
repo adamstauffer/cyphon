@@ -4,8 +4,6 @@ language: python
 
 services:
   - docker
-  - elasticsearch
-  - mongodb
 
 addons:
   postgresql: "9.6"
@@ -34,14 +32,6 @@ script:
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:
-  # - pwd
-  # - ls -a
-  # - cd django
-  # - pwd
-  # - ls -a
-  # - cat .coverage
-  # - mv .coverage .coverage.123
-  # - coverage combine --append
   - coverage
   - coveralls
 
