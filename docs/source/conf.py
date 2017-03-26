@@ -35,7 +35,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../../django'))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'cyphon.settings.default'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'cyphon.settings.sphinx'
 import django
 django.setup()
 
