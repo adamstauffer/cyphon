@@ -3,7 +3,7 @@ sudo: required
 language: python
 
 env:
-  - GEOIP_PATH=./GeoIP/GeoLite2-City.mmdb
+  - GEOIP_PATH=/home/travis/build/dunbarcyber/cyphon/GeoIP/GeoLite2-City.mmdb
 
 services:
   - docker
@@ -31,7 +31,7 @@ script:
   # db connections are still open from threads in TransactionTestCases
   # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
   - pwd
-  - ls -a
+  - ls ./GEOIP
   - cd django
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
