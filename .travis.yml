@@ -30,7 +30,9 @@ script:
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
   # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
-  - docker exec cyphon_geoip_1 cp /usr/share/GeoIP/*.mmdb /usr/share/cyphondock
+  # - docker exec cyphon_geoip_1 cp /usr/share/GeoIP/*.mmdb /usr/share/cyphondock
+  - docker exec cyphon_geoip_1 ls /usr/share
+  - docker exec cyphon_geoip_1 ls /usr/share/GeoIP
   - ls GeoIP
   - cd django
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
