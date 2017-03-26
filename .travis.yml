@@ -31,7 +31,7 @@ script:
   # db connections are still open from threads in TransactionTestCases
   # - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
   - pwd
-  - ls GEOIP
+  - ls GeoIP
   - cd django
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 

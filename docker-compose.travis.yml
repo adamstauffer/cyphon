@@ -43,7 +43,7 @@ services:
   geoip:
     image: dunbar/geoip:latest
     volumes:
-      - ./GeoIP:/usr/share/GeoIP
+      - /home/travis/build/dunbarcyber/cyphon/GeoIP:/usr/share/GeoIP
 
   mongo:
     image: mongo:latest
