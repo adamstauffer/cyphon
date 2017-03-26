@@ -50,7 +50,7 @@ services:
     ports:
       - "27017:27017"
 
-  postgres:
-    image: mdillon/postgis:latest
-    ports:
-      - "5433:5432"
+  # postgres:
+  #   image: mdillon/postgis:latest
+  #   ports:
+  #     - "5432:5432"
