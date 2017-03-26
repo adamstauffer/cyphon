@@ -17,24 +17,19 @@
 """
 [`source`_]
 
-Default Django settings for Cyphon when running tests or compiling docs.
+Overrides default Cyphon settings when compiling docs.
 
-For more information on this Django file, see:
-https://docs.djangoproject.com/en/1.9/topics/settings/
-
-For the full list of Django settings and their values, see:
-https://docs.djangoproject.com/en/1.9/ref/settings/
-
-.. _source: ../_modules/cyphon/settings/dev.html
+.. _source: ../_modules/cyphon/settings/sphinx.html
 
 """
 
 from .default import *
+from .default import DATABASES as DB_SETTINGS
 
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': POSTGRES['NAME'],
+        'NAME': DB_SETTINGS['default']['NAME'],
     }
 }
