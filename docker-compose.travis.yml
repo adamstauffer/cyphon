@@ -43,14 +43,14 @@ services:
   geoip:
     image: dunbar/geoip:latest
     volumes:
-      - /usr/share/GeoIP/:/usr/share/GeoIP
+      - /usr/share/GeoIP:/usr/share/GeoIP
 
   mongo:
     image: mongo:latest
     ports:
       - "27017:27017"
 
-  # postgres:
-  #   image: mdillon/postgis:latest
-  #   ports:
-  #     - "5432:5432"
+  postgres:
+    image: mdillon/postgis:latest
+    ports:
+      - "5433:5432"
