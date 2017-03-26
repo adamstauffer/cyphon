@@ -1,7 +1,7 @@
-cyphon.settings.prod
-====================
+cyphon.settings.default
+=======================
 
-.. automodule:: cyphon.settings.prod
+.. automodule:: cyphon.settings.default
     :members:
     :undoc-members:
     :show-inheritance:

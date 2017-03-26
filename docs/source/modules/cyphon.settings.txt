@@ -7,3 +7,4 @@ Submodules
 .. toctree::
 
    cyphon.settings.default
+   cyphon.settings.sphinx
