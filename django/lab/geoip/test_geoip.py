@@ -34,13 +34,13 @@ from lab.geoip import geoip
 _LOGGER = logging.getLogger(__name__)
 
 
-if os.path.isfile(geoip._GEOIP_SETTINGS['CITY_DB_PATH']):
+if os.path.isfile(geoip.settings.GEOIP['CITY_DB_PATH']):
     NOT_INSTALLED = False
 
 else:
     NOT_INSTALLED = True
     _LOGGER.warning('GeoLite2 database is not installed. '
-                   'GeoIP tests will be skipped.')
+                    'GeoIP tests will be skipped.')
 
 
 @skipIf(NOT_INSTALLED, 'GeoLite2 database is not installed')
