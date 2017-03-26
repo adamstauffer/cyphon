@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master)](https://travis-ci.org/dunbarcyber/cyphon) [![Documentation Status](https://readthedocs.org/projects/cyphon/badge/?version=latest)](http://cyphon.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master)](https://travis-ci.org/dunbarcyber/cyphon) [![Coverage Status](https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg)](https://coveralls.io/github/dunbarcyber/cyphon) [![Documentation Status](https://readthedocs.org/projects/cyphon/badge/?version=latest)](http://cyphon.readthedocs.io/en/latest/?badge=latest)
 
 # Cyphon
 
