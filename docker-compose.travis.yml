@@ -43,7 +43,7 @@ services:
   geoip:
     image: dunbar/geoip:latest
     volumes:
-      - /usr/share/GeoIP:/usr/share/GeoIP
+      - ./GeoIP:/usr/share/GeoIP
 
   mongo:
     image: mongo:latest

@@ -2,6 +2,9 @@ sudo: required
 
 language: python
 
+env:
+  - GEOIP_PATH=./GeoIP/GeoLite2-City.mmdb
+
 services:
   - docker
 
