@@ -48,7 +48,7 @@ def _get_remote_driver():
     username = _SAUCE_SETTINGS['USERNAME']
     access_key = _SAUCE_SETTINGS['ACCESS_KEY']
     url = 'ondemand.saucelabs.com:80/wd/hub'
-    command = 'http://%s:%s@%s' % (username, access_key, url),
+    command = 'http://%s:%s@%s' % (username, access_key, url)
     return Remote(
         command_executor=command,
         desired_capabilities=DesiredCapabilities.FIREFOX
