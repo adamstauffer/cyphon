@@ -129,7 +129,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUpClass(cls):
         super(FunctionalTest, cls).setUpClass()
         cls.driver = get_web_driver()
-        cls.driver.implicitly_wait(1)
+        cls.driver.implicitly_wait(10)
         cls.driver.maximize_window()
 
     @classmethod
