@@ -358,7 +358,7 @@ class MailFittingTestCase(MailCondenserBaseTestCase, FittingTestCaseMixin):
         *Attempted on: *URL
         *Threat pattern: *dunbararmored.com/blog/wp-admin/admin-ajax.php
 
-        document.write("PT =C2=BB SRC=3D"
+        document.write("&lt;SCR =C2=BB I");PT =C2=BB SRC=3D"
 http://ha.ckers.org/xss =C2=BB .js"&gt;"""
-        print(actual)
+
         self.assertEqual(actual, expected)
