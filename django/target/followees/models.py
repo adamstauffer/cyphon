@@ -39,7 +39,7 @@ class Followee(models.Model):
     'associates' relationship.
     """
     nickname = models.CharField(max_length=255, unique=True, null=False)
-    associates = models.ManyToManyField('self', symmetrical=True)
+    associates = models.ManyToManyField('self', symmetrical=True, blank=true)
 
     def __str__(self):
         return self.nickname

@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='followee',
             name='associates',
-            field=models.ManyToManyField(related_name='_followee_associates_+', to='followees.Followee'),
+            field=models.ManyToManyField(blank=True, related_name='_followee_associates_+', to='followees.Followee'),
         ),
         migrations.AddField(
             model_name='account',
