@@ -36,9 +36,28 @@ from tests.pages.configtool import ConfigToolPage
 from tests.pages.modeladmin import ModelAdminPage
 from tests.pages.preview import ModelPreviewPage
 
+_TEST_SETTINGS = settings.FUNCTIONAL_TESTS
 _SAUCE_SETTINGS = settings.SAUCELABS
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _get_desired_capabilities():
+    """
+    Return a dictionary of browser settings for a Selenium web driver.
+    """
+    platform = _TEST_SETTINGS['PLATFORM']
+    browser = _TEST_SETTINGS['BROWSER']
+    version = _TEST_SETTINGS['VERSION']
+
+    if platform and browser and version:
+        return {
+            'platform': _TEST_SETTINGS['PLATFORM'],
+            'browserName': _TEST_SETTINGS['BROWSER'],
+            'version': _TEST_SETTINGS['VERSION'],
+        }
+    else:
+        return DesiredCapabilities.FIREFOX
 
 
 def _get_remote_driver():
@@ -49,13 +68,14 @@ def _get_remote_driver():
     access_key = _SAUCE_SETTINGS['ACCESS_KEY']
     url = 'ondemand.saucelabs.com:80/wd/hub'
     command = 'http://%s:%s@%s' % (username, access_key, url)
+    desired_cap = _get_desired_capabilities()
     return Remote(
         command_executor=command,
-        desired_capabilities=DesiredCapabilities.FIREFOX
+        desired_capabilities=desired_cap
     )
 
 
-def _get_web_driver():
+def get_web_driver():
     """
     Get a Selenium web driver. Try to get a local driver first. If that
     fails, try to get a remote driver.
@@ -72,7 +92,7 @@ def _web_driver_available():
     available.
     """
     try:
-        driver = _get_web_driver()
+        driver = get_web_driver()
         driver.quit()
         return True
     except WebDriverException as error:
@@ -83,20 +103,20 @@ def _enable_functional_tests():
     """
     Return a Boolean indicating whether functional tests should be run.
     """
-    if settings.FUNCTIONAL_TESTS_ENABLED:
+    if _TEST_SETTINGS['ENABLED']:
         return _web_driver_available()
     return False
 
 
 if not _enable_functional_tests():
-    _FUNCTIONAL_TESTS_ENABLED = False
+    FUNCTIONAL_TESTS_ENABLED = False
     _LOGGER.warning('Functional tests are disabled, '
                     'so those tests will be skipped.')
 else:
-    _FUNCTIONAL_TESTS_ENABLED = True
+    FUNCTIONAL_TESTS_ENABLED = True
 
 
-@unittest.skipUnless(_FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
+@unittest.skipUnless(FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
 class FunctionalTest(StaticLiveServerTestCase):
     """
     Base class for a functional test case.
@@ -108,15 +128,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(FunctionalTest, cls).setUpClass()
-        try:
-            cls.driver = Firefox()
-        except WebDriverException as error:
-            cls.driver = Remote(
-                command_executor='http://YOUR_SAUCE_USERNAME:YOUR_SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub',
-                desired_capabilities=DesiredCapabilities.FIREFOX
-            )
-
-
+        cls.driver = get_web_driver()
         cls.driver.implicitly_wait(1)
         cls.driver.maximize_window()
 
