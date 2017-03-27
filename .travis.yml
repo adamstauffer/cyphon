@@ -19,6 +19,7 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - pip install codecov
   - pip install coveralls
   - pip install codacy-coverage
 
@@ -40,7 +41,9 @@ script:
 after_success:
   - coverage
   - coveralls
+  - codecov
   - coverage xml
+  - cat coverage.xml
   - python-codacy-coverage -r coverage.xml
 
 after_script:
