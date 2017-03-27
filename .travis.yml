@@ -43,7 +43,6 @@ after_success:
   - coveralls
   - codecov
   - coverage xml
-  - cat coverage.xml
   - python-codacy-coverage -r coverage.xml
 
 after_script:
