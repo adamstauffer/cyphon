@@ -195,6 +195,11 @@ RABBITMQ = {
     'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
 }
 
+SAUCELABS = {
+    'USERNAME': os.getenv('SAUCE_USERNAME', ''),
+    'ACCESS_KEY': os.getenv('SAUCE_ACCESS_KEY', ''),
+}
+
 TEASERS = {
     'CHAR_LIMIT': 1000  # Character limit for teaser fields
 }

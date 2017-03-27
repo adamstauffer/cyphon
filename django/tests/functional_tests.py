@@ -36,13 +36,64 @@ from tests.pages.configtool import ConfigToolPage
 from tests.pages.modeladmin import ModelAdminPage
 from tests.pages.preview import ModelPreviewPage
 
-_FUNCTIONAL_TESTS_ENABLED = settings.FUNCTIONAL_TESTS_ENABLED
+_SAUCE_SETTINGS = settings.SAUCELABS
 
 _LOGGER = logging.getLogger(__name__)
 
-if not _FUNCTIONAL_TESTS_ENABLED:
+
+def _get_remote_driver():
+    """
+    Get a SauceLabs Selenium web driver.
+    """
+    username = _SAUCE_SETTINGS['USERNAME']
+    access_key = _SAUCE_SETTINGS['ACCESS_KEY']
+    url = 'ondemand.saucelabs.com:80/wd/hub'
+    command = 'http://%s:%s@%s' % (username, access_key, url),
+    return Remote(
+        command_executor=command,
+        desired_capabilities=DesiredCapabilities.FIREFOX
+    )
+
+
+def _get_web_driver():
+    """
+    Get a Selenium web driver. Try to get a local driver first. If that
+    fails, try to get a remote driver.
+    """
+    try:
+        return Firefox()
+    except WebDriverException as error:
+        return _get_remote_driver()
+
+
+def _web_driver_available():
+    """
+    Return a Boolean indicating whether a Selenium web driver is
+    available.
+    """
+    try:
+        driver = _get_web_driver()
+        driver.quit()
+        return True
+    except WebDriverException as error:
+        return False
+
+
+def _enable_functional_tests():
+    """
+    Return a Boolean indicating whether functional tests should be run.
+    """
+    if settings.FUNCTIONAL_TESTS_ENABLED:
+        return _web_driver_available()
+    return False
+
+
+if not _enable_functional_tests():
+    _FUNCTIONAL_TESTS_ENABLED = False
     _LOGGER.warning('Functional tests are disabled, '
-                   'so those tests will be skipped.')
+                    'so those tests will be skipped.')
+else:
+    _FUNCTIONAL_TESTS_ENABLED = True
 
 
 @unittest.skipUnless(_FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
@@ -61,9 +112,11 @@ class FunctionalTest(StaticLiveServerTestCase):
             cls.driver = Firefox()
         except WebDriverException as error:
             cls.driver = Remote(
-                command_executor='http://selenium:4444/wd/hub',
+                command_executor='http://YOUR_SAUCE_USERNAME:YOUR_SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub',
                 desired_capabilities=DesiredCapabilities.FIREFOX
             )
+
+
         cls.driver.implicitly_wait(1)
         cls.driver.maximize_window()
 
