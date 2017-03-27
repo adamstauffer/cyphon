@@ -44,4 +44,5 @@ after_success:
   - python-codacy-coverage -r coverage.xml
 
 after_script:
+  - cd ../
   - docker-compose down
