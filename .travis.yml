@@ -19,7 +19,9 @@ python:
 
 install:
   - pip install -r requirements.txt
+  - pip install codecov
   - pip install coveralls
+  - pip install codacy-coverage
 
 before_script:
   - psql -U postgres -c "create extension postgis"
@@ -39,6 +41,10 @@ script:
 after_success:
   - coverage
   - coveralls
+  - codecov
+  - coverage xml
+  - python-codacy-coverage -r coverage.xml
 
 after_script:
+  - cd ../
   - docker-compose down

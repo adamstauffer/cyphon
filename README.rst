@@ -12,6 +12,10 @@ Cyphon will be officially released on April 4, 2017. Until then, some of the lin
     :target: https://www.codacy.com/app/lhadjchikh/cyphon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dunbarcyber/cyphon&amp;utm_campaign=Badge_Grade
     :alt: Codacy Grade
 
+.. image:: https://pyup.io/repos/github/dunbarcyber/cyphon/shield.svg
+     :target: https://pyup.io/repos/github/dunbarcyber/cyphon/
+     :alt: Updates
+
 .. image:: https://readthedocs.org/projects/cyphon/badge/?version=latest
     :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
