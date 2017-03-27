@@ -2,11 +2,11 @@ amqp==2.1.4
 anyjson==0.3.3
 beautifulsoup4==4.5.3
 billiard==3.5.0.2
-bleach==2.0.0
+bleach==1>=1.0.0,<2.0.0
 celery==4.0.2
 cryptography==1.8.1
 Django==1.10.6
-django-autocomplete-light==3.2.1
+django-autocomplete-light>=2.0.0,<3.0.0
 django-constance==2.0.0
 django-cors-headers==2.0.2
 django-extensions==1.7.7
