@@ -1,6 +1,6 @@
 amqp==2.1.4
 anyjson==0.3.3
-beautifulsoup4==4.5.1
+beautifulsoup4==4.5.3
 billiard==3.3.0.23
 bleach==1.4.3
 celery==3.1.24
