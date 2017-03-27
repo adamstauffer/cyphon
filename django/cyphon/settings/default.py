@@ -17,15 +17,15 @@
 """
 [`source`_]
 
-Default Django settings for Cyphon when running tests or compiling docs.
+Default Django settings for Cyphon when running tests.
 
 For more information on this Django file, see:
-https://docs.djangoproject.com/en/1.9/topics/settings/
+https://docs.djangoproject.com/en/1.10/topics/settings/
 
 For the full list of Django settings and their values, see:
-https://docs.djangoproject.com/en/1.9/ref/settings/
+https://docs.djangoproject.com/en/1.10/ref/settings/
 
-.. _source: ../_modules/cyphon/settings/dev.html
+.. _source: ../_modules/cyphon/settings/default.html
 
 """
 
@@ -127,7 +127,8 @@ EMAIL = {
 }
 
 GEOIP = {
-    'CITY_DB_PATH': '/usr/share/GeoIP/GeoLite2-City.mmdb'
+    'CITY_DB_PATH': os.getenv('GEOIP_PATH',
+                              '/usr/share/GeoIP/GeoLite2-City.mmdb'),
 }
 
 JIRA = {

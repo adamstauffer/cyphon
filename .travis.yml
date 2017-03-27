@@ -2,25 +2,43 @@ sudo: required
 
 language: python
 
+env:
+  - GEOIP_PATH=/home/travis/build/dunbarcyber/cyphon/GeoIP/GeoLite2-City.mmdb
+
 services:
   - docker
+
+addons:
+  postgresql: "9.6"
+  apt:
+    packages:
+      - postgresql-9.6-postgis-2.3
 
 python:
   - 3.6
 
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+
 before_script:
+  - psql -U postgres -c "create extension postgis"
   - docker-compose -f docker-compose.travis.yml up --build -d 
-  - docker ps -a
   - sleep 15  # wait for PostgreSQl and Elasticsearch to start
 
 script:
+
+  # copy GeoLite database to shared volume
+  - docker exec cyphon_geoip_1 cp /usr/share/GeoIP/GeoLite2-City.mmdb /usr/share/cyphondock
+
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
-  - docker exec cyphon_cyphon_1 python manage.py test --noinput --keepdb
-  # - docker exec cyphon_cyphon_1 coverage run --source='.' --omit=*migrations*,*test* --branch manage.py test --noinput --keepdb
-  # - docker exec cyphon_cyphon_1 coveralls --output=coverage.json
+  - cd django
+  - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
+
+after_success:
+  - coverage
+  - coveralls
 
 after_script:
-  # - cd ./django
-  # - coveralls --merge=coverage.json
   - docker-compose down
