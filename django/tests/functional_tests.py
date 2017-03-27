@@ -82,7 +82,7 @@ def get_web_driver():
     """
     try:
         return Firefox()
-    except WebDriverException as error:
+    except (NameError, WebDriverException):
         return _get_remote_driver()
 
 
@@ -95,7 +95,7 @@ def _web_driver_available():
         driver = get_web_driver()
         driver.quit()
         return True
-    except WebDriverException as error:
+    except WebDriverException:
         return False
 
 
