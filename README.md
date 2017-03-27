@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c77cf13e942d465389978df70278c2ad)](https://www.codacy.com/app/lhadjchikh/cyphon?utm_source=github.com&utm_medium=referral&utm_content=dunbarcyber/cyphon&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master)](https://travis-ci.org/dunbarcyber/cyphon) [![Coverage Status](https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg)](https://coveralls.io/github/dunbarcyber/cyphon) [![Documentation Status](https://readthedocs.org/projects/cyphon/badge/?version=latest)](http://cyphon.readthedocs.io/en/latest/?badge=latest)
 
 # Cyphon
