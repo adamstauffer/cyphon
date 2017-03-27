@@ -217,10 +217,10 @@ TEASERS = {
 
 #: Twitter authentication credentials for use in tests
 TWITTER = {
-    'KEY': '',                          # consumer key
-    'SECRET': '',                       # consumer secret
-    'ACCESS_TOKEN': '',                 # access token
-    'ACCESS_TOKEN_SECRET': '',          # access token secret
+    'KEY': os.getenv('TWITTER_KEY', ''),  # consumer key
+    'SECRET': os.getenv('TWITTER_SECRET', ''),  # consumer secret
+    'ACCESS_TOKEN': os.getenv('TWITTER_ACCESS_TOKEN', ''),  # access token
+    'ACCESS_TOKEN_SECRET': os.getenv('TWITTER_TOKEN_SECRET', ''),  # tok secret
 }
 
 WAREHOUSES = {
