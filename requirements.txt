@@ -25,7 +25,7 @@ gunicorn==19.7.1
 html5lib==0.999999999
 httmock==1.2.6
 httplib2==0.10.3
-jira==1.0.7
+jira==1.0.10
 kombu==3.0.37
 langdetect==1.0.7
 maxminddb==1.2.1
