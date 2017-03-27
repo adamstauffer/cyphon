@@ -23,7 +23,7 @@ geoip2==2.4.2
 geopy==1.11.0
 gunicorn==19.7.1
 html5lib==0.999999999
-httmock==1.2.5
+httmock==1.2.6
 httplib2==0.9.2
 jira==1.0.7
 kombu==3.0.37
