@@ -45,4 +45,3 @@ after_success:
 
 after_script:
   - docker-compose down
-
