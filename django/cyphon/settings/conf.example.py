@@ -220,4 +220,3 @@ TWITTER = {
 WAREHOUSES = {
     'DEFAULT_STORAGE_ENGINE': 'elasticsearch'
 }
-
