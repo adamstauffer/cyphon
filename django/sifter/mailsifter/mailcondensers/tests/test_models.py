@@ -333,6 +333,7 @@ class MailFittingTestCase(MailCondenserBaseTestCase, FittingTestCaseMixin):
         """
         Tests the process method.
         """
+        self.maxDiff = None
         actual = self.parser_fitting.process(self.msg)
         expected = \
 """
@@ -359,5 +360,5 @@ class MailFittingTestCase(MailCondenserBaseTestCase, FittingTestCaseMixin):
 
         document.write("PT =C2=BB SRC=3D"
 http://ha.ckers.org/xss =C2=BB .js"&gt;"""
+        print(actual)
         self.assertEqual(actual, expected)
-
