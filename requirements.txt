@@ -8,7 +8,7 @@ cryptography==1.8.1
 Django==1.10.6
 django-autocomplete-light==3.2.1
 django-constance==2.0.0
-django-cors-headers==1.2.2
+django-cors-headers==2.0.2
 django-extensions==1.7.6
 django-filter==1.0.1
 django-grappelli==2.9.1
