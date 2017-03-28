@@ -19,7 +19,7 @@ Tests the TwitterSearch class.
 """
 
 # standard library
-from unittest import skip
+from unittest import skipUnless
 
 # third party
 from django.contrib.gis.geos import Point
@@ -33,7 +33,7 @@ from target.followees.models import Account
 from target.locations.models import Location
 from target.searchterms.models import SearchTerm
 from target.timeframes.models import TimeFrame
-from .mixins import TwitterPassportMixin
+from .mixins import TWITTER_TESTS_ENABLED, TwitterPassportMixin
 
 
 class TwitterSearchTestCase(ApiHandlerTestCase):
@@ -282,12 +282,14 @@ class ProcessSearchQueryTestCase(TwitterSearchTestCase, TwitterPassportMixin):
             timeframe=timeframe
         )
 
-    @skip
+    @skipUnless(TWITTER_TESTS_ENABLED, 'Twitter API tests disabled')
     def test_process_request(self):
         """
         Tests the process_request method.
         """
         self._update_passport()
         query = self._create_test_query()
-        self.search_handler.process_request(query)
+        results = self.search_handler.process_request(query)
 
+        # ensure that we're getting multiple tweets back (say, > 5)
+        self.assertTrue(len(results.data) > 5)
