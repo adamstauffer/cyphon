@@ -72,7 +72,7 @@ If you'd like to work with our Docker images directly, you can find them on Dock
 
 ## Documentation
 
-Consult our [official documentation](http://cyphon.readthedocs.io/en/latest/index.html) to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found [here](http://cyclops-ui.readthedocs.io/en/latest/index.html).
+Consult our [official documentation](http://cyphon.readthedocs.io/en/latest/index.html) to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found [here](http://cyphon-ui.readthedocs.io/en/latest/index.html).
 
 
 ## License
