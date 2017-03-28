@@ -108,4 +108,3 @@ class InlineTasteFunctionalTest(ModelAdminFunctionalTest):
         self.assertEqual(self.page.content.count(), 12)
         self.assertEqual(self.page.title.count(), 12)
         self.assertEqual(self.page.author.count(), 12)
-
