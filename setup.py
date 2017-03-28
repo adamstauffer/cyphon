@@ -8,11 +8,11 @@ from setuptools import find_packages, setup
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
 INSTALL_REQS = parse_requirements('requirements.txt')
 
-# reqs is a list of requirement
+# reqs is a list of requirements
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']
 REQUIREMENTS = [str(ir.req) for ir in INSTALL_REQS]
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
     README = readme.read()
 
 # allow setup.py to be run from any path
@@ -26,7 +26,7 @@ setup(
     include_package_data=True,
     license='GNU General Public License v3 (GPLv3)',
     description='Cyphon Engine',
-    # long_description=README,
+    long_description=README,
     url='https://cyphon.io/',
     author='Dunbar Cybersecurity',
     author_email='leila.hadj-chikh@dunbarsecured.com',
