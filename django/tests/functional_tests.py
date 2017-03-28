@@ -171,7 +171,6 @@ class AdminFunctionalTest(FunctionalTest):
     def setUp(self):
         self._create_superuser()
         self.driver.get(self.live_server_url + self.url)
-        print(self.driver.page_source)
         self.page = LoginPage(self.driver)
         self.page.login(self.username, self.password)
 
