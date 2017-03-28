@@ -57,7 +57,12 @@ HOST_SETTINGS = {
 
 TEST = 'test' in sys.argv
 
-FUNCTIONAL_TESTS_ENABLED = os.getenv('FUNCTIONAL_TESTS_ENABLED', False)
+FUNCTIONAL_TESTS = {
+    'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
+    'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', ''),
+    'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', ''),
+    'VERSION': os.getenv('FUNCTIONAL_TESTS_VERSION', ''),
+}
 
 PAGE_SIZE = 10
 
@@ -211,6 +216,11 @@ RABBITMQ = {
     'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
 }
 
+SAUCELABS = {
+    'USERNAME': os.getenv('SAUCE_USERNAME', ''),
+    'ACCESS_KEY': os.getenv('SAUCE_ACCESS_KEY', ''),
+}
+
 TEASERS = {
     'CHAR_LIMIT': 1000  # Character limit for teaser fields
 }
@@ -220,7 +230,7 @@ TWITTER = {
     'KEY': os.getenv('TWITTER_KEY', ''),  # consumer key
     'SECRET': os.getenv('TWITTER_SECRET', ''),  # consumer secret
     'ACCESS_TOKEN': os.getenv('TWITTER_ACCESS_TOKEN', ''),  # access token
-    'ACCESS_TOKEN_SECRET': os.getenv('TWITTER_TOKEN_SECRET', ''),  # tok secret
+    'ACCESS_TOKEN_SECRET': os.getenv('TWITTER_TOKEN_SECRET', ''),  # tkn secret
 }
 
 WAREHOUSES = {

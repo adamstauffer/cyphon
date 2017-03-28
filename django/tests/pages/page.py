@@ -21,7 +21,7 @@
 # third party
 from selenium.webdriver.common.by import By
 
-TIMEOUT = 10
+TIMEOUT = 5
 
 
 class PageLocators(object):

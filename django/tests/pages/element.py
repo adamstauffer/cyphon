@@ -23,11 +23,14 @@ import time
 
 # third party
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 TIMEOUT = 1
 
+SLEEP = 0.5
 
 class HtmlElement(object):
     """
@@ -48,9 +51,9 @@ class StyledElement(HtmlElement):
         Gets the text of the specified object.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_css_selector(self.locator))
-        element = driver.find_element_by_css_selector(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, self.locator))
+        )
         return element.get_attribute('innerHTML')
 
 
@@ -64,9 +67,9 @@ class NamedElement(HtmlElement):
         Gets the text of the specified object.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.locator))
-        element = driver.find_element_by_name(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.locator))
+        )
         return element.get_attribute('value')
 
 
@@ -80,9 +83,9 @@ class TextInputElement(NamedElement):
         Sets the text to the value supplied.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.locator))
-        element = driver.find_element_by_name(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.locator))
+        )
         element.clear()
         element.send_keys(value)
 
@@ -99,9 +102,9 @@ class SelectElement(HtmlElement):
         Gets the text of the specified object.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.locator))
-        element = driver.find_element_by_name(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.locator))
+        )
         select = Select(element)
         return select.first_selected_option.text
 
@@ -110,9 +113,9 @@ class SelectElement(HtmlElement):
         Sets the select element to the value supplied.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.locator))
-        element = driver.find_element_by_name(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.locator))
+        )
         for option in element.find_elements_by_tag_name('option'):
             if option.text == value:
                 option.click()
@@ -129,9 +132,9 @@ class LinkElement(HtmlElement):
         Gets the text of the specified object.
         """
         driver = obj.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_id(self.locator))
-        element = driver.find_element_by_id(self.locator)
+        element = WebDriverWait(driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.ID, self.locator))
+        )
         return element.get_attribute('href')
 
 
@@ -149,9 +152,10 @@ class AutocompleteElement(HtmlElement):
         """
 
         """
-        WebDriverWait(self.driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.name))
-        self.driver.find_element_by_name(self.name).click()
+        element = WebDriverWait(self.driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.name))
+        )
+        element.click()
 
     def delete(self):
         """
@@ -159,20 +163,19 @@ class AutocompleteElement(HtmlElement):
         """
         btn_path = '//span[@id="id_%s-deck"]//span[@class="remove"]' \
                    % self.locator
-        driver = self.driver
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_xpath(btn_path))
-        driver.find_element_by_xpath(btn_path).click()
+        element = WebDriverWait(self.driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.XPATH, btn_path))
+        )
+        element.click()
 
     def _get_option(self, value):
         """
 
         """
-        driver = self.driver
         option_path = '%s/span[@data-value="%s"]' % (self.path, value)
-        WebDriverWait(driver, self.timeout).until(
-            lambda driver: driver.find_element_by_xpath(option_path))
-        return driver.find_element_by_xpath(option_path)
+        return WebDriverWait(self.driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.XPATH, option_path))
+        )
 
     def exists(self, value):
         """
@@ -190,7 +193,7 @@ class AutocompleteElement(HtmlElement):
 
         """
         self.click()
-        time.sleep(0.5)
+        time.sleep(SLEEP)
         option = self._get_option(value)
         option.click()
 
@@ -198,13 +201,14 @@ class AutocompleteElement(HtmlElement):
         """
 
         """
-        time.sleep(0.5)
+        time.sleep(SLEEP)
         self.click()
-        time.sleep(0.5) # wait for server response
+        time.sleep(SLEEP)  # wait for server response
         option_path = self.path + '/span[@data-value]'
         try:
-            WebDriverWait(self.driver, self.timeout).until(
-                lambda driver: driver.find_element_by_xpath(option_path))
+            WebDriverWait(self.driver, TIMEOUT).until(
+                EC.presence_of_element_located((By.XPATH, option_path))
+            )
             options = self.driver.find_elements_by_xpath(option_path)
             return len(options)
         except TimeoutException:
@@ -214,8 +218,7 @@ class AutocompleteElement(HtmlElement):
         """
         Gets the current value of the autocomplete.
         """
-        WebDriverWait(self.driver, self.timeout).until(
-            lambda driver: driver.find_element_by_name(self.locator))
-        element = self.driver.find_element_by_name(self.locator)
+        element = WebDriverWait(self.driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.NAME, self.locator))
+        )
         return element.get_attribute('value')
-

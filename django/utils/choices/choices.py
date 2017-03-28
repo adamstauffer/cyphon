@@ -94,7 +94,7 @@ def get_operator_choices(field_type):
     """
 
     """
-    if (field_type == 'CharField'):
+    if (field_type in ['CharField', 'TextField']):
         options = [
             ('regex', 'contains'),
             ('eq', 'equals'),

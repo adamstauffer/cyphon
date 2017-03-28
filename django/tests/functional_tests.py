@@ -20,6 +20,7 @@ Functional test case classes.
 
 # standard library
 import logging
+import os
 import unittest
 
 # third party
@@ -36,16 +37,98 @@ from tests.pages.configtool import ConfigToolPage
 from tests.pages.modeladmin import ModelAdminPage
 from tests.pages.preview import ModelPreviewPage
 
-_FUNCTIONAL_TESTS_ENABLED = settings.FUNCTIONAL_TESTS_ENABLED
+_TEST_SETTINGS = settings.FUNCTIONAL_TESTS
+_SAUCE_SETTINGS = settings.SAUCELABS
 
 _LOGGER = logging.getLogger(__name__)
 
-if not _FUNCTIONAL_TESTS_ENABLED:
+
+def _add_travis_info(capabilities):
+    """
+
+    """
+    capabilities['tunnel-identifier'] = os.getenv('TRAVIS_JOB_NUMBER')
+    capabilities['build'] = os.getenv('TRAVIS_BUILD_NUMBER')
+    capabilities['tags'] = [os.getenv('TRAVIS_PYTHON_VERSION'), 'CI']
+    return capabilities
+
+
+def _get_desired_capabilities():
+    """
+    Return a dictionary of browser settings for a Selenium web driver.
+    """
+    platform = _TEST_SETTINGS['PLATFORM']
+    browser = _TEST_SETTINGS['BROWSER']
+    version = _TEST_SETTINGS['VERSION']
+
+    if platform and browser and version:
+        capabilities = {
+            'platform': _TEST_SETTINGS['PLATFORM'],
+            'browserName': _TEST_SETTINGS['BROWSER'],
+            'version': _TEST_SETTINGS['VERSION'],
+        }
+    else:
+        capabilities = DesiredCapabilities.FIREFOX
+
+    return _add_travis_info(capabilities)
+
+
+def _get_remote_driver():
+    """
+    Get a SauceLabs Selenium web driver.
+    """
+    username = _SAUCE_SETTINGS['USERNAME']
+    access_key = _SAUCE_SETTINGS['ACCESS_KEY']
+    hub_url = '%s:%s@localhost:4445' % (username, access_key)
+    desired_cap = _get_desired_capabilities()
+    return Remote(
+        command_executor='http://%s/wd/hub' % hub_url,
+        desired_capabilities=desired_cap
+    )
+
+
+def get_web_driver():
+    """
+    Get a Selenium web driver. Try to get a local driver first. If that
+    fails, try to get a remote driver.
+    """
+    try:
+        return Firefox()
+    except (NameError, WebDriverException):
+        return _get_remote_driver()
+
+
+def _web_driver_available():
+    """
+    Return a Boolean indicating whether a Selenium web driver is
+    available.
+    """
+    try:
+        driver = get_web_driver()
+        driver.quit()
+        return True
+    except WebDriverException:
+        return False
+
+
+def _enable_functional_tests():
+    """
+    Return a Boolean indicating whether functional tests should be run.
+    """
+    if _TEST_SETTINGS['ENABLED']:
+        return _web_driver_available()
+    return False
+
+
+if not _enable_functional_tests():
+    FUNCTIONAL_TESTS_ENABLED = False
     _LOGGER.warning('Functional tests are disabled, '
-                   'so those tests will be skipped.')
+                    'so those tests will be skipped.')
+else:
+    FUNCTIONAL_TESTS_ENABLED = True
 
 
-@unittest.skipUnless(_FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
+@unittest.skipUnless(FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
 class FunctionalTest(StaticLiveServerTestCase):
     """
     Base class for a functional test case.
@@ -57,14 +140,8 @@ class FunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(FunctionalTest, cls).setUpClass()
-        try:
-            cls.driver = Firefox()
-        except WebDriverException as error:
-            cls.driver = Remote(
-                command_executor='http://selenium:4444/wd/hub',
-                desired_capabilities=DesiredCapabilities.FIREFOX
-            )
-        cls.driver.implicitly_wait(1)
+        cls.driver = get_web_driver()
+        cls.driver.implicitly_wait(10)
         cls.driver.maximize_window()
 
     @classmethod
