@@ -31,7 +31,6 @@ from platforms.twitter.listener import CustomStreamListener
 from aggregator.pumproom.faucet import Faucet
 from ambassador.transport import Cargo
 from utils.dateutils import dateutils as dt
-from .streaming import Stream
 
 LOGGER = logging.getLogger(__name__)
 
@@ -314,7 +313,7 @@ class PublicStreamsAPI(TwitterHandler):
         """
         auth = self.authenticate()
         listener = CustomStreamListener(faucet=self)
-        stream = Stream(auth, listener)
+        stream = tweepy.Stream(auth, listener)
         kwargs = self._format_query(query)
         stream.filter(**kwargs)
 
@@ -322,4 +321,3 @@ class PublicStreamsAPI(TwitterHandler):
                     stream.listener.data_count, stream.listener.saved_data_count)
 
         return Cargo(status_code=listener.status_code, notes=listener.notes)
-
