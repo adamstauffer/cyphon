@@ -26,8 +26,9 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-TIMEOUT = 1
+TIMEOUT = 10
 
+SLEEP = 1
 
 class HtmlElement(object):
     """
@@ -190,7 +191,7 @@ class AutocompleteElement(HtmlElement):
 
         """
         self.click()
-        time.sleep(0.5)
+        time.sleep(SLEEP)
         option = self._get_option(value)
         option.click()
 
@@ -198,9 +199,9 @@ class AutocompleteElement(HtmlElement):
         """
 
         """
-        time.sleep(0.5)
+        time.sleep(SLEEP)
         self.click()
-        time.sleep(0.5) # wait for server response
+        time.sleep(SLEEP)  # wait for server response
         option_path = self.path + '/span[@data-value]'
         try:
             WebDriverWait(self.driver, self.timeout).until(
@@ -218,4 +219,3 @@ class AutocompleteElement(HtmlElement):
             lambda driver: driver.find_element_by_name(self.locator))
         element = self.driver.find_element_by_name(self.locator)
         return element.get_attribute('value')
-
