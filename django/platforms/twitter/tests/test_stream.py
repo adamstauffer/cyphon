@@ -19,7 +19,7 @@ Tests the TwitterSearch class.
 """
 
 # standard library
-from unittest import skip
+from unittest import skipUnless
 
 # third party
 from testfixtures import LogCapture
@@ -36,7 +36,7 @@ from target.followees.models import Account
 from target.locations.models import Location
 from target.searchterms.models import SearchTerm
 from target.timeframes.models import TimeFrame
-from .mixins import TwitterPassportMixin
+from .mixins import TWITTER_TESTS_ENABLED, TwitterPassportMixin
 
 
 class TwitterPublicStreamsMixin(object):
@@ -172,7 +172,8 @@ class FormatStreamQueryTestCase(TwitterPublicStreamsTestCase):
 
 
 class SubmitStreamQueryTestCase(ApiHandlerTransactionTestCase,
-    TwitterPublicStreamsMixin, TwitterPassportMixin):
+                                TwitterPublicStreamsMixin,
+                                TwitterPassportMixin):
     """
     Tests the PublicStreamsAPI class.
     """
@@ -197,7 +198,7 @@ class SubmitStreamQueryTestCase(ApiHandlerTransactionTestCase,
             timeframe=timeframe
         )
 
-    @skip
+    @skipUnless(TWITTER_TESTS_ENABLED, 'Twitter API tests disabled')
     def test_submit_query(self):
         """
         Tests the _submit_query method.
@@ -211,4 +212,3 @@ class SubmitStreamQueryTestCase(ApiHandlerTransactionTestCase,
             log_capture.check(
                 ('platforms.twitter.handlers', 'INFO', expected),
             )
-

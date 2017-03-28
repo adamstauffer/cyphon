@@ -31,12 +31,8 @@ from platforms.twitter.listener import CustomStreamListener
 from aggregator.pumproom.faucet import Faucet
 from ambassador.transport import Cargo
 from utils.dateutils import dateutils as dt
-from .streaming import Stream
 
-LOGGER = logging.getLogger(__name__)
-
-# start the stream asynchronously, except when running test suite
-ASYNC_STREAM = not settings.TEST
+_LOGGER = logging.getLogger(__name__)
 
 
 class TwitterHandler(Faucet):
@@ -314,12 +310,11 @@ class PublicStreamsAPI(TwitterHandler):
         """
         auth = self.authenticate()
         listener = CustomStreamListener(faucet=self)
-        stream = Stream(auth, listener)
+        stream = tweepy.Stream(auth, listener)
         kwargs = self._format_query(query)
         stream.filter(**kwargs)
 
-        LOGGER.info('Received %s objects from Twitter and saved %s of them',
-                    stream.listener.data_count, stream.listener.saved_data_count)
+        _LOGGER.info('Received %s objects from Twitter and saved %s of them',
+                     stream.listener.data_count, stream.listener.saved_data_count)
 
         return Cargo(status_code=listener.status_code, notes=listener.notes)
-

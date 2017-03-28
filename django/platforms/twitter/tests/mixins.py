@@ -18,6 +18,9 @@
 Tests the TwitterSearch class.
 """
 
+# standard library
+import logging
+
 # third party
 from django.conf import settings
 
@@ -25,6 +28,27 @@ from django.conf import settings
 from ambassador.passports.models import Passport
 
 _TWITTER_SETTINGS = settings.TWITTER
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def _credentials_exist():
+    """
+    Return a Boolean indicating whether Twitter authentication
+    credentials exist.
+    """
+    for setting in _TWITTER_SETTINGS:
+        if not _TWITTER_SETTINGS[setting]:
+            return False
+    return True
+
+
+if not _credentials_exist():
+    TWITTER_TESTS_ENABLED = False
+    _LOGGER.warning('Twitter authentication credentials are missing, '
+                    'so Twitter API will be skipped.')
+else:
+    TWITTER_TESTS_ENABLED = True
 
 
 class TwitterPassportMixin(object):

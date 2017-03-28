@@ -175,4 +175,3 @@ class CustomStreamListener(StreamListener):
         """Called when a disconnection warning message arrives"""
         LOGGER.warning('Twitter disconnection warning: %s', notice)
         return True
-
