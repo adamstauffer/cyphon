@@ -4,7 +4,7 @@ Cyphon will be officially released on April 4, 2017. Until then, some of the lin
     :target: https://travis-ci.org/dunbarcyber/cyphon
     :alt: Build Status
 
-.. image:: https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg
+.. image:: https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg?maxAge=0
     :target: https://coveralls.io/github/dunbarcyber/cyphon
     :alt: Coverage Status
 
