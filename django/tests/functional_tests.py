@@ -20,6 +20,7 @@ Functional test case classes.
 
 # standard library
 import logging
+import os
 import unittest
 
 # third party
@@ -42,6 +43,16 @@ _SAUCE_SETTINGS = settings.SAUCELABS
 _LOGGER = logging.getLogger(__name__)
 
 
+def _add_travis_info(capabilities):
+    """
+
+    """
+    capabilities['tunnel-identifier'] = os.getenv('TRAVIS_JOB_NUMBER')
+    capabilities['build'] = os.getenv('TRAVIS_BUILD_NUMBER')
+    capabilities['tags'] = [os.getenv('TRAVIS_PYTHON_VERSION'), 'CI']
+    return capabilities
+
+
 def _get_desired_capabilities():
     """
     Return a dictionary of browser settings for a Selenium web driver.
@@ -51,13 +62,15 @@ def _get_desired_capabilities():
     version = _TEST_SETTINGS['VERSION']
 
     if platform and browser and version:
-        return {
+        capabilities = {
             'platform': _TEST_SETTINGS['PLATFORM'],
             'browserName': _TEST_SETTINGS['BROWSER'],
             'version': _TEST_SETTINGS['VERSION'],
         }
     else:
-        return DesiredCapabilities.FIREFOX
+        capabilities = DesiredCapabilities.FIREFOX
+
+    return _add_travis_info(capabilities)
 
 
 def _get_remote_driver():
@@ -66,11 +79,10 @@ def _get_remote_driver():
     """
     username = _SAUCE_SETTINGS['USERNAME']
     access_key = _SAUCE_SETTINGS['ACCESS_KEY']
-    url = 'ondemand.saucelabs.com:80/wd/hub'
-    command = 'http://%s:%s@%s' % (username, access_key, url)
+    hub_url = '%s:%s@localhost:4445' % (username, access_key)
     desired_cap = _get_desired_capabilities()
     return Remote(
-        command_executor=command,
+        command_executor='http://%s/wd/hub' % hub_url,
         desired_capabilities=desired_cap
     )
 
