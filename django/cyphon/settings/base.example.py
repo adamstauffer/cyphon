@@ -37,14 +37,7 @@ import sys
 
 # local
 from .conf import *
-# from cyphon.settings.conf import (
-#     EMAIL,
-#     HOME_DIR,
-#     HOST_SETTINGS,
-#     POSTGRES,
-#     RABBITMQ,
-#     SECRET_KEY,
-# )
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
@@ -332,4 +325,3 @@ DJANGO_MAILBOX_ATTACHMENT_UPLOAD_TO = os.path.join(MEDIA_ROOT,
 REST_FRAMEWORK_DOCS = {
     'HIDE_DOCS': os.environ.get('HIDE_DRFDOCS', False)
 }
-
