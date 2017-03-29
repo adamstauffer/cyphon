@@ -9,7 +9,7 @@ Django==1.10.6
 django-autocomplete-light>=2.0.0,<3.0.0
 django-constance==2.0.0
 django-cors-headers==2.0.2
-django-extensions==1.7.7
+django-extensions==1.7.8
 django-filter==1.0.2
 django-grappelli==2.9.1
 django-mailbox==4.5.4
