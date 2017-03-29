@@ -29,10 +29,6 @@ import sys
 
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
-
-# HOSTNAME is used to send out an email to new users once an
-# administrator adds them.
-
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': [],
     'CORS_ORIGIN_WHITELIST': [],
