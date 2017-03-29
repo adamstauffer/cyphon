@@ -19,7 +19,7 @@
 # wait for PostgreSQL server to start
 sleep 20
 
-# cd /usr/src/app/cyphon/django
+cd /usr/src/app/cyphon
 
 rm -f celerybeat.pid
 rm -f celerybeat-schedule.pid
