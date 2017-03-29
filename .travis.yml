@@ -36,7 +36,7 @@ script:
 
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
-  - cd django
+  - cd cyphon
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:
