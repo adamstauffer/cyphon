@@ -1,6 +1,6 @@
 ############################################################
 # Dockerfile to run a Django-based web application
-# Based on a Python 3.5 image
+# Based on a Python 3.6 image
 #
 # Copyright 2017 Dunbar Security Solutions, Inc.
 #
@@ -20,7 +20,7 @@
 #
 ############################################################
 
-FROM python:3.5
+FROM python:3.6
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
