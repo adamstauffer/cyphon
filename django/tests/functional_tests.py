@@ -94,7 +94,7 @@ def get_web_driver():
     """
     try:
         return Firefox()
-    except (NameError, WebDriverException):
+    except (ConnectionRefusedError, NameError, WebDriverException):
         return _get_remote_driver()
 
 
