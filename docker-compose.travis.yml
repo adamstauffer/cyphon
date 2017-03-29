@@ -1,39 +1,8 @@
-# Creates a minimal stack for testing the Cyphon Django project
-# using Django's test runner.
+# Creates a minimal stack for testing Cyphon Engine on Travis CI.
 
 version: '2'
 
 services:
-
-  # cyphon:
-  #   # image: dunbar/cyphon:latest
-  #   build: .
-  #   environment:
-  #     CYPHON_ENV: DEV
-  #     CYPHON_SUPERUSER: "YES"
-  #     CYPHON_USERNAME: admin@example.com
-  #     CYPHON_PASSWORD: admin
-  #     DJANGO_SETTINGS_MODULE: cyphon.settings.default
-  #     ELASTICSEARCH_HOST: elasticsearch
-  #     MONGODB_HOST: mongo
-  #     POSTGRES_HOST: postgres
-  #   command: ../entrypoints/run_test_env.sh
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - ./django:/usr/src/app/cyphon/django
-  #   volumes_from:
-  #     - geoip
-  #   links:
-  #     - elasticsearch
-  #     - geoip
-  #     - mongo
-  #     - postgres
-  #   depends_on:
-  #     - elasticsearch
-  #     - geoip
-  #     - mongo
-  #     - postgres
 
   elasticsearch:
     image: elasticsearch:latest
@@ -49,8 +18,3 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
-
-  # postgres:
-  #   image: mdillon/postgis:latest
-  #   ports:
-  #     - "5432:5432"
