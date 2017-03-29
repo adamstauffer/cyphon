@@ -24,7 +24,7 @@ FROM python:3.5
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
-ENV CYPHON_HOME /usr/src/app/cyphon
+ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
 
