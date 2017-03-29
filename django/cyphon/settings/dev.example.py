@@ -36,14 +36,10 @@ import logging
 # local
 from .base import *
 
-
 LOGGER = logging.getLogger(__name__)
 
 DEBUG = True
 
-# Necessary for logstash environment
-REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
-                            'virtualenv/lib/python3.4/site-packages')
 ALLOWED_HOSTS = ['localhost']
 
 #: URL for constructing link with MEDIA_URL

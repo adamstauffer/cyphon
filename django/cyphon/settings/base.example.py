@@ -41,6 +41,10 @@ from .conf import *
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
+# change this to the directory where Cyphon's dependencies are installed
+REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
+                            'virtualenv/lib/python3.4/site-packages')
+
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
 HOSTNAME = HOST_SETTINGS['HOSTNAME']

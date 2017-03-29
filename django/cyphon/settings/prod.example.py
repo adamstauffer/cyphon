@@ -40,10 +40,6 @@ LOGGER = logging.getLogger(__name__)
 
 DEBUG = False
 
-# Necessary for logstash environment
-REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
-                            '../venv/lib/python3.4/site-packages')
-
 ADMINS = [
     # ('Jane Smith', 'jane@example.com'),
 ]
