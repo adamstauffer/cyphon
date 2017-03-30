@@ -19,7 +19,7 @@
 # wait for RabbitMQ to start
 sleep 20
 
-# cd /usr/src/app/cyphon/django
+cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
 su -m cyphon -c "python manage.py migrate --verbosity 0"

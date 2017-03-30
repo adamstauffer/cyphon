@@ -4,9 +4,17 @@ Cyphon will be officially released on April 4, 2017. Until then, some of the lin
     :target: https://travis-ci.org/dunbarcyber/cyphon
     :alt: Build Status
 
-.. image:: https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg
+.. image:: https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg?maxAge=0
     :target: https://coveralls.io/github/dunbarcyber/cyphon
     :alt: Coverage Status
+
+.. image:: https://api.codacy.com/project/badge/Grade/c77cf13e942d465389978df70278c2ad
+    :target: https://www.codacy.com/app/lhadjchikh/cyphon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dunbarcyber/cyphon&amp;utm_campaign=Badge_Grade
+    :alt: Codacy Grade
+
+.. image:: https://pyup.io/repos/github/dunbarcyber/cyphon/shield.svg
+     :target: https://pyup.io/repos/github/dunbarcyber/cyphon/
+     :alt: Updates
 
 .. image:: https://readthedocs.org/projects/cyphon/badge/?version=latest
     :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
@@ -100,7 +108,7 @@ If you'd like to work with our Docker images directly, you can find them on Dock
 Documentation
 *************
 
-Consult our `official documentation <http://cyphon.readthedocs.io/en/latest/index.html>`__ to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found `here <http://cyclops-ui.readthedocs.io/en/latest/index.html>`__.
+Consult our `official documentation <http://cyphon.readthedocs.io/en/latest/index.html>`__ to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found `here <http://cyphon-ui.readthedocs.io/en/latest/index.html>`__.
 
 
 *******

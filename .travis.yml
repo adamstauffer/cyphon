@@ -1,3 +1,19 @@
+# Copyright 2017 Dunbar Security Solutions, Inc.
+#
+# This file is part of Cyphon Engine.
+#
+# Cyphon Engine is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# Cyphon Engine is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+
 sudo: required
 
 language: python
@@ -13,13 +29,16 @@ addons:
   apt:
     packages:
       - postgresql-9.6-postgis-2.3
+  sauce_connect: true
 
 python:
   - 3.6
 
 install:
   - pip install -r requirements.txt
+  - pip install codecov
   - pip install coveralls
+  - pip install codacy-coverage
 
 before_script:
   - psql -U postgres -c "create extension postgis"
@@ -33,12 +52,16 @@ script:
 
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
-  - cd django
+  - cd cyphon
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:
   - coverage
   - coveralls
+  - codecov
+  - coverage xml
+  - python-codacy-coverage -r coverage.xml
 
 after_script:
+  - cd ../
   - docker-compose down

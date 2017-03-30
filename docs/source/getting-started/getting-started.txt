@@ -10,6 +10,7 @@ Getting Started
    configure-server
    install-cyphon
    configure-project
+   securing-cyphon
    start-docker
    load-settings
    create-superuser

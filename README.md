@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c77cf13e942d465389978df70278c2ad)](https://www.codacy.com/app/lhadjchikh/cyphon?utm_source=github.com&utm_medium=referral&utm_content=dunbarcyber/cyphon&utm_campaign=badger)
-[![Build Status](https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master)](https://travis-ci.org/dunbarcyber/cyphon) [![Coverage Status](https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg)](https://coveralls.io/github/dunbarcyber/cyphon) [![Documentation Status](https://readthedocs.org/projects/cyphon/badge/?version=latest)](http://cyphon.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master)](https://travis-ci.org/dunbarcyber/cyphon) [![Coverage Status](https://coveralls.io/repos/github/dunbarcyber/cyphon/badge.svg?maxAge=0)](https://coveralls.io/github/dunbarcyber/cyphon) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c77cf13e942d465389978df70278c2ad)](https://www.codacy.com/app/lhadjchikh/cyphon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dunbarcyber/cyphon&amp;utm_campaign=Badge_Grade) [![Updates](https://pyup.io/repos/github/dunbarcyber/cyphon/shield.svg)](https://pyup.io/repos/github/dunbarcyber/cyphon/)
+ [![Documentation Status](https://readthedocs.org/projects/cyphon/badge/?version=latest)](http://cyphon.readthedocs.io/en/latest/?badge=latest)
 
 # Cyphon
 
@@ -72,7 +72,7 @@ If you'd like to work with our Docker images directly, you can find them on Dock
 
 ## Documentation
 
-Consult our [official documentation](http://cyphon.readthedocs.io/en/latest/index.html) to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found [here](http://cyclops-ui.readthedocs.io/en/latest/index.html).
+Consult our [official documentation](http://cyphon.readthedocs.io/en/latest/index.html) to learn more about Cyphon. The docs include set-up instructions and a description of Cyphon’s API. Documentation for Cyclops can be found [here](http://cyphon-ui.readthedocs.io/en/latest/index.html).
 
 
 ## License
