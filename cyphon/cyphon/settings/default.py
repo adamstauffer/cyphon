@@ -291,7 +291,7 @@ TEST = 'test' in sys.argv
 INSTALLED_APPS = (
     'cyphon',  # must come before django.contrib.admin to override templates
     'autocomplete_light',  # must come before django.contrib.admin
-    'django.contrib.admindocs',
+    # 'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.gis',

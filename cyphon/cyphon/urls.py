@@ -35,11 +35,14 @@ from appusers.views import AppUserViewSet
 from contexts.views import ContextViewSet, ContextFilterViewSet
 from bottler.bottles.views import BottleViewSet, BottleFieldViewSet
 from bottler.containers.views import ContainerViewSet
-from distilleries.views import DistilleryViewSet
-from bottler.labels.views import LabelViewSet, LabelFieldViewSet
+from bottler.labels.views import LabelFieldViewSet, LabelViewSet
 from bottler.tastes.views import TasteViewSet
+from distilleries.views import DistilleryViewSet
 from monitors.views import MonitorViewSet
-from query.collectionqueries.views import CollectionQueryViewSet, QueryFieldsetViewSet
+from query.collectionqueries.views import (
+    CollectionQueryViewSet,
+    QueryFieldsetViewSet,
+)
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
@@ -51,8 +54,8 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='admin/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
-    url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^grappelli/', include('grappelli.urls')),
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
 
 # REST API
