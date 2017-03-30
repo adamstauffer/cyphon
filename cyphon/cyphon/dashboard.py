@@ -279,8 +279,8 @@ class CyphonIndexDashboard(Dashboard):
             column=3,
             children=[
                 {
-                    'title': _('Django Documentation'),
-                    'url': 'http://docs.djangoproject.com/',
+                    'title': _('Cyphon Documentation'),
+                    'url': 'https://cyphon.readthedocs.io/',
                     'external': True,
                 },
             ]
@@ -292,4 +292,3 @@ class CyphonIndexDashboard(Dashboard):
             collapsible=False,
             column=3,
         ))
-
