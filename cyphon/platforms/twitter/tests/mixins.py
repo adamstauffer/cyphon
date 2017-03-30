@@ -46,7 +46,7 @@ def _credentials_exist():
 if not _credentials_exist():
     TWITTER_TESTS_ENABLED = False
     _LOGGER.warning('Twitter authentication credentials are missing, '
-                    'so Twitter API will be skipped.')
+                    'so Twitter API tests will be skipped.')
 else:
     TWITTER_TESTS_ENABLED = True
 
