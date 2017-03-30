@@ -47,12 +47,11 @@ ADMINS = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 
-#: URL for constructing link with MEDIA_URL
-BASE_URL = 'https://yoursite.com'
+#: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
+BASE_URL = 'https://localhost:8000'
 
 # LOG_DIR = '/var/log/cyphon'
 LOG_DIR = BASE_DIR
-
 
 LOGGING = {
     'version': 1,
