@@ -19,13 +19,15 @@ Defines Category class.
 """
 
 # local
-from taxonomies.models import Taxonomy
+from taxonomies.models import Taxonomy, TaxonomyManager
 
 
 class Category(Taxonomy):
     """
 
     """
+
+    objects = TaxonomyManager()
 
     class Meta(object):
         verbose_name_plural = 'categories'

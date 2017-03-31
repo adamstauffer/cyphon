@@ -25,13 +25,18 @@ from django.db import models
 from cyphon.models import GetByNameManager
 
 
+class TaxonomyManager(GetByNameManager):
+    """
+    Adds methods to the default model manager.
+    """
+    pass
+
+
 class Taxonomy(models.Model):
     """
 
     """
     name = models.CharField(max_length=255, unique=True)
-
-    objects = GetByNameManager()
 
     class Meta:
         abstract = True

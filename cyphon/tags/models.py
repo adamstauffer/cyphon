@@ -19,13 +19,15 @@ Defines Tag class.
 """
 
 # local
-from taxonomies.models import Taxonomy
+from taxonomies.models import Taxonomy, TaxonomyManager
 
 
 class Tag(Taxonomy):
     """
 
     """
+
+    objects = TaxonomyManager()
 
     class Meta(object):
         ordering = ['name']
