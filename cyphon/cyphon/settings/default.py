@@ -540,10 +540,6 @@ REST_FRAMEWORK_DOCS = {
 
 DEBUG = True
 
-# Necessary for logstash environment
-REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
-                            'virtualenv/lib/python3.4/site-packages')
-
 #: URL for constructing link with MEDIA_URL
 BASE_URL = 'http://localhost:8000'
 
