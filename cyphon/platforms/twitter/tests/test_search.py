@@ -291,5 +291,5 @@ class ProcessSearchQueryTestCase(TwitterSearchTestCase, TwitterPassportMixin):
         query = self._create_test_query()
         results = self.search_handler.process_request(query)
 
-        # ensure that we're getting multiple tweets back (say, > 5)
-        self.assertTrue(len(results.data) > 5)
+        # ensure that we're getting multiple tweets back
+        self.assertTrue(len(results.data) > 2)
