@@ -57,6 +57,7 @@ class CyphonIndexDashboard(Dashboard):
                 'target.followees.models.Followee',
                 'target.locations.models.Location',
                 'target.searchterms.models.SearchTerm',
+                'aggregator.filters.models.Filter',
             ),
         ))
 
