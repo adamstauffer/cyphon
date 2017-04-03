@@ -42,7 +42,9 @@ class CyphonIndexDashboard(Dashboard):
             collapsible=True,
             css_classes=('grp-collapse grp-closed',),
             models=(
+                'bottler.bottles.models.BottleField',
                 'bottler.bottles.models.Bottle',
+                'bottler.labels.models.LabelField',
                 'bottler.labels.models.Label',
                 'bottler.containers.models.Container',
             ),
