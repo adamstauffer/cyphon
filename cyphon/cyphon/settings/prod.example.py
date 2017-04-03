@@ -44,13 +44,12 @@ ADMINS = [
     # ('Jane Smith', 'jane@example.com'),
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIALS = True
-
 #: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
 BASE_URL = 'http://localhost:8000'
 
-# LOG_DIR = '/var/log/cyphon'
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+
 LOG_DIR = BASE_DIR
 
 LOGGING = {
