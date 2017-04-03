@@ -25,7 +25,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from appusers.models import AppUser
-from appusers.forms import CustomUserChangeForm, CustomUserCreationForm
 
 
 class AppUserAdmin(UserAdmin):
@@ -65,14 +64,6 @@ class AppUserAdmin(UserAdmin):
             )
         }),
     )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email',)
-        }),
-    )
-    form = CustomUserChangeForm
-    add_form = CustomUserCreationForm
     list_display = (
         'email',
         'first_name',
