@@ -30,9 +30,8 @@ import sys
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
 HOST_SETTINGS = {
-    'ALLOWED_HOSTS': [],
-    'CORS_ORIGIN_WHITELIST': [],
-    'HOSTNAME': 'localhost',
+    'ALLOWED_HOSTS': ['localhost'],
+    'CORS_ORIGIN_WHITELIST': ['localhost:8000'],
 }
 
 TEST = 'test' in sys.argv
