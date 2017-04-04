@@ -34,7 +34,7 @@ from lab.geoip import geoip
 _LOGGER = logging.getLogger(__name__)
 
 
-if os.path.isfile(geoip.settings.GEOIP['CITY_DB_PATH']):
+if os.path.isfile(geoip.get_city_db_path()):
     NOT_INSTALLED = False
 
 else:

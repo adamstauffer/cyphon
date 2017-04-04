@@ -111,8 +111,8 @@ EMAIL = {
 }
 
 GEOIP = {
-    'CITY_DB_PATH': os.getenv('GEOIP_PATH',
-                              '/usr/share/GeoIP/GeoLite2-City.mmdb'),
+    'GEOIP_PATH': os.getenv('GEOIP_PATH', '/usr/share/GeoIP/'),
+    'CITY_DB': 'GeoLite2-City.mmdb',
 }
 
 JIRA = {
