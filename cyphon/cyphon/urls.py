@@ -103,7 +103,6 @@ urlpatterns += [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/auth/',
         include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/v1/user/', include('appusers.urls')),
     url(r'^api/v1/notifications/', include('notifications.urls')),
     url(r'^api/v1/api-token-auth/', rest_views.obtain_jwt_token),
     url(r'^api/v1/api-token-verify/', rest_views.verify_jwt_token),

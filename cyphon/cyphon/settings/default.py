@@ -50,9 +50,8 @@ SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 # administrator adds them.
 
 HOST_SETTINGS = {
-    'ALLOWED_HOSTS': [],
-    'CORS_ORIGIN_WHITELIST': [],
-    'HOSTNAME': 'localhost',
+    'ALLOWED_HOSTS': ['localhost'],
+    'CORS_ORIGIN_WHITELIST': ['localhost:8000'],
 }
 
 TEST = 'test' in sys.argv
@@ -132,8 +131,8 @@ EMAIL = {
 }
 
 GEOIP = {
-    'CITY_DB_PATH': os.getenv('GEOIP_PATH',
-                              '/usr/share/GeoIP/GeoLite2-City.mmdb'),
+    'GEOIP_PATH': os.getenv('GEOIP_PATH', '/usr/share/GeoIP/'),
+    'CITY_DB': 'GeoLite2-City.mmdb',
 }
 
 JIRA = {
@@ -250,7 +249,6 @@ REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
 
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
-HOSTNAME = HOST_SETTINGS['HOSTNAME']
 
 DATABASES = {
     'default': {

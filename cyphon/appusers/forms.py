@@ -21,7 +21,6 @@ Django forms for AppUser app.
 # third party
 from django import forms
 from django.contrib.auth import forms as auth_forms
-from django.utils.translation import ugettext_lazy as _
 
 # local
 from appusers.models import AppUser
@@ -29,10 +28,10 @@ from appusers.models import AppUser
 
 class CustomUserCreationForm(forms.ModelForm):
     """
-    A form that creates a user, with no privileges, from the given username.
-    Password is automatically set as unusable until the user responds
-    to a confirmation email.
+    A form that creates a user, with no privileges, from the given
+    username.
     """
+
     class Meta:
         model = AppUser
         fields = ('email', )
@@ -40,9 +39,8 @@ class CustomUserCreationForm(forms.ModelForm):
 
 class CustomUserChangeForm(auth_forms.UserChangeForm):
     """
-    A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
+    A form for updating users. Includes all the fields on the user, but
+    replaces the password field with a password hash display field.
     """
 
     def __init__(self, *args, **kargs):
@@ -51,82 +49,3 @@ class CustomUserChangeForm(auth_forms.UserChangeForm):
     class Meta:
         model = AppUser
         fields = '__all__'
-
-
-class UserRegistrationForm(auth_forms.SetPasswordForm):
-    """
-    The form used for the initial registration of a user.
-    """
-    new_password2 = forms.CharField(widget=forms.PasswordInput(),
-                                    label=_("Password Confirmation"))
-    first_name = forms.CharField(label=_("First Name"),
-                                 required=True, widget=forms.TextInput,
-                                 max_length=30)
-    last_name = forms.CharField(label=_("Last Name"),
-                                required=True, widget=forms.TextInput,
-                                max_length=30)
-
-    def save(self, commit=True):
-        """
-        Saves the user to the database.
-        """
-        self.user.set_password(self.cleaned_data['new_password1'])
-        self.user.first_name = self.cleaned_data['first_name']
-        self.user.last_name = self.cleaned_data['last_name']
-        self.user.is_active = True
-        if commit:
-            self.user.save()
-        return self.user
-
-
-class CustomSetPasswordForm(auth_forms.SetPasswordForm):
-    """
-    Custom form for setting passwords.
-    """
-    error_messages = dict(auth_forms.SetPasswordForm.error_messages, **{
-        'same_password_as_old': _("You entered the same password as your "
-                                  "current password. Please enter a new "
-                                  "password."),
-    })
-    new_password1 = forms.CharField(widget=forms.PasswordInput(),
-                                    label=_("New Password"))
-
-    def clean_new_password1(self):
-        """
-        Checks to make sure that the new password isn't the same as
-        the old one.
-        """
-        password1 = self.cleaned_data.get('new_password1')
-        if self.user.check_password(password1):
-            raise forms.ValidationError(
-                self.error_messages['same_password_as_old'],
-                code='same_password_as_old',
-            )
-        return password1
-
-
-class CustomPasswordChangeForm(auth_forms.PasswordChangeForm):
-    """
-    Custom form for changing passwords by an admin panel.
-    """
-    error_messages = dict(auth_forms.PasswordChangeForm.error_messages, **{
-        'same_password_as_old': _("You entered the same password as your "
-                                  "current password. Please enter a new "
-                                  "password."),
-    })
-    new_password1 = forms.CharField(widget=forms.PasswordInput(),
-                                    label=_("New Password"))
-
-    def clean_new_password1(self):
-        """
-        Checks to make sure that the new password isn't the same as
-        the old one.
-        """
-        password1 = self.cleaned_data.get('new_password1')
-        if self.user.check_password(password1):
-            raise forms.ValidationError(
-                self.error_messages['same_password_as_old'],
-                code='same_password_as_old',
-            )
-        return password1
-

@@ -21,6 +21,7 @@
 # standard library
 import ipaddress
 import logging
+import os
 
 # third party
 from django.conf import settings
@@ -30,6 +31,14 @@ from geoip2.errors import AddressNotFoundError
 _GEOIP_SETTINGS = settings.GEOIP
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def get_city_db_path():
+    """
+    Returns the path for the GeoLite2 city database.
+    """
+    return os.path.join(_GEOIP_SETTINGS['GEOIP_PATH'],
+                        _GEOIP_SETTINGS['CITY_DB'])
 
 
 def is_public_ip_addr(ip_address):
@@ -53,7 +62,8 @@ def get_lng_lat(ip_address):
 
     if ip_address and is_public_ip_addr(ip_address):
 
-        db_reader = Reader(_GEOIP_SETTINGS['CITY_DB_PATH'])
+        city_db_path = get_city_db_path()
+        db_reader = Reader(city_db_path)
 
         try:
             result = db_reader.city(ip_address)
@@ -61,7 +71,7 @@ def get_lng_lat(ip_address):
 
         except AddressNotFoundError:
             _LOGGER.warning('The address %s is not in the GeoLite2 database.',
-                           ip_address)
+                            ip_address)
 
         finally:
             db_reader.close()
