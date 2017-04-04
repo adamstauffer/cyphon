@@ -24,6 +24,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
 # local
+from appusers.forms import CustomUserChangeForm, CustomUserCreationForm
 from appusers.models import AppUser
 
 
@@ -64,6 +65,14 @@ class AppUserAdmin(UserAdmin):
             )
         }),
     )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email',),
+        }),
+    )
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
     list_display = (
         'email',
         'first_name',
@@ -72,5 +81,6 @@ class AppUserAdmin(UserAdmin):
     )
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+
 
 admin.site.register(AppUser, AppUserAdmin)
