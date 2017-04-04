@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('alerts', '0003_auto_20170320_1223'),
+        ('alerts', '0001_initial'),
     ]
 
     operations = [
