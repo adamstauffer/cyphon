@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('followee', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='followees.Followee')),
                 ('first', models.CharField(max_length=255)),
-                ('middle', models.CharField(default='', max_length=255)),
+                ('middle', models.CharField(blank=True, default='', max_length=255)),
                 ('last', models.CharField(max_length=255)),
             ],
         ),
