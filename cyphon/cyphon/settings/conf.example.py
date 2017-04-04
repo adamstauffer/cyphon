@@ -30,9 +30,8 @@ import sys
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
 HOST_SETTINGS = {
-    'ALLOWED_HOSTS': [],
-    'CORS_ORIGIN_WHITELIST': [],
-    'HOSTNAME': 'localhost',
+    'ALLOWED_HOSTS': ['localhost'],
+    'CORS_ORIGIN_WHITELIST': ['localhost:8000'],
 }
 
 TEST = 'test' in sys.argv
@@ -112,8 +111,8 @@ EMAIL = {
 }
 
 GEOIP = {
-    'CITY_DB_PATH': os.getenv('GEOIP_PATH',
-                              '/usr/share/GeoIP/GeoLite2-City.mmdb'),
+    'GEOIP_PATH': os.getenv('GEOIP_PATH', '/usr/share/GeoIP/'),
+    'CITY_DB': 'GeoLite2-City.mmdb',
 }
 
 JIRA = {

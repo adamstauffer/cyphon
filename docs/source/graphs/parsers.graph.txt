@@ -21,6 +21,6 @@ To graph these models::
 Related Graphs
 --------------
 
-* :ref:`datasieves-graph`
-* :ref:`logsieves-graph`
-* :ref:`mailsieves-graph`
+* :ref:`datacondensers-graph`
+* :ref:`logcondensers-graph`
+* :ref:`mailcondensers-graph`

@@ -32,7 +32,7 @@ sys.path.append(CYPHON_PATH)
 sys.path.append(os.path.dirname(os.path.dirname(CYPHON_PATH)))
 
 # set the default Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cyphon.settings.prod')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cyphon.settings.default')
 
 # add path to virtualenv site packages so required packages can be found
 from django.conf import settings
