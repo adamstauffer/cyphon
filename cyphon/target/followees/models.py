@@ -70,7 +70,7 @@ class LegalName(models.Model):
     """
     followee = models.OneToOneField(Followee, primary_key=True)
     first = models.CharField(max_length=255)
-    middle = models.CharField(max_length=255, default='')
+    middle = models.CharField(max_length=255, default='', blank=True)
     last = models.CharField(max_length=255)
 
     def __str__(self):
