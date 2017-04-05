@@ -48,6 +48,10 @@ class FilterManagerTestCase(FilterModelsTestCase):
         """
         Tests the _find_enabled_filters_by_type method.
         """
+        followee_type = ContentType.objects.get_for_model(Followee)
+        followees = Filter.objects._find_enabled_filters_by_type(followee_type)
+        self.assertEqual(len(followees), 2)
+
         location_type = ContentType.objects.get_for_model(Location)
         locations = Filter.objects._find_enabled_filters_by_type(location_type)
         self.assertEqual(len(locations), 3)
@@ -75,7 +79,7 @@ class FilterManagerTestCase(FilterModelsTestCase):
         Tests the create_reservoir_query method.
         """
         query = Filter.objects.create_reservoir_query()
-        self.assertEqual(len(query.accounts), 3)
+        self.assertEqual(len(query.accounts), 4)
         self.assertEqual(len(query.locations), 3)
         self.assertEqual(len(query.searchterms), 1)
 
@@ -163,4 +167,3 @@ class FilterTestCase(FilterModelsTestCase):
         )
         with self.assertRaises(ValidationError):
             new_filter.full_clean()
-

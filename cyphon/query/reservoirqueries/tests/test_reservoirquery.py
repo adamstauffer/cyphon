@@ -25,6 +25,7 @@ from datetime import datetime
 from django.test import TestCase
 
 # local
+from aggregator.reservoirs.models import Reservoir
 from query.reservoirqueries.models import ReservoirQuery
 from target.followees.models import Account
 from target.locations.models import Location
@@ -392,11 +393,12 @@ class FilterAccountsTestCase(ReservoirQueryTestCase):
 
     def test_no_followees(self):
         """
-        Tests the create_query_for_reservoir method for a Reservoir with no
+        Tests the filter_accounts method for a Reservoir with no
         Followees associated with it.
         """
         query = self._create_example_query()
-        query.filter_accounts('youtube')
+        reservoir = Reservoir.objects.get_by_natural_key('youtube')
+        query.filter_accounts(reservoir)
 
         # check that all the data was copied over
         self.assertEqual(len(query.accounts), 0)
@@ -407,20 +409,22 @@ class FilterAccountsTestCase(ReservoirQueryTestCase):
 
     def test_single_followee(self):
         """
-        Tests the create_query_for_reservoir method for a Reservoir with
-        one Followee associated with it.
+        Tests the filter_accounts method for a Reservoir with one
+        Followee associated with it.
         """
         query = self._create_example_query()
-        query.filter_accounts('facebook')
+        reservoir = Reservoir.objects.get_by_natural_key('facebook')
+        query.filter_accounts(reservoir)
         self.assertEqual(len(query.accounts), 1)
 
     def test_multiple_followees(self):
         """
-        Tests the create_query_for_reservoir method for a Reservoir with
-        multiple Followees associated with it.
+        Tests the filter_accounts method for a Reservoir with multiple
+        Followees associated with it.
         """
         query = self._create_example_query()
-        query.filter_accounts('twitter')
+        reservoir = Reservoir.objects.get_by_natural_key('twitter')
+        query.filter_accounts(reservoir)
         self.assertEqual(len(query.accounts), 2)
 
 
