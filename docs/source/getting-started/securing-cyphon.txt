@@ -4,6 +4,17 @@
 Securing Cyphon
 ###############
 
+.. _disclaimer:
+
+**********
+Disclaimer
+**********
+
+The Cyphon project is provided as open source software, and we encourage you to report any security bugs, configuration issues, or comments related to Cyphon or Cyclops components. We’re extremely thankful for responsible security researchers that report vulnerabilities to us. To make a report, please `email us <CyphonProject@dunbarsecured.com>`__ with the full details, including steps to reproduce the issue. 
+
+We recommend that you follow security best practices when running Cyphon. Please consult the official documentation of any open source or commercially available products that are used as a component of (or are integrated) with Cyphon, and follow their recommended security practices. This disclaimer also applies to outside APIs, operating systems, or virtualization technologies.
+
+
 .. _credentials:
 
 ***********
