@@ -25,19 +25,37 @@ from django.contrib import admin
 from target.followees.models import Followee, LegalName, Account
 
 
-class FolloweeAdmin(admin.ModelAdmin):
-    pass
+class AccountInLineAdmin(admin.TabularInline):
+    """
+    Customizes inline admin forms for Tastes.
+    """
+    model = Account
+    classes = ('grp-open', )
+    inline_classes = ('grp-open', )
 
 
-class LegalNameAdmin(admin.ModelAdmin):
-    pass
+class LegalNameInLineAdmin(admin.StackedInline):
+    """
+    Customizes inline admin forms for Tastes.
+    """
+    model = LegalName
+    classes = ('grp-open', )
+    inline_classes = ('grp-open', )
+    max_num = 1
 
 
 class AccountAdmin(admin.ModelAdmin):
     pass
 
 
+class FolloweeAdmin(admin.ModelAdmin):
+    inlines = [LegalNameInLineAdmin, AccountInLineAdmin, ]
+
+
+class LegalNameAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Account, AccountAdmin)
 admin.site.register(Followee, FolloweeAdmin)
 admin.site.register(LegalName, LegalNameAdmin)
-admin.site.register(Account, AccountAdmin)
-
