@@ -27,7 +27,7 @@ from target.followees.models import Followee, LegalName, Account
 
 class AccountInLineAdmin(admin.TabularInline):
     """
-    Customizes inline admin forms for Tastes.
+    Inline admin for Accounts.
     """
     model = Account
     classes = ('grp-open', )
@@ -36,7 +36,7 @@ class AccountInLineAdmin(admin.TabularInline):
 
 class LegalNameInLineAdmin(admin.StackedInline):
     """
-    Customizes inline admin forms for Tastes.
+    Inline admin for LegalNames.
     """
     model = LegalName
     classes = ('grp-open', )
