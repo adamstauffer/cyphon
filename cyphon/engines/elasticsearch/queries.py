@@ -355,7 +355,7 @@ class ElasticsearchQueryFieldset(EngineQueryFieldset):
         if self.raw_value is not None:
             # if string value, convert to lowercase
             # so it can be compared to indexed terms
-            if get_data_type(self.field_type) in 'text':
+            if get_data_type(self.field_type) == 'text':
                 return self.raw_value.lower()
 
             # if location search, convert geojson value back to dictionary
