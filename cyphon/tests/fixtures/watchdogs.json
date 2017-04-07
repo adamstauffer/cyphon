@@ -4,7 +4,7 @@
     "fields": {
       "id": 1,
       "name": "subject_contains_CRIT",
-      "field_name": "subject",
+      "field_name": "content.subject",
       "operator": "CharField:x",
       "value": "CRIT-",
       "case_sensitive": true
@@ -15,7 +15,7 @@
     "fields": {
       "id": 2,
       "name": "subject_contains_WARN",
-      "field_name": "subject",
+      "field_name": "content.subject",
       "operator": "CharField:x",
       "value": "WARN-",
       "case_sensitive": false
@@ -26,7 +26,7 @@
     "fields": {
       "id": 3,
       "name": "subject_contains_INFO",
-      "field_name": "subject",
+      "field_name": "content.subject",
       "operator": "CharField:x",
       "value": "INFO-",
       "case_sensitive": false
@@ -251,7 +251,7 @@
     "model": "watchdogs.muzzle",
     "fields": {
       "watchdog": 1,
-      "matching_fields": "subject,to",
+      "matching_fields": "content.subject,to",
       "time_interval": 5,
       "time_unit": "m"
     }

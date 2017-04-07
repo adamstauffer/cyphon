@@ -30,6 +30,7 @@ from django.test import TestCase, TransactionTestCase
 from alerts.models import Alert
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
+from tests.mock import patch_find_by_id
 from watchdogs.models import Watchdog, Trigger, Muzzle
 
 
@@ -44,7 +45,9 @@ DATA = {
         'distillery': 'test',
         'doc_id': DOC_ID
     },
-    'subject': '[CRIT-111]'
+    'content': {
+        'subject': '[CRIT-111]'
+    }
 }
 
 
@@ -319,8 +322,10 @@ class MuzzleTestCase(TestCase):
     fixtures = get_fixtures(['watchdogs', 'alerts'])
 
     mock_data = {
-        'subject': 'foo',
-        'to': 'bar'
+        'content': {
+            'text': 'foo',
+        },
+        'user': 'bar',
     }
 
     @classmethod
@@ -342,7 +347,7 @@ class MuzzleTestCase(TestCase):
         Tests the _get_fields method when no spaces separate the fields.
         """
         actual = self.muzzle._get_fields()
-        expected = ['subject', 'to']
+        expected = ['content.subject', 'to']
         self.assertEqual(actual, expected)
 
     def test_get_fields_w_spaces(self):
@@ -381,12 +386,15 @@ class MuzzleTestCase(TestCase):
         alert5 = Alert.objects.get(pk=5)
         alert6 = Alert.objects.get(pk=6)
         alert7 = Alert.objects.get(pk=7)
-        alert5.data = {'subject': 'foo', 'to': 'bar1'}
-        alert6.data = {'subject': 'foo', 'to': 'bar2'}
-        alert7.data = {'subject': 'foo', 'to': 'bar3'}
-        with patch('distilleries.models.Distillery.find_by_id'):
+        alert5.data = {'content': {'subject': 'foo1'}, 'to': 'bar'}
+        alert6.data = {'content': {'subject': 'foo2'}, 'to': 'bar'}
+        alert7.data = {'content': {'subject': 'foo3'}, 'to': 'bar'}
+        alert5.save()
+        alert6.save()
+        alert7.save()
+        new_data = {'content': {'subject': 'foo4'}, 'to': 'bar'}
+        with patch('alerts.models.Alert.saved_data', return_value=new_data):
             alert8 = Alert.objects.get(pk=8)
-            alert8.saved_data = {'subject': 'foo', 'to': 'bar4'}
             with patch('watchdogs.models.timezone.now',
                        return_value=alert8.created_date):
                 self.assertIs(self.muzzle.is_match(alert8), False)
@@ -396,22 +404,21 @@ class MuzzleTestCase(TestCase):
         Tests the is_match method when there is a matching Alert in
         the Muzzle's time frame.
         """
-        dup_doc = {'subject': 'foo', 'to': 'bar1'}
+        dup_doc = {'content': {'subject': 'foo1'}, 'to': 'bar'}
         alert5 = Alert.objects.get(pk=5)
         alert6 = Alert.objects.get(pk=6)
         alert5.data = dup_doc
         alert6.data = dup_doc
         alert5.save()
         alert6.save()
-
         old_alert5_incidents = alert5.incidents
         old_alert6_incidents = alert6.incidents
-        with patch('distilleries.models.Distillery.find_by_id'):
+        with patch('distilleries.models.Distillery.find_by_id',
+                   return_value=dup_doc):
             with patch('watchdogs.models.timezone.now',
                        return_value=alert6.created_date):
                 new_alert = Alert.objects.get(pk=6)
                 new_alert.pk = None
-                new_alert.saved_data = dup_doc
                 self.assertIs(self.muzzle.is_match(new_alert), True)
 
         # get fresh instances of Alerts and check that the oldest
@@ -445,7 +452,7 @@ class WatchdogTransactionTestCase(TransactionTestCase):
         with patch('distilleries.models.Distillery.find_by_id',
                    return_value=self.data):
             with patch('alerts.models.Alert._format_title',
-                       return_value=self.data['subject']):
+                       return_value=self.data['content']['subject']):
                 incident_num = 20
 
                 alert_count = Alert.objects.count()

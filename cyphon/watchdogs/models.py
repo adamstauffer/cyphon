@@ -20,6 +20,7 @@ Defines Watchdog, Trigger, and Muzzle classes for generating Alerts.
 
 # standard library
 import datetime
+import logging
 
 # third party
 from django.core.exceptions import ObjectDoesNotExist
@@ -36,7 +37,10 @@ from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
 from cyphon.models import GetByNameManager
 from cyphon.transaction import require_lock
 from utils.dateutils.dateutils import convert_time_to_whole_minutes
+from utils.parserutils.parserutils import get_dict_value
 from sifter.datasifter.datasieves.models import DataSieve
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class WatchdogManager(AlarmManager):
@@ -320,12 +324,13 @@ class Muzzle(models.Model):
         fields = self._get_fields()
         alerts = self._get_filtered_alerts(alert)
         new_data = alert.saved_data
-
         for old_alert in alerts:
             match = True
             old_data = old_alert.data
             for field in fields:
-                if new_data.get(field) != old_data.get(field):
+                new_data_val = get_dict_value(field, new_data)
+                old_data_val = get_dict_value(field, old_data)
+                if new_data_val != old_data_val:
                     match = False
                     break
             if match:
@@ -333,4 +338,3 @@ class Muzzle(models.Model):
                 return True
 
         return False
-
