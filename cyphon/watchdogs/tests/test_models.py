@@ -24,13 +24,12 @@ from unittest.mock import Mock, patch
 import threading
 
 # third party
-from django.test import TestCase, TransactionTestCase 
+from django.test import TestCase, TransactionTestCase
 
 # local
 from alerts.models import Alert
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
-from tests.mock import patch_find_by_id
 from watchdogs.models import Watchdog, Trigger, Muzzle
 
 
