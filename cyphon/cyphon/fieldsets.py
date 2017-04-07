@@ -63,6 +63,9 @@ class QueryFieldset(object):
         assert self.field_type in self.FIELD_TYPES
         assert self.operator in self.OPERATORS
 
+    def __str__(self):
+        return "%s: %s" % (self.__class__.__name__, self.__dict__)
+
     @property
     def __dict__(self):
         return {
@@ -71,4 +74,3 @@ class QueryFieldset(object):
             'operator': self.operator,
             'value': self.value
         }
-

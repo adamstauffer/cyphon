@@ -488,7 +488,13 @@ class ContextTestCase(ContextBaseTestCase):
         time frame and ContextFilters.
         """
         time = timezone.now()
-        data = {'created_date': time, 'host': 'foo', 'message': 'bar'}
+        data = {
+            'created_date': time,
+            'host': 'foo',
+            'content': {
+                'message': 'bar'
+            }
+        }
         mock_results = {
             'count': 1,
             'results': [{'foo2': 'bar2'}]
@@ -499,16 +505,16 @@ class ContextTestCase(ContextBaseTestCase):
                 data, page=1, page_size=10)
             expected_fieldsets = [
                 {
+                    'field_name': 'content.subject',
+                    'field_type': 'TextField',
+                    'operator': 'eq',
+                    'value': 'bar'
+                },
+                {
                     'field_name': 'from',
                     'field_type': 'EmailField',
                     'operator': 'eq',
                     'value': 'foo'
-                },
-                {
-                    'field_name': 'subject',
-                    'field_type': 'TextField',
-                    'operator': 'eq',
-                    'value': 'bar'
                 }
             ]
             expected_timeframe = [
@@ -535,7 +541,6 @@ class ContextTestCase(ContextBaseTestCase):
             query = mock_find.call_args[0][0]
             fieldsets = [vars(q) for q in query.subqueries[0].subqueries]
             timeframe = [vars(q) for q in query.subqueries[1].subqueries]
-
             self.assertEqual(fieldsets, expected_fieldsets)
             self.assertEqual(timeframe, expected_timeframe)
             self.assertEqual(query.subqueries[0].joiner, 'AND')
