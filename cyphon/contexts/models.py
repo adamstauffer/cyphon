@@ -41,6 +41,7 @@ from engines.queries import EngineQuery
 from engines.sorter import SortParam, Sorter
 from utils.choices.choices import get_field_type
 from utils.dateutils import dateutils as dt
+from utils.parserutils.parserutils import get_dict_value
 
 
 class Context(models.Model):
@@ -495,7 +496,7 @@ class ContextFilter(models.Model):
         Focal Distillery. Returns a QueryFieldset representing a
         query expression for the ContextFilter.
         """
-        value = data.get(self.value_field)
+        value = get_dict_value(self.value_field, data)
         field_type = get_field_type(self.search_field)
         return QueryFieldset(
             field_name=self.search_field,
@@ -503,4 +504,3 @@ class ContextFilter(models.Model):
             operator=self.operator,
             value=value
         )
-
