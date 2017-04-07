@@ -264,7 +264,7 @@ class MongoDbEngine(Engine):
             Documents matching the query.
 
         """
-        offset = (page - 1) * page_size
+        offset = self.get_offset(page, page_size)
         query_args = [query]
 
         if projection:
@@ -276,7 +276,7 @@ class MongoDbEngine(Engine):
             m_sorter = mongodb_sorter.MongoDbSorter(sorter.sort_list)
             cursor = cursor.sort(m_sorter.params)
 
-        return cursor.skip(offset).limit(page_size)
+        return cursor.skip(offset).limit(int(page_size))
 
     def _find_multiple_ids(self, doc_ids):
         """Find documents by their ids.
