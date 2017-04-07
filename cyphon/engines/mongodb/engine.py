@@ -353,7 +353,8 @@ class MongoDbEngine(Engine):
         """
         query = mongodb_queries.MongoDbQuery(query.subqueries, query.joiner)
         projection = self.field_names
-        docs = self._get_search_results(query.params, projection, sorter,
+        mongodb_params = query.params
+        docs = self._get_search_results(mongodb_params, projection, sorter,
                                         page, page_size)
         return mongodb_results.get_results_and_count(docs)
 
