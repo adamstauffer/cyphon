@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'grappelli',  # must come before django.contrib.admin
     'django.contrib.admin',
     'django_extensions',
+    'django_filters',
     'django_mailbox',
     # 'corsheaders',  # Cross Origin Resource Sharing (local dev)
     'rest_framework',

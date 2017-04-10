@@ -68,6 +68,16 @@
     }
   },
   {
+    "model": "followees.account",
+    "fields": {
+      "id": 4,
+      "followee": 3,
+      "platform": ["twitter"],
+      "user_id": "57634",
+      "username": "jackbnimble"
+    }
+  },
+  {
     "model": "followees.alias",
     "fields": {
       "account": 1,

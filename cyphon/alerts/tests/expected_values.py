@@ -129,19 +129,19 @@ ALERT_DETAIL = {
             'id': 1,
             'name': 'context_w_filters',
             'filters': [{
+                'id': 2,
+                'operator': 'eq',
+                'url': 'http://testserver/api/v1/contextfilters/2/',
+                'value_field': 'content.message',
+                'search_field': 'content.subject',
+                'operator_text': 'equals',
+                'context': 1
+            }, {
                 'id': 1,
                 'operator': 'eq',
                 'url': 'http://testserver/api/v1/contextfilters/1/',
                 'value_field': 'host',
                 'search_field': 'from',
-                'operator_text': 'equals',
-                'context': 1
-            }, {
-                'id': 2,
-                'operator': 'eq',
-                'url': 'http://testserver/api/v1/contextfilters/2/',
-                'value_field': 'message',
-                'search_field': 'subject',
                 'operator_text': 'equals',
                 'context': 1
             }],

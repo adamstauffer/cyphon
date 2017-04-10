@@ -80,9 +80,9 @@
     "fields": {
       "id": 2,
       "context": 1,
-      "search_field": "subject",
+      "search_field": "content.subject",
       "operator": "eq",
-      "value_field": "message"
+      "value_field": "content.message"
     }
   }
 ]

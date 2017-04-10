@@ -29,17 +29,27 @@ class QueryFieldsetTestCase(TestCase):
     Tests the QueryFieldset class.
     """
 
+    fieldset = QueryFieldset(
+        field_name='foo',
+        field_type='CharField',
+        operator='eq',
+        value='foobar'
+    )
+
+    def test_str(self):
+        """
+        Tests the __str__ method on a QueryFieldset.
+        """
+        actual = str(self.fieldset)
+        expected = ("QueryFieldset: {'field_name': 'foo', 'field_type': "
+                    "'CharField', 'operator': 'eq', 'value': 'foobar'}")
+        self.assertEqual(actual, expected)
+
     def test_vars(self):
         """
-
+        Tests the outcome of the vars() function on a QueryFieldset.
         """
-        fieldset = QueryFieldset(
-            field_name='foo',
-            field_type='CharField',
-            operator='eq',
-            value='foobar'
-        )
-        actual = vars(fieldset)
+        actual = vars(self.fieldset)
         expected = {
             'field_name': 'foo',
             'field_type': 'CharField',
@@ -47,4 +57,3 @@ class QueryFieldsetTestCase(TestCase):
             'value': 'foobar'
         }
         self.assertEqual(actual, expected)
-

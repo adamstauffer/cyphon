@@ -145,13 +145,13 @@ class ReservoirQuery(object):
 
     def filter_accounts(self, reservoir):
         """
-        Takes the primary key of a Reservoir and filters the list of Accounts
-        to only include Accounts associated with the given Reservoir.
+        Takes a Reservoir and filters the list of Accounts to only
+        include Accounts associated with the given Reservoir.
         """
         accounts = []
 
         for account in self.accounts:
-            if str(account.platform) == reservoir:
+            if account.platform == reservoir:
                 accounts.append(account)
 
         self.accounts = accounts
