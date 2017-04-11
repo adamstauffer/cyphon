@@ -29,7 +29,7 @@ To install and start Docker Engine::
     $ sudo apt-get update
 
     $ sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
-    sudo apt-get install docker-engine
+    $ sudo apt-get install docker-engine
 
     $ sudo service docker start
 
