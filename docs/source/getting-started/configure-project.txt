@@ -50,7 +50,6 @@ address and/or domain name for your host machine::
     HOST_SETTINGS = {
        'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
        'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
-       'HOSTNAME': 'example.com',
     }
 
 You should also change the Django ``SECRET_KEY`` to something unique. 
