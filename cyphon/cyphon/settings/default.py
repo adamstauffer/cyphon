@@ -58,6 +58,9 @@ TEST = 'test' in sys.argv
 
 FUNCTIONAL_TESTS = {
     'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
+    'DRIVER': os.getenv('FUNCTIONAL_TESTS_DRIVER', 'LOCALHOST'),  # 'DOCKER', 'SAUCELABS'
+    'HOST': os.getenv('FUNCTIONAL_TESTS_HOST', 'localhost'),
+    'PORT': os.getenv('FUNCTIONAL_TESTS_PORT', '4444'),
     'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', ''),
     'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', ''),
     'VERSION': os.getenv('FUNCTIONAL_TESTS_VERSION', ''),

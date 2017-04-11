@@ -27,7 +27,7 @@ import unittest
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver import Firefox, Remote
+from selenium.webdriver import Chrome, Firefox, Remote
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import WebDriverException
 
@@ -67,24 +67,48 @@ def _get_desired_capabilities():
             'browserName': _TEST_SETTINGS['BROWSER'],
             'version': _TEST_SETTINGS['VERSION'],
         }
-    else:
+    elif browser.lower() == 'firefox':
         capabilities = DesiredCapabilities.FIREFOX
+    else:
+        capabilities = DesiredCapabilities.CHROME
 
     return _add_travis_info(capabilities)
 
 
-def _get_remote_driver():
+def _get_remote_driver(capabilities):
+    """
+    Get a Docker Selenium web driver.
+    """
+    host = _TEST_SETTINGS['HOST']
+    port = _TEST_SETTINGS['PORT']
+    url = 'http://%s:%s/wd/hub' % (host, port)
+    return Remote(
+        command_executor=url,
+        desired_capabilities=capabilities
+    )
+
+
+def _get_saucelabs_driver(capabilities):
     """
     Get a SauceLabs Selenium web driver.
     """
     username = _SAUCE_SETTINGS['USERNAME']
     access_key = _SAUCE_SETTINGS['ACCESS_KEY']
     hub_url = '%s:%s@localhost:4445' % (username, access_key)
-    desired_cap = _get_desired_capabilities()
     return Remote(
         command_executor='http://%s/wd/hub' % hub_url,
-        desired_capabilities=desired_cap
+        desired_capabilities=capabilities
     )
+
+
+def _get_local_driver(browser):
+    """
+    Get a local Selenium web driver.
+    """
+    if browser.lower() == 'firefox':
+        return Firefox()
+    else:
+        return Chrome()
 
 
 def get_web_driver():
@@ -92,11 +116,16 @@ def get_web_driver():
     Get a Selenium web driver. Try to get a local driver first. If that
     fails, try to get a remote driver.
     """
-    try:
-        return Firefox()
-    except (ConnectionRefusedError, NameError, RuntimeError,
-            WebDriverException):
-        return _get_remote_driver()
+    driver = _TEST_SETTINGS['DRIVER'].lower()
+    capabilities = _get_desired_capabilities()
+
+    if driver == 'docker':
+        return _get_remote_driver(capabilities)
+    elif driver == 'saucelabs':
+        return _get_saucelabs_driver(capabilities)
+    else:
+        browser = _TEST_SETTINGS['BROWSER']
+        return _get_local_driver(browser)
 
 
 def _web_driver_available():
@@ -108,25 +137,19 @@ def _web_driver_available():
         driver = get_web_driver()
         driver.quit()
         return True
-    except WebDriverException:
+    except (ConnectionRefusedError, NameError, RuntimeError,
+            WebDriverException) as error:
+        _LOGGER.warning('No WebDriver available for functional tests, '
+                        'so those tests will be skipped.')
         return False
 
 
-def _enable_functional_tests():
-    """
-    Return a Boolean indicating whether functional tests should be run.
-    """
-    if _TEST_SETTINGS['ENABLED']:
-        return _web_driver_available()
-    return False
-
-
-if not _enable_functional_tests():
-    FUNCTIONAL_TESTS_ENABLED = False
-    _LOGGER.warning('Functional tests are disabled, '
-                    'so those tests will be skipped.')
+if _TEST_SETTINGS['ENABLED']:
+    FUNCTIONAL_TESTS_ENABLED = _web_driver_available()
 else:
     FUNCTIONAL_TESTS_ENABLED = True
+    _LOGGER.warning('Functional tests are disabled, '
+                    'so those tests will be skipped.')
 
 
 @unittest.skipUnless(FUNCTIONAL_TESTS_ENABLED, 'functional tests disabled')
