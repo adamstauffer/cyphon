@@ -111,13 +111,16 @@ def _get_local_driver(browser):
         return Chrome()
 
 
-def get_web_driver():
+def get_web_driver(name=None):
     """
     Get a Selenium web driver. Try to get a local driver first. If that
     fails, try to get a remote driver.
     """
     driver = _TEST_SETTINGS['DRIVER'].lower()
     capabilities = _get_desired_capabilities()
+
+    if name:
+        capabilities['name'] = name
 
     if driver == 'docker':
         return _get_remote_driver(capabilities)
@@ -164,7 +167,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(FunctionalTest, cls).setUpClass()
-        cls.driver = get_web_driver()
+        cls.driver = get_web_driver(cls.__name__)
         cls.driver.implicitly_wait(10)
         cls.driver.maximize_window()
 
