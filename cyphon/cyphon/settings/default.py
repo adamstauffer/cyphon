@@ -61,8 +61,8 @@ FUNCTIONAL_TESTS = {
     'DRIVER': os.getenv('FUNCTIONAL_TESTS_DRIVER', 'LOCALHOST'),  # 'DOCKER', 'SAUCELABS'
     'HOST': os.getenv('FUNCTIONAL_TESTS_HOST', 'localhost'),
     'PORT': os.getenv('FUNCTIONAL_TESTS_PORT', '4444'),
-    'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', ''),
-    'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', ''),
+    'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', 'ANY'),
+    'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', 'chrome'),
     'VERSION': os.getenv('FUNCTIONAL_TESTS_VERSION', ''),
 }
 
