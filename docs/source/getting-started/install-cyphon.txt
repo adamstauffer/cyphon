@@ -15,7 +15,7 @@ File Structure
 
 If you plan on using Cyphon in a production environment, we recommend creating specific directories for your data stores. This will make it easier to locate and backup your data.
 
-The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ Git repository.
+The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ Git repository. (If you would like to use other directories for storing your data, just make sure those changes are reflected in your Docker Compose files.)
 
 First, create directories for the project::
 
@@ -34,17 +34,15 @@ Next, create users and groups for the data storage services::
     $ sudo groupadd -r mongodb && sudo useradd -r -g mongodb mongodb
     $ sudo groupadd -r postgres && sudo useradd -r -g postgres postgres
 
-.. warning:: For greater security, be sure to change the default 
-             passwords of these users and groups using the 
-             ``sudo passwd <account name>`` and 
-             ``sudo passwd -g <group name>`` commands.
+.. warning::
+
+    For greater security, be sure to change the default  passwords of these users and groups using the ``sudo passwd <account name>`` and ``sudo passwd -g <group name>`` commands.
 
 Give these new users ownership of their respective directories::
 
     $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
     $ sudo chown mongodb:mongodb /opt/cyphon/data/mongodb
     $ sudo chown postgres:postgres /opt/cyphon/data/postgresql
-
 
 .. _git-repositories:
 
