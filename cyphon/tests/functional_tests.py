@@ -61,11 +61,11 @@ def _get_desired_capabilities():
     browser = _TEST_SETTINGS['BROWSER']
     version = _TEST_SETTINGS['VERSION']
 
-    if platform and browser and version:
+    if platform and browser:
         capabilities = {
-            'platform': _TEST_SETTINGS['PLATFORM'],
-            'browserName': _TEST_SETTINGS['BROWSER'],
-            'version': _TEST_SETTINGS['VERSION'],
+            'platform': platform,
+            'browserName': browser,
+            'version': version,
         }
     elif browser.lower() == 'firefox':
         capabilities = DesiredCapabilities.FIREFOX
