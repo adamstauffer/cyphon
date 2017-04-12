@@ -4,40 +4,62 @@
 Server Configuration
 ####################
 
-Cyphon is most easily deployed using `Docker`_. This requires installing Docker Engine and Docker Compose, and configuring virtual memory on the host machine.
+Cyphon is most easily deployed using `Docker`_. This requires installing Docker and Docker Compose, and configuring virtual memory on the host machine.
 
 
 .. _install-docker-engine:
 
-*********************
-Install Docker Engine
-*********************
+**************
+Install Docker
+**************
 
-The following instructions are for Ubuntu 14.04 LTS (Trusty). 
-To install Docker Engine on other operating systems, see `Docker documentation <https://docs.docker.com/engine/installation/>`_.
+The following instructions are for installing Docker Community Edition (CE) x86_64 on Ubuntu. For other editions, versions, or operating systems, see `Docker's documentation <https://docs.docker.com/engine/installation/>`__.
 
-To install and start Docker Engine::
+Unistall Older Versions
+=======================
+    
+If you have an older version of Docker already installed, such as ``docker`` or ``docker-engine``, uninstall it before proceeding::
+
+    $ sudo apt-get remove docker docker-engine
+
+Extra packages for Trusty 14.04
+===============================
+
+If you're installing on Ubuntu 14.04 (Trusty), Docker strongly recommends installing the ``linux-image-extra-*`` packages::
 
     $ sudo apt-get update
-    $ sudo apt-get install apt-transport-https ca-certificates
 
-    $ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 \
-                     --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    $ sudo apt-get install \
+        linux-image-extra-$(uname -r) \
+        linux-image-extra-virtual
 
-    $ sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-trusty main'
+Install Docker CE
+=================
+
+To install Docker Community Edition x86_64::
+
+    $ sudo apt-get update
+    $ sudo apt-get install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common
+
+    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    $ sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) \
+        stable"
 
     $ sudo apt-get update
 
-    $ sudo apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
+    $ sudo apt-get install docker-ce
+
     $ sudo apt-get install docker-engine
 
-    $ sudo service docker start
-
-See Docker's `Ubuntu documentation <https://docs.docker.com/engine/installation/linux/ubuntulinux/>`_ for more information on the installation procedure. 
-You can also refer to Digital Ocean's `tutorial <https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04>`_ for Ubuntu 16.04.
-
-.. note:: If you have problems adding the GPG key, try using 
-          ``--keyserver hkp://p80.pool.sks-keyservers.net:80`` instead.
+See Docker's `Ubuntu documentation <https://docs.docker.com/engine/installation/linux/ubuntu/>`__ for more information on this installation procedure. 
+You can also refer to Digital Ocean's `tutorial for Ubuntu 16.04 <https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04>`__.
 
 
 .. _install-docker-compose:
