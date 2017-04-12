@@ -33,6 +33,6 @@ class ProcedureAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Protocol, ProcedureAdmin)
+admin.site.register(Protocol, ProtocolAdmin)
 admin.site.register(Procedure, ProcedureAdmin)
 
