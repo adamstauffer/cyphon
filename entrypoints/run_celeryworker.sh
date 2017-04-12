@@ -22,4 +22,4 @@ sleep 20
 cd /usr/src/app/cyphon
 
 # run Celery worker for Cyphon with Celery configuration stored in celeryapp
-celery worker -A cyphon -l ERROR "$@"
+su -m cyphon -c 'celery worker -A cyphon -l ERROR "$@"'

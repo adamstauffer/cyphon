@@ -250,6 +250,13 @@ class CyphonIndexDashboard(Dashboard):
                         'aggregator.reservoirs.models.Reservoir',
                     ),
                 ),
+                modules.ModelList(
+                    _('Data Enhancement'),
+                    css_classes=('grp-collapse grp-open',),
+                    models=(
+                        'lab.procedures.models.Protocol',
+                    ),
+                ),
             ]
         ))
 
