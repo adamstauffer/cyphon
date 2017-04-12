@@ -138,6 +138,7 @@ class CondenserPage(ConfigToolPage):
         """
         Clicks the 'remove fitting' button.
         """
+        self.page.scroll_to_bottom()
         element = self.driver.find_element(*CondenserPageLocators.REMOVE_FITTING)
         element.click()
 
@@ -147,4 +148,3 @@ class CondenserPage(ConfigToolPage):
         """
         element = self.driver.find_element(*CondenserPageLocators.DELETE_FITTING_0)
         element.click()
-
