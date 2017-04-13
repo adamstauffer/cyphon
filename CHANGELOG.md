@@ -4,19 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
+
 <a name="Unreleased"></a>
 ## [Unreleased]
+
+### Changed
+
+- **cyphon.tests.functional_tests:** enabled functional tests to run in a Selenium 3 Docker container ([fe170cc](https://github.com/dunbarcyber/cyphon/commit/fe170cc))
+- **docs:** replaced install instructions for Docker Engine with those for Docker Community Edition ([4aa080c](https://github.com/dunbarcyber/cyphon/commit/4aa080c))
+
+### Fixed
+
+- **cyphon.dashboard:** added Protocols to admin dashboard ([ee34361](https://github.com/dunbarcyber/cyphon/commit/ee34361))
+
+### Removed
+
+- **fixtures:** removed default fixtures, since these are provided in [Cyphondock](https://github.com/dunbarcyber/cyphondock/) ([ba25363](https://github.com/dunbarcyber/cyphon/commit/ba25363))
+
+### Security
+
+* **entrypoints**: Celery beat and worker are now run without superuser privileges ([8f18b42](https://github.com/dunbarcyber/cyphon/commit/8f18b42))
+
 
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/dunbarcyber/cyphon/compare/1.0.1...1.0.2) (2017-04-07)
 
 ### Added
 
-* **docs:** added CHANGELOG ([baf76ae](https://github.com/dunbarcyber/cyphon/commit/baf76ae))
+- **docs:** added CHANGELOG ([baf76ae](https://github.com/dunbarcyber/cyphon/commit/baf76ae))
 
 ### Changed
 
-* **docs:** changed AUTHORS to markdown ([beb0d87](https://github.com/dunbarcyber/cyphon/commit/beb0d87))
+- **docs:** changed AUTHORS to markdown ([beb0d87](https://github.com/dunbarcyber/cyphon/commit/beb0d87))
 
 ### Fixed
 
@@ -24,6 +43,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **cyphon.settings:** applied fix for [django-filter issue #562](https://github.com/carltongibson/django-filter/issues/562) ([7f09009](https://github.com/dunbarcyber/cyphon/commit/7f09009))
 - **engine.mongodb.engine:** fixed issue with MongoDB queries ([ea1b043](https://github.com/dunbarcyber/cyphon/commit/ea1b043))
 - **watchdogs:** fixed issue with Muzzles handling nested fields ([fe30e75](https://github.com/dunbarcyber/cyphon/commit/fe30e75))
+
 
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/dunbarcyber/cyphon/compare/1.0.0...1.0.1) (2017-04-05)
