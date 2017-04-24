@@ -150,7 +150,7 @@ def _web_driver_available():
 if _TEST_SETTINGS['ENABLED']:
     FUNCTIONAL_TESTS_ENABLED = _web_driver_available()
 else:
-    FUNCTIONAL_TESTS_ENABLED = True
+    FUNCTIONAL_TESTS_ENABLED = False
     _LOGGER.warning('Functional tests are disabled, '
                     'so those tests will be skipped.')
 
