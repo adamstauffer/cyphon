@@ -46,4 +46,4 @@ six==1.10.0
 testfixtures==4.13.5
 tlslite==0.4.9
 tweepy==3.5.0
-urllib3==1.20
+urllib3==1.21
