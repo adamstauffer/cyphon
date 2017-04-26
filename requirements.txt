@@ -6,7 +6,7 @@ bleach==2.0.0
 celery==4.0.2
 cryptography==1.8.1
 Django==1.10.7
-django-autocomplete-light>=2.0.0,<3.0.0
+django-autocomplete-light==3.2.7
 django-constance==2.0.0
 django-cors-headers==2.0.2
 django-extensions==1.7.8
