@@ -53,7 +53,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class WarehouseManager(models.Manager):
-    """Manage |Collection| objects.
+    """Manage |Warehouse| objects.
 
     Adds methods to the default Django model manager.
     """

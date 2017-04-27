@@ -25,6 +25,7 @@ import threading
 
 # third party
 from django.test import TestCase, TransactionTestCase
+from testfixtures import LogCapture
 
 # local
 from alerts.models import Alert
@@ -271,10 +272,41 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         Tests the process method for a case that doesn't match a ruleset.
         """
         actual = self.log_wdog.process(self.data, self.distillery,
-                                        self.doc_id)
+                                       self.doc_id)
         self.assertEqual(actual, None)
         alerts = Alert.objects.all()
         self.assertEqual(alerts.count(), 0)
+
+
+class TriggerManagerTestCase(TestCase):
+    """
+    Tests the TriggerManager classes.
+    """
+    fixtures = get_fixtures(['watchdogs'])
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method of the WarehouseManager class.
+        """
+        trigger = Trigger.objects.get_by_natural_key('inspect_emails',
+                                                     'high_priority_email')
+        self.assertEqual(trigger.pk, 1)
+
+    @staticmethod
+    def test_get_by_natural_key_error():
+        """
+        Tests the get_by_natural_key method of the WarehouseManager class.
+        """
+        with LogCapture() as log_capture:
+            Trigger.objects.get_by_natural_key('dummy_watchdog',
+                                               'high_priority_email')
+            expected_1 = 'Watchdog "dummy_watchdog" does not exist'
+            expected_2 = ('Trigger dummy_watchdog:high_priority_email '
+                          'does not exist')
+            log_capture.check(
+                ('watchdogs.models', 'ERROR', expected_1),
+                ('watchdogs.models', 'ERROR', expected_2),
+            )
 
 
 class TriggerTestCase(TestCase):

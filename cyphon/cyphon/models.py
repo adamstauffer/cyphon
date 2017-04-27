@@ -53,6 +53,7 @@ class GetByNameMixin(object):
             logging.getLogger(self.__module__).error('%s "%s" does not exist',
                                                      self.model.__name__, name)
 
+
 class FindEnabledMixin(object):
     """
     Mixin for a |Manager| that provides a method for finding enabled

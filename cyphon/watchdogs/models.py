@@ -34,7 +34,6 @@ from alarms.models import Alarm, AlarmManager
 from alerts.models import Alert
 from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
-from cyphon.models import GetByNameManager
 from cyphon.transaction import require_lock
 from utils.dateutils.dateutils import convert_time_to_whole_minutes
 from utils.parserutils.parserutils import get_dict_value
@@ -158,6 +157,41 @@ class Watchdog(Alarm):
                 return self._process_alert(alert)
 
 
+class TriggerManager(models.Manager):
+    """Manage |Trigger| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    def get_by_natural_key(self, watchdog_name, sieve_name):
+        """Get a |Trigger| by its natural key.
+
+        Allows retrieval of a |Warehouse| by its natural key instead of
+        its primary key.
+
+        Parameters
+        ----------
+        watchdog_name : str
+            The name of the |Watchdog| to which the Trigger belongs.
+
+        sieve_name : str
+            The name of the |DataSieve| associated with the Trigger.
+
+        Returns
+        -------
+        |Trigger|
+            The |Trigger| associated with the natural key.
+
+        """
+        try:
+            watchdog = Watchdog.objects.get_by_natural_key(watchdog_name)
+            sieve = DataSieve.objects.get_by_natural_key(sieve_name)
+            return self.get(watchdog=watchdog, sieve=sieve)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s %s:%s does not exist',
+                          self.model.__name__, watchdog_name, sieve_name)
+
+
 class Trigger(models.Model):
     """
     Defines conditions under which a |Watchdog| will generate an |Alert|.
@@ -207,7 +241,7 @@ class Trigger(models.Model):
                     'with the lowest number examined first.')
     )
 
-    objects = GetByNameManager()
+    objects = TriggerManager()
 
     class Meta:
         ordering = ['rank']

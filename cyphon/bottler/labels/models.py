@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from cyphon.models import GetByNameManager
-from bottler.datafields.models import DataField
+from bottler.datafields.models import DataField, DataFieldManager
 
 _DISTILLERY_SETTINGS = settings.DISTILLERIES
 
@@ -64,6 +64,8 @@ class LabelField(DataField):
                     'analyze the data.')
     )
     analyzer = GenericForeignKey()
+
+    objects = DataFieldManager()
 
     class Meta:
         """

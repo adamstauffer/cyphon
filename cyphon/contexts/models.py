@@ -21,9 +21,10 @@ to a given reference document.
 
 # standard library
 from datetime import timedelta
+import logging
 
 # third party
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -42,6 +43,53 @@ from engines.sorter import SortParam, Sorter
 from utils.choices.choices import get_field_type
 from utils.dateutils import dateutils as dt
 from utils.parserutils.parserutils import get_dict_value
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class ContextManager(models.Manager):
+    """Manage |Context| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    def get_by_natural_key(self, name, backend, warehouse_name,
+                           collection_name):
+        """Get a |Context| by its natural key.
+
+        Allows retrieval of a |Context| by its natural key instead of
+        its primary key.
+
+        Parameters
+        ----------
+        name : str
+            The name of the Context.
+
+        backend : str
+            The backend associated with the Context's `primary_distillery`.
+
+        warehouse_name : str
+            The name of the |Warehouse| associated with the Context's
+            `primary_distillery`.
+
+        collection_name : str
+            The name of the |Collection| associated with the Context's
+            `primary_distillery`.
+
+        Returns
+        -------
+        |Context|
+            The |Context| associated with the natural key.
+
+        """
+        try:
+            distillery_key = [backend, warehouse_name, collection_name]
+            distillery = Distillery.objects.get_by_natural_key(*distillery_key)
+            return self.get(name=name, primary_distillery=distillery)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s %s:%s.%s.%s does not exist',
+                          self.model.__name__, name,
+                          backend, warehouse_name, collection_name)
 
 
 class Context(models.Model):
@@ -114,6 +162,8 @@ class Context(models.Model):
         choices=LOGIC_CHOICES,
         default='AND'
     )
+
+    objects = ContextManager()
 
     class Meta:
         unique_together = ['name', 'primary_distillery']
@@ -401,6 +451,60 @@ class Context(models.Model):
             return {'error': msg}
 
 
+class ContextFilterManager(models.Manager):
+    """Manage |ContextFilte| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    # pylint: disable=R0913
+    def get_by_natural_key(self, name, backend, warehouse_name,
+                           collection_name, value_field, search_field):
+        """Get a |ContextFilter| by its natural key.
+
+        Allows retrieval of a |ContextFilter| by its natural key instead
+        of its primary key.
+
+        Parameters
+        ----------
+        name : str
+            The name of the |Context| to which the |ComtextFilter| belongs.
+
+        backend : str
+            The backend associated with the `primary_distillery` of the
+            |ContextFilter|'s |Context|.
+
+        warehouse_name : str
+            The name of the |Warehouse| associated with the
+            `primary_distillery` of the |ContextFilter|'s |Context|.
+
+        collection_name : str
+            The name of the |Collection| associated with the
+            `primary_distillery` of the |ContextFilter|'s |Context|.
+
+        value_field : str
+            The |ContextFilter|'s `value_field`.
+
+        search_field : str
+            The |ContextFilter|'s `search_field`.
+
+        Returns
+        -------
+        |ContextFilter|
+            The |ContextFilter| associated with the natural key.
+
+        """
+        try:
+            filter_key = [name, backend, warehouse_name, collection_name]
+            context = Context.objects.get_by_natural_key(*filter_key)
+            return self.get(context=context, value_field=value_field,
+                            search_field=search_field)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s %s:%s.%s.%s (%s -> %s) does not exist',
+                          self.model.__name__, name, backend, warehouse_name,
+                          collection_name, value_field, search_field)
+
+
 class ContextFilter(models.Model):
     """
     Defines parameters for constructing a query expression to filter
@@ -437,6 +541,8 @@ class ContextFilter(models.Model):
         help_text=_('The field of the Related Distillery\'s Container '
                     'that should be used to filter results.'))
     operator = models.CharField(max_length=40, choices=OPERATOR_CHOICES)
+
+    objects = ContextFilterManager()
 
     class Meta:
         unique_together = ('context', 'value_field', 'search_field')

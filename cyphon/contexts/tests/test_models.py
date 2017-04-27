@@ -28,12 +28,12 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 import six
+from testfixtures import LogCapture
 
 # local
 from cyphon.fieldsets import QueryFieldset
 from contexts.models import Context, ContextFilter
 from tests.fixture_manager import get_fixtures
-from tests.mock import patch_find, patch_find_by_id
 
 
 class ContextBaseTestCase(TestCase):
@@ -52,6 +52,35 @@ class ContextBaseTestCase(TestCase):
 
     def tearDown(self):
         logging.disable(logging.NOTSET)
+
+
+class ContextManagerTestCase(ContextBaseTestCase):
+    """
+    Tests the ContextManager class.
+    """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for an existing Context.
+        """
+        key = ['context_w_filters', 'mongodb', 'test_database', 'test_posts']
+        context = Context.objects.get_by_natural_key(*key)
+        self.assertEqual(context.pk, 1)
+
+    @staticmethod
+    def test_natural_key_exception():
+        """
+        Tests the get_by_natural_key method for a Context that doesn't
+        exist.
+        """
+        with LogCapture() as log_capture:
+            key = ['dummy_context', 'mongodb', 'test_database', 'test_posts']
+            Context.objects.get_by_natural_key(*key)
+            expected = ('Context dummy_context:mongodb.test_database.'
+                        'test_posts does not exist')
+            log_capture.check(
+                ('contexts.models', 'ERROR', expected),
+            )
 
 
 class ContextTestCase(ContextBaseTestCase):
@@ -587,9 +616,43 @@ class ContextTestCase(ContextBaseTestCase):
         self.assertEqual(actual, expected)
 
 
+class ContextFilterManagerTestCase(ContextBaseTestCase):
+    """
+    Tests the ContextFilterManager class.
+    """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for an existing ContextFilter.
+        """
+        key = ['context_w_filters', 'mongodb', 'test_database', 'test_posts',
+               'host', 'from']
+        context = ContextFilter.objects.get_by_natural_key(*key)
+        self.assertEqual(context.pk, 1)
+
+    @staticmethod
+    def test_natural_key_exception():
+        """
+        Tests the get_by_natural_key method for a ContextFilter that
+        doesn't exist.
+        """
+        with LogCapture() as log_capture:
+            key = ['dummy_context', 'mongodb', 'test_database', 'test_posts',
+                   'host', 'from']
+            ContextFilter.objects.get_by_natural_key(*key)
+            expected_1 = ('Context dummy_context:mongodb.test_database.'
+                          'test_posts does not exist')
+            expected_2 = ('ContextFilter dummy_context:mongodb.test_database.'
+                          'test_posts (host -> from) does not exist')
+            log_capture.check(
+                ('contexts.models', 'ERROR', expected_1),
+                ('contexts.models', 'ERROR', expected_2)
+            )
+
+
 class ContextFilterTestCase(ContextBaseTestCase):
     """
-    Test case for the Context class.
+    Test case for the ContextFilter class.
     """
 
     def test_invalid_value_field(self):
