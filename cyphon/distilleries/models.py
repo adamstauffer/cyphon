@@ -76,7 +76,7 @@ class DistilleryManager(models.Manager):
         default_queryset = super(DistilleryManager, self).get_queryset()
         return default_queryset.select_related()
 
-    def get_by_natural_key(self, backend, database, collection_name):
+    def get_by_natural_key(self, backend, warehouse_name, collection_name):
         """Get a |Distillery| by its natural key.
 
         Allows retrieval of a |Distillery| by its natural key instead of
@@ -88,7 +88,7 @@ class DistilleryManager(models.Manager):
             The backend of the |Warehouse| to which the Distillery's
             |Collection| belongs.
 
-        database : str
+        warehouse_name : str
             The name of the |Warehouse| to which the Distillery's
             |Collection| belongs.
 
@@ -101,13 +101,13 @@ class DistilleryManager(models.Manager):
             The |Distillery| associated with the natural key.
 
         """
-        collection = Collection.objects.get_by_natural_key(backend, database,
-                                                           collection_name)
+        collection_key = [backend, warehouse_name, collection_name]
+        collection = Collection.objects.get_by_natural_key(*collection_key)
         if collection:
             return self.get(collection=collection.pk)
         else:
             _LOGGER.error('%s for Collection %s.%s.%s does not exist',
-                          self.model.__name__, backend, database,
+                          self.model.__name__, backend, warehouse_name,
                           collection_name)
 
     def have_alerts(self, queryset=None):
