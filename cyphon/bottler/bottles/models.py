@@ -23,7 +23,6 @@ sources.
 # standard library
 from collections import OrderedDict
 import json
-import logging
 
 # third party
 from django.db import models
@@ -32,27 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from cyphon.models import SelectRelatedManager, GetByNameMixin
-from bottler.datafields.models import DataField
+from bottler.datafields.models import DataField, DataFieldManager
 from utils.validators.validators import field_name_validator
-
-LOGGER = logging.getLogger(__name__)
-
-
-class BottleFieldManager(models.Manager):
-    """
-    Adds methods to the default model manager.
-    """
-
-    def get_by_natural_key(self, field_name):
-        """
-        Allow retrieval of a BottleField by its natural key instead of its
-        primary key.
-        """
-        try:
-            return self.get(field_name=field_name)
-        except BottleField.DoesNotExist:
-            LOGGER.error('%s "%s" does not exist',
-                         self.model.__name__, field_name)
 
 
 class BottleField(DataField):
@@ -61,7 +41,7 @@ class BottleField(DataField):
     """
     embedded_doc = models.ForeignKey('Bottle', blank=True, null=True)
 
-    objects = BottleFieldManager()
+    objects = DataFieldManager()
 
     def clean(self):
         super(BottleField, self).clean()

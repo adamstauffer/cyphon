@@ -18,14 +18,36 @@
 
 """
 
+# standard library
+import logging
+
 # third party
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 # local
 from cyphon.choices import FIELD_TYPE_CHOICES, TARGET_TYPE_CHOICES
 from utils.validators.validators import field_name_validator
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class DataFieldManager(models.Manager):
+    """
+    Adds methods to the default model manager.
+    """
+
+    def get_by_natural_key(self, field_name):
+        """
+        Allow retrieval of a DataField by its natural key instead of its
+        primary key.
+        """
+        try:
+            return self.get(field_name=field_name)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s "%s" does not exist',
+                          self.model.__name__, field_name)
 
 
 class DataField(models.Model):
@@ -46,7 +68,7 @@ class DataField(models.Model):
         The type of target the |DataField| represents. Corresponds to a
         value in |TARGET_TYPE_CHOICES|.
 
-    """ 
+    """
     field_name = models.CharField(
         max_length=40,
         unique=True,

@@ -29,7 +29,6 @@ import six
 
 # local
 from bottler.bottles.models import Bottle, BottleField
-from bottler.datafields.models import DataField
 from tests.fixture_manager import get_fixtures
 
 
@@ -57,15 +56,17 @@ class BottleFieldManagerTestCase(BottleBaseTestCase):
         saved_field = BottleField.objects.get_by_natural_key('test_field')
         self.assertEqual(saved_field, field)
 
-    def test_natural_key_exception(self):
+    @staticmethod
+    def test_natural_key_exception():
         """
-        Tests the get_by_natural_key method for BottleField that doesn't exist.
+        Tests the get_by_natural_key method for a BottleField that
+        doesn't exist.
         """
         with LogCapture() as log_capture:
             BottleField.objects.get_by_natural_key('dummy_field')
             expected = 'BottleField "dummy_field" does not exist'
             log_capture.check(
-                ('bottler.bottles.models', 'ERROR', expected),
+                ('bottler.datafields.models', 'ERROR', expected),
             )
 
 

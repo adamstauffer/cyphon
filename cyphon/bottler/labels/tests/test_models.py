@@ -23,6 +23,7 @@ from collections import OrderedDict
 
 # third party
 from django.test import TestCase
+from testfixtures import LogCapture
 
 # local
 from bottler.labels.models import _DISTILLERY_SETTINGS, Label, LabelField
@@ -45,6 +46,32 @@ class LabelBaseTestCase(TestCase):
 
 
 # TODO(LH): mock out LabelField.analyzer.get_result()
+
+
+class LabelFieldManagerTestCase(LabelBaseTestCase):
+    """
+    Tests the LabelFieldManager class.
+    """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for an existing LabelField.
+        """
+        labelfield = LabelField.objects.get_by_natural_key('priority')
+        self.assertEqual(labelfield.pk, 1)
+
+    @staticmethod
+    def test_natural_key_exception():
+        """
+        Tests the get_by_natural_key method for a LabelField that
+        doesn't exist.
+        """
+        with LogCapture() as log_capture:
+            LabelField.objects.get_by_natural_key('dummy_field')
+            expected = 'LabelField "dummy_field" does not exist'
+            log_capture.check(
+                ('bottler.datafields.models', 'ERROR', expected),
+            )
 
 
 class LabelFieldTestCase(LabelBaseTestCase):
