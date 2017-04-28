@@ -26,7 +26,7 @@ The ``config`` directory contains settings for:
 Environment Variables
 *********************
 
-The ``./config/cyphon.env`` file contains default settings for 
+The ``./config/env/cyphon.env`` file contains default settings for 
 superusers created for various services. Use a text editor to 
 change the usernames and passwords to more secure options.
 
@@ -40,7 +40,7 @@ Django
 ******
 
 Cyphon's backend is based on the Django_ web framework. Settings for the 
-Cyphon Django project are found in the ``./config/django/settings`` 
+Cyphon Django project are found in the ``./config/cyphon/settings`` 
 directory.
 
 The ``conf.py`` file contains settings specific to your Cyphon instance. 
@@ -50,7 +50,6 @@ address and/or domain name for your host machine::
     HOST_SETTINGS = {
        'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
        'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
-       'HOSTNAME': 'example.com',
     }
 
 You should also change the Django ``SECRET_KEY`` to something unique. 
@@ -82,19 +81,11 @@ Logstash
 
 Cyphon receives data from logs using `Logstash`_ and `RabbitMQ`_. Logstash receives the logs and passes them to RabbitMQ, where Cyphon consumes them.
 
-To configure Logstash, choose one of the example configuration files in ``./etc/logstash/conf`` and copy it to a new file in the same directory, e.g.::
-
-    $ cd /opt/cyphon/cyphondock/etc/logstash/conf
-    $ cp logstash-bro.example.conf logstash.conf
-
-Using your favorite text editor, you can customize the newly created 
-``./etc/logstash/conf/logstash.conf`` file to suit your needs.
+To configure Logstash, you can use the example configuration files in ``./config/logstash``. See `Logstash's documentation <https://www.elastic.co/guide/en/logstash/current/config-setting-files.html>`__ for more information on these files. The Docker Compose files are already configured to create a Logstash container based on these configs.
 
 .. warning:: If you changed the RabbitMQ settings in the ``cyphon.env`` 
              file, you will need to make sure your ``logstash.conf`` 
              file reflects those changes.
-
-See `Logstash's documentation <https://www.elastic.co/guide/en/logstash/current/configuration.html>`_ for more info on its configuration file.
 
 
 .. _elasticsearch-config:
@@ -103,6 +94,4 @@ See `Logstash's documentation <https://www.elastic.co/guide/en/logstash/current/
 Elasticsearch
 *************
 
-Settings for the Elasticsearch_ search engine are in the 
-``./config/elasticsearch/`` folder. You can use the default settings 
-if you like.
+Settings for the Elasticsearch_ search engine are in the ``./config/elasticsearch/`` folder. You can use the default settings if you like.

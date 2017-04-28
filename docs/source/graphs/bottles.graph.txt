@@ -7,7 +7,7 @@ Bottles Graph
     :target: ../_static/images/graphs/bottles-graph.png
     :alt: Bottles model graph
 
-    Graph of models in the Bottles app and related apps.
+    Graph of models in the :ref:`bottles` app and related apps.
 
 Overview
 --------

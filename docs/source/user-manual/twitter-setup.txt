@@ -182,7 +182,7 @@ You should now be able to create a Twitter stream.
 Add Filters
 ***********
 
-To filter your Twitter stream, add locations, keywords, and user accounts you wish to follow. These are located in the "Filtering Data" panel of Cyphon's main admin page.
+To filter your Twitter stream, first create search parameters for the locations, keywords, and user accounts you wish to follow. These are located in the "Filtering Data" panel of Cyphon's main admin page. You can then use these search parameters to create your Filters.
 
 .. image:: ../_static/images/admin/filtering-data-admin.png
     :alt: App Configurations

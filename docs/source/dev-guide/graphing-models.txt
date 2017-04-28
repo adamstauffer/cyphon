@@ -55,7 +55,7 @@ This would generate a graph like this:
    Model graph for DataCondensers and Bottles, grouped by app.
 
 To find out what models you can graph, refer to the list of 
-:any:`INSTALLED_APPS<cyphon.settings.base.INSTALLED_APPS>`.
+:const:`INSTALLED_APPS<cyphon.settings.base.INSTALLED_APPS>`.
 
 .. _Graph Models: http://django-extensions.readthedocs.org/en/latest/graph_models.html
 .. _Graph Models Documentation: http://django-extensions.readthedocs.org/en/latest/graph_models.html

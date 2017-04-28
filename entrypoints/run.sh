@@ -19,7 +19,7 @@
 # wait for PostgreSQL server to start
 sleep 10
 
-# cd /usr/src/app/cyphon/django
+cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
 su -m cyphon -c "python manage.py migrate --verbosity 0"

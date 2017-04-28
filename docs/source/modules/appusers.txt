@@ -17,11 +17,7 @@ Submodules
 .. toctree::
 
    appusers.admin
-   appusers.apps
    appusers.forms
    appusers.models
-   appusers.registration
    appusers.serializers
-   appusers.signals
-   appusers.urls
    appusers.views

@@ -54,6 +54,8 @@ Social Media
 
 Cyphon can gather data from social media platforms by searching for specific terms, locations, or people ("followees"). You can configure these filters through the "Filtering Data" panel on Cyphon's main admin page. 
 
+First create search parameters for Followees, Locations, and SearchTerms. You can then create Filters based on these parameters.
+
 .. image:: ../_static/images/admin/filtering-data-admin.png
     :alt: Filter admin
 

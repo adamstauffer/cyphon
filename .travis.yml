@@ -1,9 +1,25 @@
+# Copyright 2017 Dunbar Security Solutions, Inc.
+#
+# This file is part of Cyphon Engine.
+#
+# Cyphon Engine is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3 of the License.
+#
+# Cyphon Engine is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+
 sudo: required
 
 language: python
 
 env:
-  - GEOIP_PATH=/home/travis/build/dunbarcyber/cyphon/GeoIP/GeoLite2-City.mmdb
+  - GEOIP_PATH=/home/travis/build/dunbarcyber/cyphon/GeoIP/
 
 services:
   - docker
@@ -13,6 +29,7 @@ addons:
   apt:
     packages:
       - postgresql-9.6-postgis-2.3
+  sauce_connect: true
 
 python:
   - 3.6
@@ -35,7 +52,7 @@ script:
 
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
-  - cd django
+  - cd cyphon
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:

@@ -1,6 +1,6 @@
 ############################################################
 # Dockerfile to run a Django-based web application
-# Based on a Python 3.5 image
+# Based on a Python 3.6 image
 #
 # Copyright 2017 Dunbar Security Solutions, Inc.
 #
@@ -20,11 +20,11 @@
 #
 ############################################################
 
-FROM python:3.5
+FROM python:3.6
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
-ENV CYPHON_HOME /usr/src/app/cyphon
+ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
 
@@ -46,8 +46,8 @@ RUN mkdir -p $CYPHON_HOME \
              $CYPHON_HOME/static \
              $LOG_DIR
 
-# copy Django project to the image
-COPY django $CYPHON_HOME/django
+# copy project to the image
+COPY cyphon $CYPHON_HOME/cyphon
 
 # copy entrypoint scripts to the image
 COPY entrypoints $CYPHON_HOME/entrypoints
@@ -58,10 +58,10 @@ COPY requirements.txt $CYPHON_HOME/requirements.txt
 # install python dependencies
 RUN pip install -r $CYPHON_HOME/requirements.txt
 
-COPY django/cyphon/settings/base.example.py django/cyphon/settings/base.py
-COPY django/cyphon/settings/conf.example.py django/cyphon/settings/conf.py
-COPY django/cyphon/settings/dev.example.py django/cyphon/settings/dev.py
-COPY django/cyphon/settings/prod.example.py django/cyphon/settings/prod.py
+COPY cyphon/cyphon/settings/base.example.py cyphon/cyphon/settings/base.py
+COPY cyphon/cyphon/settings/conf.example.py cyphon/cyphon/settings/conf.py
+COPY cyphon/cyphon/settings/dev.example.py cyphon/cyphon/settings/dev.py
+COPY cyphon/cyphon/settings/prod.example.py cyphon/cyphon/settings/prod.py
 
 # set owner:group and permissions
 RUN chown -R cyphon:cyphon $CYPHON_HOME \
@@ -69,7 +69,7 @@ RUN chown -R cyphon:cyphon $CYPHON_HOME \
  && chown -R cyphon:cyphon $LOG_DIR \
  && chmod -R 775 $LOG_DIR
 
-WORKDIR $CYPHON_HOME/django
+WORKDIR $CYPHON_HOME/cyphon
 
 VOLUME ["$CYPHON_HOME/keys", "$CYPHON_HOME/media", "$CYPHON_HOME/static"]
 
