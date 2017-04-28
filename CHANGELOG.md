@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Added
+
+- **bottler:** added `get_by_natural_key()` method for BottleFields and LabelFields ([68c2a15](https://github.com/dunbarcyber/cyphon/commit/68c2a15))
+- **contexts:** added `get_by_natural_key()` method for Contexts and ContextFields ([09ff0b8](https://github.com/dunbarcyber/cyphon/commit/09ff0b8))
+- **watchdogs:** added `get_by_natural_key()` method for Triggers ([8312713](https://github.com/dunbarcyber/cyphon/commit/8312713))
+
 ### Changed
 
 - **cyphon.tests.functional_tests:** enabled functional tests to run in a Selenium 3 Docker container ([fe170cc](https://github.com/dunbarcyber/cyphon/commit/fe170cc))
