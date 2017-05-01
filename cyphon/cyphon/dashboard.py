@@ -257,6 +257,13 @@ class CyphonIndexDashboard(Dashboard):
                         'lab.procedures.models.Protocol',
                     ),
                 ),
+                modules.ModelList(
+                    _('Push Notifications'),
+                    css_classes=('grp-collapse grp-open',),
+                    models=(
+                        'constance.*',
+                    ),
+                ),
             ]
         ))
 

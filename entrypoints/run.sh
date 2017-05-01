@@ -36,6 +36,12 @@ if [ "$CYPHON_SUPERUSER" = 'YES' ]; then
           | python manage.py shell
 fi
 
+# load example fixtures
+if [ "$LOAD_EXAMPLE_FIXTURES" = 'YES' ]; then
+    echo "Loading example fixtures..."
+    su -m cyphon -c "python manage.py loaddata fixtures/starter-fixtures.json"
+fi
+
 if [ "$CYPHON_ENV" = 'PROD' ]; then
     echo "Running Production Server"
     exec gunicorn cyphon.wsgi:application \
