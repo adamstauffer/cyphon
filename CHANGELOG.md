@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 - **bottler:** added `get_by_natural_key()` method for BottleFields and LabelFields ([68c2a15](https://github.com/dunbarcyber/cyphon/commit/68c2a15))
 - **contexts:** added `get_by_natural_key()` method for Contexts and ContextFields ([09ff0b8](https://github.com/dunbarcyber/cyphon/commit/09ff0b8))
+- **entrypoints:** added conditional for loading example fixtures ([a0efa1f](https://github.com/dunbarcyber/cyphon/commit/a0efa1f))
 - **watchdogs:** added `get_by_natural_key()` method for Triggers ([8312713](https://github.com/dunbarcyber/cyphon/commit/8312713))
 
 ### Changed
@@ -21,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Fixed
 
-- **cyphon.dashboard:** added Protocols to admin dashboard ([ee34361](https://github.com/dunbarcyber/cyphon/commit/ee34361))
+- **cyphon.dashboard:** added Protocols and Constance to admin dashboard ([ee34361](https://github.com/dunbarcyber/cyphon/commit/ee34361), [0cbbb15](https://github.com/dunbarcyber/cyphon/commit/0cbbb15))
 
 ### Removed
 
