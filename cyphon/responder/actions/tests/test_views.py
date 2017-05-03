@@ -15,36 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-
+Tests the Pipe class and the related RateLimit and SpecSheet classes.
 """
 
-# third party
-from django.test import TestCase
+# standard library
+from unittest.mock import Mock, patch
 
 # local
-from tests.fixture_manager import get_fixtures
+from .test_models import ActionsBaseTestCase
 
 
-class ActionsBaseTestCase(TestCase):
+class ActionsViewTestCase(ActionsBaseTestCase):
     """
-    Base class for testing Actions.
+    Base class for testing the Action views.
     """
-    fixtures = get_fixtures(['actions'])
-
-
-class ActionTestCase(ActionsBaseTestCase):
-    """
-    Tests the Action class.
-    """
-
-    def test_save(self):
-        """
-
-        """
-        pass
-
-    def test_get_dispatch(self):
-        """
-
-        """
-        pass
+    pass
