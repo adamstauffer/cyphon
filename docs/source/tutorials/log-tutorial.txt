@@ -3,6 +3,10 @@
 Simple Log
 **********
 
+
+NOTE: If you want to keep a copy of a raw log and let the parsed version store a reference to the raw data, use Logstash to add '@uuid' and 'collection' fields to your message prior to sending it to RabbitMQ. Cyphon will look for these fields and save them with the parsed document, so you can access the raw data if needed.
+
+
 We want to turn this log:
 
 `May  2 17:28:16 server-name sshd[29810]: Accepted password for baduser from 192.168.1.1 port 4951 ssh2`
