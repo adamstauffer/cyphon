@@ -48,18 +48,50 @@ import pika
 
 # local
 from cyphon.transaction import close_connection, close_old_connections
+from sifter.logsifter.datachutes.models import DataChute
+from sifter.logsifter.datamungers.models import DataMunger
 from sifter.logsifter.logchutes.models import LogChute
 from sifter.logsifter.logmungers.models import LogMunger
 
 LOGGER = logging.getLogger('receiver')
 
-LOGSIFTER = settings.LOGSIFTER
+DATASIFTER = settings.DATASIFTER
 BROKER = settings.RABBITMQ
+LOGSIFTER = settings.LOGSIFTER
 
 
-def consume_logs():
+def get_consumer(queue_type=None):
+    """
+
+    Parameters
+    ----------
+    queue_type : str
+        Options are 'DATACHUTES', 'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
+
+    Returns
+    -------
+    func
+        A function for processing a queue of the given type.
+
+    """
+    consumers = {
+        'DATACHUTES': process_json,
+        'LOGCHUTES': process_log,
+        'MONITORS': call_monitors,
+        'WATCHDOGS': call_watchdogs,
+    }
+    return consumers.get(queue_type, 'WATCHDOGS')
+
+
+def consume_queue(queue_type='ALARMS'):
     """
     Creates a queue consumer for RabbitMQ.
+
+    Parameters
+    ----------
+    queue_type : str
+        Options are 'DATACHUTES', 'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
+
     """
     try:
         credentials = pika.PlainCredentials(username=BROKER['USERNAME'],
@@ -76,9 +108,10 @@ def consume_logs():
         channel = conn.channel()
         exchange = BROKER['EXCHANGE']
         exchange_type = BROKER['EXCHANGE_TYPE']
-        routing_key = BROKER['ROUTING_KEY']
         durable = BROKER['DURABLE']
-        queue_name = BROKER['QUEUE_NAME']
+
+        routing_key = BROKER[queue_type]['ROUTING_KEY']
+        queue_name = BROKER[queue_type]['QUEUE_NAME']
 
         channel.exchange_declare(exchange=exchange,
                                  type=exchange_type,
@@ -90,10 +123,12 @@ def consume_logs():
                            queue=queue_name,
                            routing_key=routing_key)
 
-        LOGGER.info('Waiting for logs')
-        # print(' [*] Waiting for logs. To exit press CTRL+C')
+        LOGGER.info('Waiting for messages')
+        # print(' [*] Waiting for messages. To exit press CTRL+C')
 
-        channel.basic_consume(process_msg,
+        consumer_func = get_consumer(queue_type)
+
+        channel.basic_consume(consumer_func,
                               queue=queue_name,
                               no_ack=True)
 
@@ -101,6 +136,64 @@ def consume_logs():
 
     except Exception as error:
         LOGGER.exception('An error occurred while consuming logs:\n  %s', error)
+
+
+def process_json(data):
+    """
+
+    """
+    doc_id = data.get('@uuid')
+    collection = data.get('collection')
+    saved = False
+    enabled_chutes = DataChute.objects.find_enabled()
+
+    LOGGER.info('Processing JSON message %s in %s', doc_id, collection)
+
+    for chute in enabled_chutes:
+        result = chute.process(data, doc_id, collection)
+        if result:
+            saved = True
+
+    if not saved and DATASIFTER['DEFAULT_DATA_CHUTE_ENABLED']:
+        default_munger = get_default_munger()
+        if default_munger:
+            default_munger.process(data, doc_id, collection)
+
+
+def process_log(data):
+    """
+
+    """
+    doc_id = data.get('@uuid')
+    collection = data.get('collection')
+    saved = False
+    enabled_chutes = LogChute.objects.find_enabled()
+
+    LOGGER.info('Processing log message %s in %s', doc_id, collection)
+
+    for chute in enabled_chutes:
+        result = chute.process(data, doc_id, collection)
+        if result:
+            saved = True
+
+    if not saved and LOGSIFTER['DEFAULT_LOG_CHUTE_ENABLED']:
+        default_munger = get_default_munger()
+        if default_munger:
+            default_munger.process(data, doc_id, collection)
+
+
+def call_monitors(data):
+    """
+
+    """
+    pass
+
+
+def call_watchdogs(data):
+    """
+
+    """
+    pass
 
 
 @close_connection
@@ -119,24 +212,12 @@ def process_msg(channel, method, properties, body):
         if not isinstance(body, str):
             body = body.decode('utf-8')
 
-        doc = json.loads(body)
-        data = doc.get('message')
-        doc_id = doc.get('@uuid')
-        collection = doc.get('collection')
-        saved = False
-        enabled_chutes = LogChute.objects.find_enabled()
+        data = json.loads(body)
 
-        LOGGER.info('Processing message %s in %s', doc_id, collection)
-
-        for chute in enabled_chutes:
-            result = chute.process(data, doc_id, collection)
-            if result:
-                saved = True
-
-        if not saved and LOGSIFTER['DEFAULT_LOG_CHUTE_ENABLED']:
-            default_munger = get_default_munger()
-            if default_munger:
-                default_munger.process(data, doc_id, collection)
+        if 'message' in data:
+            process_log(data)
+        else:
+            process_json(data)
 
     except Exception as error:
         LOGGER.exception('An error occurred while processing the message:\n  %s',
@@ -155,19 +236,24 @@ def get_default_munger():
 
 
 @close_old_connections
-def create_consumers(num):
+def create_consumers(queue_type, num):
     """
 
     """
+    kwargs = {'queue_type': queue_type}
     for dummy_num in range(num):
-        process = Process(target=consume_logs)
+        process = Process(target=consume_queue, kwargs=kwargs)
         process.start()
 
 
 if __name__ == '__main__':
     try:
-        NUM = int(sys.argv[1])
+        QUEUE_TYPE = sys.argv[1]
+    except (IndexError, ValueError):
+        QUEUE_TYPE = 'ALARMS'
+    try:
+        NUM = int(sys.argv[2])
     except (IndexError, ValueError):
         NUM = 1
 
-    create_consumers(NUM)
+    create_consumers(QUEUE_TYPE, NUM)

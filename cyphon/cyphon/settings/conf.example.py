@@ -65,6 +65,11 @@ CODEBOOKS = {
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
 }
 
+DATASIFTER = {
+    'DEFAULT_DATA_MUNGER': 'default_data',
+    'DEFAULT_DATA_CHUTE_ENABLED': True,
+}
+
 DISTILLERIES = {
 
     # dictionary key for recording the date record was saved
@@ -187,15 +192,29 @@ PRIVATE_FIELDS = [
 ]
 
 RABBITMQ = {
-    'EXCHANGE': 'cyphon',
-    'EXCHANGE_TYPE': 'direct',
-    'ROUTING_KEY': 'logstash',
-    'QUEUE_NAME': 'logstash',
-    'DURABLE': True,
     'HOST': os.getenv('RABBITMQ_DEFAULT_HOST', 'rabbit'),
     'VHOST': os.getenv('RABBITMQ_DEFAULT_VHOST', 'cyphon'),
     'USERNAME': os.getenv('RABBITMQ_DEFAULT_USER', 'guest'),
     'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
+    'EXCHANGE': 'cyphon',
+    'EXCHANGE_TYPE': 'direct',
+    'DURABLE': True,
+    'DATACHUTES': {
+        'ROUTING_KEY': 'datachutes',
+        'QUEUE_NAME': 'datachutes',
+    },
+    'LOGCHUTES': {
+        'ROUTING_KEY': 'logchutes',
+        'QUEUE_NAME': 'logchutes',
+    },
+    'MONITORS': {
+        'ROUTING_KEY': 'monitors',
+        'QUEUE_NAME': 'monitors',
+    },
+    'WATCHDOGS': {
+        'ROUTING_KEY': 'watchdogs',
+        'QUEUE_NAME': 'watchdogs',
+    },
 }
 
 SAUCELABS = {
