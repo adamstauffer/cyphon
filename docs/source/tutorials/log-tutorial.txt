@@ -1,0 +1,73 @@
+
+**********
+Simple Log
+**********
+
+We want to turn this log:
+
+`May  2 17:28:16 server-name sshd[29810]: Accepted password for baduser from 192.168.1.1 port 4951 ssh2`
+
+{
+    "host": "server-name",
+    "message": "sshd[29810]: Accepted password for baduser from 192.168.1.1 port 4951 ssh2",
+    "sys_timestamp": "2017-05-02T17:28:16+00:00"
+}
+
+
+1. Design Container
+===================
+
+
+
+ - Bottlefields
+ - Bottle
+ - Container
+
+
+2. Create Distillery
+====================
+
+- Warehouse
+- Collection
+
+
+3. Create Condenser
+===================
+
+
+
+4. Create Chute
+===============
+
+- Sieve
+- Munger
+
+
+5. Create Watchdog
+==================
+
+
+6. Create Context
+=================
+
+
+7. Create Action
+================
+
+
+
+
+
+{
+    "_metadata": {
+        "source_ip_location": "PointField (Location)"
+    },
+    "category": "Accepted password for baduser",
+    "host": "server-name",
+    "protocol": "ssh2",
+    "process": "sshd",
+    "process_id": "29810",
+    "source_ip": "192.168.1.1",
+    "source_port": "4951",
+    "sys_timestamp": "2017-05-02T17:28:16+00:00"
+}
