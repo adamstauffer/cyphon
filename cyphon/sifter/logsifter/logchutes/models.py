@@ -19,7 +19,7 @@
 """
 
 # third party
-from django.conf import settings
+from django.conf import settings as conf
 from django.db import models
 
 # local
@@ -33,7 +33,7 @@ class LogChuteManager(ChuteManager):
     Adds methods to the default model manager.
     """
 
-    settings = settings.LOGSIFTER
+    settings = conf.LOGSIFTER
 
 
 class LogChute(Chute):

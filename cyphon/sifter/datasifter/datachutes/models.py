@@ -19,7 +19,7 @@
 """
 
 # third party
-from django.conf import settings
+from django.conf import settings as conf
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -36,7 +36,7 @@ class DataChuteManager(ChuteManager):
     Adds methods to the default model manager.
     """
 
-    settings = settings.DATASIFTER
+    settings = conf.DATASIFTER
 
     def find_by_endpoint(self, endpoint):
         """
