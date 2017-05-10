@@ -76,7 +76,7 @@ class DataChute(Chute):
 
         """
         for doc in data:
-            doc_obj = DocumentObj(data=data)
+            doc_obj = DocumentObj(data=doc)
             self.process(doc_obj)
 
     def process(self, doc_obj):
