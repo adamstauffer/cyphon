@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright 2017 Dunbar Security Solutions, Inc.
 #
@@ -18,12 +19,44 @@
 
 """
 
-# third party
-from django.contrib import admin
+# local
+from monitors.models import Monitor
+from sifter.datasifter.datachutes.models import DataChute
+from sifter.logsifter.logchutes.models import LogChute
+from watchdogs.models import Watchdog
 
 
-class ChuteAdmin(admin.ModelAdmin):
+def _process_json(doc_obj):
     """
-    Customizes admin pages for Chutes.
+
     """
-    list_display = ['name', 'enabled']
+    DataChute.objects.process(doc_obj)
+
+
+def _process_log(doc_obj):
+    """
+ 
+    """
+    LogChute.objects.process(doc_obj)
+
+
+def _call_monitors(doc_obj):
+    """
+
+    """
+    Monitor.objects.process(doc_obj)
+
+
+def _call_watchdogs(doc_obj):
+    """
+
+    """
+    Watchdog.objects.process(doc_obj)
+
+
+CONSUMERS = {
+    'DATACHUTES': _process_json,
+    'LOGCHUTES': _process_log,
+    'MONITORS': _call_monitors,
+    'WATCHDOGS': _call_watchdogs,
+}

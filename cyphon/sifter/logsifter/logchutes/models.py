@@ -19,12 +19,21 @@
 """
 
 # third party
+from django.conf import settings
 from django.db import models
 
 # local
 from sifter.chutes.models import Chute, ChuteManager
 from sifter.logsifter.logsieves.models import LogSieve
 from sifter.logsifter.logmungers.models import LogMunger
+
+
+class LogChuteManager(ChuteManager):
+    """
+    Adds methods to the default model manager.
+    """
+
+    settings = settings.LOGSIFTER
 
 
 class LogChute(Chute):
@@ -35,5 +44,4 @@ class LogChute(Chute):
                               related_name='chutes', related_query_name='chute')
     munger = models.ForeignKey(LogMunger)
 
-    objects = ChuteManager()
-
+    objects = LogChuteManager()

@@ -26,6 +26,7 @@ from unittest.mock import Mock
 from django.test import TestCase
 
 # local
+from cyphon.documents import DocumentObj
 from sifter.datasifter.datachutes.models import DataChute
 from tests.fixture_manager import get_fixtures
 
@@ -39,6 +40,12 @@ class DataChuteTestCase(TestCase):
     def setUp(self):
         logging.disable(logging.ERROR)
 
+        # clear cached property
+        try:
+            del DataChute.objects._default_munger
+        except AttributeError:
+            pass
+
     def tearDown(self):
         logging.disable(logging.NOTSET)
 
@@ -49,14 +56,14 @@ class DataChuteTestCase(TestCase):
         mock_doc_id = 1
 
         data = {'id': 123, 'subject': 'This is a Critical Alert'}
+        doc_obj = DocumentObj(data=data)
 
         datachute = DataChute.objects.get(pk=3)
         datachute.munger.process = Mock(return_value=mock_doc_id)
 
-        doc_id = datachute.process(data)
+        doc_id = datachute.process(doc_obj)
 
-        datachute.munger.process.assert_called_once_with(data, None, None,
-                                                         'twitter')
+        datachute.munger.process.assert_called_once_with(doc_obj)
         self.assertEqual(doc_id, mock_doc_id)
 
     def test_process_nonmatch(self):
@@ -64,11 +71,12 @@ class DataChuteTestCase(TestCase):
         Tests the process method for a nonmatching data dictionary.
         """
         data = {'id': 123, 'Subject': 'This is an Urgent Alert'}
+        doc_obj = DocumentObj(data=data)
 
         datachute = DataChute.objects.get(pk=3)
         datachute.munger.process = Mock(return_value=None)
 
-        doc_id = datachute.process(data)
+        doc_id = datachute.process(doc_obj)
 
         self.assertEqual(doc_id, None)
 
@@ -79,13 +87,12 @@ class DataChuteTestCase(TestCase):
         mock_doc_id = 1
 
         data = {'id': 123, 'Subject': 'This is an Urgent Alert'}
+        doc_obj = DocumentObj(data=data)
 
         datachute = DataChute.objects.get(pk=4)
         datachute.munger.process = Mock(return_value=mock_doc_id)
 
-        doc_id = datachute.process(data)
+        doc_id = datachute.process(doc_obj)
 
-        datachute.munger.process.assert_called_once_with(data, None, None,
-                                                         'twitter')
+        datachute.munger.process.assert_called_once_with(doc_obj)
         self.assertEqual(doc_id, mock_doc_id)
-

@@ -66,8 +66,8 @@ CODEBOOKS = {
 }
 
 DATASIFTER = {
-    'DEFAULT_DATA_MUNGER': 'default_data',
-    'DEFAULT_DATA_CHUTE_ENABLED': True,
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
 }
 
 DISTILLERIES = {
@@ -152,13 +152,13 @@ JIRA = {
 }
 
 LOGSIFTER = {
-    'DEFAULT_LOG_MUNGER': 'default_log',
-    'DEFAULT_LOG_CHUTE_ENABLED': True,
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
 }
 
 MAILSIFTER = {
-    'DEFAULT_MAIL_MUNGER': 'default_mail',
-    'DEFAULT_MAIL_CHUTE_ENABLED': True,
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
     'MAIL_COLLECTION': 'postgresql.django_cyphon.django_mailbox_message',
     'EMAIL_CONTENT_PREFERENCES': ('text/plain', 'text/html'),
     'ALLOWED_EMAIL_ATTACHMENTS': ('text/plain', 'application/pdf', 'image/jpeg', 'image/png'),

@@ -133,27 +133,48 @@ class Watchdog(Alarm):
             return alert
 
     def inspect(self, data):
-        """
-        Takes a data dictionary and returns the alert_level of the first
-        Trigger that matches the data. If the data matches no Triggers,
-        returns None.
+        """Return an Alert level for a document.
+
+        Parameters
+        ----------
+        data: dict
+            The document to be inspected.
+
+        Returns
+        -------
+        |str| or |None|
+            If the data matches one of the Watchdog's |triggers|,
+            returns the :attr:`~Trigger.alert_level` for that Ttrigger|.
+            Otherwise, returns |None|.
+
         """
         triggers = self.triggers.all()
         for trigger in triggers:
             if trigger.is_match(data):
                 return trigger.alert_level
 
-    def process(self, data, distillery, doc_id):
-        """
-        Takes a dictionary of data, a distillery, and a document id.
-        If the Watchdog is enabled, inspects the data and generates an
-        Alert if necessary. If the Watchdog is disabled or an Alert is
-        not warranted, returns None.
+    def process(self, doc_obj):
+        """Generate an |Alert| for a document if appropriate.
+
+        Parameters
+        ----------
+        doc_obj: |DocumentObj|
+            Data and related information about the document to be
+            inspected.
+
+        Returns
+        -------
+        |Alert| or |None|
+            Returns an |Alert| if the Watchdog is enabled and the
+            document matches one of the Watchdog's |Triggers|.
+            Otherwise, returns |None|.
+
         """
         if self.enabled:
-            alert_level = self.inspect(data)
+            alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
-                alert = self._create_alert(alert_level, distillery, doc_id)
+                alert = self._create_alert(alert_level, doc_obj.distillery,
+                                           doc_obj.doc_id)
                 return self._process_alert(alert)
 
 

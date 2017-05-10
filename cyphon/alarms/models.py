@@ -26,18 +26,33 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from alerts.models import Alert
-from categories.models import Category
+from cyphon.baseclass import BaseClass
 from cyphon.models import GetByNameManager, FindEnabledMixin
+from cyphon.transaction import close_old_connections
 
 
-class AlarmManager(GetByNameManager, FindEnabledMixin):
+class AlarmManager(GetByNameManager, FindEnabledMixin, BaseClass):
     """
     Adds methods to the default model manager.
     """
-    pass
+
+    def find_relevant(self, distillery):
+        """
+
+        """
+        self.raise_method_not_implemented()
+
+    @close_old_connections
+    def process(self, doc_obj):
+        """
+
+        """
+        alarms = self.find_relevant(doc_obj.distillery)
+        for alarm in alarms:
+            alarm.process(doc_obj)
 
 
-class Alarm(models.Model):
+class Alarm(models.Model, BaseClass):
     """
     Defines a class for inspecting data produced by a Distillery. Used
     to create Alerts when appropriate.
@@ -71,3 +86,9 @@ class Alarm(models.Model):
 
     class Meta:
         abstract = True
+
+    def process(self, doc_obj):
+        """
+
+        """
+        self.raise_method_not_implemented()

@@ -40,6 +40,19 @@ from distilleries.models import Distillery
 import utils.dateutils.dateutils as dt
 
 
+class MonitorManager(AlarmManager):
+    """
+
+    """
+
+    def find_relevant(self, distillery):
+        """
+
+        """
+        active_monitors = self.find_enabled()
+        return active_monitors.filter(distilleries=distillery)
+
+
 class Monitor(Alarm):
     """
     A Monitor monitors one or more Distilleries for saved data.
@@ -148,7 +161,7 @@ class Monitor(Alarm):
     _HEALTHY = 'GREEN'
     _UNHEALTHY = 'RED'
 
-    objects = AlarmManager()
+    objects = MonitorManager()
 
     def __str__(self):
         return self.name
@@ -265,7 +278,7 @@ class Monitor(Alarm):
         """
         return str(self.time_interval) + self.time_unit
 
-    def register_healthy(self, distillery, doc_id):
+    def process(self, doc_obj):
         """
         Takes a Distillery and a document id string. Updates the
         Monitor's status as healthy, records the current time in the
@@ -273,8 +286,8 @@ class Monitor(Alarm):
         last_active_distillery and last_saved_doc fields.
         """
         self.last_healthy = timezone.now()
-        self.last_active_distillery = distillery
-        self.last_saved_doc = doc_id
+        self.last_active_distillery = doc_obj.distillery
+        self.last_saved_doc = doc_obj.doc_id
         self.status = self._HEALTHY
         self.save()
 
@@ -302,4 +315,3 @@ class Monitor(Alarm):
             return json.dumps(doc, indent=4)
 
     last_doc.short_description = _('Last saved document')
-

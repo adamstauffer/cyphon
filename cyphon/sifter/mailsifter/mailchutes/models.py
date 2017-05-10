@@ -19,12 +19,21 @@
 """
 
 # third party
+from django.conf import settings
 from django.db import models
 
 # local
 from sifter.chutes.models import Chute, ChuteManager
 from sifter.mailsifter.mailmungers.models import MailMunger
 from sifter.mailsifter.mailsieves.models import MailSieve
+
+
+class MailChuteManager(ChuteManager):
+    """
+    Adds methods to the default model manager.
+    """
+
+    settings = settings.MAILSIFTER
 
 
 class MailChute(Chute):
@@ -41,5 +50,4 @@ class MailChute(Chute):
     )
     munger = models.ForeignKey(MailMunger)
 
-    objects = ChuteManager()
-
+    objects = MailChuteManager()

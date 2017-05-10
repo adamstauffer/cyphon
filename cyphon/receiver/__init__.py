@@ -1,5 +1,4 @@
-#!/bin/sh
-
+# -*- coding: utf-8 -*-
 # Copyright 2017 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
@@ -15,13 +14,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
-
-# wait for RabbitMQ to start
-sleep 20
-
-cd /usr/src/app/cyphon
-
-# migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
-
-su -m cyphon -c 'python receiver/receiver.py "$@"'  

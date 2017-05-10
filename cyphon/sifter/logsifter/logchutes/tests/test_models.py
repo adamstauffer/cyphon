@@ -19,17 +19,81 @@ Tests the LogChute class.
 """
 
 # standard library
-from unittest.mock import Mock
+from unittest.mock import patch
 
 # third party
 from django.test import TestCase
+from testfixtures import LogCapture
 
 # local
 from sifter.logsifter.logchutes.models import LogChute
+from sifter.logsifter.logmungers.models import LogMunger
+from tests.fixture_manager import get_fixtures
 
 
 class LogChuteTestCase(TestCase):
     """
     Base class for testing the LogChute class.
     """
-    pass
+
+    fixtures = get_fixtures(['logchutes'])
+
+    def setUp(self):
+        try:
+            del LogChute.objects._default_munger
+        except AttributeError:
+            pass
+
+    def test_get_default_w_chute(self):
+        """
+        Tests the _default_munger function when the default LogMunger
+        does not exists.
+        """
+        mock_config = {
+            'DEFAULT_MUNGER': 'default_log',
+            'DEFAULT_MUNGER_ENABLED': True
+        }
+        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+                        mock_config):
+            actual = LogChute.objects._default_munger
+            expected = LogMunger.objects.get(name='default_log')
+            self.assertEqual(actual.pk, expected.pk)
+            self.assertTrue(LogChute.objects._default_munger_enabled)
+
+    def test_get_default_disabled(self):
+        """
+        Tests the _default_munger function when the default LogMunger
+        is disabled.
+        """
+        mock_config = {
+            'DEFAULT_MUNGER': 'default_log',
+            'DEFAULT_MUNGER_ENABLED': False
+        }
+        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+                        mock_config):
+            actual = LogChute.objects._default_munger
+            expected = LogMunger.objects.get(name='default_log')
+            self.assertEqual(actual.pk, expected.pk)
+            self.assertFalse(LogChute.objects._default_munger_enabled)
+
+    def test_get_default_no_chute(self):
+        """
+        Tests the _default_munger function when the default LogMunger
+        does not exist.
+        """
+        mock_config = {
+            'DEFAULT_MUNGER': 'dummy_munger',
+            'DEFAULT_MUNGER_ENABLED': True
+        }
+        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+                        mock_config):
+            with LogCapture() as log_capture:
+                actual = LogChute.objects._default_munger
+                expected = None
+                self.assertEqual(actual, expected)
+                self.assertFalse(LogChute.objects._default_munger_enabled)
+                log_capture.check(
+                    ('sifter.chutes.models',
+                     'ERROR',
+                     'Default LogMunger "dummy_munger" is not configured.'),
+                )
