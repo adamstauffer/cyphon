@@ -126,7 +126,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
         }
         with patch('distilleries.models.Distillery.save_data',
                    return_value='id_123') as mock_save:
-            with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
+            with patch.dict('sifter.mailsifter.mailchutes.models.conf.MAILSIFTER',
                             mock_config):
                 with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
                         as mock_catch_email:
@@ -146,7 +146,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
             'DEFAULT_MUNGER_ENABLED': False
         }
         with patch('distilleries.models.Distillery.save_data') as mock_save:
-            with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
+            with patch.dict('sifter.mailsifter.mailchutes.models.conf.MAILSIFTER',
                             mock_config):
                 with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
                         as mock_catch_email:
@@ -165,7 +165,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
             'DEFAULT_MUNGER': 'default_mail',
             'DEFAULT_MUNGER_ENABLED': True
         }
-        with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
+        with patch.dict('sifter.mailsifter.mailchutes.models.conf.MAILSIFTER',
                         mock_config):
             with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
                     as mock_default_process:
@@ -184,7 +184,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
             'DEFAULT_MUNGER': 'missing_munger',
             'DEFAULT_MUNGER_ENABLED': True
         }
-        with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
+        with patch.dict('sifter.mailsifter.mailchutes.models.conf.MAILSIFTER',
                         mock_config):
             with LogCapture() as log_capture:
                 msg = 'Default MailMunger "missing_munger" is not configured.'

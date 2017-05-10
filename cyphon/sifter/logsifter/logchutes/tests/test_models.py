@@ -53,7 +53,7 @@ class LogChuteTestCase(TestCase):
             'DEFAULT_MUNGER': 'default_log',
             'DEFAULT_MUNGER_ENABLED': True
         }
-        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+        with patch.dict('sifter.logsifter.logchutes.models.conf.LOGSIFTER',
                         mock_config):
             actual = LogChute.objects._default_munger
             expected = LogMunger.objects.get(name='default_log')
@@ -69,7 +69,7 @@ class LogChuteTestCase(TestCase):
             'DEFAULT_MUNGER': 'default_log',
             'DEFAULT_MUNGER_ENABLED': False
         }
-        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+        with patch.dict('sifter.logsifter.logchutes.models.conf.LOGSIFTER',
                         mock_config):
             actual = LogChute.objects._default_munger
             expected = LogMunger.objects.get(name='default_log')
@@ -85,7 +85,7 @@ class LogChuteTestCase(TestCase):
             'DEFAULT_MUNGER': 'dummy_munger',
             'DEFAULT_MUNGER_ENABLED': True
         }
-        with patch.dict('sifter.logsifter.logchutes.models.settings.LOGSIFTER',
+        with patch.dict('sifter.logsifter.logchutes.models.conf.LOGSIFTER',
                         mock_config):
             with LogCapture() as log_capture:
                 actual = LogChute.objects._default_munger
