@@ -22,7 +22,7 @@ Tests the receiver module.
 from collections import OrderedDict
 import json
 import logging
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, patch
 
 # third party
 from django.test import TransactionTestCase

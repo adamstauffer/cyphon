@@ -28,7 +28,7 @@ from testfixtures import LogCapture
 
 # local
 from cyphon.documents import DocumentObj
-from sifter.mailsifter.mailchutes.models import MailChute, MailChuteManager
+from sifter.mailsifter.mailchutes.models import MailChute
 from tests.fixture_manager import get_fixtures
 
 
@@ -106,7 +106,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
         self.msg['Message-ID'] = 'NM615AA6A517B60AA16@email.com'
         self.msg['Date'] = 'Tue, 8 Sep 2015 16:08:59 -0400'
         self.doc_obj = DocumentObj(data=self.msg)
-        
+
         # clear cached property
         try:
             del MailChute.objects._default_munger
@@ -145,8 +145,7 @@ class MailChuteManagerTestCase(TransactionTestCase):
             'DEFAULT_MUNGER': 'default_mail',
             'DEFAULT_MUNGER_ENABLED': False
         }
-        with patch('distilleries.models.Distillery.save_data',
-                   return_value='id_123') as mock_save:
+        with patch('distilleries.models.Distillery.save_data') as mock_save:
             with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
                             mock_config):
                 with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
@@ -166,14 +165,12 @@ class MailChuteManagerTestCase(TransactionTestCase):
             'DEFAULT_MUNGER': 'default_mail',
             'DEFAULT_MUNGER_ENABLED': True
         }
-        with patch('distilleries.models.Distillery.save_data',
-                   return_value='id_123') as mock_save:
-            with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
-                            mock_config):
-                with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
-                        as mock_default_process:
-                    MailChute.objects.process(doc_obj)
-                    mock_default_process.assert_called_once_with(doc_obj)
+        with patch.dict('sifter.mailsifter.mailchutes.models.settings.MAILSIFTER',
+                        mock_config):
+            with patch('sifter.mailsifter.mailchutes.models.MailChuteManager._process_with_default') \
+                    as mock_default_process:
+                MailChute.objects.process(doc_obj)
+                mock_default_process.assert_called_once_with(doc_obj)
 
     def test_no_match_missing_munger(self):
         """
