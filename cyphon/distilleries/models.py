@@ -230,7 +230,8 @@ class Distillery(models.Model):
         doc[self._DATE_KEY] = timezone.now()
         return doc
 
-    def _add_raw_data_info(self, doc, raw_doc_obj):
+    @staticmethod
+    def _add_raw_data_info(doc, raw_doc_obj):
         """Add a reference to the location of raw data.
 
         Takes a dictionary of distilled data, the doc id of the original
