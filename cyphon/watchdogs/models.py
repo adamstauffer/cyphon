@@ -110,7 +110,7 @@ class Watchdog(Alarm):
         else:
             return False
 
-    def _create_alert(self, level, distillery, doc_id):
+    def _create_alert(self, level, doc_obj):
         """
         Takes an alert level, a distillery, and a document id. Returns
         an Alert object.
@@ -118,8 +118,8 @@ class Watchdog(Alarm):
         return Alert(
             level=level,
             alarm=self,
-            distillery=distillery,
-            doc_id=doc_id,
+            distillery=doc_obj.distillery,
+            doc_id=doc_obj.doc_id,
         )
 
     @transaction.atomic
@@ -173,8 +173,7 @@ class Watchdog(Alarm):
         if self.enabled:
             alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
-                alert = self._create_alert(alert_level, doc_obj.distillery,
-                                           doc_obj.doc_id)
+                alert = self._create_alert(alert_level, doc_obj)
                 return self._process_alert(alert)
 
 

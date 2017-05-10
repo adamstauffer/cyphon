@@ -161,8 +161,7 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         """
         alert = self.email_wdog._create_alert(
             level='HIGH',
-            distillery=self.distillery,
-            doc_id=self.doc_id
+            doc_obj=self.doc_obj
         )
         self.assertEqual(alert.level, 'HIGH')
         self.assertEqual(alert.alarm_type.name, 'watchdog')
