@@ -134,8 +134,8 @@ class ProcessLogChuteTestCase(TransactionTestCase):
                     log_capture.check(
                         ('receiver',
                          'ERROR',
-                         ('An error occurred while processing the message:\n'
-                          '  {"@uuid": "12345", '
-                          '"collection": "elasticsearch.test_index.test_logs", '
-                          '"message": "foobar"}')),
+                         'An error occurred while processing the message \'{"@uuid": "12345", '
+                         '"collection": "elasticsearch.test_index.test_logs", "message": '
+                         '"foobar"}\':\n'
+                         '  foo'),
                     )

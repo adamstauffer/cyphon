@@ -95,8 +95,8 @@ def process_msg(channel, method, properties, body, queue_type):
         consumer_func(doc_obj)
 
     except Exception as error:
-        LOGGER.exception('An error occurred while processing the message:\n  %s',
-                         body)
+        LOGGER.exception('An error occurred while processing the message '
+                         '\'%s\':\n  %s', body, error)
 
 
 def consume_queue(queue_type='WATCHDOGS'):
