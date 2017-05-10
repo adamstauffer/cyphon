@@ -35,7 +35,7 @@ def _process_json(doc_obj):
 
 def _process_log(doc_obj):
     """
- 
+
     """
     LogChute.objects.process(doc_obj)
 
