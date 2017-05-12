@@ -185,19 +185,22 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         self.assertEqual(actual.distillery, self.distillery)
         self.assertEqual(Alert.objects.count(), alert_count + 1)
 
-    @patch_find_by_id
+    @patch_find_by_id(DATA)
     def test_process_muzzled(self):
         """
         Tests the process method for a case that matches a ruleset but
         duplicates a previous Alert when the Watchdog is muzzled.
         """
+        doc_obj = self.doc_obj
         alert_count = Alert.objects.count()
-        alert = self.email_wdog.process(self.doc_obj)
+        alert = self.email_wdog.process(doc_obj)
+        old_incidents = alert.incidents
+
         # check that a new Alert was created
         self.assertEqual(Alert.objects.count(), alert_count + 1)
 
         # try to create a duplicate Alert
-        results = self.email_wdog.process(self.doc_obj)
+        results = self.email_wdog.process(doc_obj)
 
         # make sure no new Alert has been created
         self.assertEqual(Alert.objects.count(), alert_count + 1)
@@ -205,14 +208,14 @@ class WatchdogTestCase(WatchdogBaseTestCase):
 
         # check that the previous Alert was incremented
         alert = Alert.objects.get(pk=alert.pk)
-        self.assertEqual(alert.incidents, 2)
+        self.assertEqual(alert.incidents, old_incidents + 1)
 
-    @patch_find_by_id
+    @patch_find_by_id(DATA)
     def test_process_muzzled_disabled(self):
         """
         Tests the process method for a case that matches a ruleset but
         duplicates a previous Alert when the Watchdog is muzzled but the
-        is disabled.
+        Muzzle is disabled.
         """
         self.email_wdog.muzzle.enabled = False
 
@@ -232,7 +235,6 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         alert = Alert.objects.get(pk=alert.pk)
         self.assertEqual(alert.incidents, 1)
 
-    @patch_find_by_id
     def test_process_not_muzzled(self):
         """
         Tests the process method for a case that matches a ruleset but
@@ -242,23 +244,25 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         data = {'message': 'CRIT-400'}
         doc_obj.data = data
 
-        watchdog = Watchdog.objects.get(pk=2)
+        with patch('distilleries.models.Distillery.find_by_id',
+                   return_value=data):
+            watchdog = Watchdog.objects.get(pk=2)
 
-        alert_count = Alert.objects.count()
-        alert = watchdog.process(self.doc_obj)
+            alert_count = Alert.objects.count()
+            alert = watchdog.process(doc_obj)
 
-        # check that a new Alert was created
-        self.assertEqual(Alert.objects.count(), alert_count + 1)
+            # check that a new Alert was created
+            self.assertEqual(Alert.objects.count(), alert_count + 1)
 
-        # try to create a duplicate Alert
-        watchdog.process(doc_obj)
+            # try to create a duplicate Alert
+            watchdog.process(doc_obj)
 
-        # make sure another Alert has been created
-        self.assertEqual(Alert.objects.count(), alert_count + 2)
+            # make sure another Alert has been created
+            self.assertEqual(Alert.objects.count(), alert_count + 2)
 
-        # check that the previous Alert was not incremented
-        alert = Alert.objects.get(pk=alert.pk)
-        self.assertEqual(alert.incidents, 1)
+            # check that the previous Alert was not incremented
+            alert = Alert.objects.get(pk=alert.pk)
+            self.assertEqual(alert.incidents, 1)
 
     def test_disabled(self):
         """
