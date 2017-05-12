@@ -87,7 +87,7 @@ class DocumentObj(object):
                 _DISTILLERY_SETTINGS['COLLECTION_KEY']: natural_key[2],
                 _DISTILLERY_SETTINGS['DOC_ID_KEY']: self.doc_id
             }
-        except (AttributeError, IndexError):
+        except (AttributeError, IndexError, TypeError):
             _LOGGER.error('Info for raw data document %s could not be added',
                           self)
 
