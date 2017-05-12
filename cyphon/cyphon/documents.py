@@ -67,7 +67,8 @@ class DocumentObj(object):
         Returns a 3-item list containing the names of the backend,
         Warehouse, and Collection associated with the document.
         """
-        return self.collection.split('.')
+        if self.collection:
+            return self.collection.split('.')
 
     @property
     def location_ref(self):
