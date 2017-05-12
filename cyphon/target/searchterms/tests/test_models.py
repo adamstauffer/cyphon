@@ -20,6 +20,7 @@ Tests the SearchTerm class used for keywords and phrases.
 
 # third party
 from django.test import TestCase
+from testfixtures import LogCapture
 
 # local
 from target.searchterms.models import SearchTerm
@@ -39,6 +40,18 @@ class SearchTermManagerTestCase(TestCase):
         term = SearchTerm.objects.get_by_natural_key('police')
         self.assertEqual(term.pk, 1)
 
+    def test_natural_key_exception(self):
+        """
+        Tests the get_by_natural_key method when the SearchTerm
+        does not exist.
+        """
+        with LogCapture() as log_capture:
+            SearchTerm.objects.get_by_natural_key('foobar')
+            log_capture.check(
+                ('target.searchterms.models',
+                 'ERROR',
+                 'SearchTerm "foobar" does not exist'),
+            )
 
 class SearchTermTestCase(TestCase):
     """
