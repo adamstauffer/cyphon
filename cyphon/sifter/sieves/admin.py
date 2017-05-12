@@ -45,6 +45,13 @@ class RuleAdmin(ConfigToolAdmin):
     ]
     list_display_links = ['name', ]
     fieldsets = (
+        ('Test this rule', {
+            'classes': CONFIG_TOOL_CLASSES,
+            'description': _('Enter a test string and click "Run test" '
+                             'to check whether the rule is True or False '
+                             'for the string.'),
+            'fields': CONFIG_TOOL_INPUTS,
+        }),
         (None, {
             'fields': [
                 'name',
@@ -56,13 +63,6 @@ class RuleAdmin(ConfigToolAdmin):
                 'protocol',
             ]
         }),
-        ('Test this rule', {
-            'classes': CONFIG_TOOL_CLASSES,
-            'description': _('Enter a test string and click "Run test" '
-                             'to check whether the rule is True or False '
-                             'for the string.'),
-            'fields': CONFIG_TOOL_INPUTS,
-        })
     )
     save_as = True
 
