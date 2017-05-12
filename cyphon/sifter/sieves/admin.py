@@ -23,14 +23,16 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 # local
-from cyphon.admin import CONFIG_TOOL_CLASSES
-from cyphon.forms import CONFIG_TOOL_INPUTS 
+from cyphon.admin import ConfigToolAdmin, CONFIG_TOOL_CLASSES
+from cyphon.forms import CONFIG_TOOL_INPUTS
 
 
-class RuleAdmin(admin.ModelAdmin):
+class RuleAdmin(ConfigToolAdmin):
     """
     Customizes admin pages for Rules.
     """
+    model_method = 'is_match'
+
     list_display = [
         'id',
         'name',
@@ -132,4 +134,3 @@ class SieveAdmin(admin.ModelAdmin):
     ]
     list_display_links = ['name', ]
     save_as = True
-
