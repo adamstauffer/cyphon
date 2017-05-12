@@ -40,7 +40,8 @@ class SearchTermManagerTestCase(TestCase):
         term = SearchTerm.objects.get_by_natural_key('police')
         self.assertEqual(term.pk, 1)
 
-    def test_natural_key_exception(self):
+    @staticmethod
+    def test_natural_key_exception():
         """
         Tests the get_by_natural_key method when the SearchTerm
         does not exist.
