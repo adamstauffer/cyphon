@@ -293,4 +293,5 @@ class Alias(models.Model):
         """
         Metadata options.
         """
+        verbose_name_plural = 'aliases'
         unique_together = ('account', 'handle', 'role')
