@@ -27,7 +27,7 @@ import sys
 from multiprocessing import Process
 
 # add path to the Cyphon project folder so Cyphon packages can be found
-CYPHON_PATH = os.path.dirname(os.path.abspath(__file__))
+CYPHON_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(CYPHON_PATH)
 sys.path.append(os.path.dirname(os.path.dirname(CYPHON_PATH)))
 
@@ -48,11 +48,21 @@ import pika
 # local
 from cyphon.documents import DocumentObj
 from cyphon.transaction import close_connection, close_old_connections
-from .consumers import CONSUMERS
+from monitors.models import Monitor
+from sifter.datasifter.datachutes.models import DataChute
+from sifter.logsifter.logchutes.models import LogChute
+from watchdogs.models import Watchdog
 
 LOGGER = logging.getLogger('receiver')
 
 BROKER = settings.RABBITMQ
+
+CONSUMERS = {
+    'datachutes': DataChute.objects.process,
+    'logchutes': LogChute.objects.process,
+    'monitors': Monitor.objects.process,
+    'watchdogs': Watchdog.objects.process,
+}
 
 
 def _create_doc_obj(body):
@@ -66,7 +76,7 @@ def _create_doc_obj(body):
 
 
 @close_connection
-def process_msg(channel, method, properties, body, queue_type):
+def process_msg(channel, method, properties, body):
     """Process a message.
 
     Callback function for a queue consumer.
@@ -81,9 +91,9 @@ def process_msg(channel, method, properties, body, queue_type):
 
     body : str, unicode, or bytes (python 3.x)
 
-    queue_type : str
-        Indicates the type of consumer to use. Options are 'DATACHUTES',
-        'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
+    routing_key : str
+        Indicates the type of consumer to use. Options are 'datachutes',
+        'logchutes', 'monitors', 'watchdogs'.
 
     """
     try:
@@ -91,7 +101,7 @@ def process_msg(channel, method, properties, body, queue_type):
             body = body.decode('utf-8')
 
         doc_obj = _create_doc_obj(body)
-        consumer_func = CONSUMERS[queue_type]
+        consumer_func = CONSUMERS[method.routing_key]
         consumer_func(doc_obj)
 
     except Exception as error:
@@ -99,12 +109,12 @@ def process_msg(channel, method, properties, body, queue_type):
                          '\'%s\':\n  %s', body, error)
 
 
-def consume_queue(queue_type='WATCHDOGS'):
+def consume_queue(routing_key='watchdogs'):
     """Create a queue consumer for RabbitMQ.
 
     Parameters
     ----------
-    queue_type : str
+    routing_key : str
         Options are 'DATACHUTES', 'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
 
     """
@@ -125,8 +135,7 @@ def consume_queue(queue_type='WATCHDOGS'):
         exchange_type = BROKER['EXCHANGE_TYPE']
         durable = BROKER['DURABLE']
 
-        routing_key = BROKER[queue_type]['ROUTING_KEY']
-        queue_name = BROKER[queue_type]['QUEUE_NAME']
+        queue_name = routing_key
 
         channel.exchange_declare(exchange=exchange,
                                  type=exchange_type,
@@ -143,8 +152,7 @@ def consume_queue(queue_type='WATCHDOGS'):
 
         channel.basic_consume(process_msg,
                               queue=queue_name,
-                              no_ack=True,
-                              arguments={'queue_type': queue_type})
+                              no_ack=True)
 
         channel.start_consuming()
 
@@ -154,21 +162,21 @@ def consume_queue(queue_type='WATCHDOGS'):
 
 
 @close_old_connections
-def create_consumers(queue_type, num):
+def create_consumers(routing_key, num):
     """Create one or more queue consumers.
 
     Parameters
     ----------
-    queue_type : str
+    routing_key : str
         Indicates how the messages will be processed. Options are
-        'DATACHUTES', 'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
+        'datachutes', 'logchutes', 'monitors', 'watchdogs'.
 
     num : str
         A string representation of an integer representing the number of
         consumers to spawn.
 
     """
-    kwargs = {'queue_type': queue_type}
+    kwargs = {'routing_key': routing_key}
     for dummy_num in range(num):
         process = Process(target=consume_queue, kwargs=kwargs)
         process.start()
@@ -176,13 +184,12 @@ def create_consumers(queue_type, num):
 
 if __name__ == '__main__':
     try:
-        if sys.argv[1] in CONSUMERS:
-            _QUEUE_TYPE = sys.argv[1]
+        _ROUTING_KEY = sys.argv[1]
     except IndexError:
-        _QUEUE_TYPE = 'WATCHDOGS'
+        _ROUTING_KEY = 'watchdogs'
     try:
         _NUM = int(sys.argv[2])
     except (IndexError, ValueError):
         _NUM = 1
 
-    create_consumers(_QUEUE_TYPE, _NUM)
+    create_consumers(_ROUTING_KEY, _NUM)
