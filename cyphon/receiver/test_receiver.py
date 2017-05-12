@@ -45,6 +45,8 @@ class ProcessMsgTestCase(TransactionTestCase):
     default_munger = 'default_log'
 
     mock_doc_obj = Mock()
+    mock_method = Mock()
+    mock_method.routing_key = 'logchutes'
 
     doc = {
         'message': 'foobar',
@@ -55,68 +57,63 @@ class ProcessMsgTestCase(TransactionTestCase):
     msg = bytes(json.dumps(sorted_doc), 'utf-8')
     decoded_msg = msg.decode('utf-8')
 
-    kwargs = {
-        'channel': None,
-        'method': None,
-        'properties': None,
-        'body': msg
-    }
-
     def setUp(self):
         logging.disable(logging.ERROR)
+        self.kwargs = {
+            'channel': None,
+            'method': self.mock_method,
+            'properties': None,
+            'body': self.msg
+        }
 
     def tearDown(self):
         logging.disable(logging.NOTSET)
 
-    @patch('receiver.consumers.LogChute.objects.process')
+    @patch('receiver.receiver.LogChute.objects.process')
     def test_process_msg_logchutes(self, mock_process):
         """
         Tests the process_msg function for LogChutes.
         """
-        kwargs = self.kwargs
-        kwargs.update({'queue_type': 'LOGCHUTES'})
+        self.kwargs['method'].routing_key = 'logchutes'
         with patch('receiver.receiver._create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
-            process_msg(**kwargs)
+            process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
             mock_process.assert_called_once_with(self.mock_doc_obj)
 
-    @patch('receiver.consumers.DataChute.objects.process')
+    @patch('receiver.receiver.DataChute.objects.process')
     def test_process_msg_datachutes(self, mock_process):
         """
         Tests the process_msg function for DataChutes.
         """
-        kwargs = self.kwargs
-        kwargs.update({'queue_type': 'DATACHUTES'})
+        self.kwargs['method'].routing_key = 'datachutes'
         with patch('receiver.receiver._create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
-            process_msg(**kwargs)
+            process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
             mock_process.assert_called_once_with(self.mock_doc_obj)
 
-    @patch('receiver.consumers.Watchdog.objects.process')
+    @patch('receiver.receiver.Watchdog.objects.process')
     def test_process_msg_watchdogs(self, mock_process):
         """
         Tests the process_msg function for Watchdogs.
         """
-        kwargs = self.kwargs
-        kwargs.update({'queue_type': 'WATCHDOGS'})
+        self.kwargs['method'].routing_key = 'watchdogs'
         with patch('receiver.receiver._create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
-            process_msg(**kwargs)
+            process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
             mock_process.assert_called_once_with(self.mock_doc_obj)
 
-    @patch('receiver.consumers.Monitor.objects.process')
+    @patch('receiver.receiver.Monitor.objects.process')
     def test_process_msg_monitors(self, mock_process):
         """
         Tests the process_msg function for Monitors.
         """
-        kwargs = self.kwargs
-        kwargs.update({'queue_type': 'MONITORS'})
+        self.kwargs['method'].routing_key = 'monitors'
         with patch('receiver.receiver._create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
-            process_msg(**kwargs)
+            process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
             mock_process.assert_called_once_with(self.mock_doc_obj)
 
@@ -125,12 +122,10 @@ class ProcessMsgTestCase(TransactionTestCase):
         Tests the process_msg function when an exception is raised.
         """
         logging.disable(logging.NOTSET)
-        kwargs = self.kwargs
-        kwargs.update({'queue_type': 'LOGCHUTES'})
         with patch('receiver.receiver.logging.getLogger', return_value=LOGGER):
             with patch('receiver.receiver.json.loads', side_effect=Exception('foo')):
                 with LogCapture() as log_capture:
-                    process_msg(**kwargs)
+                    process_msg(**self.kwargs)
                     log_capture.check(
                         ('receiver',
                          'ERROR',

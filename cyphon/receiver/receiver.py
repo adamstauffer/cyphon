@@ -57,18 +57,9 @@ LOGGER = logging.getLogger('receiver')
 
 BROKER = settings.RABBITMQ
 
-CONSUMERS = {
-    'datachutes': DataChute.objects.process,
-    'logchutes': LogChute.objects.process,
-    'monitors': Monitor.objects.process,
-    'watchdogs': Watchdog.objects.process,
-}
-
 
 def _create_doc_obj(body):
-    """
-
-    """
+    """Turn a message str into a DocumentObj."""
     data = json.loads(body)
     doc_id = data.get('@uuid')
     collection = data.get('collection')
@@ -96,12 +87,19 @@ def process_msg(channel, method, properties, body):
         'logchutes', 'monitors', 'watchdogs'.
 
     """
+    consumers = {
+        'datachutes': DataChute.objects.process,
+        'logchutes': LogChute.objects.process,
+        'monitors': Monitor.objects.process,
+        'watchdogs': Watchdog.objects.process,
+    }
+
     try:
         if not isinstance(body, str):
             body = body.decode('utf-8')
 
         doc_obj = _create_doc_obj(body)
-        consumer_func = CONSUMERS[method.routing_key]
+        consumer_func = consumers[method.routing_key]
         consumer_func(doc_obj)
 
     except Exception as error:
