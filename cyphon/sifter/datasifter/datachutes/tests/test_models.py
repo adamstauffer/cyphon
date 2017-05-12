@@ -20,7 +20,7 @@ Tests the DataChute class.
 
 # standard library
 import logging
-from unittest.mock import Mock
+from unittest.mock import call, Mock, patch
 
 # third party
 from django.test import TestCase
@@ -48,6 +48,22 @@ class DataChuteTestCase(TestCase):
 
     def tearDown(self):
         logging.disable(logging.NOTSET)
+
+    @patch('sifter.datasifter.datachutes.models.DataChute.process')
+    def test_bulk_process(self, mock_process):
+        """
+        Tests the bulk_process method for a chute.
+        """
+        data_1 = {}
+        data_2 = {}
+        mock_doc_1 = Mock()
+        mock_doc_2 = Mock()
+        with patch('sifter.datasifter.datachutes.models.DocumentObj',
+                   side_effect=[[mock_doc_1], [mock_doc_2]]) as mock_doc:
+            datachute = DataChute.objects.get(pk=1)
+            datachute.bulk_process([data_1, data_2])
+            mock_doc.has_calls([call(data_1), call(data_2)])
+            mock_process.has_calls([call(mock_doc_1), call(mock_doc_2)])
 
     def test_process_match(self):
         """
