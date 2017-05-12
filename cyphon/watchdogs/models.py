@@ -47,12 +47,32 @@ class WatchdogManager(AlarmManager):
     Adds methods to the default model manager.
     """
 
-    def find_relevant(self, distillery):
+    @staticmethod
+    def _get_categories(distillery):
         """
+        Takes a Distillery and returns a Queryset of Categories
+        associated with the Distillery. If distillery=None, returns None.
+        """
+        if distillery:
+            return distillery.categories.all()
+
+    def find_relevant(self, distillery):
+        """Find appropriate Watchdogs for inspecting a document.
+
+        Parameters
+        ----------
+        distillery : |Distillery| or |None|
+            The |Distillery| associated with the document to be
+            inspected.
+
+        Returns
+        -------
+        |Queryset|
+            A |Queryset| of |Watchdogs| for inspecting a document.
 
         """
         enabled_watchdogs = super(WatchdogManager, self).find_enabled()
-        categories = distillery.categories.all()
+        categories = self._get_categories(distillery)
         queryset = enabled_watchdogs.annotate(
             categories_cnt=models.Count('categories')
         )
