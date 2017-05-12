@@ -26,4 +26,4 @@ class ChuteAdmin(admin.ModelAdmin):
     """
     Customizes admin pages for Chutes.
     """
-    list_display = ['name', 'enabled']
+    list_display = ['sieve', 'munger', 'enabled']
