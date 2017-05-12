@@ -44,6 +44,7 @@ class ActionViewSet(CustomModelViewSet):
         'default': ActionSerializer
     }
 
+    @staticmethod
     def _get_alert(alert_id):
         """
         Takes an Alert primary key and returns the corresponding Alert
@@ -51,12 +52,15 @@ class ActionViewSet(CustomModelViewSet):
         """
         return Alert.objects.get(pk=alert_id)
 
+    @staticmethod
     def _serialize_dispatch(dispatch, request):
         """
         Takes a Dispatch and an HttpRequest are returns a dictionary.
         """
-        return Alert.objects.get(pk=alert_id)
-
+        return DispatchSerializer(
+            dispatch,
+            context={'request': request}
+        ).data
 
     def get_serializer_class(self):
         """
@@ -77,10 +81,7 @@ class ActionViewSet(CustomModelViewSet):
             alert_id = serializer.validated_data['alert']
             alert = self._get_alert(alert_id)
             dispatch = action.get_dispatch(user=request.user, alert=alert)
-            result = DispatchSerializer(
-                dispatch,
-                context={'request': request}
-            ).data
+            result = self._serialize_dispatch(dispatch, request)
             return Response(result)
         else:
             return Response(
