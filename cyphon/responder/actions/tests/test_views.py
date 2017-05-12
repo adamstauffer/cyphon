@@ -22,11 +22,24 @@ Tests the Pipe class and the related RateLimit and SpecSheet classes.
 from unittest.mock import Mock, patch
 
 # local
-from .test_models import ActionsBaseTestCase
+from responder.actions.models import Action
+from tests.api_tests import CyphonAPITestCase
+from tests.fixture_manager import get_fixtures
 
 
-class ActionsViewTestCase(ActionsBaseTestCase):
+class ActionsViewTestCase(CyphonAPITestCase):
     """
     Base class for testing the Action views.
     """
-    pass
+
+    fixtures = get_fixtures(['actions', 'alerts'])
+
+    model_url = 'actions/'
+
+    obj_url = '1/'
+
+    # def test_run(self):
+    #     """
+
+    #     """
+    #     pass

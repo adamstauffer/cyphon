@@ -25,6 +25,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 
 # local
+from alerts.models import Alert
 from cyphon.views import CustomModelViewSet
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Action
@@ -43,6 +44,20 @@ class ActionViewSet(CustomModelViewSet):
         'default': ActionSerializer
     }
 
+    def _get_alert(alert_id):
+        """
+        Takes an Alert primary key and returns the corresponding Alert
+        object.
+        """
+        return Alert.objects.get(pk=alert_id)
+
+    def _serialize_dispatch(dispatch, request):
+        """
+        Takes a Dispatch and an HttpRequest are returns a dictionary.
+        """
+        return Alert.objects.get(pk=alert_id)
+
+
     def get_serializer_class(self):
         """
         Overrides the class method to get the serializer for the view.
@@ -59,10 +74,9 @@ class ActionViewSet(CustomModelViewSet):
         serializer = serializer_class(data=request.data)
 
         if serializer.is_valid():
-            alert = serializer.validated_data['alert']
-            carrier = action.create_request_handler(user=request.user)
-            carrier.run(alert)
-            dispatch = carrier.record
+            alert_id = serializer.validated_data['alert']
+            alert = self._get_alert(alert_id)
+            dispatch = action.get_dispatch(user=request.user, alert=alert)
             result = DispatchSerializer(
                 dispatch,
                 context={'request': request}
