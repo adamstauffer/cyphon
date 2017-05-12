@@ -140,6 +140,7 @@ class DistilleryTestCaseMixin(object):
 
     meta = {
         _DISTILLERY_SETTINGS['DISTILLERY_KEY']: 1,
+        _DISTILLERY_SETTINGS['PLATFORM_KEY']: 'twitter',
         _DISTILLERY_SETTINGS['RAW_DATA_KEY']: {
             _DISTILLERY_SETTINGS['DOC_ID_KEY']: '551d54e6f861c95f3123e5f6',
             _DISTILLERY_SETTINGS['BACKEND_KEY']: 'mongodb',
@@ -375,7 +376,8 @@ class SaveDataTestCase(TransactionTestCase, DistilleryTestCaseMixin):
         doc_obj = DocumentObj(
             data=self.bottled_data,
             doc_id='551d54e6f861c95f3123e5f6',
-            collection='mongodb.test_database.twitter'
+            collection='mongodb.test_database.twitter',
+            platform='twitter'
         )
 
         with patch('distilleries.models.timezone.now',
