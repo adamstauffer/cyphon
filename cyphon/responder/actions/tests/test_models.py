@@ -66,7 +66,7 @@ class ActionTestCase(ActionsBaseTestCase):
         """
         mock_user = Mock()
         mock_handler = Mock()
-        with patch('platforms.jira.handlers.IssuehAPI',
+        with patch('platforms.jira.handlers.IssueAPI',
                    return_value=mock_handler) as mock_api:
             kwargs = {
                 'user': mock_user,
@@ -106,7 +106,7 @@ class ActionTestCase(ActionsBaseTestCase):
         mock_handler.run = Mock(return_value=mock_record)
         mock_handler.record = mock_record
 
-        with patch('platforms.jira.handlers.IssuehAPI',
+        with patch('platforms.jira.handlers.IssueAPI',
                    return_value=mock_handler) as mock_api:
             kwargs = {
                 'alert': mock_alert,
@@ -115,5 +115,5 @@ class ActionTestCase(ActionsBaseTestCase):
             result = self.action.get_dispatch(**kwargs)
             mock_api.assert_called_once_with(endpoint=self.action,
                                              user=mock_user)
-            mock_api.run.assert_called_once_with(mock_alert)
+            mock_handler.run.assert_called_once_with(mock_alert)
             self.assertEqual(result, mock_record)
