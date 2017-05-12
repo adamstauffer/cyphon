@@ -25,8 +25,8 @@ from unittest.mock import Mock, patch
 from .test_models import ActionsBaseTestCase
 
 
-class ActionsViewTestCase(ActionsBaseTestCase):
+class ActionsFiltersTestCase(ActionsBaseTestCase):
     """
-    Base class for testing the Action views.
+    Base class for testing the Action filters.
     """
     pass
