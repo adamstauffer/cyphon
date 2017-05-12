@@ -26,7 +26,7 @@ from django.test import TestCase
 
 # local
 import platforms.jira.handlers as jira_module
-from responder.actions.models  import Action
+from responder.actions.models import Action
 from tests.fixture_manager import get_fixtures
 
 

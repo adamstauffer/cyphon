@@ -18,11 +18,7 @@
 Tests the Pipe class and the related RateLimit and SpecSheet classes.
 """
 
-# standard library
-from unittest.mock import Mock, patch
-
 # local
-from responder.actions.models import Action
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 

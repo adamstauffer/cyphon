@@ -18,9 +18,6 @@
 Tests the Pipe class and the related RateLimit and SpecSheet classes.
 """
 
-# standard library
-from unittest.mock import Mock, patch
-
 # local
 from .test_models import ActionsBaseTestCase
 
