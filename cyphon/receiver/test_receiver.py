@@ -35,7 +35,7 @@ from tests.fixture_manager import get_fixtures
 LOGGER.removeHandler('console')
 
 
-class ProcessLogChuteTestCase(TransactionTestCase):
+class ProcessMsgTestCase(TransactionTestCase):
     """
     Tests the process_msg function.
     """
