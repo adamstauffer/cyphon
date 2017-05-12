@@ -37,14 +37,34 @@ class AlarmManager(GetByNameManager, FindEnabledMixin, BaseClass):
     """
 
     def find_relevant(self, distillery):
-        """
+        """Find appropriate Alarms to inspect a document.
+
+        This method should be overridden in derived classes.
+
+        Parameters
+        ----------
+        doc_obj : |Distillery|
+            The |Distillery| associated with the document.
+
+        Raises
+        ------
+        NotImplementedError
 
         """
         self.raise_method_not_implemented()
 
     @close_old_connections
     def process(self, doc_obj):
-        """
+        """Inspect a document with Alarms.
+
+        Parameters
+        ----------
+        doc_obj : |DocumentObj|
+            The document that Alarms should inspect.
+
+        Returns
+        -------
+        None
 
         """
         alarms = self.find_relevant(doc_obj.distillery)
@@ -66,6 +86,7 @@ class Alarm(models.Model, BaseClass):
         A |bool| indicating whether the Watchdog is active.
 
     groups : `QuerySet` of `Groups`
+        |Groups| to which the generated Alerts should be visible.
 
     """
     name = models.CharField(max_length=255, unique=True)
@@ -88,7 +109,18 @@ class Alarm(models.Model, BaseClass):
         abstract = True
 
     def process(self, doc_obj):
-        """
+        """Inspect a document and generate an Alert if appropriate.
+
+        This method should be overridden in derived classes.
+
+        Parameters
+        ----------
+        doc_obj : |DocumentObj|
+            The document that Alarms should inspect.
+
+        Raises
+        ------
+        NotImplementedError
 
         """
         self.raise_method_not_implemented()
