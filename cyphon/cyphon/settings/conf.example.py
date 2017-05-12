@@ -199,22 +199,6 @@ RABBITMQ = {
     'EXCHANGE': 'cyphon',
     'EXCHANGE_TYPE': 'direct',
     'DURABLE': True,
-    'DATACHUTES': {
-        'ROUTING_KEY': 'datachutes',
-        'QUEUE_NAME': 'datachutes',
-    },
-    'LOGCHUTES': {
-        'ROUTING_KEY': 'logchutes',
-        'QUEUE_NAME': 'logchutes',
-    },
-    'MONITORS': {
-        'ROUTING_KEY': 'monitors',
-        'QUEUE_NAME': 'monitors',
-    },
-    'WATCHDOGS': {
-        'ROUTING_KEY': 'watchdogs',
-        'QUEUE_NAME': 'watchdogs',
-    },
 }
 
 SAUCELABS = {
