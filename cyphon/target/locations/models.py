@@ -42,7 +42,8 @@ class Location(models.Model):
     name = models.CharField(max_length=255, unique=True)
     geom = models.GeometryField()
     buffer_m = models.PositiveIntegerField(default=0)   # buffer in meters
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                   blank=True, null=True)
     editable = models.BooleanField(default=True)
 
     # use GeoManager to allow geoqueries
