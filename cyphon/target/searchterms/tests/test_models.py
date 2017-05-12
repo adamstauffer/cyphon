@@ -23,6 +23,21 @@ from django.test import TestCase
 
 # local
 from target.searchterms.models import SearchTerm
+from tests.fixture_manager import get_fixtures
+
+
+class SearchTermManagerTestCase(TestCase):
+    """
+    Tests the SearchTermManager class.
+    """
+    fixtures = get_fixtures(['searchterms'])
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for SearchTerms.
+        """
+        term = SearchTerm.objects.get_by_natural_key(term='police')
+        self.assertEqual(term.pk, 1)
 
 
 class SearchTermTestCase(TestCase):
