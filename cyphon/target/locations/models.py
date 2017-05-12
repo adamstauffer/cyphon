@@ -19,27 +19,34 @@ Defines a class for a location (search area).
 """
 
 # third party
-from django.db import models
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon
 from django.conf import settings
 
 # local
+from cyphon.models import GetByNameMixin
 from utils.geometry import shapes, units
+
+
+class LocationManager(models.GeoManager, GetByNameMixin):
+    """
+    A GeoManager to allow geoqueries on Locations.
+    """
+    pass
 
 
 class Location(models.Model):
     """
     A geographic area that can be used in constructing a social media query.
     """
-    name = models.CharField(max_length=255, default='Untitled')
+    name = models.CharField(max_length=255, unique=True)
     geom = models.GeometryField()
     buffer_m = models.PositiveIntegerField(default=0)   # buffer in meters
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     editable = models.BooleanField(default=True)
 
     # use GeoManager to allow geoqueries
-    objects = models.GeoManager()
+    objects = LocationManager()
 
     def __str__(self):
         """
@@ -175,4 +182,3 @@ class Location(models.Model):
         points = shapes.factor_polygon_into_circles(polygon, radius_km)
         radius = units.km_to_meters(radius_km)
         return [self._create_radius(point, radius) for point in points]
-

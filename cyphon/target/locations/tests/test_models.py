@@ -21,6 +21,7 @@ Tests the Location class and its related classes.
 # third party
 from django.test import TestCase
 from geopy.distance import vincenty
+from testfixtures import LogCapture
 
 # local
 from target.locations.models import Location
@@ -33,6 +34,33 @@ class LocationTestCase(TestCase):
     Base class for testing the Location class.
     """
     fixtures = get_fixtures(['locations'])
+
+
+class LocationManagerTestCase(LocationTestCase):
+    """
+    Tests the Location objects manager.
+    """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for Locations.
+        """
+        location = Location.objects.get_by_natural_key('Point')
+        self.assertEqual(location.pk, 1)
+
+    @staticmethod
+    def test_natural_key_exception():
+        """
+        Tests the get_by_natural_key method when the Location
+        does not exist.
+        """
+        with LogCapture() as log_capture:
+            Location.objects.get_by_natural_key('foobar')
+            log_capture.check(
+                ('target.locations.models',
+                 'ERROR',
+                 'Location "foobar" does not exist'),
+            )
 
 
 class StrTestCase(LocationTestCase):
@@ -278,5 +306,3 @@ class FactorByRadiusTestCase(LocationTestCase):
         polygon = Location.objects.get(pk=4)
         new_locations = polygon.factor_by_radius_km(1)
         self.assertTrue(new_locations[0].buffer_m == 1000)
-
-
