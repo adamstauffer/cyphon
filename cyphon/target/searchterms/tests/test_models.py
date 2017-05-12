@@ -36,7 +36,7 @@ class SearchTermManagerTestCase(TestCase):
         """
         Tests the get_by_natural_key method for SearchTerms.
         """
-        term = SearchTerm.objects.get_by_natural_key(term='police')
+        term = SearchTerm.objects.get_by_natural_key('police')
         self.assertEqual(term.pk, 1)
 
 
