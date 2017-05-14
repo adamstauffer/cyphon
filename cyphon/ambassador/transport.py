@@ -379,4 +379,3 @@ class Transport(BaseClass):
         self.start(obj)
         self.stop()
         return self
-

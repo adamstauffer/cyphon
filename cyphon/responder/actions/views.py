@@ -33,7 +33,7 @@ from .serializers import ActionSerializer, ActionRunSerializer
 
 class ActionViewSet(CustomModelViewSet):
     """
-    REST API for Contexts.
+    REST API for Actions.
     """
     queryset = Action.objects.all()
     custom_filter_backends = ['responder.actions.filters.ActionFilterBackend']
@@ -43,13 +43,23 @@ class ActionViewSet(CustomModelViewSet):
         'default': ActionSerializer
     }
 
+    @staticmethod
+    def _serialize_dispatch(dispatch, request):
+        """
+        Takes a Dispatch and an HttpRequest are returns a dictionary.
+        """
+        return DispatchSerializer(
+            dispatch,
+            context={'request': request}
+        ).data
+
     def get_serializer_class(self):
         """
         Overrides the class method to get the serializer for the view.
         """
         return self.serializers.get(self.action, self.serializers['default'])
 
-    @detail_route(methods=['post'], url_path='run')
+    @detail_route(methods=['get', 'post'], url_path='run')
     def run(self, request, pk=None):
         """
 
@@ -57,16 +67,10 @@ class ActionViewSet(CustomModelViewSet):
         action = self.get_object()
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
-
         if serializer.is_valid():
             alert = serializer.validated_data['alert']
-            carrier = action.create_request_handler(user=request.user)
-            carrier.run(alert)
-            dispatch = carrier.record
-            result = DispatchSerializer(
-                dispatch,
-                context={'request': request}
-            ).data
+            dispatch = action.get_dispatch(user=request.user, alert=alert)
+            result = self._serialize_dispatch(dispatch, request)
             return Response(result)
         else:
             return Response(

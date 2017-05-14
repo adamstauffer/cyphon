@@ -19,7 +19,6 @@ Defines a reciever for the Distillery package's document_saved signal.
 """
 
 # third party
-from django.db import close_old_connections
 from django.dispatch import receiver
 
 # local
@@ -28,14 +27,9 @@ from monitors.models import Monitor
 
 
 @receiver(document_saved)
-def update_monitors(sender, doc, distillery, doc_id, **args):
+def update_monitors(sender, doc_obj, **args):
     """
-    Receiver for the Warehouse package's document_saved signal.
+    Receiver for the Distillery app's document_saved signal.
 
     """
-    active_monitors = Monitor.objects.find_enabled()
-    monitors = active_monitors.filter(distilleries=distillery)
-    for monitor in monitors:
-        monitor.register_healthy(distillery, doc_id)
-
-    close_old_connections()
+    Monitor.objects.process(doc_obj)

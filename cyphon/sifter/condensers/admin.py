@@ -60,7 +60,8 @@ class FittingInLineAdmin(admin.TabularInline):
     related_lookup_fields = {
         'generic': [['content_type', 'object_id'], ],
     }
-    extra = 1
+    min_num = 1
+    extra = 0
 
 
 class FittingAdmin(admin.ModelAdmin):
@@ -78,4 +79,3 @@ class FittingAdmin(admin.ModelAdmin):
     related_lookup_fields = {
         'generic': [['content_type', 'object_id'], ],
     }
-

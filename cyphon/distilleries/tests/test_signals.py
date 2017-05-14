@@ -25,6 +25,7 @@ from unittest.mock import Mock
 from django.test import TransactionTestCase
 
 # local
+from cyphon.documents import DocumentObj
 from distilleries.signals import document_saved
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
@@ -40,6 +41,12 @@ class DocumentSavedSignalTestCase(TransactionTestCase):
     def setUp(self):
         self.distillery = Distillery.objects.get_by_natural_key(
             'mongodb', 'test_database', 'test_posts')
+        doc = {'text': 'this is a text post'}
+        self.doc_obj = DocumentObj(
+            data=doc,
+            doc_id=2,
+            collection=str(self.distillery)
+        )
 
     def test_document_saved_signal(self):
         """
@@ -47,18 +54,13 @@ class DocumentSavedSignalTestCase(TransactionTestCase):
         """
         handler = Mock()
 
-        doc = {'text': 'this is a text post'}
-
         document_saved.connect(handler, sender='test')
-        document_saved.send(sender='test', doc=doc,
-                            distillery=self.distillery, doc_id=2)
+        document_saved.send(sender='test', doc_obj=self.doc_obj)
 
         handler.assert_called_once_with(
             sender='test',
             signal=document_saved,
-            doc=doc,
-            distillery=self.distillery,
-            doc_id=2
+            doc_obj=self.doc_obj
         )
 
     def test_save_data_sends_signal(self):
@@ -66,28 +68,20 @@ class DocumentSavedSignalTestCase(TransactionTestCase):
         Tests that the document_saved signal is sent when a document is saved.
         """
         handler = Mock()
+        mock_doc_obj = self.doc_obj
+        mock_doc_id = '1'
 
-        mock_doc_id = 1
         self.distillery.collection.insert = Mock(return_value=mock_doc_id)
+        self.distillery._create_doc_obj = Mock(return_value=mock_doc_obj)
 
         document_saved.connect(handler, sender=Distillery)
 
-        doc = {
-            'text': 'this is a test post',
-            '_raw_data': {
-                'backend': 'mongodb',
-                'collection': 'test_database',
-                'doc_id': 1
-            }
-        }
-
-        doc_id = self.distillery._save_and_send_signal(doc)
+        doc_id = self.distillery._save_and_send_signal(self.doc_obj)
 
         # Assert the signal was called only once with the args
         handler.assert_called_once_with(
             sender=Distillery,
             signal=document_saved,
-            doc=doc,
-            distillery=self.distillery,
-            doc_id=doc_id
+            doc_obj=mock_doc_obj
         )
+        self.assertEqual(mock_doc_id, doc_id)

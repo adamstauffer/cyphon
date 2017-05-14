@@ -25,6 +25,7 @@ from unittest.mock import Mock
 from django.test import TestCase
 
 # local
+from cyphon.documents import DocumentObj
 from sifter.mailsifter.mailmungers.models import MailMunger
 from tests.fixture_manager import get_fixtures
 
@@ -41,27 +42,20 @@ class MailMungerTestCase(TestCase):
         Tests the process method.
         """
         mock_doc = Mock()
-        mock_doc_id = 1
+        mock_doc_id = '1'
+        email = {'Message-ID': 'abc', 'Subject': 'This is a Critical Alert'}
+        doc_obj = DocumentObj(data=email)
 
-        email = {'Message-ID': 'abc'}
-
-        msg_id = email['Message-ID']
         mailmunger = MailMunger.objects.get_by_natural_key('mail')
         mailmunger.condenser.process = Mock(return_value=mock_doc)
         mailmunger.distillery.save_data = Mock(return_value=mock_doc_id)
 
-        doc_id = mailmunger.process(email)
+        doc_id = mailmunger.process(doc_obj)
 
         mailmunger.condenser.process.assert_called_once_with(
             data=email,
             company=mailmunger.distillery.company
         )
 
-        mailmunger.distillery.save_data.assert_called_once_with(
-            mock_doc,
-            msg_id,
-            'postgresql.django_cyphon.django_mailbox_message',
-            None
-        )
+        mailmunger.distillery.save_data.assert_called_once_with(doc_obj)
         self.assertEqual(doc_id, mock_doc_id)
-

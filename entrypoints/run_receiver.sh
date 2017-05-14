@@ -24,4 +24,4 @@ cd /usr/src/app/cyphon
 # migrate db, so we have the latest db schema
 su -m cyphon -c "python manage.py migrate --verbosity 0"
 
-su -m cyphon -c 'python receiver.py "$@"'  
+exec python receiver/receiver.py "$@"

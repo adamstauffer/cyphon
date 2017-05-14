@@ -39,6 +39,7 @@ from django.utils.translation import ugettext_lazy as _
 # local
 from categories.models import Category
 from companies.models import Company
+from cyphon.documents import DocumentObj
 from bottler.containers.models import Container
 from distilleries import signals
 from utils.dateutils.dateutils import parse_date
@@ -230,27 +231,7 @@ class Distillery(models.Model):
         return doc
 
     @staticmethod
-    def _get_doc_ref(doc_id, collection_str):
-        """Create a location reference for a doc.
-
-        Takes a document id and a string representing a |Collection|.
-        Returns a dictionary that breaks down the location of the
-        document so it can be easily located.
-        """
-        try:
-            source = collection_str.split('.')
-
-            return {
-                _DISTILLERY_SETTINGS['BACKEND_KEY']: source[0],
-                _DISTILLERY_SETTINGS['WAREHOUSE_KEY']: source[1],
-                _DISTILLERY_SETTINGS['COLLECTION_KEY']: source[2],
-                _DISTILLERY_SETTINGS['DOC_ID_KEY']: doc_id
-            }
-        except (AttributeError, IndexError):
-            _LOGGER.error('Info for raw data document %s could not be added',
-                          doc_id)
-
-    def _add_raw_data_info(self, doc, doc_id, collection_str):
+    def _add_raw_data_info(doc, raw_doc_obj):
         """Add a reference to the location of raw data.
 
         Takes a dictionary of distilled data, the doc id of the original
@@ -258,9 +239,9 @@ class Distillery(models.Model):
         where the original data resides. Adds a location reference for the
         undistilled data to the distilled doc, and returns the updated doc.
         """
-        raw_data_info = self._get_doc_ref(doc_id, collection_str)
-        if raw_data_info:
-            doc[_DISTILLERY_SETTINGS['RAW_DATA_KEY']] = raw_data_info
+        location_ref = raw_doc_obj.location_ref
+        if location_ref:
+            doc[_DISTILLERY_SETTINGS['RAW_DATA_KEY']] = location_ref
         return doc
 
     @staticmethod
@@ -283,6 +264,13 @@ class Distillery(models.Model):
         """
         return self.container.add_label(doc)
 
+    def _create_doc_obj(self, doc, doc_id):
+        """
+        Takes a data dictionary and a document id for a document in the
+        Distillery, and returns a DocumentObj for the document.
+        """
+        return DocumentObj(data=doc, doc_id=doc_id, collection=str(self))
+
     def _save_and_send_signal(self, doc):
         """Save a doc and send a |document_saved| signal.
 
@@ -292,9 +280,8 @@ class Distillery(models.Model):
         and |Monitors|.
         """
         doc_id = self.collection.insert(doc)
-
-        signals.document_saved.send(sender=type(self), doc=doc,
-                                    distillery=self, doc_id=doc_id)
+        doc_obj = self._create_doc_obj(doc, doc_id)
+        signals.document_saved.send(sender=type(self), doc_obj=doc_obj)
         return doc_id
 
     def _get_date_saved_field(self):
@@ -618,30 +605,17 @@ class Distillery(models.Model):
         else:
             return self.container.get_sample(doc)
 
-    def save_data(self, doc, doc_id, collection, platform=None):
+    def save_data(self, doc_obj):
         """Save a document to the Distillery's |Collection|.
 
-        Takes a distilled document and info on the location of the
-        raw data from which it was derived. Updates the document with
-        a reference to the raw data location and saves the distilled
-        document to the Distillery's |Collection|.
+        Takes a document from a DocumentObj, updates it with a reference to
+        the location of the original data, and saves the new document to
+        the Distillery's |Collection|.
 
         Parameters
         ----------
-        doc : dict
-            A distilled document to be saved.
-
-        doc_id : str
-            The id of the raw document from which the distilled document
-            was derived.
-
-        collection : str
-            A string representation of the |Collection| where the raw
-            data resides (e.g., 'elasticsearch.cyphon.twitter').
-
-        platform : str
-            A string representation of the |Platform| from which the
-            data originated.
+        doc_obj : |DocumentObj|
+            A document to be saved.
 
         Returns
         -------
@@ -649,12 +623,12 @@ class Distillery(models.Model):
             The id of the saved document.
 
         """
-        doc = self._add_date(doc)
+        doc = self._add_date(doc_obj.data)
         doc = self._add_distillery_info(doc)
-        if doc_id and collection:
-            doc = self._add_raw_data_info(doc, doc_id, collection)
-        if platform:
-            doc = self._add_platform_info(doc, platform)
+        if doc_obj.doc_id and doc_obj.collection:
+            doc = self._add_raw_data_info(doc, doc_obj)
+        if doc_obj.platform:
+            doc = self._add_platform_info(doc, doc_obj.platform)
         doc = self._add_label(doc)
         doc_id = self._save_and_send_signal(doc)
         return doc_id

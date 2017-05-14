@@ -196,10 +196,6 @@ class ChangeLogCondenserConfigToolTest(CondenserFunctionalTest):
 
     test_doc = 'Mar 29 13:02:58 0.0.0.0 [3:19187:7] THIS IS A TEST'
 
-    def setUp(self):
-        super(ChangeLogCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
-
     def test_invalid_form(self):
         """
         Tests the configuration test tool when the form is invalid.

@@ -21,6 +21,7 @@ Tests the Followee class and its related classes.
 # third party
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from testfixtures import LogCapture
 
 # local
 from aggregator.reservoirs.models import Reservoir
@@ -39,6 +40,27 @@ class FolloweeTestCase(FolloweeModelsTestCase):
     """
     Tests the Followee class.
     """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for SearchTerms.
+        """
+        followee = Followee.objects.get_by_natural_key('John')
+        self.assertEqual(followee.pk, 1)
+
+    @staticmethod
+    def test_natural_key_exception():
+        """
+        Tests the get_by_natural_key method when the Followee
+        does not exist.
+        """
+        with LogCapture() as log_capture:
+            Followee.objects.get_by_natural_key('foobar')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'Followee "foobar" does not exist'),
+            )
 
     def test_find_accounts(self):
         """
@@ -66,6 +88,41 @@ class LegalNameTestCase(FolloweeModelsTestCase):
     """
     Tests the LegalName class.
     """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for LegalNames.
+        """
+        legalname = LegalName.objects.get_by_natural_key('John')
+        self.assertEqual(legalname.pk, 1)
+
+    @staticmethod
+    def test_natural_key_no_followee():
+        """
+        Tests the get_by_natural_key method when the Followee
+        associated with the LegalName does not exist.
+        """
+        with LogCapture() as log_capture:
+            LegalName.objects.get_by_natural_key('foobar')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'Followee "foobar" does not exist'),
+            )
+
+    @staticmethod
+    def test_natural_key_no_legalname():
+        """
+        Tests the get_by_natural_key method when the LegalName does not
+        exist.
+        """
+        with LogCapture() as log_capture:
+            LegalName.objects.get_by_natural_key('Jack')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'LegalName for Followee "Jack" does not exist'),
+            )
 
     def test_get_full_name_if_middle(self):
         """
@@ -103,6 +160,41 @@ class AccountTestCase(FolloweeModelsTestCase):
     Tests the Account class.
     """
 
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for Accounts.
+        """
+        account = Account.objects.get_by_natural_key('twitter', '73987')
+        self.assertEqual(account.pk, 1)
+
+    @staticmethod
+    def test_natural_key_no_platform():
+        """
+        Tests the get_by_natural_key method when the Reservoir
+        associated with the Account does not exist.
+        """
+        with LogCapture() as log_capture:
+            Account.objects.get_by_natural_key('foobar', '73987')
+            log_capture.check(
+                ('aggregator.reservoirs.models',
+                 'ERROR',
+                 'Reservoir "foobar" does not exist'),
+            )
+
+    @staticmethod
+    def test_natural_key_no_account():
+        """
+        Tests the get_by_natural_key method when the Account
+        does not exist.
+        """
+        with LogCapture() as log_capture:
+            Account.objects.get_by_natural_key('twitter', 'foobar')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'Account "foobar" for twitter does not exist'),
+            )
+
     def test_dup_account_same_followee(self):
         """
         Tests that an Account having the same platform and user id of another
@@ -132,6 +224,41 @@ class AliasTestCase(FolloweeModelsTestCase):
     """
     Tests the Alias class.
     """
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method for Accounts.
+        """
+        alias = Alias.objects.get_by_natural_key('twitter', '73987',
+                                                   'John Smith', 'name')
+        self.assertEqual(alias.account.pk, 1)
+
+    @staticmethod
+    def test_natural_key_no_account():
+        """
+        Tests the get_by_natural_key method when the Account
+        associated with the Alias does not exist.
+        """
+        with LogCapture() as log_capture:
+            Alias.objects.get_by_natural_key('twitter', 'foo', 'bar', 'name')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'Account "foo" for twitter does not exist'),
+            )
+
+    @staticmethod
+    def test_natural_key_no_alias():
+        """
+        Tests the get_by_natural_key method when the Alias does not exist.
+        """
+        with LogCapture() as log_capture:
+            Alias.objects.get_by_natural_key('twitter', '73987', 'foo', 'name')
+            log_capture.check(
+                ('target.followees.models',
+                 'ERROR',
+                 'Name "foo" for Twitter account 73987 does not exist'),
+            )
 
     def test_dup_alias_is_invalid(self):
         """
@@ -163,5 +290,3 @@ class AliasTestCase(FolloweeModelsTestCase):
             dup.full_clean()
         except ValidationError:
             self.fail("Nonduplicate raised ValidationError unexpectedly")
-
-

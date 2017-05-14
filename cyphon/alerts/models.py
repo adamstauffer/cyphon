@@ -465,4 +465,3 @@ class Comment(models.Model):
         date = self.created_date
         content = self.content
         return '%s commented at %s:\n%s' % (user, date, content)
-

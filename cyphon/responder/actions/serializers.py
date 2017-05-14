@@ -53,4 +53,3 @@ class ActionRunSerializer(serializers.Serializer):
         queryset=Alert.objects.all(),
         required=True
     )
-

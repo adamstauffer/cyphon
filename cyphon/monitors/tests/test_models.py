@@ -28,6 +28,7 @@ from django.test import TestCase
 
 # local
 from alerts.models import Alert
+from cyphon.documents import DocumentObj
 from distilleries.models import Distillery
 from monitors.models import Monitor
 from tests.fixture_manager import get_fixtures
@@ -148,9 +149,9 @@ class MonitorTestCase(TestCase):
         self.assertEqual(alert.doc_id, self.monitor_red.last_saved_doc)
 
     @patch('monitors.models.timezone.now', return_value=LATE)
-    def test_register_healthy(self, mock_now):
+    def test_process(self, mock_now):
         """
-        Tests the register_healthy method of the Monitor class.
+        Tests the process method of the Monitor class.
         """
         monitor = self.monitor_red
         assert monitor.last_healthy != LATE
@@ -159,14 +160,17 @@ class MonitorTestCase(TestCase):
         assert monitor.status != 'GREEN'
 
         distillery = Distillery.objects.get(pk=2)
+        collection = str(distillery)
         doc_id = '11'
-        monitor.register_healthy(distillery, doc_id)
+
+        doc_obj = DocumentObj(doc_id=doc_id, collection=collection)
+        monitor.process(doc_obj)
 
         # get a fresh instance from the database
         updated_monitor = Monitor.objects.get(pk=monitor.pk)
         self.assertEqual(updated_monitor.last_healthy, LATE)
-        self.assertEqual(updated_monitor.last_active_distillery.pk, 2)
-        self.assertEqual(updated_monitor.last_saved_doc, '11')
+        self.assertEqual(updated_monitor.last_active_distillery.pk, distillery.pk)
+        self.assertEqual(updated_monitor.last_saved_doc, doc_id)
         self.assertEqual(updated_monitor.status, 'GREEN')
 
     @patch_find_by_id()

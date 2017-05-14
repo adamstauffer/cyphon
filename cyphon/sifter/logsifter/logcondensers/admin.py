@@ -20,7 +20,6 @@ LogFittings, and registers them with Django Admin.
 """
 
 # third party
-import autocomplete_light
 from django.contrib import admin
 
 # local
@@ -73,4 +72,3 @@ class LogCondenserAdmin(CondenserAdmin):
 admin.site.register(LogParser, LogParserAdmin)
 admin.site.register(LogCondenser, LogCondenserAdmin)
 admin.site.register(LogFitting, LogFittingAdmin)
-

@@ -29,7 +29,7 @@ Constant                  Description
 from django.dispatch import Signal
 
 # pylint: disable=C0103
-document_saved = Signal(providing_args=['doc', 'distillery', 'doc_id'])
+document_saved = Signal(providing_args=['doc_obj'])
 """|Signal|
 
 Send a signal when a |Distillery| saves a document to a |Collection|.

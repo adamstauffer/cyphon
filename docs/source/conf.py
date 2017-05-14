@@ -477,6 +477,7 @@ rst_epilog = """
 .. |Dispatches| replace:: :class:`Dispatches<responder.dispatches.models.Dispatch>`
 .. |Distilleries| replace:: :class:`Distilleries<distilleries.models.Distillery>`
 .. |Distillery| replace:: :class:`~distilleries.models.Distillery`
+.. |DocumentObj| replace:: :class:`~cyphon.documents.DocumentObj`
 .. |document_saved| replace:: :const:`~distilleries.signals.document_saved`
 .. |Emissary| replace:: :class:`~ambassador.emissaries.models.Emissary`
 .. |Emissaries| replace:: :class:`Emissaries<ambassador.emissaries.models.Emissary>`

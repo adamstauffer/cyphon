@@ -423,6 +423,22 @@ class GetDataStrTestCase(AlertModelTestCase):
         self.assertEqual(actual, expected)
 
 
+class AddIncidentTestCase(AlertModelTestCase):
+    """
+    Tests the add_incident method of an Alert.
+    """
+
+    def test_add_incident(self):
+        """
+        Tests the add_incident method.
+        """
+        alert = Alert.objects.get(pk=1)
+        old_incidents = alert.incidents
+        alert.add_incident()
+        alert_updated = Alert.objects.get(pk=1)
+        self.assertEqual(alert_updated.incidents, old_incidents + 1)
+
+
 class AlertTeaserTestCase(AlertModelTestCase):
     """
     Tests the teaser property of an Alert.

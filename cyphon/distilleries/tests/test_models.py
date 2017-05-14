@@ -30,6 +30,7 @@ from testfixtures import LogCapture
 
 # local
 from bottler.containers.models import Container
+from cyphon.documents import DocumentObj
 from distilleries.models import _DISTILLERY_SETTINGS, _PAGE_SIZE, Distillery
 from tests.fixture_manager import get_fixtures
 from warehouses.models import Collection
@@ -139,6 +140,7 @@ class DistilleryTestCaseMixin(object):
 
     meta = {
         _DISTILLERY_SETTINGS['DISTILLERY_KEY']: 1,
+        _DISTILLERY_SETTINGS['PLATFORM_KEY']: 'twitter',
         _DISTILLERY_SETTINGS['RAW_DATA_KEY']: {
             _DISTILLERY_SETTINGS['DOC_ID_KEY']: '551d54e6f861c95f3123e5f6',
             _DISTILLERY_SETTINGS['BACKEND_KEY']: 'mongodb',
@@ -168,6 +170,12 @@ class DistilleryTestCase(TestCase, DistilleryTestCaseMixin):
     Tests the Distillery class.
     """
     fixtures = get_fixtures(['distilleries', 'funnels', 'tastes'])
+    doc = {'foo': 'bar'}
+    doc_obj = DocumentObj(
+        collection='elasticsearch.cyphon.syslog',
+        doc_id='1',
+        data=doc
+    )
 
     @classmethod
     def setUpTestData(cls):
@@ -175,32 +183,34 @@ class DistilleryTestCase(TestCase, DistilleryTestCaseMixin):
 
     def test_add_raw_data_info_for_none(self):
         """
-        Tests the _get_doc_ref method for a malformed collection string.
+        Tests the _add_raw_data_info method when no Collection name is
+        given.
         """
         with LogCapture() as log_capture:
-            doc_id = '1'
-            actual = self.distillery._get_doc_ref(doc_id, None)
-            expected = None
+            doc_obj = self.doc_obj
+            doc_obj.collection = None
+            actual = self.distillery._add_raw_data_info(self.doc, doc_obj)
+            expected = self.doc
             log_capture.check(
-                ('distilleries.models',
+                ('cyphon.documents',
                  'ERROR',
-                 'Info for raw data document %s could not be added' % doc_id),
+                 'Info for raw data document None:1 could not be added'),
             )
             self.assertEqual(actual, expected)
 
     def test_add_raw_data_info_bad_str(self):
         """
-        Tests the _get_doc_ref method when no Collection name is
-        given.
+        Tests the _add_raw_data_info method for a malformed collection string.
         """
         with LogCapture() as log_capture:
-            doc_id = '1'
-            actual = self.distillery._get_doc_ref(doc_id, 'bad_name')
-            expected = None
+            doc_obj = self.doc_obj
+            doc_obj.collection = 'bad_string'
+            actual = self.distillery._add_raw_data_info(self.doc, doc_obj)
+            expected = self.doc
             log_capture.check(
-                ('distilleries.models',
+                ('cyphon.documents',
                  'ERROR',
-                 'Info for raw data document %s could not be added' % doc_id),
+                 'Info for raw data document bad_string:1 could not be added'),
             )
             self.assertEqual(actual, expected)
 
@@ -363,13 +373,16 @@ class SaveDataTestCase(TransactionTestCase, DistilleryTestCaseMixin):
         mock_doc_id = 1
         self.distillery.collection.insert = Mock(return_value=mock_doc_id)
 
+        doc_obj = DocumentObj(
+            data=self.bottled_data,
+            doc_id='551d54e6f861c95f3123e5f6',
+            collection='mongodb.test_database.twitter',
+            platform='twitter'
+        )
+
         with patch('distilleries.models.timezone.now',
                    return_value=self.time):
-            doc_id = self.distillery.save_data(
-                doc=self.bottled_data,
-                doc_id='551d54e6f861c95f3123e5f6',
-                collection='mongodb.test_database.twitter'
-            )
+            doc_id = self.distillery.save_data(doc_obj)
 
         bottled_with_meta = copy.deepcopy(self.bottled_data)
         bottled_with_meta.update(self.meta)
