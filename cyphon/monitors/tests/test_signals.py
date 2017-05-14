@@ -22,6 +22,7 @@ Tests signal recievers in the Monitors package.
 from django.test import TransactionTestCase
 
 # local
+from cyphon.documents import DocumentObj
 from distilleries.models import Distillery
 from distilleries.signals import document_saved
 from monitors.models import Monitor
@@ -42,8 +43,8 @@ class UpdateMonitorsTestCase(TransactionTestCase):
         assert Monitor.objects.get(pk=4).status == 'RED'
 
         distillery = Distillery.objects.get(pk=1)
-        document_saved.send(sender='document_saved', doc={},
-                            distillery=distillery, doc_id='1')
+        doc_obj = DocumentObj(data={}, doc_id='1', collection=str(distillery))
+        document_saved.send(sender='document_saved', doc_obj=doc_obj)
 
         self.assertEqual(Monitor.objects.get(pk=3).status, 'GREEN')
         self.assertEqual(Monitor.objects.get(pk=4).status, 'RED')

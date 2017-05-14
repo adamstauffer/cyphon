@@ -29,8 +29,10 @@ from testfixtures import LogCapture
 
 # local
 from alerts.models import Alert
+from cyphon.documents import DocumentObj
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
+from tests.mock import patch_find_by_id
 from watchdogs.models import Watchdog, Trigger, Muzzle
 
 
@@ -59,6 +61,11 @@ class WatchdogBaseTestCase(TestCase):
 
     doc_id = DOC_ID
     data = DATA
+    doc_obj = DocumentObj(
+        data=DATA,
+        doc_id=DOC_ID,
+        collection='mongodb.test_database.test_docs'
+    )
 
     @classmethod
     def setUpClass(cls):
@@ -154,8 +161,7 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         """
         alert = self.email_wdog._create_alert(
             level='HIGH',
-            distillery=self.distillery,
-            doc_id=self.doc_id
+            doc_obj=self.doc_obj
         )
         self.assertEqual(alert.level, 'HIGH')
         self.assertEqual(alert.alarm_type.name, 'watchdog')
@@ -164,92 +170,92 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         self.assertEqual(alert.distillery, self.distillery)
         self.assertEqual(alert.doc_id, self.doc_id)
 
+    @patch_find_by_id
     def test_process_true(self):
         """
         Tests the process method for a case that matches a ruleset.
         """
-        with patch('distilleries.models.Distillery.find_by_id',
-                   return_value=self.data):
-            alert_count = Alert.objects.count()
-            actual = self.email_wdog.process(self.data, self.distillery,
-                                             self.doc_id)
-            self.assertEqual(actual, Alert.objects.get(doc_id=self.doc_id))
-            self.assertEqual(actual.level, 'HIGH')
-            self.assertEqual(actual.alarm_type.name, 'watchdog')
-            self.assertEqual(actual.alarm_id, self.email_wdog.pk)
-            self.assertEqual(actual.alarm, self.email_wdog)
-            self.assertEqual(actual.distillery, self.distillery)
-            self.assertEqual(Alert.objects.count(), alert_count + 1)
+        alert_count = Alert.objects.count()
+        actual = self.email_wdog.process(self.doc_obj)
+        self.assertEqual(actual, Alert.objects.get(doc_id=self.doc_id))
+        self.assertEqual(actual.level, 'HIGH')
+        self.assertEqual(actual.alarm_type.name, 'watchdog')
+        self.assertEqual(actual.alarm_id, self.email_wdog.pk)
+        self.assertEqual(actual.alarm, self.email_wdog)
+        self.assertEqual(actual.distillery, self.distillery)
+        self.assertEqual(Alert.objects.count(), alert_count + 1)
 
+    @patch_find_by_id(DATA)
     def test_process_muzzled(self):
         """
         Tests the process method for a case that matches a ruleset but
         duplicates a previous Alert when the Watchdog is muzzled.
         """
-        with patch('distilleries.models.Distillery.find_by_id',
-                   return_value=self.data):
-            alert_count = Alert.objects.count()
-            alert = self.email_wdog.process(self.data, self.distillery,
-                                            self.doc_id)
-            # check that a new Alert was created
-            self.assertEqual(Alert.objects.count(), alert_count + 1)
+        doc_obj = self.doc_obj
+        alert_count = Alert.objects.count()
+        alert = self.email_wdog.process(doc_obj)
+        old_incidents = alert.incidents
 
-            # try to create a duplicate Alert
-            results = self.email_wdog.process(self.data, self.distillery,
-                                              self.doc_id)
+        # check that a new Alert was created
+        self.assertEqual(Alert.objects.count(), alert_count + 1)
 
-            # make sure no new Alert has been created
-            self.assertEqual(Alert.objects.count(), alert_count + 1)
-            self.assertEqual(results, None)
+        # try to create a duplicate Alert
+        results = self.email_wdog.process(doc_obj)
 
-            # check that the previous Alert was incremented
-            alert = Alert.objects.get(pk=alert.pk)
-            self.assertEqual(alert.incidents, 2)
+        # make sure no new Alert has been created
+        self.assertEqual(Alert.objects.count(), alert_count + 1)
+        self.assertEqual(results, None)
 
+        # check that the previous Alert was incremented
+        alert = Alert.objects.get(pk=alert.pk)
+        self.assertEqual(alert.incidents, old_incidents + 1)
+
+    @patch_find_by_id(DATA)
     def test_process_muzzled_disabled(self):
         """
         Tests the process method for a case that matches a ruleset but
         duplicates a previous Alert when the Watchdog is muzzled but the
-        is disabled.
+        Muzzle is disabled.
         """
         self.email_wdog.muzzle.enabled = False
 
-        with patch('distilleries.models.Distillery.find_by_id',
-                   return_value=self.data):
-            alert_count = Alert.objects.count()
-            alert = self.email_wdog.process(self.data, self.distillery,
-                                            self.doc_id)
-            # check that a new Alert was created
-            self.assertEqual(Alert.objects.count(), alert_count + 1)
+        alert_count = Alert.objects.count()
+        alert = self.email_wdog.process(self.doc_obj)
 
-            # try to create a duplicate Alert
-            self.email_wdog.process(self.data, self.distillery,
-                                    self.doc_id)
+        # check that a new Alert was created
+        self.assertEqual(Alert.objects.count(), alert_count + 1)
 
-            # make sure another Alert has been created
-            self.assertEqual(Alert.objects.count(), alert_count + 2)
+        # try to create a duplicate Alert
+        self.email_wdog.process(self.doc_obj)
 
-            # check that the previous Alert was not incremented
-            alert = Alert.objects.get(pk=alert.pk)
-            self.assertEqual(alert.incidents, 1)
+        # make sure another Alert has been created
+        self.assertEqual(Alert.objects.count(), alert_count + 2)
+
+        # check that the previous Alert was not incremented
+        alert = Alert.objects.get(pk=alert.pk)
+        self.assertEqual(alert.incidents, 1)
 
     def test_process_not_muzzled(self):
         """
         Tests the process method for a case that matches a ruleset but
         duplicates a previous Alert when the Watchdog is not muzzled.
         """
-        watchdog = Watchdog.objects.get(pk=2)
+        doc_obj = self.doc_obj
         data = {'message': 'CRIT-400'}
+        doc_obj.data = data
+
         with patch('distilleries.models.Distillery.find_by_id',
                    return_value=data):
+            watchdog = Watchdog.objects.get(pk=2)
+
             alert_count = Alert.objects.count()
-            alert = watchdog.process(data, self.distillery, self.doc_id)
+            alert = watchdog.process(doc_obj)
 
             # check that a new Alert was created
             self.assertEqual(Alert.objects.count(), alert_count + 1)
 
             # try to create a duplicate Alert
-            watchdog.process(data, self.distillery, self.doc_id)
+            watchdog.process(doc_obj)
 
             # make sure another Alert has been created
             self.assertEqual(Alert.objects.count(), alert_count + 2)
@@ -263,16 +269,14 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         Tests the process method for a Watchdog that is disabled.
         """
         self.email_wdog.enabled = False
-        result = self.email_wdog.process(self.data, self.distillery,
-                                         self.doc_id)
+        result = self.email_wdog.process(self.doc_obj)
         self.assertEqual(result, None)
 
     def test_process_false(self):
         """
         Tests the process method for a case that doesn't match a ruleset.
         """
-        actual = self.log_wdog.process(self.data, self.distillery,
-                                       self.doc_id)
+        actual = self.log_wdog.process(self.doc_obj)
         self.assertEqual(actual, None)
         alerts = Alert.objects.all()
         self.assertEqual(alerts.count(), 0)
@@ -430,6 +434,7 @@ class MuzzleTestCase(TestCase):
                        return_value=alert8.created_date):
                 self.assertIs(self.muzzle.is_match(alert8), False)
 
+    @patch_find_by_id
     def test_is_match_w_matches(self):
         """
         Tests the is_match method when there is a matching Alert in
@@ -444,13 +449,12 @@ class MuzzleTestCase(TestCase):
         alert6.save()
         old_alert5_incidents = alert5.incidents
         old_alert6_incidents = alert6.incidents
-        with patch('distilleries.models.Distillery.find_by_id',
-                   return_value=dup_doc):
-            with patch('watchdogs.models.timezone.now',
-                       return_value=alert6.created_date):
-                new_alert = Alert.objects.get(pk=6)
-                new_alert.pk = None
-                self.assertIs(self.muzzle.is_match(new_alert), True)
+
+        with patch('watchdogs.models.timezone.now',
+                   return_value=alert6.created_date):
+            new_alert = Alert.objects.get(pk=6)
+            new_alert.pk = None
+            self.assertIs(self.muzzle.is_match(new_alert), True)
 
         # get fresh instances of Alerts and check that the oldest
         # one was incremented
@@ -468,6 +472,11 @@ class WatchdogTransactionTestCase(TransactionTestCase):
 
     doc_id = DOC_ID
     data = DATA
+    doc_obj = DocumentObj(
+        data=DATA,
+        doc_id=DOC_ID,
+        collection='mongodb.test_database.test_docs'
+    )
 
     def setUp(self):
         self.distillery = Distillery.objects.get_by_natural_key('mongodb',
@@ -475,42 +484,41 @@ class WatchdogTransactionTestCase(TransactionTestCase):
                                                                 'test_docs')
         self.email_wdog = Watchdog.objects.get_by_natural_key('inspect_emails')
 
+    @patch_find_by_id
     def test_multiprocess_muzzled(self):
         """
         Tests muzzling when multiple duplicate Alerts are being processed
         concurrently.
         """
-        with patch('distilleries.models.Distillery.find_by_id',
-                   return_value=self.data):
-            with patch('alerts.models.Alert._format_title',
-                       return_value=self.data['content']['subject']):
-                incident_num = 20
+        with patch('alerts.models.Alert._format_title',
+                   return_value=self.data['content']['subject']):
+            incident_num = 20
 
-                alert_count = Alert.objects.count()
+            alert_count = Alert.objects.count()
 
-                args = (self.data, self.distillery, self.doc_id)
+            args = [self.doc_obj]
 
-                alert = self.email_wdog.process(*args)
+            alert = self.email_wdog.process(*args)
 
-                # check that a new Alert was created
-                self.assertEqual(Alert.objects.count(), alert_count + 1)
+            # check that a new Alert was created
+            self.assertEqual(Alert.objects.count(), alert_count + 1)
 
-                # NOTE: we can't use multiprocessing with Mocks,
-                # so we have to settle for using threading to mimic concurrency
+            # NOTE: we can't use multiprocessing with Mocks,
+            # so we have to settle for using threading to mimic concurrency
 
-                threads = []
-                for dummy_index in range(incident_num):
-                    new_thread = threading.Thread(target=self.email_wdog.process,
-                                                  args=args)
-                    threads.append(new_thread)
-                    new_thread.start()
+            threads = []
+            for dummy_index in range(incident_num):
+                new_thread = threading.Thread(target=self.email_wdog.process,
+                                              args=args)
+                threads.append(new_thread)
+                new_thread.start()
 
-                for thread in threads:
-                    thread.join()
+            for thread in threads:
+                thread.join()
 
-                # NOTE: we can't check Alert counts because saved Alerts
-                # won't be committed in the TransactionTestCase
+            # NOTE: we can't check Alert counts because saved Alerts
+            # won't be committed in the TransactionTestCase
 
-                # but we can check that the previous Alert was incremented
-                alert = Alert.objects.get(pk=alert.pk)
-                self.assertEqual(alert.incidents, incident_num + 1)
+            # but we can check that the previous Alert was incremented
+            alert = Alert.objects.get(pk=alert.pk)
+            self.assertEqual(alert.incidents, incident_num + 1)

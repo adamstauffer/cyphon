@@ -65,6 +65,11 @@ CODEBOOKS = {
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
 }
 
+DATASIFTER = {
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
+}
+
 DISTILLERIES = {
 
     # dictionary key for recording the date record was saved
@@ -147,13 +152,13 @@ JIRA = {
 }
 
 LOGSIFTER = {
-    'DEFAULT_LOG_MUNGER': 'default_log',
-    'DEFAULT_LOG_CHUTE_ENABLED': True,
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
 }
 
 MAILSIFTER = {
-    'DEFAULT_MAIL_MUNGER': 'default_mail',
-    'DEFAULT_MAIL_CHUTE_ENABLED': True,
+    'DEFAULT_MUNGER': 'default',
+    'DEFAULT_MUNGER_ENABLED': True,
     'MAIL_COLLECTION': 'postgresql.django_cyphon.django_mailbox_message',
     'EMAIL_CONTENT_PREFERENCES': ('text/plain', 'text/html'),
     'ALLOWED_EMAIL_ATTACHMENTS': ('text/plain', 'application/pdf', 'image/jpeg', 'image/png'),
@@ -187,15 +192,13 @@ PRIVATE_FIELDS = [
 ]
 
 RABBITMQ = {
-    'EXCHANGE': 'cyphon',
-    'EXCHANGE_TYPE': 'direct',
-    'ROUTING_KEY': 'logstash',
-    'QUEUE_NAME': 'logstash',
-    'DURABLE': True,
     'HOST': os.getenv('RABBITMQ_DEFAULT_HOST', 'rabbit'),
     'VHOST': os.getenv('RABBITMQ_DEFAULT_VHOST', 'cyphon'),
     'USERNAME': os.getenv('RABBITMQ_DEFAULT_USER', 'guest'),
     'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
+    'EXCHANGE': 'cyphon',
+    'EXCHANGE_TYPE': 'direct',
+    'DURABLE': True,
 }
 
 SAUCELABS = {

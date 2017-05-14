@@ -25,6 +25,7 @@ from unittest.mock import Mock
 from django.test import TestCase
 
 # local
+from cyphon.documents import DocumentObj
 from sifter.datasifter.datamungers.models import DataMunger
 from tests.fixture_manager import get_fixtures
 
@@ -43,20 +44,15 @@ class DataMungerTestCase(TestCase):
         mock_doc_id = 1
 
         data = {'id': 123, 'subject': 'This is a Critical Alert'}
+        doc_obj = DocumentObj(data=data)
 
         datamunger = DataMunger.objects.get(pk=1)
         datamunger.condenser.process = Mock(return_value=mock_doc)
         datamunger.distillery.save_data = Mock(return_value=mock_doc_id)
 
-        doc_id = datamunger.process(data, 'twitter')
+        doc_id = datamunger.process(doc_obj)
 
         datamunger.condenser.process.assert_called_once_with(data)
 
-        datamunger.distillery.save_data.assert_called_once_with(
-            mock_doc,
-            'twitter',
-            None,
-            None
-        )
+        datamunger.distillery.save_data.assert_called_once_with(doc_obj)
         self.assertEqual(doc_id, mock_doc_id)
-

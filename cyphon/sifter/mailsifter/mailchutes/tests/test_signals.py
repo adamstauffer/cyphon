@@ -35,12 +35,11 @@ class HandleMessageTestCase(TestCase):
         """
         Tests the handle_email signal receiver.
         """
-        mock_email = Mock()
+        mock_email = {'Message-ID': 'abc', 'Subject': 'This is a Critical Alert'}
         mock_message = Mock()
         mock_message.get_email_object = Mock(return_value=mock_email)
-        with patch('sifter.mailsifter.mailchutes.signals.process_email') \
+        with patch('sifter.mailsifter.mailchutes.models.MailChuteManager.process') \
                 as mock_process:
             message_received.send(sender='message_received',
                                   message=mock_message)
-            mock_process.assert_called_once_with(mock_email)
-
+            mock_process.assert_called_once()

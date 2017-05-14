@@ -197,10 +197,6 @@ class ChangeDataCondenserConfigToolTest(CondenserFunctionalTest):
         }
     })
 
-    def setUp(self):
-        super(ChangeDataCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
-
     def test_invalid_form(self):
         """
         Tests the configuration test tool when the form is invalid.

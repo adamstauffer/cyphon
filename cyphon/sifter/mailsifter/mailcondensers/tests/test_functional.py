@@ -215,10 +215,6 @@ class ChangeMailCondenserConfigToolTest(CondenserFunctionalTest):
 
     test_doc = TEST_DOC
 
-    def setUp(self):
-        super(ChangeMailCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
-
     def test_invalid_form(self):
         """
         Tests the configuration test tool when the form is invalid.

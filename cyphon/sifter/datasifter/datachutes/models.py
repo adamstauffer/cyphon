@@ -18,25 +18,25 @@
 
 """
 
-# standard library
-import logging
-
 # third party
+from django.conf import settings as conf
 from django.db import models
+from django.utils.functional import cached_property
 
 # local
 from aggregator.pipes.models import Pipe
+from cyphon.documents import DocumentObj
 from sifter.chutes.models import Chute, ChuteManager
 from sifter.datasifter.datasieves.models import DataSieve
 from sifter.datasifter.datamungers.models import DataMunger
-
-LOGGER = logging.getLogger(__name__)
 
 
 class DataChuteManager(ChuteManager):
     """
     Adds methods to the default model manager.
     """
+
+    settings = conf.DATASIFTER
 
     def find_by_endpoint(self, endpoint):
         """
@@ -64,7 +64,8 @@ class DataChute(Chute):
 
     objects = DataChuteManager()
 
-    def _get_platform_name(self):
+    @cached_property
+    def _platform_name(self):
         """
 
         """
@@ -75,12 +76,12 @@ class DataChute(Chute):
 
         """
         for doc in data:
-            self.process(doc)
+            doc_obj = DocumentObj(data=doc)
+            self.process(doc_obj)
 
-    def process(self, data):
+    def process(self, doc_obj):
         """
         Overrides the parent method to add platform info to the data.
         """
-        platform = self._get_platform_name()
-        return super(DataChute, self).process(data, platform=platform)
-
+        doc_obj.platform = self._platform_name
+        return super(DataChute, self).process(doc_obj)

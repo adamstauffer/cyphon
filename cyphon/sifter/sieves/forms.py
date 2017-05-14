@@ -27,4 +27,3 @@ class RuleForm(ConfigToolForm):
     Defines a form for adding or updating a Rule.
     """
     pass
-
