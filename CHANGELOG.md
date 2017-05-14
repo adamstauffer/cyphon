@@ -7,6 +7,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+<a name="1.1.0"></a>
+## [1.1.0](https://github.com/dunbarcyber/cyphon/compare/1.0.3...1.1.0) (2017-05-14)
+
+### Added
+
+- **cyphon.documents:** added `DocumentOj` class for handling document references ([d701762](https://github.com/dunbarcyber/cyphon/commit/d701762))
+- **receiver.receiver:** added RabbitMQ queue consumers for DataChutes, Watchdogs, and Monitors ([d701762](https://github.com/dunbarcyber/cyphon/commit/d701762))
+- **targets.followees:** added `get_by_natural_key()` method for Followees, Accounts, LegalNames, and Aliases ([0f8f3b8](https://github.com/dunbarcyber/cyphon/commit/0f8f3b8))
+- **targets.locations:** added `get_by_natural_key()` method for Locations ([2b5199d](https://github.com/dunbarcyber/cyphon/commit/2b5199d))
+- **targets.searchterms:** added `get_by_natural_key()` method for SearchTerms ([813c1ca](https://github.com/dunbarcyber/cyphon/commit/813c1ca))
+
+### Fixed
+- **sifter.condensers:** removed extra inline Fitting form ([10f53ce](https://github.com/dunbarcyber/cyphon/commit/10f53ce))
+- **sifter.logsifter:** fixed "Test this rule" tool on LogRule admin page ([751d55b](https://github.com/dunbarcyber/cyphon/commit/751d55b))
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/dunbarcyber/cyphon/compare/1.0.2...1.0.3) (2017-05-14)
 
