@@ -44,7 +44,7 @@ class ActionsViewTestCase(CyphonAPITestCase):
 
     obj_url = '1/'
 
-    def setUp(self):
+    def setUp(self, *args, **kwargs):
         self.user = AppUser.objects.get(id=2)
 
     def test_public_private_couriers(self):
