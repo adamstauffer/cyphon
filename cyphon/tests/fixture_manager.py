@@ -124,4 +124,3 @@ def get_fixtures(dependencies):
             fixtures.append(file_name)
 
     return fixtures
-

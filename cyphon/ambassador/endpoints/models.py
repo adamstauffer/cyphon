@@ -183,4 +183,3 @@ class Endpoint(models.Model):
         request_handler = api(endpoint=self, user=user, **params)
 
         return request_handler
-
