@@ -35,7 +35,7 @@ class ActionsBaseTestCase(TestCase):
     Base class for testing Actions.
     """
 
-    fixtures = get_fixtures(['actions', 'alerts'])
+    fixtures = get_fixtures(['actions', 'dispatches'])
 
     def setUp(self):
         self.action = Action.objects.get(pk=1)
