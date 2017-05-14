@@ -25,7 +25,6 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 
 # local
-from alerts.models import Alert
 from cyphon.views import CustomModelViewSet
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Action
@@ -34,7 +33,7 @@ from .serializers import ActionSerializer, ActionRunSerializer
 
 class ActionViewSet(CustomModelViewSet):
     """
-    REST API for Contexts.
+    REST API for Actions.
     """
     queryset = Action.objects.all()
     custom_filter_backends = ['responder.actions.filters.ActionFilterBackend']
@@ -43,14 +42,6 @@ class ActionViewSet(CustomModelViewSet):
         'run': ActionRunSerializer,
         'default': ActionSerializer
     }
-
-    @staticmethod
-    def _get_alert(alert_id):
-        """
-        Takes an Alert primary key and returns the corresponding Alert
-        object.
-        """
-        return Alert.objects.get(pk=alert_id)
 
     @staticmethod
     def _serialize_dispatch(dispatch, request):
@@ -68,7 +59,7 @@ class ActionViewSet(CustomModelViewSet):
         """
         return self.serializers.get(self.action, self.serializers['default'])
 
-    @detail_route(methods=['post'], url_path='run')
+    @detail_route(methods=['get', 'post'], url_path='run')
     def run(self, request, pk=None):
         """
 
@@ -76,10 +67,8 @@ class ActionViewSet(CustomModelViewSet):
         action = self.get_object()
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
-
         if serializer.is_valid():
-            alert_id = serializer.validated_data['alert']
-            alert = self._get_alert(alert_id)
+            alert = serializer.validated_data['alert']
             dispatch = action.get_dispatch(user=request.user, alert=alert)
             result = self._serialize_dispatch(dispatch, request)
             return Response(result)
