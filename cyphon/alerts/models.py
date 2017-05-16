@@ -143,6 +143,8 @@ class Alert(models.Model):
     _MONITOR = models.Q(app_label='monitors', model='monitor')
     _ALARMS = _WATCHDOG | _MONITOR
 
+    _DEFAULT_TITLE = 'No title available'
+
     level = models.CharField(
         max_length=20,
         choices=ALERT_LEVEL_CHOICES,
@@ -227,9 +229,7 @@ class Alert(models.Model):
             self._add_location()
             self._add_content_date()
 
-        # add a title if saving for the first time
-        if not self.pk:
-            self._add_title()
+        self._add_title()
 
         super(Alert, self).save(*args, **kwargs)
 
@@ -266,7 +266,7 @@ class Alert(models.Model):
         """
         Adds a title if the Alert does not already have one.
         """
-        if not self.title:
+        if not self.title or self.title == self._DEFAULT_TITLE:
             self.title = self._format_title()
 
     def _add_location(self):
@@ -297,7 +297,7 @@ class Alert(models.Model):
         """
         Return the Alert's title or a default title.
         """
-        return self.title or 'No title available'
+        return self.title or self._DEFAULT_TITLE
 
     display_title.short_description = _('title')
 
