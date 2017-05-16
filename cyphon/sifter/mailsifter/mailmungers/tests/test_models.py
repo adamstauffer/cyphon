@@ -57,5 +57,5 @@ class MailMungerTestCase(TestCase):
             company=mailmunger.distillery.company
         )
 
-        mailmunger.distillery.save_data.assert_called_once_with(doc_obj)
+        mailmunger.distillery.save_data.assert_called_once()
         self.assertEqual(doc_id, mock_doc_id)

@@ -143,6 +143,8 @@ class Alert(models.Model):
     _MONITOR = models.Q(app_label='monitors', model='monitor')
     _ALARMS = _WATCHDOG | _MONITOR
 
+    _DEFAULT_TITLE = 'No title available'
+
     level = models.CharField(
         max_length=20,
         choices=ALERT_LEVEL_CHOICES,
@@ -224,12 +226,15 @@ class Alert(models.Model):
         """
         if not self.data:
             self._add_data()
+
+        if not self.location:
             self._add_location()
+
+        if not self.content_date:
             self._add_content_date()
 
-        # add a title if saving for the first time
-        if not self.pk:
-            self._add_title()
+        if not self.title or self.title == self._DEFAULT_TITLE:
+            self.title = self._format_title()
 
         super(Alert, self).save(*args, **kwargs)
 
@@ -262,13 +267,6 @@ class Alert(models.Model):
         """
         self.data = json_encodeable(self.saved_data)
 
-    def _add_title(self):
-        """
-        Adds a title if the Alert does not already have one.
-        """
-        if not self.title:
-            self.title = self._format_title()
-
     def _add_location(self):
         """
         Adds a location if the Alert has one.
@@ -297,7 +295,7 @@ class Alert(models.Model):
         """
         Return the Alert's title or a default title.
         """
-        return self.title or 'No title available'
+        return self.title or self._DEFAULT_TITLE
 
     display_title.short_description = _('title')
 
@@ -319,7 +317,7 @@ class Alert(models.Model):
         if self.distillery:
             return self.distillery.company
 
-    @cached_property
+    @property
     def saved_data(self):
         """
         Attempts to locate the document which triggered the Alert.
@@ -332,7 +330,7 @@ class Alert(models.Model):
                 return data
             else:
                 _LOGGER.warning('The document associated with id %s cannot be ' \
-                               + 'found in %s.', self.doc_id, self.distillery)
+                                + 'found in %s.', self.doc_id, self.distillery)
         return {}
 
     def get_data_str(self):

@@ -18,6 +18,9 @@
 
 """
 
+# standard library
+import copy
+
 # third party
 from django.db import models
 
@@ -78,6 +81,8 @@ class Munger(models.Model):
             The document to be processed.
 
         """
-        doc_obj.data = self._process_data(doc_obj.data)
-        doc_id = self._save_data(doc_obj)
+        parsed_data = self._process_data(doc_obj.data)
+        new_doc_obj = copy.deepcopy(doc_obj)
+        new_doc_obj.data = parsed_data
+        doc_id = self._save_data(new_doc_obj)
         return doc_id

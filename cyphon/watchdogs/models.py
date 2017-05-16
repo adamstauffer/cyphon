@@ -36,6 +36,7 @@ from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
 from cyphon.transaction import require_lock
 from utils.dateutils.dateutils import convert_time_to_whole_minutes
+from utils.dbutils.dbutils import json_encodeable
 from utils.parserutils.parserutils import get_dict_value
 from sifter.datasifter.datasieves.models import DataSieve
 
@@ -135,11 +136,14 @@ class Watchdog(Alarm):
         Takes an alert level, a distillery, and a document id. Returns
         an Alert object.
         """
+        data = json_encodeable(doc_obj.data)
+
         return Alert(
             level=level,
             alarm=self,
             distillery=doc_obj.distillery,
             doc_id=doc_obj.doc_id,
+            data=data
         )
 
     @transaction.atomic
@@ -397,7 +401,7 @@ class Muzzle(models.Model):
         """
         fields = self._get_fields()
         alerts = self._get_filtered_alerts(alert)
-        new_data = alert.saved_data
+        new_data = alert.data
         for old_alert in alerts:
             match = True
             old_data = old_alert.data
