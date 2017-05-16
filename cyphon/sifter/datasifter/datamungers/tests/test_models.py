@@ -54,5 +54,5 @@ class DataMungerTestCase(TestCase):
 
         datamunger.condenser.process.assert_called_once_with(data)
 
-        datamunger.distillery.save_data.assert_called_once_with(doc_obj)
+        datamunger.distillery.save_data.assert_called_once()
         self.assertEqual(doc_id, mock_doc_id)
