@@ -319,7 +319,7 @@ class Alert(models.Model):
         if self.distillery:
             return self.distillery.company
 
-    @cached_property
+    @property
     def saved_data(self):
         """
         Attempts to locate the document which triggered the Alert.
@@ -332,7 +332,7 @@ class Alert(models.Model):
                 return data
             else:
                 _LOGGER.warning('The document associated with id %s cannot be ' \
-                               + 'found in %s.', self.doc_id, self.distillery)
+                                + 'found in %s.', self.doc_id, self.distillery)
         return {}
 
     def get_data_str(self):
