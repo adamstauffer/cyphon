@@ -226,10 +226,15 @@ class Alert(models.Model):
         """
         if not self.data:
             self._add_data()
+
+        if not self.location:
             self._add_location()
+
+        if not self.content_date:
             self._add_content_date()
 
-        self._add_title()
+        if not self.title or self.title == self._DEFAULT_TITLE:
+            self.title = self._format_title()
 
         super(Alert, self).save(*args, **kwargs)
 
@@ -261,13 +266,6 @@ class Alert(models.Model):
 
         """
         self.data = json_encodeable(self.saved_data)
-
-    def _add_title(self):
-        """
-        Adds a title if the Alert does not already have one.
-        """
-        if not self.title or self.title == self._DEFAULT_TITLE:
-            self.title = self._format_title()
 
     def _add_location(self):
         """

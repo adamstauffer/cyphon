@@ -140,6 +140,7 @@ class Watchdog(Alarm):
             alarm=self,
             distillery=doc_obj.distillery,
             doc_id=doc_obj.doc_id,
+            data=doc_obj.data
         )
 
     @transaction.atomic
@@ -397,7 +398,7 @@ class Muzzle(models.Model):
         """
         fields = self._get_fields()
         alerts = self._get_filtered_alerts(alert)
-        new_data = alert.saved_data
+        new_data = alert.data
         for old_alert in alerts:
             match = True
             old_data = old_alert.data
