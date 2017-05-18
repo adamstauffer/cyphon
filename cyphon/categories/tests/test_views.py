@@ -42,7 +42,7 @@ class CategoryViewTestCase(CyphonAPITestCase):
         """
         response = self.get_api_response('1/')
         category = Category.objects.get(pk=1)
-        result = { 'id': category.id, 'name': category.name }
+        result = {'id': category.id, 'name': category.name}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, result)
@@ -57,7 +57,7 @@ class CategoryViewTestCase(CyphonAPITestCase):
         results = []
 
         for category in categories:
-            results.append({ 'id': category.id, 'name': category.name })
+            results.append({'id': category.id, 'name': category.name})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], count)
