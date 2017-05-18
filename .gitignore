@@ -18,11 +18,11 @@ docs/build
 mailbox_attachments/
 config/
 data/
-django/custom/
-django/cyphon/settings/base.py
-django/cyphon/settings/conf.py
-django/cyphon/settings/dev.py
-django/cyphon/settings/prod.py
+cyphon/custom/
+cyphon/cyphon/settings/base.py
+cyphon/cyphon/settings/conf.py
+cyphon/cyphon/settings/dev.py
+cyphon/cyphon/settings/prod.py
 keys/
 kibana/
 logs/

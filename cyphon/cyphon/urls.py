@@ -32,6 +32,7 @@ import rest_framework_jwt.views as rest_views
 # local
 from alerts.views import AlertViewSet, CommentViewSet
 from appusers.views import AppUserViewSet
+from categories.views import CategoryViewSet
 from contexts.views import ContextViewSet, ContextFilterViewSet
 from bottler.bottles.views import BottleViewSet, BottleFieldViewSet
 from bottler.containers.views import ContainerViewSet
@@ -63,6 +64,7 @@ router = DefaultRouter()
 
 router.register(r'actions', ActionViewSet)
 router.register(r'alerts', AlertViewSet)
+router.register(r'categories', CategoryViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'bottles', BottleViewSet)
 router.register(r'bottlefields', BottleFieldViewSet)
