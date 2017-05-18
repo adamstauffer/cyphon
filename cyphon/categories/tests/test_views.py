@@ -16,7 +16,7 @@
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for categories API.
+Tests for Categories REST API.
 """
 
 # third party
@@ -38,7 +38,7 @@ class CategoryViewTestCase(CyphonAPITestCase):
 
     def test_get_category(self):
         """
-        Tests getting a single category object by it's id.
+        Tests getting a single category object by its id.
         """
         response = self.get_api_response('1/')
         category = Category.objects.get(pk=1)
