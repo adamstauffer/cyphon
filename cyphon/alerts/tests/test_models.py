@@ -428,6 +428,7 @@ class AddIncidentTestCase(AlertModelTestCase):
     Tests the add_incident method of an Alert.
     """
 
+    @patch_find_by_id
     def test_add_incident(self):
         """
         Tests the add_incident method.
