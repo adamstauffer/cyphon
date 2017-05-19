@@ -60,5 +60,6 @@ class CategoryViewTestCase(CyphonAPITestCase):
             results.append({'id': category.id, 'name': category.name})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['count'] > 0)
         self.assertEqual(response.data['count'], count)
         self.assertEqual(response.data['results'], results)
