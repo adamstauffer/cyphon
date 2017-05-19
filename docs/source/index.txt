@@ -35,6 +35,7 @@ Contents
    What is Cyphon? <intro>
    getting-started/getting-started
    user-manual/user-manual
+   tutorials/tutorials
    dev-guide/dev-guide
    api
    contributing/contributing
