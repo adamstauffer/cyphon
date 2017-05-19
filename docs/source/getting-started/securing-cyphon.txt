@@ -73,7 +73,7 @@ Ports
 Port   Service
 =====  ===================
 80     Nginx
-433    Nginx
+443    Nginx
 5000   Logstash
 5044   Logstash
 5601   Kibana

@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Added
+
+- **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
+
+### Fixed
+- **.gitignore:** fixed directory for Cyphon settings ([e863c4a](https://github.com/dunbarcyber/cyphon/commit/e863c4a))
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/dunbarcyber/cyphon/compare/1.1.1...1.1.2) (2017-05-16)
 
