@@ -452,7 +452,7 @@ class Context(models.Model):
 
 
 class ContextFilterManager(models.Manager):
-    """Manage |ContextFilte| objects.
+    """Manage |ContextFilter| objects.
 
     Adds methods to the default Django model manager.
     """
@@ -468,7 +468,7 @@ class ContextFilterManager(models.Manager):
         Parameters
         ----------
         name : str
-            The name of the |Context| to which the |ComtextFilter| belongs.
+            The name of the |Context| to which the |ContextFilter| belongs.
 
         backend : str
             The backend associated with the `primary_distillery` of the
