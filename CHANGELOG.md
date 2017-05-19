@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ### Added
 
 - **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
+- **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9))
 
 ### Fixed
 - **.gitignore:** fixed directory for Cyphon settings ([e863c4a](https://github.com/dunbarcyber/cyphon/commit/e863c4a))
