@@ -257,7 +257,7 @@ Then, create a Container using the "snort" Bottle. Define a Taste for the Contai
 
 .. note::
 
-    You could also add a "location" to this Taste by adding a `geoip filter <https://www.elastic.co/guide/en/logstash/current/plugins-filters-geoip.html>`__ to your Logstash configuration and then including the ``geoip.location`` field to the "snort" Container. Refer to Cyphondock's `Snort filter <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/logstash/pipeline/2-filter4-snort.conf>`__ and `starter fixtures <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/fixtures/starter-fixtures.json>`__ for an example.
+    You could also add a "location" to this Taste by adding a `geoip filter <https://www.elastic.co/guide/en/logstash/current/plugins-filters-geoip.html>`__ to your Logstash configuration and then including the ``geoip.location`` field in the "snort" Container. Refer to Cyphondock's `Snort filter <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/logstash/pipeline/2-filter4-snort.conf>`__ and `starter fixtures <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/cyphon/fixtures/starter-fixtures.json>`__ for an example.
 
 Distillery
 ==========
@@ -362,6 +362,7 @@ Now all we have to do is start some queue consumers for Logstash's RabbitMQ outp
 This will create four queue consumers for a RabbitMQ queue called "watchdogs" that's associated with the "watchdogs" routing key. This is the same routing key we specified in our Logstash output configuration for RabbitMQ.
 
 You should now start to see Cyphon Alerts from Snort!
+
 
 **********
 Conclusion
