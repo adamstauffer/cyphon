@@ -17,6 +17,10 @@ If you plan on using Cyphon in a production environment, we recommend creating s
 
 The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ Git repository. (If you would like to use other directories for storing your data, just make sure those changes are reflected in your Docker Compose files.)
 
+.. note::
+
+    These instructions create directories for both MongoDB and Elasticsearch. Although you can use both as backends if you'd like, you will likely only use one of them. You can skip instructions for whichever one you don't intend to use.
+
 First, create directories for the project::
 
     $ sudo mkdir -p /opt/cyphon /opt/cyphon/data
@@ -28,21 +32,34 @@ its subdirectories::
 
     $ sudo chown -R $(whoami):$(whoami) /opt/cyphon
 
-Next, create users and groups for the data storage services::
+Next, create users and groups for MongoDB and PostgreSQL::
 
-    $ sudo groupadd -r elasticsearch && sudo useradd -r -g elasticsearch elasticsearch
     $ sudo groupadd -r mongodb && sudo useradd -r -g mongodb mongodb
     $ sudo groupadd -r postgres && sudo useradd -r -g postgres postgres
 
 .. warning::
 
-    For greater security, be sure to change the default  passwords of these users and groups using the ``sudo passwd <account name>`` and ``sudo passwd -g <group name>`` commands.
+    For greater security, be sure to change the default passwords of these users and groups using the ``sudo passwd <account name>`` and ``sudo passwd -g <group name>`` commands.
 
 Give these new users ownership of their respective directories::
 
-    $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
     $ sudo chown mongodb:mongodb /opt/cyphon/data/mongodb
     $ sudo chown postgres:postgres /opt/cyphon/data/postgresql
+
+The Elasticsearch data directory needs to be owned by uid ``1000``, so double-check that this uid corresponds to your current user::
+
+    $ id -u $(whoami)
+
+If this shows ``1000``, you should be good. If not, find out which user has uid ``1000``::
+
+    $ awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd
+
+Give that user ownership of the Elasticsearch data directory if appropriate. If no such user exists, create a new user for Elasticsearch with that uid and give it ownership instead::
+
+    $ sudo groupadd -r -g 1000 elasticsearch
+    $ sudo useradd -r -g 1000 -u 1000 elasticsearch
+    $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
+
 
 .. _git-repositories:
 
