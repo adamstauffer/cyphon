@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Fixed
 - **.gitignore:** fixed directory for Cyphon settings ([e863c4a](https://github.com/dunbarcyber/cyphon/commit/e863c4a))
+- **docs:** updated instructions for Elasticsearch data directory ([03c3446](https://github.com/dunbarcyber/cyphon/commit/03c3446))
 
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/dunbarcyber/cyphon/compare/1.1.1...1.1.2) (2017-05-16)
