@@ -20,7 +20,7 @@
 #
 ############################################################
 
-FROM python:3.6
+FROM python:3.6-alpine
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
@@ -28,17 +28,24 @@ ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
 
+# copy requirements.txt to the image
+COPY requirements.txt $CYPHON_HOME/requirements.txt
+
 # update the list of available packages and their versions
 # and install postgis and its dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --update --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       binutils \
-      gdal-bin \
-      libproj-dev \
+      gdal \
+      proj4-dev \
       postgis \
-      sendmail
+      py-psycopg2 \
+      postgresql-dev gcc python3-dev musl-dev libffi-dev \
+      # install python dependencies
+    && pip install -r $CYPHON_HOME/requirements.txt \
+    && apk del postgresql-dev gcc python3-dev musl-dev libffi-dev proj4-dev
 
 # create unprivileged user
-RUN groupadd -r cyphon && useradd -r -g cyphon cyphon
+RUN addgroup -S cyphon && adduser -S -G cyphon cyphon
 
 # create application subdirectories
 RUN mkdir -p $CYPHON_HOME \
@@ -51,12 +58,6 @@ COPY cyphon $CYPHON_HOME/cyphon
 
 # copy entrypoint scripts to the image
 COPY entrypoints $CYPHON_HOME/entrypoints
-
-# copy requirements.txt to the image
-COPY requirements.txt $CYPHON_HOME/requirements.txt
-
-# install python dependencies
-RUN pip install -r $CYPHON_HOME/requirements.txt
 
 COPY cyphon/cyphon/settings/base.example.py cyphon/cyphon/settings/base.py
 COPY cyphon/cyphon/settings/conf.example.py cyphon/cyphon/settings/conf.py
