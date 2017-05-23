@@ -6,9 +6,15 @@ Server Configuration
 
 Cyphon is most easily deployed using `Docker`_. This requires installing Docker and Docker Compose, and configuring virtual memory on the host machine.
 
+
+.. _system-requirements:
+
+***************************
 Minimum System Requirements
-===========================
-Cyphon requires that the server (either dedicated machine or virtual machine) hosting Docker has a minimum of 2 cores and at least 8GB of RAM.  Docker based installation will require at least 20GB of storage space. Expect an increase over time due to Docker's snapshot system.  For production environments, you may want to map data folders to a separate volume with much larger storage capacity.
+***************************
+
+Cyphon requires that the server (either dedicated machine or virtual machine) hosting Docker has a minimum of 2 cores and at least 8GB of RAM. Docker-based installation will require at least 20GB of storage space. Expect an increase over time due to Docker's snapshot system. For production environments, you may want to map data folders to a separate volume with much larger storage capacity.
+
 
 .. _install-docker-engine:
 
