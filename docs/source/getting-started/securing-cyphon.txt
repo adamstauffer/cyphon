@@ -69,16 +69,16 @@ Ports
 
 `Cyphondock`_'s Docker Compose files for the production environment open the following ports on the host machine:
 
-=====  ===================
-Port   Service
-=====  ===================
-80     Nginx
-443    Nginx
-5000   Logstash
-5044   Logstash
-5601   Kibana
-5601   CAdvisor
-15672  RabbitMQ management 
-=====  ===================
+========  =================================
+Port      Service
+========  =================================
+80        Cyclops - Nginx proxy
+443       Cyclops - Nginx proxy
+5000      Logstash
+5044      Logstash
+5601      Kibana - Nginx proxy
+8000      Cyphon - Nginx proxy
+15672     RabbitMQ management - Nginx proxy
+========  =================================
 
 Please restrict external access to these ports.
