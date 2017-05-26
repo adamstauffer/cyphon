@@ -28,4 +28,4 @@ rm -f celerybeat-schedule.pid
 su -m cyphon -c "python manage.py migrate --verbosity 0"
 
 # run Celery beat for Cyphon with Celery configuration stored in celeryapp
-su -m cyphon -c 'celery beat -A cyphon -l ERROR "$@"'
+su -m cyphon -c 'celery beat -A cyphon -l ERROR'
