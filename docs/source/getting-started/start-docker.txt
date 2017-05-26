@@ -59,13 +59,13 @@ the endpoints of the various services.
 
 You can access Cyphon and some of its related services through your web 
 browser. The following services can be accessed by visiting your host 
-domain on the appropriate port (e.g., ``http://example.com:8080``):
+domain on the appropriate port (e.g., ``http://example.com:8000``):
 
 ===================  =====
 Service              Port
 ===================  =====
-Cyphon               80
-CAdvisor             8080
+Cyclops              80
+Cyphon               8000
 Kibana               5601
 RabbitMQ management  15672
 ===================  =====
@@ -85,7 +85,9 @@ Development Environment
 ***********************
 
 Unlike the production environment, the dev environment builds the images
-for Cyphon and Cyclops using local files.
+for Cyphon using local files. You'll need to downlaod the Cyphon GitHub repository into the ``/opt/cyphon/cyphon`` directory so these files are available to Docker Compose::
+
+    $ git clone https://github.com/dunbarcyber/cyphon.git /opt/cyphon/cyphon
 
 Settings for the dev environment are contained in the 
 ``docker-compose.dev.yml`` file. To use the dev environment, you must 
