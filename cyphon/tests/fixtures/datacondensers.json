@@ -160,7 +160,7 @@
     "fields": {
       "id": 2,
       "name": "twitter__content",
-      "bottle": ["content"]
+      "bottle": ["post_content"]
     }
   },
   {
