@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/dunbarcyber/cyphon/compare/1.1.2...1.1.3) (2017-05-27)
+
 ### Added
 
 - **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
@@ -15,19 +18,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **docs:** added minimum system requirements ([d00b95](https://github.com/dunbarcyber/cyphon/commit/d00b95))
 
 ### Fixed
+
 - **.gitignore:** fixed directory for Cyphon settings ([e863c4a](https://github.com/dunbarcyber/cyphon/commit/e863c4a))
+- **bottler.bottles:** fixed bug with EmbeddedDocumentFields ([6fd70f5](https://github.com/dunbarcyber/cyphon/commit/6fd70f5))
 - **docs:** updated instructions for Elasticsearch data directory ([03c3446](https://github.com/dunbarcyber/cyphon/commit/03c3446))
 
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/dunbarcyber/cyphon/compare/1.1.1...1.1.2) (2017-05-16)
 
 ### Fixed
+
 - **sifter.mungers:** modified `Munger.process()` to avoid errors when processing mail ([84f8871](https://github.com/dunbarcyber/cyphon/commit/84f8871))
 
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/dunbarcyber/cyphon/compare/1.1.0...1.1.1) (2017-05-16)
 
 ### Fixed
+
 - **alerts:** modified `Alert.save()` so that `location` and `content_date` are added the Alert to even if the Alert already has `data`, and a `title` with a default value is refreshed ([a37d9eb](https://github.com/dunbarcyber/cyphon/commit/a37d9eb))
 - **alerts:** `Alert.saved_data` is no longer cached ([9fdba5d](https://github.com/dunbarcyber/cyphon/commit/9fdba5d))
 - **engines.elasticsearch.engine:** Elasticsearch indexes are refreshed prior to searching by id ([65d72e2](https://github.com/dunbarcyber/cyphon/commit/65d72e2))
@@ -45,6 +52,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **target.searchterms:** added `get_by_natural_key()` method for SearchTerms ([813c1ca](https://github.com/dunbarcyber/cyphon/commit/813c1ca))
 
 ### Fixed
+
 - **sifter.condensers:** removed extra inline Fitting form ([10f53ce](https://github.com/dunbarcyber/cyphon/commit/10f53ce))
 - **sifter.logsifter:** fixed "Test this rule" tool on LogRule admin page ([751d55b](https://github.com/dunbarcyber/cyphon/commit/751d55b))
 
