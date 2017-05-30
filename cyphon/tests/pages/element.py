@@ -144,6 +144,7 @@ class AutocompleteElement(HtmlElement):
     """
 
     """
+
     def __init__(self, driver, *args, **kwargs):
         super(AutocompleteElement, self).__init__(*args, **kwargs)
         self.driver = driver
