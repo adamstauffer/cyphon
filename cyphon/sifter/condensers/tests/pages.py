@@ -33,29 +33,15 @@ from tests.pages.configtool import ConfigToolPage
 from tests.pages.generic import GenericRelationMixin
 
 
-class CondenserField(SelectElement):
-    locator = 'condenser'
-
-class TargetField(AutocompleteElement):
-    locator = 'target_field'
-
-
 class FittingPage(ModelAdminPage, GenericRelationMixin):
     """
     Page class for a Fitting admin page.
     """
-    condenser = CondenserField()
+    condenser = SelectElement('condenser')
 
     def __init__(self, *args, **kwargs):
         super(FittingPage, self).__init__(*args, **kwargs)
-        self.target_field = TargetField(self.driver)
-
-
-class NameField(TextInputElement):
-    locator = 'name'
-
-class BottleField(SelectElement):
-    locator = 'bottle'
+        self.target_field = AutocompleteElement(self.driver, 'target_field')
 
 
 class InlineTargetField(AutocompleteElement):
@@ -111,8 +97,8 @@ class CondenserPage(ConfigToolPage):
     """
     Page class for a Condenser admin page.
     """
-    name = NameField()
-    bottle = BottleField()
+    name = TextInputElement('name')
+    bottle = SelectElement('bottle')
 
     content_type_0 = InlineContentTypeField(index=0)
     object_id_0 = InlineObjectIdField(index=0)
