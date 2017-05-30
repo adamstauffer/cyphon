@@ -31,7 +31,6 @@ class RelatedObjLookUp(LinkElement):
 
 class GenericRelationMixin(object):
     """
-    
+
     """
     lookup = RelatedObjLookUp()
-
