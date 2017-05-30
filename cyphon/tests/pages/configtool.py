@@ -39,26 +39,12 @@ class ConfigToolLocators(object):
     RUN_TEST_BUTTON = (By.NAME, '_test')
 
 
-class ConfigTestStringField(TextInputElement):
-    """
-    A username input field.
-    """
-    locator = CONFIG_TEST_VALUE_FIELD
-
-
-class ConfigTestResultField(TextInputElement):
-    """
-    A password input field.
-    """
-    locator = CONFIG_TEST_RESULT_FIELD
-
-
 class ConfigToolPage(ModelAdminPage):
     """
     Mixin class for a ConfigToolAdmin page.
     """
-    config_test_value = ConfigTestStringField()
-    config_test_result = ConfigTestResultField()
+    config_test_value = TextInputElement(CONFIG_TEST_VALUE_FIELD)
+    config_test_result = TextInputElement(CONFIG_TEST_RESULT_FIELD)
 
     def open_tool(self):
         """
@@ -79,4 +65,3 @@ class ConfigToolPage(ModelAdminPage):
         WebDriverWait(driver, self.timeout).until(
             lambda driver: self.config_test_result)
         return self.config_test_result
-
