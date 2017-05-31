@@ -53,8 +53,8 @@ class Faucet(Transport):
 
     """
 
-    def __init__(self, task, *args, **kawrgs):
-        super(Faucet, self).__init__(*args, **kawrgs)
+    def __init__(self, task, *args, **kwargs):
+        super(Faucet, self).__init__(*args, **kwargs)
         self.task = task
 
     @cached_property
