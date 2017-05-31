@@ -43,36 +43,6 @@ class ContextFilterPage(ModelAdminPage):
         self.value_field = AutocompleteElement(self.driver, 'value_field')
 
 
-class InlineSearchField(AutocompleteElement):
-    """
-    A search_field field for an inline ContextFilter.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-search_field' % index
-        super(InlineSearchField, self).__init__(driver)
-
-
-class InlineOperatorField(AutocompleteElement):
-    """
-    An operator field for an inline ContextFilter.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-operator' % index
-        super(InlineOperatorField, self).__init__(driver)
-
-
-class InlineValueField(AutocompleteElement):
-    """
-    A value_field field for an inline ContextFilter.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-value_field' % index
-        super(InlineValueField, self).__init__(driver)
-
-
 class ContextPageLocators(object):
     """
     A base class for page locators.
@@ -92,13 +62,19 @@ class ContextPage(ModelAdminPage):
 
     def __init__(self, driver):
         super(ContextPage, self).__init__(driver)
-        self.search_field_0 = InlineSearchField(self.driver, index=0)
-        self.operator_0 = InlineOperatorField(self.driver, index=0)
-        self.value_field_0 = InlineValueField(self.driver, index=0)
+        self.search_field_0 = AutocompleteElement(self.driver,
+                                                  'filters-0-search_field')
+        self.operator_0 = AutocompleteElement(self.driver,
+                                              'filters-0-operator')
+        self.value_field_0 = AutocompleteElement(self.driver,
+                                                 'filters-0-value_field')
 
-        self.search_field_1 = InlineSearchField(self.driver, index=1)
-        self.operator_1 = InlineOperatorField(self.driver, index=1)
-        self.value_field_1 = InlineValueField(self.driver, index=1)
+        self.search_field_1 = AutocompleteElement(self.driver,
+                                                  'filters-1-search_field')
+        self.operator_1 = AutocompleteElement(self.driver,
+                                              'filters-1-operator')
+        self.value_field_1 = AutocompleteElement(self.driver,
+                                                 'filters-1-value_field')
 
     def add_filter(self):
         """
