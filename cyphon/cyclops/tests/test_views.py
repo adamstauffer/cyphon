@@ -33,9 +33,10 @@ class CyclopsViewsTestCase(TestCase):
         """
         Creates a user for the views.
         """
+        secret = 'test12345'
         self.user = AppUser.objects.create_user(
             email='test@test.com',
-            password='p184dksoemnfea',
+            password=secret,
             first_name='Bob',
             last_name='Saget',
         )
