@@ -45,7 +45,6 @@ LOGGER = logging.getLogger(__name__)
 
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
-
 # HOSTNAME is used to send out an email to new users once an
 # administrator adds them.
 
@@ -84,6 +83,20 @@ CODEBOOKS = {
     'CODENAME_PREFIX': '**',  # prefix for displayed CodeNames
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
 }
+
+CYCLOPS = {
+    'MAPBOX_ACCESS_TOKEN': '',
+    'JS_FILENAME': 'cyclops.js',
+    'CSS_FILENAME': 'cyclops.css',
+    'DEVELOPMENT_STATIC_PATH': 'cyclops_dev',
+    'DEVELOPMENT_ASSETS': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+    'DEVELOPMENT_ASSETS_ENABLED': False,
+}
+
+if CYCLOPS['DEVELOPMENT_ASSETS_ENABLED']:
+    STATICFILES_DIRS = [
+        (CYCLOPS['DEVELOPMENT_STATIC_PATH'], CYCLOPS['DEVELOPMENT_ASSETS']),
+    ]
 
 DATASIFTER = {
     'DEFAULT_MUNGER': 'default',
@@ -193,7 +206,9 @@ MONGODB = {
 }
 
 NOTIFICATIONS = {
+    'ENABLED': False,
     'PUSH_NOTIFICATION_KEY': '',
+    'GCM_SENDER_ID': '',
     'IGNORED_ALERT_LEVELS': ['INFO'],
 }
 
@@ -255,6 +270,7 @@ REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
 
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
+LOGIN_REDIRECT_URL = '/app/'
 
 DATABASES = {
     'default': {
@@ -338,6 +354,7 @@ INSTALLED_APPS = (
     'codebooks',
     'companies',
     'contexts',
+    'cyclops',
     'cyphon.settings',
     'distilleries',
     'httmock',

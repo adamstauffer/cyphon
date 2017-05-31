@@ -65,6 +65,20 @@ CODEBOOKS = {
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
 }
 
+CYCLOPS = {
+    'MAPBOX_ACCESS_TOKEN': '',
+    'JS_FILENAME': 'cyclops.js',
+    'CSS_FILENAME': 'cyclops.css',
+    'DEVELOPMENT_STATIC_PATH': 'cyclops_dev',
+    'DEVELOPMENT_ASSETS': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+    'DEVELOPMENT_ASSETS_ENABLED': False,
+}
+
+if CYCLOPS['DEVELOPMENT_ASSETS_ENABLED']:
+    STATICFILES_DIRS = [
+        (CYCLOPS['DEVELOPMENT_STATIC_PATH'], CYCLOPS['DEVELOPMENT_ASSETS']),
+    ]
+
 DATASIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,
@@ -118,6 +132,8 @@ EMAIL = {
     'USE_TLS': True,
 }
 
+GCM_SENDER_ID = ''
+
 GEOIP = {
     'GEOIP_PATH': os.getenv('GEOIP_PATH', '/usr/share/GeoIP/'),
     'CITY_DB': 'GeoLite2-City.mmdb',
@@ -166,6 +182,8 @@ MAILSIFTER = {
     'ATTACHMENTS_FOLDER': 'attachments/%Y/%m/%d/',
 }
 
+MAPBOX_ACCESS_TOKEN = ''
+
 MONGODB = {
     'HOST': '{0}:{1}'.format(os.getenv('MONGODB_HOST', 'mongo'),  # e.g., 'localhost'
                              os.getenv('MONGODB_PORT', '27017')),
@@ -173,7 +191,9 @@ MONGODB = {
 }
 
 NOTIFICATIONS = {
+    'ENABLED': False,
     'PUSH_NOTIFICATION_KEY': '',
+    'GCM_SENDER_ID': '',
     'IGNORED_ALERT_LEVELS': ['INFO'],
 }
 
