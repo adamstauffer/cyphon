@@ -58,8 +58,21 @@ LOGGER = logging.getLogger('receiver')
 BROKER = settings.RABBITMQ
 
 
-def _create_doc_obj(body):
-    """Turn a message str into a DocumentObj."""
+def create_doc_obj(body):
+    """Turn a message str into a |DocumentObj|.
+
+    Parses a message body, adds an ``_id`` field based on the document's
+    ``@uuid`` field, and creates a |DocumentObj| from the result.
+
+    Parameters
+    ----------
+    body : str
+
+    Returns
+    -------
+    |DocumentObj|
+
+    """
     data = json.loads(body)
     doc_id = data.get('@uuid')
     data['_id'] = doc_id
@@ -99,7 +112,7 @@ def process_msg(channel, method, properties, body):
         if not isinstance(body, str):
             body = body.decode('utf-8')
 
-        doc_obj = _create_doc_obj(body)
+        doc_obj = create_doc_obj(body)
         consumer_func = consumers[method.routing_key]
         consumer_func(doc_obj)
 
