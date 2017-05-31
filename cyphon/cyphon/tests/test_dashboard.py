@@ -52,6 +52,6 @@ class DashboardFunctionalTest(AdminFunctionalTest):
         self.assertIn('People and Permissions', self.page.module_12)
         self.assertIn('Records', self.page.module_13)
         self.assertIn('App Configurations', self.page.module_14)
-        self.assertIn('Recent Actions', self.page.module_15)
-        self.assertIn('Support', self.page.module_16)
-        self.assertIn('Latest Cyphon News', self.page.module_17)
+        # self.assertIn('Recent Actions', self.page.module_15)  # no listings
+        self.assertIn('Support', self.page.module_15)
+        self.assertIn('Latest Cyphon News', self.page.module_16)
