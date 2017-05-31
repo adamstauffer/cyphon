@@ -42,3 +42,5 @@ class DashboardPage(Page):
     module_13 = StyledElement('div[id="module_13"] h2')
     module_14 = StyledElement('div[id="module_14"] h2')
     module_15 = StyledElement('div[id="module_15"] h2')
+    module_16 = StyledElement('div[id="module_16"] h2')
+    module_17 = StyledElement('div[id="module_17"] h2')
