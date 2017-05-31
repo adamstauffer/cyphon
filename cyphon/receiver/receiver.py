@@ -62,6 +62,7 @@ def _create_doc_obj(body):
     """Turn a message str into a DocumentObj."""
     data = json.loads(body)
     doc_id = data.get('@uuid')
+    data['_id'] = doc_id
     collection = data.get('collection')
     return DocumentObj(data=data, doc_id=doc_id, collection=collection)
 
