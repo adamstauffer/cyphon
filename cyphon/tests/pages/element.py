@@ -38,9 +38,9 @@ class HtmlElement(object):
     Base element class.
     """
 
-    def __init__(self, locator='', timeout=TIMEOUT):
+    def __init__(self, locator=''):
         self.locator = locator
-        self.timeout = timeout
+        self.timeout = TIMEOUT
 
 
 class StyledElement(HtmlElement):
