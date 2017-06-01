@@ -61,6 +61,32 @@ minimum, you should configure the `BASE_URL` setting in the ``dev.py``
 and ``prod.py`` files. You can read more about Django's settings in  
 `Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`_.
 
+.. _cyclops-config:
+
+=======
+Cyclops
+=======
+
+Since Cyphon version 1.2, a copy of the most recent version of Cyclops comes
+bundled with Cyphon. Cyclops is also configured with the ``conf.py`` file
+in the Django settings::
+
+    CYCLOPS = {
+        'MAPBOX_ACCESS_TOKEN': '',
+        'JS_FILENAME': 'cyclops.js',
+        'CSS_FILENAME': 'cyclops.css',
+        'DEVELOPMENT_STATIC_PATH': 'cyclops_dev',
+        'DEVELOPMENT_ASSETS': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+        'DEVELOPMENT_ASSETS_ENABLED': False,
+    }
+
+The only thing to change in these settings is ``MAPBOX_ACCESS_TOKEN``.
+This is required to show maps with locations and to get geolocation data.
+You can signup for an access token
+`here <https://www.mapbox.com/studio/signup/>`_.
+
+The next optional step would be to setup push notifications for Cyclops,
+which is explained in :ref:`push-notifications`.
 
 .. _nginx-config:
 
