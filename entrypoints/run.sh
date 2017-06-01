@@ -22,10 +22,10 @@ sleep 10
 cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
 # collect static files
-su -m cyphon -c "python manage.py collectstatic --noinput --verbosity 0"
+su-exec cyphon python manage.py collectstatic --noinput --verbosity 0
 
 # create superuser
 if [ "$CYPHON_SUPERUSER" = 'YES' ]; then
@@ -39,7 +39,7 @@ fi
 # load example fixtures
 if [ "$LOAD_EXAMPLE_FIXTURES" = 'YES' ]; then
     echo "Loading example fixtures..."
-    su -m cyphon -c "python manage.py loaddata fixtures/starter-fixtures.json"
+    su-exec cyphon python manage.py loaddata fixtures/starter-fixtures.json
 fi
 
 if [ "$CYPHON_ENV" = 'PROD' ]; then

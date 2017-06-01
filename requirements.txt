@@ -19,6 +19,7 @@ djangorestframework-jwt==1.10.0
 docutils==0.13.1
 drfdocs==0.0.11
 elasticsearch==5.4.0
+GDAL==2.2.0
 geoip2==2.5.0
 geopy==1.11.0
 gunicorn==19.7.1
