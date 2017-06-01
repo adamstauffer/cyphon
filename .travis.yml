@@ -39,7 +39,6 @@ install:
   - pip install codecov
   - pip install coveralls
   - pip install codacy-coverage
-  - python setup.py install
 
 before_script:
   - psql -U postgres -c "create extension postgis"
@@ -54,6 +53,7 @@ script:
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
   - cd cyphon
+  - rm -f __init__.py
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:
