@@ -4,31 +4,50 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
+
 <a name="Unreleased"></a>
 ## [Unreleased]
 
 ### Added
 
+- **cyphon.dashboard:** added cyphon.io RSS feed to dashboard ([910f2fd](https://github.com/dunbarcyber/cyphon/commit/910f2fd))
+
+
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/dunbarcyber/cyphon/compare/1.1.2...1.1.3) (2017-05-27)
+
+### Added
+
 - **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
-- **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9))
+- **docs:** added email tutorial ([d8fd982](https://github.com/dunbarcyber/cyphon/commit/d8fd982))
+- **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9), [1c56516](https://github.com/dunbarcyber/cyphon/commit/1c56516))
+- **docs:** added minimum system requirements ([d00b95](https://github.com/dunbarcyber/cyphon/commit/d00b95))
 
 ### Fixed
+
 - **.gitignore:** fixed directory for Cyphon settings ([e863c4a](https://github.com/dunbarcyber/cyphon/commit/e863c4a))
+- **bottler.bottles:** fixed bug with EmbeddedDocumentFields ([6fd70f5](https://github.com/dunbarcyber/cyphon/commit/6fd70f5))
+- **docs:** updated instructions for Elasticsearch data directory ([03c3446](https://github.com/dunbarcyber/cyphon/commit/03c3446))
+
 
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/dunbarcyber/cyphon/compare/1.1.1...1.1.2) (2017-05-16)
 
 ### Fixed
+
 - **sifter.mungers:** modified `Munger.process()` to avoid errors when processing mail ([84f8871](https://github.com/dunbarcyber/cyphon/commit/84f8871))
+
 
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/dunbarcyber/cyphon/compare/1.1.0...1.1.1) (2017-05-16)
 
 ### Fixed
+
 - **alerts:** modified `Alert.save()` so that `location` and `content_date` are added the Alert to even if the Alert already has `data`, and a `title` with a default value is refreshed ([a37d9eb](https://github.com/dunbarcyber/cyphon/commit/a37d9eb))
 - **alerts:** `Alert.saved_data` is no longer cached ([9fdba5d](https://github.com/dunbarcyber/cyphon/commit/9fdba5d))
 - **engines.elasticsearch.engine:** Elasticsearch indexes are refreshed prior to searching by id ([65d72e2](https://github.com/dunbarcyber/cyphon/commit/65d72e2))
 - **watchdogs:** Watchdogs pass data directly to Muzzles instead of fetching saved data, avoiding race condition in Logstash ([7c5a53d](https://github.com/dunbarcyber/cyphon/commit/7c5a53d))
+
 
 <a name="1.1.0"></a>
 ## [1.1.0](https://github.com/dunbarcyber/cyphon/compare/1.0.3...1.1.0) (2017-05-14)
@@ -42,8 +61,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **target.searchterms:** added `get_by_natural_key()` method for SearchTerms ([813c1ca](https://github.com/dunbarcyber/cyphon/commit/813c1ca))
 
 ### Fixed
+
 - **sifter.condensers:** removed extra inline Fitting form ([10f53ce](https://github.com/dunbarcyber/cyphon/commit/10f53ce))
 - **sifter.logsifter:** fixed "Test this rule" tool on LogRule admin page ([751d55b](https://github.com/dunbarcyber/cyphon/commit/751d55b))
+
 
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/dunbarcyber/cyphon/compare/1.0.2...1.0.3) (2017-05-14)
@@ -105,6 +126,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 - **docs:** deleted obsolete appuser docs ([ea3e5f3](https://github.com/dunbarcyber/cyphon/commit/ea3e5f3))
 - **query.reservoirqueries.reservoirqueries:** fixed bug affecting Followee-based Filters ([b6a8fd9](https://github.com/dunbarcyber/cyphon/commit/b6a8fd9))
+
 
 <a name="1.0.0"></a>
 ## [1.0.0](https://github.com/dunbarcyber/cyphon/releases/tag/1.0.0) (2017-04-04)

@@ -47,6 +47,7 @@ REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
 
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
+LOGIN_REDIRECT_URL = '/app/'
 
 DATABASES = {
     'default': {
@@ -130,6 +131,7 @@ INSTALLED_APPS = (
     'codebooks',
     'companies',
     'contexts',
+    'cyclops',
     'cyphon.settings',
     'distilleries',
     'httmock',

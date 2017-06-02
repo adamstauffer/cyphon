@@ -23,80 +23,38 @@ from tests.pages.element import AutocompleteElement, SelectElement
 from tests.pages.modeladmin import ModelAdminPage
 
 
-class BottleField(SelectElement):
-    locator = 'bottle'
-
-class LabelField(SelectElement):
-    locator = 'label'
-
-class ContainerField(SelectElement):
-    locator = 'container'
-
-class LocationField(AutocompleteElement):
-    locator = 'location'
-
-class ContentField(AutocompleteElement):
-    locator = 'content'
-
-class TitleField(AutocompleteElement):
-    locator = 'title'
-
-class AuthorField(AutocompleteElement):
-    locator = 'author'
-
-class DateField(AutocompleteElement):
-    locator = 'datetime'
-
-
 class TastePage(ModelAdminPage):
     """
     Page class for a Taste admin page.
     """
-    container = ContainerField()
+    container = SelectElement('container')
 
     def __init__(self, *args, **kwargs):
         """
 
         """
         super(TastePage, self).__init__(*args, **kwargs)
-        self.datetime = DateField(self.driver)
-        self.location = LocationField(self.driver)
-        self.content = ContentField(self.driver)
-        self.title = TitleField(self.driver)
-        self.author = AuthorField(self.driver)
-
-
-class InlineLocationField(AutocompleteElement):
-    locator = 'taste-0-location'
-
-class InlineContentField(AutocompleteElement):
-    locator = 'taste-0-content'
-
-class InlineTitleField(AutocompleteElement):
-    locator = 'taste-0-title'
-
-class InlineAuthorField(AutocompleteElement):
-    locator = 'taste-0-author'
-
-class InlineDateField(AutocompleteElement):
-    locator = 'taste-0-datetime'
+        self.datetime = AutocompleteElement(self.driver, 'datetime')
+        self.location = AutocompleteElement(self.driver, 'location')
+        self.content = AutocompleteElement(self.driver, 'content')
+        self.title = AutocompleteElement(self.driver, 'title')
+        self.author = AutocompleteElement(self.driver, 'author')
 
 
 class InlineTastePage(ModelAdminPage):
     """
     Page class for a Fitting admin page.
     """
-    bottle = BottleField()
-    label = LabelField()
+    bottle = SelectElement('bottle')
+    label = SelectElement('label')
 
     def __init__(self, *args, **kwargs):
         """
 
         """
         super(InlineTastePage, self).__init__(*args, **kwargs)
-        self.datetime = InlineDateField(self.driver)
-        self.location = InlineLocationField(self.driver)
-        self.content = InlineContentField(self.driver)
-        self.title = InlineTitleField(self.driver)
-        self.author = InlineAuthorField(self.driver)
-
+        self.datetime = AutocompleteElement(self.driver, 'taste-0-datetime')
+        self.location = AutocompleteElement(self.driver, 'taste-0-location')
+        self.content = AutocompleteElement(self.driver, 'taste-0-content')
+        self.title = AutocompleteElement(self.driver, 'taste-0-title')
+        self.author = AutocompleteElement(self.driver, 'taste-0-author')

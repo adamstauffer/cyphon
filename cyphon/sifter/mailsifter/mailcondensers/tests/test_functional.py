@@ -197,11 +197,11 @@ class AddMailCondenserFunctionalTest(CondenserFunctionalTest):
         self.assertEqual(actual, expected)
 
         self.page.scroll_to_bottom()
-        field = BottleField.objects.get_by_natural_key('subject')
+        field = BottleField.objects.get_by_natural_key('body')
         self.page.target_field_0.select(field.pk)
-        self.page.object_id_0 = '3'
+        self.page.object_id_0 = '4'
         actual = self.page.run_test()
-        expected = '{\n    "subject": "the meaning of life"\n}'
+        expected = '{\n    "body": "   The answer is 42."\n}'
         self.assertEqual(actual, expected)
 
 
