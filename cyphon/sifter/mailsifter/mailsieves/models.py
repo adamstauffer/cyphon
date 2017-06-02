@@ -77,4 +77,3 @@ class MailSieveNode(SieveNode):
     content_type = models.ForeignKey(ContentType,
                                      limit_choices_to=_CONTENT_TYPES,
                                      verbose_name=_('node type'))
-
