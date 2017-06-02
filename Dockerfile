@@ -56,6 +56,7 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
     ./configure --prefix=/usr && \
     make && \
     make install && \
+    pip install GDAL==2.2.0 && \
     pip install -r $CYPHON_HOME/requirements.txt && \
     apk del build-deps
 
