@@ -287,8 +287,10 @@ class Trigger(models.Model):
 
     objects = TriggerManager()
 
-    class Meta:
-        ordering = ['rank']
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['watchdog', 'rank']
         unique_together = [('watchdog', 'sieve'), ('watchdog', 'rank')]
 
     def __str__(self):
@@ -351,6 +353,11 @@ class Muzzle(models.Model):
         help_text=_('The units of the time interval.')
     )
     enabled = models.BooleanField(default=True)
+
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['watchdog']
 
     def __str__(self):
         return str(self.watchdog)

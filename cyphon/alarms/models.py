@@ -105,8 +105,11 @@ class Alarm(models.Model, BaseClass):
         related_query_name='%(class)s'
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def process(self, doc_obj):
         """Inspect a document and generate an Alert if appropriate.
