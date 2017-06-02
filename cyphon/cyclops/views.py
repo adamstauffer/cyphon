@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 
 # third party
 from django.conf import settings
@@ -21,48 +24,69 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
+_CYCLOPS_SETTINGS = settings.CYCLOPS
+_NOTIFICATIONS_SETTINGS = settings.NOTIFICATIONS
 
 
 @login_required(login_url='/login/')
 def application(request):
-    """
-    Returns an html template for Cyphon with the necessary variables and
+    """Return an HTML template for Cyclops.
+
+    Returns an HTML template for Cyclops with the necessary variables and
     resources to make it run.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.HttpResponse`
+
     """
-    css_url = settings.CYCLOPS['CDN_FORMAT'].format(
-        settings.CYCLOPS['VERSION'],
+    css_url = _CYCLOPS_SETTINGS['CDN_FORMAT'].format(
+        _CYCLOPS_SETTINGS['VERSION'],
         'css',
     )
-    js_url = settings.CYCLOPS['CDN_FORMAT'].format(
-        settings.CYCLOPS['VERSION'],
+    js_url = _CYCLOPS_SETTINGS['CDN_FORMAT'].format(
+        _CYCLOPS_SETTINGS['VERSION'],
         'js',
     )
     css_file = '{0}/{1}'.format(
-        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
-        settings.CYCLOPS['LOCAL_CSS_FILENAME'],
+        _CYCLOPS_SETTINGS['LOCAL_FOLDER_NAME'],
+        _CYCLOPS_SETTINGS['LOCAL_CSS_FILENAME'],
     )
     js_file = '{0}/{1}'.format(
-        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
-        settings.CYCLOPS['LOCAL_JS_FILENAME'],
+        _CYCLOPS_SETTINGS['LOCAL_FOLDER_NAME'],
+        _CYCLOPS_SETTINGS['LOCAL_JS_FILENAME'],
     )
 
     return render(request, 'cyclops/app.html', {
-        'notifications_enabled': settings.NOTIFICATIONS['ENABLED'],
-        'mapbox_access_token': settings.CYCLOPS['MAPBOX_ACCESS_TOKEN'],
-        'local_assets_enabled': settings.CYCLOPS['LOCAL_ASSETS_ENABLED'],
-        'cyclops_version': settings.CYCLOPS['VERSION'],
+        'notifications_enabled': _NOTIFICATIONS_SETTINGS['ENABLED'],
+        'mapbox_access_token': _CYCLOPS_SETTINGS['MAPBOX_ACCESS_TOKEN'],
+        'local_assets_enabled': _CYCLOPS_SETTINGS['LOCAL_ASSETS_ENABLED'],
+        'cyclops_version': _CYCLOPS_SETTINGS['VERSION'],
         'css_file': css_file,
         'js_file': js_file,
         'css_url': css_url,
         'js_url': js_url,
     })
 
+
 def manifest(request):
-    """
-    Returns the manifest.json necessary for push notifications.
+    """Return the manifest.json necessary for push notifications.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.JsonResponse`
+
     """
     return JsonResponse({
-        'gcm_sender_id': settings.NOTIFICATIONS['GCM_SENDER_ID'],
+        'gcm_sender_id': _NOTIFICATIONS_SETTINGS['GCM_SENDER_ID'],
         'manifest_version': 2,
         'name': 'Cyphon Push Notifications',
         'version': '0.2',
