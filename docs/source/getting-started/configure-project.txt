@@ -39,7 +39,7 @@ You can read more about environment variables in `Docker's documentation <https:
 Django
 ******
 
-Cyphon's backend is based on the Django_ web framework. Settings for the 
+Cyphon's backend is based on the `Django`_ web framework. Settings for the 
 Cyphon Django project are found in the ``./config/cyphon/settings`` 
 directory.
 
@@ -53,13 +53,13 @@ address and/or domain name for your host machine::
     }
 
 You should also change the Django ``SECRET_KEY`` to something unique. 
-You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`_.
+You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
 
 The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general 
 settings for Django and other third party apps used by Cyphon. At a 
 minimum, you should configure the `BASE_URL` setting in the ``dev.py`` 
 and ``prod.py`` files. You can read more about Django's settings in  
-`Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`_.
+`Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
 
 .. _cyclops-config:
 
@@ -69,7 +69,7 @@ Cyclops
 
 Cyclops is an optional frontend that helps to mange alerts and data from
 Cyphon in real time. This product is under a different license than Cyphon
-outline `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`_.
+outline `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`__.
 Make sure to take a quick look over it before using Cyclops in your use case.
 
 Cyclops is configured with the ``conf.py`` file in the Django settings::
@@ -89,7 +89,7 @@ Cyclops is configured with the ``conf.py`` file in the Django settings::
 The only thing to change in these settings is ``MAPBOX_ACCESS_TOKEN``.
 This is required to show maps with locations and to get geolocation data.
 You can signup for an access token
-`here <https://www.mapbox.com/studio/signup/>`_.
+`here <https://www.mapbox.com/studio/signup/>`__.
 
 The next optional step would be to setup push notifications for Cyclops,
 which is explained in :ref:`push-notifications`.
@@ -126,4 +126,4 @@ To configure Logstash, you can use the example configuration files in ``./config
 Elasticsearch
 *************
 
-Settings for the Elasticsearch_ search engine are in the ``./config/elasticsearch/`` folder. You can use the default settings if you like.
+Settings for the `Elasticsearch`_ search engine are in the ``./config/elasticsearch/`` folder. You can use the default settings if you like.
