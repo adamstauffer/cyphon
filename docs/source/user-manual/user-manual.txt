@@ -18,3 +18,4 @@ User Manual
    jira-example
    twitter-setup
    mail-handler
+   push-notifications

@@ -22,28 +22,39 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 
+
 @login_required(login_url='/login/')
 def application(request):
     """
-    Renders the cyclops template view.
+    Returns an html template for Cyphon with the necessary variables and
+    resources to make it run.
     """
-    static_resources = (
-        settings.CYCLOPS['DEVELOPMENT_STATIC_PATH']
-        if settings.CYCLOPS['DEVELOPMENT_ASSETS_ENABLED']
-        else 'cyclops'
+    css_url = settings.CYCLOPS['CDN_FORMAT'].format(
+        settings.CYCLOPS['VERSION'],
+        'css',
+    )
+    js_url = settings.CYCLOPS['CDN_FORMAT'].format(
+        settings.CYCLOPS['VERSION'],
+        'js',
+    )
+    css_file = '{0}/{1}'.format(
+        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
+        settings.CYCLOPS['LOCAL_CSS_FILENAME'],
+    )
+    js_file = '{0}/{1}'.format(
+        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
+        settings.CYCLOPS['LOCAL_JS_FILENAME'],
     )
 
     return render(request, 'cyclops/app.html', {
         'notifications_enabled': settings.NOTIFICATIONS['ENABLED'],
         'mapbox_access_token': settings.CYCLOPS['MAPBOX_ACCESS_TOKEN'],
-        'css_url': '{0}/{1}'.format(
-            static_resources,
-            settings.CYCLOPS['CSS_FILENAME'],
-        ),
-        'js_url': '{0}/{1}'.format(
-            static_resources,
-            settings.CYCLOPS['JS_FILENAME'],
-        ),
+        'local_assets_enabled': settings.CYCLOPS['LOCAL_ASSETS_ENABLED'],
+        'cyclops_version': settings.CYCLOPS['VERSION'],
+        'css_file': css_file,
+        'js_file': js_file,
+        'css_url': css_url,
+        'js_url': js_url,
     })
 
 def manifest(request):

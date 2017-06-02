@@ -115,27 +115,6 @@ class ApplicationTest(CyclopsViewsTestCase):
 
             self.assertEqual(response.context['mapbox_access_token'], 'blah')
 
-    def test_resource_urls(self):
-        """
-        Tests that the resource urls are changed if the
-        DEVELOPMENT_ASSETS_ENABLED flag is set to true.
-        """
-        self.authenticate()
-
-        response = self.get_application()
-
-        self.assertEqual(response.context['js_url'], 'cyclops/cyclops.js')
-        self.assertEqual(response.context['css_url'], 'cyclops/cyclops.css')
-
-        cyclops_settings = deepcopy(settings.CYCLOPS)
-        cyclops_settings['DEVELOPMENT_ASSETS_ENABLED'] = True
-
-        with self.settings(CYCLOPS=cyclops_settings):
-            response = self.get_application()
-
-            self.assertEqual(response.context['js_url'], 'cyclops_dev/cyclops.js')
-            self.assertEqual(response.context['css_url'], 'cyclops_dev/cyclops.css')
-
 
 class ManifestTest(CyclopsViewsTestCase):
     """
