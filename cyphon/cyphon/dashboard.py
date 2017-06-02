@@ -312,7 +312,7 @@ class CyphonIndexDashboard(Dashboard):
 
         self.children.append(modules.Feed(
             _('Latest Cyphon News'),
-            feed_url='https://www.cyphon.io/blog?format=rss&utm_campaign=admin',
+            feed_url='https://www.cyphon.io/blog?format=rss&utm_source=admin',
             column=3,
             limit=3,
         ))
