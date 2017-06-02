@@ -24,6 +24,9 @@ FROM python:3.6
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
+ARG UID=1000
+ARG GID=1000
+
 ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
@@ -38,7 +41,7 @@ RUN apt-get update && apt-get install -y \
       sendmail
 
 # create unprivileged user
-RUN groupadd -r cyphon && useradd -r -g cyphon cyphon
+RUN groupadd -r -g $GID cyphon && useradd -r -g cyphon -u $UID cyphon
 
 # create application subdirectories
 RUN mkdir -p $CYPHON_HOME \
