@@ -1,3 +1,6 @@
+.tox/
+.python-version
+coverage.*.xml
 *.egg-info
 build/
 dist/

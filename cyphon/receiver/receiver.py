@@ -44,6 +44,7 @@ django.setup()
 
 # third party
 import pika
+import six
 
 # local
 from cyphon.documents import DocumentObj
@@ -73,6 +74,8 @@ def create_doc_obj(body):
     |DocumentObj|
 
     """
+    if isinstance(body, six.binary_type):
+        body = body.decode('utf-8')
     data = json.loads(body)
     doc_id = data.get('@uuid')
     data['_id'] = doc_id
