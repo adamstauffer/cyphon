@@ -42,7 +42,7 @@ install:
 
 before_script:
   - psql -U postgres -c "create extension postgis"
-  - docker-compose -f docker-compose.travis.yml up --build -d 
+  - docker-compose -f docker-compose.travis.yml up --build -d
   - sleep 15  # wait for PostgreSQl and Elasticsearch to start
 
 script:
@@ -53,6 +53,7 @@ script:
   # use --keepdb to avoid OperationalError during teardown in case any
   # db connections are still open from threads in TransactionTestCases
   - cd cyphon
+  - rm -f __init__.py
   - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
 
 after_success:
