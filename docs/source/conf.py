@@ -341,7 +341,6 @@ rst_epilog = """
 .. _Auth: https://docs.djangoproject.com/en/1.10/topics/auth/
 .. _cleaning and validating: https://docs.djangoproject.com/en/1.10/ref/forms/validation/#cleaning-and-validating-fields-that-depend-on-each-other
 .. _custom filtering: http://www.django-rest-framework.org/api-guide/filtering/#custom-generic-filtering
-.. _Cyclops: https://github.com/dunbarcyber/cyclops
 .. _Cyphondock: https://github.com/dunbarcyber/cyphondock
 .. _Elasticsearch: https://www.elastic.co/products/elasticsearch/
 .. _Django: https://www.djangoproject.com/
