@@ -50,22 +50,14 @@ before_script:
   - sleep 15  # wait for PostgreSQl and Elasticsearch to start
 
 script:
-
   # copy GeoLite database to shared volume
-  - docker exec cyphon_geoip_1 cp /usr/share/GeoIP/GeoLite2-City.mmdb /usr/share/cyphondock
-
-  # use --keepdb to avoid OperationalError during teardown in case any
-  # db connections are still open from threads in TransactionTestCases
-  - cd cyphon
-  - rm -f __init__.py
-  - coverage run --source='.' --omit=*migrations*,*test* manage.py test --noinput --keepdb
+  - docker exec cyphon_geoip_1 cp /usr/share/GeoIP/GeoLite2-City.mmdb /usr/share/cyphon
+  - tox
 
 after_success:
-  - coverage
   - coveralls
-  - codecov
-  - coverage xml
-  - python-codacy-coverage -r coverage.xml
+  - codecov -f .coverage
+  - python-codacy-coverage -r .coverage
 
 after_script:
   - cd ../
