@@ -366,13 +366,6 @@ class ElasticsearchEngine(Engine):
 
         return ELASTICSEARCH.search(**params)
 
-    def _refresh(self):
-        """Refresh the search index."""
-        try:
-            ELASTICSEARCH.indices.refresh(index=self._index_for_search)
-        except elasticsearch.exceptions.NotFoundError:
-            pass
-
     @catch_connection_error
     @wait_for_status('yellow')
     def find_by_id(self, doc_ids):
@@ -391,7 +384,6 @@ class ElasticsearchEngine(Engine):
             single document. If no matches are found, returns `None`.
 
         """
-        self._refresh()
         if self._in_time_series:
             return self._filter_by_id(doc_ids)
         elif isinstance(doc_ids, list):

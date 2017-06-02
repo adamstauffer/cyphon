@@ -4,6 +4,10 @@
 Generating Alerts from Logstash Output
 ######################################
 
+.. note::
+
+    If you'd like to run through this tutorial more quickly, be sure you've loaded Cyohon's :ref:`starter settings <load-settings>` before you begin. These settings provide many of the configurations used in this tutorial.
+
 ************
 Introduction
 ************
@@ -32,6 +36,7 @@ We want the parsed message to look like this::
     }
 
 We could either use Cyphon to parse and save the message through a LogChute, or we could use Logstash to parse the message and send it directly to Cyphon's Watchdogs. In this tutorial, we'll use the Logstash shortcut. Although we'll only cover the main aspects of the Logstash configuration here, you can see a full example on `Cyphondock <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/>`__.
+
 
 ****************
 Step 1: Filebeat
@@ -62,10 +67,11 @@ Next, specify an output to send the logs to Logstash, for example::
     output.logstash:
       hosts: ["localhost:5044"]
 
+If Filebeat and Logstash are on different machines, be sure to change the ``hosts`` setting to reflect the address of your Logstash server.
 
 .. note::
 
-    If you're using a Logstash Docker container, the ``hosts`` might instead be ``["logstash:5044"]``.
+    If you're using a Logstash Docker container for local testing of your Filebeat configuration, the ``hosts`` might instead be ``["logstash:5044"]``.
 
 
 ****************
@@ -204,6 +210,10 @@ Although we're using Logstash to parse and store our logs, we need to let Cyphon
 Container
 =========
 
+.. image:: ../_static/images/icons/container.png
+    :width: 60px
+    :align: left
+
 We can tell Cyphon what fields of the document are important to us by creating a Container for those fields. We're not performing any extra analyses on the document, so we don't need a Label for the Container, just a Bottle.
 
 Let's revisit our parsed document::
@@ -223,7 +233,7 @@ Let's revisit our parsed document::
         "destination_port": "0"
     }
 
-To make a Container for this document, open the "Shaping Data" panel on Cyphon's main admin page. Create a Bottle called "snort" with the following BottleFields:
+To make a Container for this document, open the "Shaping Data" panel on Cyphon's main admin page. Create the following BottleFields:
 
     ================  =====================  ===========
     Field Name        Field Type             Target Type
@@ -246,7 +256,9 @@ To make a Container for this document, open the "Shaping Data" panel on Cyphon's
 
     If you're wondering why we're storing ports and other numbers as CharFields instead of IntegerFields, it's because numeric fields are usually reserved for values which have mathematical meaning (can be added, multiplied, etc.).
 
-Then, create a Container using the "snort" Bottle. Define a Taste for the Container with the following properties:
+Add these BottleFields to a Bottle called "snort".
+
+Next, create a Container using the "snort" Bottle. Define a Taste for the Container with the following properties:
 
     ==============  ==============
     Taste.author    host
@@ -261,6 +273,10 @@ Then, create a Container using the "snort" Bottle. Define a Taste for the Contai
 
 Distillery
 ==========
+
+.. image:: ../_static/images/icons/distillery.png
+    :width: 100px
+    :align: left
 
 Next, we need to specify where the data is located. To do this, we'll create a Distillery, which defines the data store and the data schema for our document. The data schema is represented by the Distillery's Container (which we just created). The data store is represented by the Distillery's Collection.
 
@@ -298,7 +314,13 @@ Under the "Distilling Data" panel on the main admin page, create a Distillery th
 Watchdog
 ========
 
-Now that Cyphon knows where the document is stored and what it looks like, we can create a Watchdog to inspect it. We'll create some simple rulesets that will generate Alerts according to the priority of the Snort alert.
+.. container:: clearfix
+
+   .. image:: ../_static/images/icons/watchdog.png
+      :width: 100px
+      :align: left
+
+   Now that Cyphon knows where the document is stored and what it looks like, we can create a Watchdog to inspect it. We'll create some simple rulesets that will generate Alerts according to the priority of the Snort alert.
 
 .. note::
 
@@ -357,7 +379,7 @@ Step 4: Receiver
 
 Now all we have to do is start some queue consumers for Logstash's RabbitMQ output. If you're using a Docker deployment, you'll create one or more Docker containers for this. See `Cyphondock <https://github.com/dunbarcyber/cyphondock/blob/master/docker-compose.yml>`__ for an example. Otherwise, from the project directory, you can enter this command::
 
-    receiver/receiver.py watchdogs 4
+    python receiver/receiver.py watchdogs 4
 
 This will create four queue consumers for a RabbitMQ queue called "watchdogs" that's associated with the "watchdogs" routing key. This is the same routing key we specified in our Logstash output configuration for RabbitMQ.
 

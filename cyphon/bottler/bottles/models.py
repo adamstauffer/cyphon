@@ -54,6 +54,13 @@ class BottleField(DataField):
             raise ValidationError(_('If an embedded doc is defined, ' \
                                   + 'the field type must be EmbeddedDocument.'))
 
+    @property
+    def embedded_doc_name(self):
+        """
+        Returns the name of the Bottle for an embedded document.
+        """
+        return self.embedded_doc.name
+
 
 class BottleManager(SelectRelatedManager, GetByNameMixin):
     """
@@ -139,7 +146,7 @@ class Bottle(models.Model):
                 field_label = self._create_key(bottlefield.field_name,
                                                parent_name)
                 nested_fields = self.get_fields(
-                    bottle_name=bottlefield.field_name,
+                    bottle_name=bottlefield.embedded_doc_name,
                     parent_name=field_label,
                 )
                 fields.extend(nested_fields)
@@ -179,7 +186,7 @@ class Bottle(models.Model):
             # recursive case: DataField refers to a Bottle
             else:
                 nested_fields = self.get_field_choices(
-                    bottle_name=bottlefield.field_name,
+                    bottle_name=bottlefield.embedded_doc_name,
                     parent_name=field_label,
                 )
                 fields.extend(nested_fields)
@@ -188,7 +195,7 @@ class Bottle(models.Model):
 
     def get_structure(self, bottle_name=None):
         """
-        Takes a Bottle primary key and returns an OrderedDict representing
+        Takes a Bottle natural key and returns an OrderedDict representing
         the data model defined by the Bottle.
         """
         fields = {}
@@ -202,7 +209,7 @@ class Bottle(models.Model):
 
             # recursive case: DataField refers to a Bottle
             else:
-                nested_fields = self.get_structure(bottlefield.field_name)
+                nested_fields = self.get_structure(bottlefield.embedded_doc_name)
                 fields[bottlefield.field_name] = nested_fields
 
         return OrderedDict(sorted(fields.items()))
@@ -216,4 +223,3 @@ class Bottle(models.Model):
         return json.dumps(structure, indent=4)
 
     preview.short_description = _('Bottle preview')
-

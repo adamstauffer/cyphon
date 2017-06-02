@@ -55,4 +55,3 @@ class MailSieveAdmin(SieveAdmin):
 admin.site.register(models.MailRule, MailRuleAdmin)
 admin.site.register(models.MailSieve, MailSieveAdmin)
 admin.site.register(models.MailSieveNode, SieveNodeAdmin)
-

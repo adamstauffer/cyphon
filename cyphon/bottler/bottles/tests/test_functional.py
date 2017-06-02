@@ -78,4 +78,3 @@ class BottleFunctionalTest(ModelPreviewFunctionalTest):
             '}'
         )
         self.assertEqual(actual, expected)
-

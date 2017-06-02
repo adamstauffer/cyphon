@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=40, unique=True)),
                 ('key', models.CharField(blank=True, max_length=255, null=True)),
-                ('file', models.FileField(blank=True, null=True, storage=django.core.files.storage.FileSystemStorage(location='/Users/lhadjchikh/Documents/socialops/cyphon/keys'), upload_to='', validators=[utils.validators.validators.key_file_validator])),
+                ('file', models.FileField(blank=True, null=True, storage=django.core.files.storage.FileSystemStorage(location='/usr/src/app/keys'), upload_to='', validators=[utils.validators.validators.key_file_validator])),
                 ('secret', models.CharField(blank=True, max_length=255, null=True)),
                 ('access_token', models.CharField(blank=True, max_length=255)),
                 ('access_token_secret', models.CharField(blank=True, max_length=255)),

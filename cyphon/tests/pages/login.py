@@ -23,26 +23,12 @@ from .element import TextInputElement
 from .page import Page
 
 
-class UserNameField(TextInputElement):
-    """
-    A username input field.
-    """
-    locator = 'username'
-
-
-class PasswordField(TextInputElement):
-    """
-    A password input field.
-    """
-    locator = 'password'
-
-
 class LoginPage(Page):
     """
     Page class for a login page.
     """
-    username = UserNameField()
-    password = PasswordField()
+    username = TextInputElement('username')
+    password = TextInputElement('password')
 
     def login(self, username, password):
         """
@@ -51,4 +37,3 @@ class LoginPage(Page):
         self.username = username
         self.password = password
         self.submit()
-
