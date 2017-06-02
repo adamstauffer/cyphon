@@ -16,6 +16,7 @@ Packages
    codebooks
    companies
    contexts
+   cyclops
    cyphon
    distilleries
    engines
