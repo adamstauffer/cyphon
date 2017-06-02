@@ -164,6 +164,7 @@ class CyphonIndexDashboard(Dashboard):
             column=1,
             css_classes=('grp-collapse grp-closed',),
             models=(
+                'categories.models.Category',
                 'distilleries.models.Distillery',
             ),
         ))
@@ -312,7 +313,7 @@ class CyphonIndexDashboard(Dashboard):
 
         self.children.append(modules.Feed(
             _('Latest Cyphon News'),
-            feed_url='https://www.cyphon.io/blog?format=rss&utm_campaign=admin',
+            feed_url='https://www.cyphon.io/blog?format=rss&utm_source=admin',
             column=3,
             limit=3,
         ))

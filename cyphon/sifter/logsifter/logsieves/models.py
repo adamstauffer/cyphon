@@ -59,4 +59,3 @@ class LogSieveNode(SieveNode):
     content_type = models.ForeignKey(ContentType,
                                      limit_choices_to=CONTENT_TYPES,
                                      verbose_name=_('node type'))
-
