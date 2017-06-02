@@ -33,13 +33,13 @@ COPY requirements.txt $CYPHON_HOME/requirements.txt
 
 # install Alpine and Python dependencies
 RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
+      binutils \
       gdal \
       postgis \
       su-exec && \
     apk add -U \
       --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       -t build-deps \
-      binutils \
       build-base \
       libffi-dev \
       linux-headers \
@@ -75,10 +75,10 @@ COPY cyphon $CYPHON_HOME/cyphon
 # copy entrypoint scripts to the image
 COPY entrypoints $CYPHON_HOME/entrypoints
 
-COPY cyphon/cyphon/settings/base.example.py cyphon/cyphon/settings/base.py
-COPY cyphon/cyphon/settings/conf.example.py cyphon/cyphon/settings/conf.py
-COPY cyphon/cyphon/settings/dev.example.py cyphon/cyphon/settings/dev.py
-COPY cyphon/cyphon/settings/prod.example.py cyphon/cyphon/settings/prod.py
+COPY cyphon/cyphon/settings/base.example.py $CYPHON_HOME/cyphon/settings/base.py
+COPY cyphon/cyphon/settings/conf.example.py $CYPHON_HOME/cyphon/settings/conf.py
+COPY cyphon/cyphon/settings/dev.example.py $CYPHON_HOME/cyphon/settings/dev.py
+COPY cyphon/cyphon/settings/prod.example.py $CYPHON_HOME/cyphon/settings/prod.py
 
 # set owner:group and permissions
 RUN chown -R cyphon:cyphon $CYPHON_HOME \
