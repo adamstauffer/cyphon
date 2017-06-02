@@ -1,4 +1,6 @@
-{% load static %}
+{% if local_assets_enabled %}
+  {% load static %}
+{% endif %}
 
 <!DOCTYPE html>
 <html>
@@ -13,7 +15,11 @@
       href='https://api.mapbox.com/mapbox-gl-js/v0.36.0/mapbox-gl.css'
       rel='stylesheet'
     />
-    <link rel="stylesheet" href="{% static css_url %}">
+    {% if local_assets_enabled %}
+      <link rel="stylesheet" href="{% static css_file %}">
+    {% else %}
+      <link rel="stylesheet" href="{{ css_url }}">
+    {% endif %}
 
     {% if notifications_enabled %}
       <link rel="manifest" href="/manifest.json">
@@ -42,6 +48,11 @@
         MAPBOX_ACCESS_TOKEN: '{{ mapbox_access_token }}'
       };
     </script>
-    <script src="{% static js_url %}"></script>
+    {% if local_assets_enabled %}
+      <script src="{% static js_file %}"></script>
+    {% else %}
+      <script src="{{ js_url }}"></script>
+    {% endif %}
+
   </body>
 </html>

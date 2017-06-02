@@ -67,17 +67,23 @@ and ``prod.py`` files. You can read more about Django's settings in
 Cyclops
 =======
 
-Since Cyphon version 1.2, a copy of the most recent version of Cyclops comes
-bundled with Cyphon. Cyclops is also configured with the ``conf.py`` file
-in the Django settings::
+Cyclops is an optional frontend that helps to mange alerts and data from
+Cyphon in real time. This product is under a different license than Cyphon
+outline `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`_.
+Make sure to take a quick look over it before using Cyclops in your use case.
+
+Cyclops is configured with the ``conf.py`` file in the Django settings::
 
     CYCLOPS = {
+        'ENABLED': True,
+        'VERSION': '0.4.0',
+        'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
         'MAPBOX_ACCESS_TOKEN': '',
-        'JS_FILENAME': 'cyclops.js',
-        'CSS_FILENAME': 'cyclops.css',
-        'DEVELOPMENT_STATIC_PATH': 'cyclops_dev',
-        'DEVELOPMENT_ASSETS': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
-        'DEVELOPMENT_ASSETS_ENABLED': False,
+        'LOCAL_ASSETS_ENABLED': False,
+        'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/build')),
+        'LOCAL_FOLDER_NAME': 'cyclops',
+        'LOCAL_CSS_FILENAME': 'cyclops.css',
+        'LOCAL_JS_FILENAME': 'cyclops.js',
     }
 
 The only thing to change in these settings is ``MAPBOX_ACCESS_TOKEN``.
