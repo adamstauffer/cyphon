@@ -164,6 +164,7 @@ class CyphonIndexDashboard(Dashboard):
             column=1,
             css_classes=('grp-collapse grp-closed',),
             models=(
+                'categories.models.Category',
                 'distilleries.models.Distillery',
             ),
         ))
