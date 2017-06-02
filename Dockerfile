@@ -35,30 +35,23 @@ COPY requirements.txt $CYPHON_HOME/requirements.txt
 RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       binutils \
       gdal \
+      py-gdal \
       postgis \
-      su-exec && \
-    apk add -U \
+      su-exec \
+    && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
+    && apk add -U \
       --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       -t build-deps \
       build-base \
       libffi-dev \
       linux-headers \
-      gdal \
       musl-dev \
       postgis \
       postgresql-dev \
       python3-dev \
-      proj4-dev && \
-    cd /tmp && \
-    wget http://download.osgeo.org/gdal/2.2.0/gdal220.zip && \
-    unzip gdal220.zip && \
-    cd gdal-2.2.0 && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
-    pip install GDAL==2.2.0 && \
-    pip install -r $CYPHON_HOME/requirements.txt && \
-    apk del build-deps
+      proj4-dev \
+    && pip install -r $CYPHON_HOME/requirements.txt \
+    && apk del build-deps
 
 # create unprivileged user
 RUN addgroup -S cyphon && adduser -S -G cyphon cyphon
@@ -75,10 +68,10 @@ COPY cyphon $CYPHON_HOME/cyphon
 # copy entrypoint scripts to the image
 COPY entrypoints $CYPHON_HOME/entrypoints
 
-COPY cyphon/cyphon/settings/base.example.py $CYPHON_HOME/cyphon/settings/base.py
-COPY cyphon/cyphon/settings/conf.example.py $CYPHON_HOME/cyphon/settings/conf.py
-COPY cyphon/cyphon/settings/dev.example.py $CYPHON_HOME/cyphon/settings/dev.py
-COPY cyphon/cyphon/settings/prod.example.py $CYPHON_HOME/cyphon/settings/prod.py
+COPY cyphon/cyphon/settings/base.example.py $CYPHON_HOME/cyphon/cyphon/settings/base.py
+COPY cyphon/cyphon/settings/conf.example.py $CYPHON_HOME/cyphon/cyphon/settings/conf.py
+COPY cyphon/cyphon/settings/dev.example.py $CYPHON_HOME/cyphon/cyphon/settings/dev.py
+COPY cyphon/cyphon/settings/prod.example.py $CYPHON_HOME/cyphon/cyphon/settings/prod.py
 
 # set owner:group and permissions
 RUN chown -R cyphon:cyphon $CYPHON_HOME \
