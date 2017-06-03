@@ -72,12 +72,11 @@ Ports
 ========  =================================
 Port      Service
 ========  =================================
-80        Cyclops - Nginx proxy
-443       Cyclops - Nginx proxy
+80        Cyphon - Nginx proxy
+443       Cyphon - Nginx proxy
 5000      Logstash
 5044      Logstash
 5601      Kibana - Nginx proxy
-8000      Cyphon - Nginx proxy
 15672     RabbitMQ management - Nginx proxy
 ========  =================================
 
