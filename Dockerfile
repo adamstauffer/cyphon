@@ -41,8 +41,9 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       py-gdal \
       postgis \
       su-exec \
-    && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
-    && apk add -U \
+ && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
+ && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so \
+ && apk add -U \
       --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       -t build-deps \
       build-base \
@@ -53,8 +54,8 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       postgresql-dev \
       python3-dev \
       proj4-dev \
-    && pip install -r $CYPHON_HOME/requirements.txt \
-    && apk del build-deps
+ && pip install -r $CYPHON_HOME/requirements.txt \
+ && apk del build-deps
 
 # create unprivileged user
 RUN addgroup -S -g $GID cyphon && adduser -S -G cyphon -u $UID cyphon
