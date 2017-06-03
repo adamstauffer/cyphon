@@ -77,11 +77,6 @@ CYCLOPS = {
     'LOCAL_JS_FILENAME': 'cyclops.js',
 }
 
-if CYCLOPS['LOCAL_ASSETS_ENABLED']:
-    STATICFILES_DIRS += [
-        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
-    ]
-
 DATASIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,
@@ -184,8 +179,6 @@ MAILSIFTER = {
     'ALLOWED_FILE_EXTENSIONS': ('.txt', '.pdf', '.jpeg', '.jpg', '.png'),
     'ATTACHMENTS_FOLDER': 'attachments/%Y/%m/%d/',
 }
-
-MAPBOX_ACCESS_TOKEN = ''
 
 MONGODB = {
     'HOST': '{0}:{1}'.format(os.getenv('MONGODB_HOST', 'mongo'),  # e.g., 'localhost'
