@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 
 # third party
 from django.conf import settings
@@ -22,12 +25,21 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 
-
 @login_required(login_url='/login/')
 def application(request):
-    """
-    Returns an html template for Cyphon with the necessary variables and
+    """Return an HTML template for Cyclops.
+
+    Returns an HTML template for Cyclops with the necessary variables and
     resources to make it run.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.HttpResponse`
+
     """
     css_url = settings.CYCLOPS['CDN_FORMAT'].format(
         settings.CYCLOPS['VERSION'],
@@ -57,9 +69,18 @@ def application(request):
         'js_url': js_url,
     })
 
+
 def manifest(request):
-    """
-    Returns the manifest.json necessary for push notifications.
+    """Return the manifest.json necessary for push notifications.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.JsonResponse`
+
     """
     return JsonResponse({
         'gcm_sender_id': settings.NOTIFICATIONS['GCM_SENDER_ID'],

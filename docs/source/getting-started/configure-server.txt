@@ -85,7 +85,7 @@ Then install Docker Compose::
 
     $ sudo pip install docker-compose
 
-To install Docker Compose on other operating systems, see `Docker's documentation <https://docs.docker.com/compose/install/>`_.
+To install Docker Compose on other operating systems, see `Docker's documentation <https://docs.docker.com/compose/install/>`__.
 
 
 .. _configure-virtual-memory:
@@ -94,8 +94,8 @@ To install Docker Compose on other operating systems, see `Docker's documentatio
 Configure Virtual Memory
 ************************
 
-This project uses the official `Elasticsearch docker repository <https://hub.docker.com/_/elasticsearch/>`_. These images require a Linux host to 
-allow a process to have at least 262,144 memory-mapped areas (see `Elasticsearch's documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/_maximum_map_count_check.html/>`_ for more info). 
+This project uses the official `Elasticsearch docker repository <https://hub.docker.com/_/elasticsearch/>`__. These images require a Linux host to 
+allow a process to have at least 262,144 memory-mapped areas (see `Elasticsearch's documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/_maximum_map_count_check.html/>`__ for more info). 
 
 To increase the memory map count::
 

@@ -87,12 +87,12 @@ class ApplicationTest(CyclopsViewsTestCase):
         """
         self.authenticate()
 
-        with self.settings(NOTIFICATIONS={ 'ENABLED': True }):
+        with self.settings(NOTIFICATIONS={'ENABLED': True}):
             response = self.get_application()
 
             self.assertTrue(response.context['notifications_enabled'])
 
-        with self.settings(NOTIFICATIONS={ 'ENABLED': False }):
+        with self.settings(NOTIFICATIONS={'ENABLED': False}):
             response = self.get_application()
 
             self.assertFalse(response.context['notifications_enabled'])
