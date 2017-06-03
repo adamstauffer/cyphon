@@ -61,6 +61,7 @@ minimum, you should configure the `BASE_URL` setting in the ``dev.py``
 and ``prod.py`` files. You can read more about Django's settings in  
 `Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
 
+
 .. _cyclops-config:
 
 =======
@@ -68,11 +69,11 @@ Cyclops
 =======
 
 Cyclops is an optional frontend that helps to mange alerts and data from
-Cyphon in real time. This product is under a different license than Cyphon
-outline `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`__.
+Cyphon in real time. This product is under a different license than Cyphon,
+found `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`__.
 Make sure to take a quick look over it before using Cyclops in your use case.
 
-Cyclops is configured with the ``conf.py`` file in the Django settings::
+Cyclops is configured with the ``conf.py`` file in the Cyphon settings::
 
     CYCLOPS = {
         'ENABLED': True,
@@ -88,11 +89,12 @@ Cyclops is configured with the ``conf.py`` file in the Django settings::
 
 The only thing to change in these settings is ``MAPBOX_ACCESS_TOKEN``.
 This is required to show maps with locations and to get geolocation data.
-You can signup for an access token
+You can sign up for an access token
 `here <https://www.mapbox.com/studio/signup/>`__.
 
-The next optional step would be to setup push notifications for Cyclops,
+The next optional step would be to set up push notifications for Cyclops,
 which is explained in :ref:`push-notifications`.
+
 
 .. _nginx-config:
 
