@@ -66,17 +66,20 @@ CODEBOOKS = {
 }
 
 CYCLOPS = {
+    'ENABLED': True,
+    'VERSION': '0.4.0',
+    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
     'MAPBOX_ACCESS_TOKEN': '',
-    'JS_FILENAME': 'cyclops.js',
-    'CSS_FILENAME': 'cyclops.css',
-    'DEVELOPMENT_STATIC_PATH': 'cyclops_dev',
-    'DEVELOPMENT_ASSETS': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
-    'DEVELOPMENT_ASSETS_ENABLED': False,
+    'LOCAL_ASSETS_ENABLED': False,
+    'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+    'LOCAL_FOLDER_NAME': 'cyclops',
+    'LOCAL_CSS_FILENAME': 'cyclops.css',
+    'LOCAL_JS_FILENAME': 'cyclops.js',
 }
 
-if CYCLOPS['DEVELOPMENT_ASSETS_ENABLED']:
-    STATICFILES_DIRS = [
-        (CYCLOPS['DEVELOPMENT_STATIC_PATH'], CYCLOPS['DEVELOPMENT_ASSETS']),
+if CYCLOPS['LOCAL_ASSETS_ENABLED']:
+    STATICFILES_DIRS += [
+        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
     ]
 
 DATASIFTER = {

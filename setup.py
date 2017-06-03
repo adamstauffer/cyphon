@@ -17,11 +17,14 @@
 
 """
 import os
+from pip.download import PipSession
 from pip.req import parse_requirements
 from setuptools import find_packages, setup
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
-INSTALL_REQS = parse_requirements('requirements.txt')
+INSTALL_REQS = parse_requirements(
+    'requirements.txt',
+    session=PipSession())
 
 # reqs is a list of requirements
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']

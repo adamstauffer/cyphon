@@ -53,30 +53,37 @@ from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 urlpatterns = [
     # url(r'^$', 'dashboard.views.index', name='index'),
-    url(
-        r'^login/$',
-        auth_views.login,
-        { 'template_name': 'cyclops/login.html' },
-        name='login'
-    ),
-    url(
-        r'^logout/',
-        auth_views.logout,
-        { 'next_page': 'login' },
-        name='logout'
-    ),
-    url(r'^manifest.json$', manifest, name='manifest.json'),
-    url(r'^sw.js$', TemplateView.as_view(
-        template_name="cyclops/sw.js",
-        content_type='application/javascript',
-    ), name='service_worker'),
-    url(r'^app/', application, name='cyclops'),
-    url(r'^$', RedirectView.as_view(url='app/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
+
+# CYCLOPS
+if settings.CYCLOPS['ENABLED']:
+    urlpatterns += [
+        url(
+            r'^login/$',
+            auth_views.login,
+            {'template_name': 'cyclops/login.html'},
+            name='login'
+        ),
+        url(
+            r'^logout/',
+            auth_views.logout,
+            {'next_page': 'login'},
+            name='logout'
+        ),
+        url(r'^manifest.json$', manifest, name='manifest.json'),
+        url(r'^sw.js$', TemplateView.as_view(
+            template_name="cyclops/sw.js",
+            content_type='application/javascript',
+        ), name='service_worker'),
+        url(r'^app/', application, name='cyclops'),
+        url(r'^$', RedirectView.as_view(url='app/')),
+    ]
+else:
+    urlpatterns += [url(r'^$', RedirectView.as_view(url='admin/'))]
 
 # REST API
 router = DefaultRouter()

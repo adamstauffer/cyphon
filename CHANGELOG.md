@@ -10,7 +10,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Added
 
-- **cyphon.dashboard:** added cyphon.io RSS feed to dashboard ([910f2fd](https://github.com/dunbarcyber/cyphon/commit/910f2fd))
+- **cyphon.dashboard:** added Categories to admin dashboard ([dbfb658](https://github.com/dunbarcyber/cyphon/commit/dbfb658))
+- **cyphon.dashboard:** added "Latest Cyphon News" to admin dashboard ([910f2fd](https://github.com/dunbarcyber/cyphon/commit/910f2fd))
+
+### Changed
+
+- **alarms, monitors, watchdogs:** Monitors and Watchdogs are now sorted by name ([0c98fc9](https://github.com/dunbarcyber/cyphon/commit/0c98fc9))
+- **sifter:** all Rules and SieveNodes are now sorted by name ([b9128f3](https://github.com/dunbarcyber/cyphon/commit/b9128f3))
+
+### Fixed
+
+- **ambassador.passports:** fixed storage directory for Passport file field ([e97fd33](https://github.com/dunbarcyber/cyphon/commit/e97fd33))
 
 
 <a name="1.1.3"></a>
@@ -19,6 +29,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ### Added
 
 - **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
+- **cyclops:** added built in cyclops integration ([d4baf47](https://github.com/dunbarcyber/cyphon/commit/d4baf47))
+- **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9))
+- **docs:** added instructions on how to configure Cyclops ([1c98e3b](https://github.com/dunbarcyber/cyphon/commit/1c98e3b))
 - **docs:** added email tutorial ([d8fd982](https://github.com/dunbarcyber/cyphon/commit/d8fd982))
 - **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9), [1c56516](https://github.com/dunbarcyber/cyphon/commit/1c56516))
 - **docs:** added minimum system requirements ([d00b95](https://github.com/dunbarcyber/cyphon/commit/d00b95))
@@ -73,6 +86,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 - **bottler:** added `get_by_natural_key()` method for BottleFields and LabelFields ([68c2a15](https://github.com/dunbarcyber/cyphon/commit/68c2a15))
 - **contexts:** added `get_by_natural_key()` method for Contexts and ContextFields ([09ff0b8](https://github.com/dunbarcyber/cyphon/commit/09ff0b8))
+- **cyphon.dashboard:** added Protocols and Constance to admin dashboard ([ee34361](https://github.com/dunbarcyber/cyphon/commit/ee34361), [0cbbb15](https://github.com/dunbarcyber/cyphon/commit/0cbbb15))
 - **entrypoints:** added conditional for loading example fixtures ([a0efa1f](https://github.com/dunbarcyber/cyphon/commit/a0efa1f))
 - **watchdogs:** added `get_by_natural_key()` method for Triggers ([8312713](https://github.com/dunbarcyber/cyphon/commit/8312713))
 
@@ -83,7 +97,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Fixed
 
-- **cyphon.dashboard:** added Protocols and Constance to admin dashboard ([ee34361](https://github.com/dunbarcyber/cyphon/commit/ee34361), [0cbbb15](https://github.com/dunbarcyber/cyphon/commit/0cbbb15))
 - **responder.actions.filters:** fixed ActionFilterBackend to allow access to Actions associated with public Passports ([952464b](https://github.com/dunbarcyber/cyphon/commit/952464b))
 
 ### Removed

@@ -1,7 +1,5 @@
-.. _receiver:
-
-receiver
-========
+receiver.receiver
+=================
 
 .. automodule:: receiver.receiver
     :members:

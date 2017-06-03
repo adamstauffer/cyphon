@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 
 # third party
 from django.conf import settings
@@ -24,31 +27,60 @@ from django.shortcuts import render
 
 @login_required(login_url='/login/')
 def application(request):
+    """Return an HTML template for Cyclops.
+
+    Returns an HTML template for Cyclops with the necessary variables and
+    resources to make it run.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.HttpResponse`
+
     """
-    Renders the cyclops template view.
-    """
-    static_resources = (
-        settings.CYCLOPS['DEVELOPMENT_STATIC_PATH']
-        if settings.CYCLOPS['DEVELOPMENT_ASSETS_ENABLED']
-        else 'cyclops'
+    css_url = settings.CYCLOPS['CDN_FORMAT'].format(
+        settings.CYCLOPS['VERSION'],
+        'css',
+    )
+    js_url = settings.CYCLOPS['CDN_FORMAT'].format(
+        settings.CYCLOPS['VERSION'],
+        'js',
+    )
+    css_file = '{0}/{1}'.format(
+        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
+        settings.CYCLOPS['LOCAL_CSS_FILENAME'],
+    )
+    js_file = '{0}/{1}'.format(
+        settings.CYCLOPS['LOCAL_FOLDER_NAME'],
+        settings.CYCLOPS['LOCAL_JS_FILENAME'],
     )
 
     return render(request, 'cyclops/app.html', {
         'notifications_enabled': settings.NOTIFICATIONS['ENABLED'],
         'mapbox_access_token': settings.CYCLOPS['MAPBOX_ACCESS_TOKEN'],
-        'css_url': '{0}/{1}'.format(
-            static_resources,
-            settings.CYCLOPS['CSS_FILENAME'],
-        ),
-        'js_url': '{0}/{1}'.format(
-            static_resources,
-            settings.CYCLOPS['JS_FILENAME'],
-        ),
+        'local_assets_enabled': settings.CYCLOPS['LOCAL_ASSETS_ENABLED'],
+        'cyclops_version': settings.CYCLOPS['VERSION'],
+        'css_file': css_file,
+        'js_file': js_file,
+        'css_url': css_url,
+        'js_url': js_url,
     })
 
+
 def manifest(request):
-    """
-    Returns the manifest.json necessary for push notifications.
+    """Return the manifest.json necessary for push notifications.
+
+    Parameters
+    ----------
+    request : :class:`~django.http.HttpRequest`
+
+    Returns
+    -------
+    :class:`~django.http.JsonResponse`
+
     """
     return JsonResponse({
         'gcm_sender_id': settings.NOTIFICATIONS['GCM_SENDER_ID'],

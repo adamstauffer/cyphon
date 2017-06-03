@@ -24,6 +24,9 @@ FROM python:3.6-alpine
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
 
+ARG UID=1000
+ARG GID=1000
+
 ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
@@ -54,7 +57,7 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
     && apk del build-deps
 
 # create unprivileged user
-RUN addgroup -S cyphon && adduser -S -G cyphon cyphon
+RUN addgroup -S -g $GID cyphon && adduser -S -G cyphon -u $UID cyphon
 
 # create application subdirectories
 RUN mkdir -p $CYPHON_HOME \
