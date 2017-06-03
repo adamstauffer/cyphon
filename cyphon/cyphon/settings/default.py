@@ -96,11 +96,6 @@ CYCLOPS = {
     'LOCAL_JS_FILENAME': 'cyclops.js',
 }
 
-if CYCLOPS['LOCAL_ASSETS_ENABLED']:
-    STATICFILES_DIRS += [
-        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
-    ]
-
 DATASIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,
@@ -476,6 +471,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(HOME_DIR, 'static')
+
+STATICFILES_DIRS = []
+
+if CYCLOPS['LOCAL_ASSETS_ENABLED']:
+    STATICFILES_DIRS += [
+        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
+    ]
 
 MEDIA_URL = '/media/'
 
