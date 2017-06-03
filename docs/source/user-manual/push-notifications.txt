@@ -7,6 +7,7 @@ Push Notifications
 
 Push notifications let the user know when a new alert has been generated, even when they're not viewing Cyphon. These only work either on your local machine or over SSH. Activating them involves setting up a project on `Firebase`_ and adding certain keys from the project page to the Django configurations.
 
+
 .. _setup-firebase-project:
 
 **********************
@@ -26,6 +27,7 @@ Click this button and you should be brought to a project overview page. On this 
     :alt: Add Firebase project
 
 Click this button to name your project and set it up.
+
 
 .. configure-push-notifications
 
@@ -53,7 +55,7 @@ On this page there will be a tab called "CLOUD MESSAGING." Click on that tab.
 
 All of the information to get push notifications set up is on this page. At first, you won't have a server key. Click the button that says "ADD SERVER KEY" in the top right to create a server key.
 
-Once you have this key, you need to place it in your Django settings ``conf.py`` file. There is a setting called ``NOTIFICATIONS``::
+Once you have this key, you need to place it in your Cyphon settings ``conf.py`` file. There is a setting called ``NOTIFICATIONS``::
 
     NOTIFICATIONS = {
         'ENABLED': False,
