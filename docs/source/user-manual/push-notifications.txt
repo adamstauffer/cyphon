@@ -58,7 +58,6 @@ All of the information to get push notifications set up is on this page. At firs
 Once you have this key, you need to place it in your Cyphon settings ``conf.py`` file. There is a setting called ``NOTIFICATIONS``::
 
     NOTIFICATIONS = {
-        'ENABLED': False,
         'PUSH_NOTIFICATION_KEY': '',
         'GCM_SENDER_ID': '',
         'IGNORED_ALERT_LEVELS': ['INFO'],
@@ -68,7 +67,7 @@ Set ``'PUSH_NOTIFICATION_KEY'`` to your created server key.
 
 After that, go back to the Firebase "CLOUD MESSANGING" tab and look at the "Sender ID" credential. Set ``'GCM_SENDER_ID'`` to this value.
 
-After you've set these two credentials, set ``ENABLED`` to ``True``, start up your Cyphon instance, and vist the admin page. Visit the URL '/constance/config/'. You should see a configuration for ``PUSH_NOTIFICATIONS_ENABLED``.
+After you've set these two credentials, start up your Cyphon instance and vist the admin page. Visit the URL '/constance/config/'. You should see a configuration for ``PUSH_NOTIFICATIONS_ENABLED``.
 
 .. image:: ../_static/images/notifications/notifications-tutorial-6.png
     :align: center

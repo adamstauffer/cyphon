@@ -19,6 +19,7 @@
 """
 
 # third party
+from constance import config
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -59,7 +60,7 @@ def application(request):
     )
 
     return render(request, 'cyclops/app.html', {
-        'notifications_enabled': settings.NOTIFICATIONS['ENABLED'],
+        'notifications_enabled': config.PUSH_NOTIFICATIONS_ENABLED,
         'mapbox_access_token': settings.CYCLOPS['MAPBOX_ACCESS_TOKEN'],
         'local_assets_enabled': settings.CYCLOPS['LOCAL_ASSETS_ENABLED'],
         'cyclops_version': settings.CYCLOPS['VERSION'],
