@@ -14,8 +14,8 @@ User Manual
    investigating-alerts
    acting-on-alerts
    provisioning-users
+   default-mail-handler
+   push-notifications
    jira-setup
    jira-example
    twitter-setup
-   mail-handler
-   push-notifications
