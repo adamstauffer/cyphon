@@ -64,9 +64,9 @@ and ``prod.py`` files. You can read more about Django's settings in
 
 .. _cyclops-config:
 
-=======
+*******
 Cyclops
-=======
+*******
 
 Cyclops is an optional frontend that helps to mange alerts and data from
 Cyphon in real time. This product is under a different license than Cyphon,
