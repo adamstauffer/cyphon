@@ -47,8 +47,7 @@ before_script:
 script:
   # copy GeoLite database to shared volume
   - sudo docker cp cyphon_geoip_1:/usr/share/GeoIP/GeoLite2-City.mmdb $GEOIP_PATH
-  - ls -l /home/travis/build/dunbarcyber/cyphon/GeoIP/
-  - tox -v
+  - tox
 
 after_script:
   - cd ../
