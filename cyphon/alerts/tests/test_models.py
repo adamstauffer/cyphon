@@ -21,7 +21,10 @@ Tests Alert model methods.
 # standard library
 import datetime
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.test import TestCase
@@ -149,14 +152,14 @@ class AlertCompanyTestCase(AlertModelTestCase):
         company.
         """
         alert = Alert.objects.get(pk=1)
-        self.assertEqual(alert.company, None) 
+        self.assertEqual(alert.company, None)
 
     def test_without_distillery(self):
         """
         Tests the company property when the Alert has no Distillery.
         """
         alert = Alert.objects.get(pk=7)
-        self.assertEqual(alert.company, None) 
+        self.assertEqual(alert.company, None)
 
 
 class AlertContentDateTestCase(AlertModelTestCase):

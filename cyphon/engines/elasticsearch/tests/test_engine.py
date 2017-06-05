@@ -22,7 +22,10 @@
 import logging
 import time
 from unittest import skipIf
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from elasticsearch.exceptions import ConnectionError

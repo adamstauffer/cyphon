@@ -21,7 +21,10 @@ Tests Alert views.
 # standard library
 from datetime import timedelta
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.conf import settings

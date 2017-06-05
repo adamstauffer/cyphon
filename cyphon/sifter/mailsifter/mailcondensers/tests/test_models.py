@@ -22,7 +22,10 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from unittest import TestCase
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 import re
 
 # third party

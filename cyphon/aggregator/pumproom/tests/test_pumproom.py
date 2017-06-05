@@ -19,7 +19,10 @@ Tests the PumpRoom class.
 """
 
 # standard library
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # local
 from aggregator.pumproom.tests.test_pump import PumpBaseTestCase

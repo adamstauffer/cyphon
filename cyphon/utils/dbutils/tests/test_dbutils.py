@@ -20,7 +20,10 @@ Tests functions in the dbutils package.
 
 # standard library
 from unittest import TestCase
-from unittest.mock import patch, Mock
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # local
 from utils.dbutils import dbutils
@@ -31,7 +34,7 @@ class CountByGroupTestCase(TestCase):
     Tests the count_by_group function.
     """
 
-    @patch('django.db.models.query.QuerySet', autospec=True)        
+    @patch('django.db.models.query.QuerySet', autospec=True)
     def test_count_by_group(self, mock_queryset):
         """
         Tests the count_by_group function.

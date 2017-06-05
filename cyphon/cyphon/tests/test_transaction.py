@@ -20,7 +20,10 @@ Tests for the locking database tables.
 
 # standard library
 from unittest import TestCase
-from unittest.mock import patch, Mock
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.db import transaction

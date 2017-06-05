@@ -20,7 +20,10 @@ Tests the fixtures module.
 
 # standard library
 from unittest import TestCase
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 import six

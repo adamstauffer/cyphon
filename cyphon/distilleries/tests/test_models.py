@@ -20,7 +20,10 @@ Tests the Distillery class.
 
 # standard library
 import copy
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 import dateutil.parser

@@ -19,7 +19,10 @@ Tests signal recievers in the MailSifter package.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django_mailbox.signals import message_received

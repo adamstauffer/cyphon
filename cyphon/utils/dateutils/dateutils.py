@@ -19,6 +19,7 @@ Utility functions for dates and times. Provides a suite of functions
 for manipulating dates and times. Defines a set of constants to be used for
 defining time units.
 """
+from __future__ import division
 
 # standard library
 import math
@@ -281,4 +282,3 @@ def date_from_str(date_string, date_format=None):
             LOGGER.error(fail_msg)
 
     return date
-
