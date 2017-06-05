@@ -8,7 +8,7 @@ Starting Docker Containers
 * :ref:`development-environment`
 * :ref:`testing-environment`
 
-The project contains several Docker Compose files used for deploying to
+The Cyphondock_ project contains several Docker Compose files used for deploying to
 development, testing, and production environments:
 
     * ``docker-compose.yml``: the base configuration for the project
@@ -26,12 +26,8 @@ You can read more about Docker Compose files in Docker's
 Production Environment
 **********************
 
-The production environment uses images on Docker Hub as the basis for 
-its Cyphon and Cyclops containers. The Cyphon and Cyclops images are 
-currently in a private Docker Hub repository, so you will need to log in 
-to Docker Hub to use them::
-
-    $ sudo docker login
+The production environment uses a Cyphon image on Docker Hub as the
+basis for its Cyphon container.
 
 Settings for the production environment are contained in the 
 ``docker-compose.override.yml`` file. Docker Compose automatically reads  
@@ -83,8 +79,10 @@ the data from those services easy to locate and backup.
 Development Environment
 ***********************
 
-Unlike the production environment, the dev environment builds the images
-for Cyphon using local files. You'll need to downlaod the Cyphon GitHub repository into the ``/opt/cyphon/cyphon`` directory so these files are available to Docker Compose::
+Unlike the production environment, the dev environment builds the images 
+for Cyphon using local files. You'll need to download the Cyphon GitHub
+repository into the ``/opt/cyphon/cyphon`` directory so these files are
+available to Docker Compose::
 
     $ git clone https://github.com/dunbarcyber/cyphon.git /opt/cyphon/cyphon
 
