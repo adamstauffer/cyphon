@@ -45,4 +45,4 @@ class HandleMessageTestCase(TestCase):
                 as mock_process:
             message_received.send(sender='message_received',
                                   message=mock_message)
-            mock_process.assert_called_once()
+            assert mock_process.call_count == 1
