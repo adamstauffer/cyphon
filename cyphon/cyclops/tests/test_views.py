@@ -16,6 +16,7 @@
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 
 # third party
+from constance.test import override_config
 from copy import deepcopy
 from django.conf import settings
 from django.test import TestCase
@@ -87,12 +88,12 @@ class ApplicationTest(CyclopsViewsTestCase):
         """
         self.authenticate()
 
-        with self.settings(NOTIFICATIONS={'ENABLED': True}):
+        with override_config(PUSH_NOTIFICATIONS_ENABLED=True):
             response = self.get_application()
 
             self.assertTrue(response.context['notifications_enabled'])
 
-        with self.settings(NOTIFICATIONS={'ENABLED': False}):
+        with override_config(PUSH_NOTIFICATIONS_ENABLED=False):
             response = self.get_application()
 
             self.assertFalse(response.context['notifications_enabled'])
