@@ -44,7 +44,7 @@ requests-toolbelt==0.8.0
 sauceclient==1.0.0
 selenium==3.4.3
 six==1.10.0
-testfixtures==4.14.3
+testfixtures==5.0.0
 tlslite==0.4.9
 tweepy==3.5.0
 urllib3==1.21.1
