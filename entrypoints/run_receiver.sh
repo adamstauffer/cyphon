@@ -22,6 +22,6 @@ sleep 20
 cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
 exec python receiver/receiver.py "$@"

@@ -22,7 +22,7 @@ sleep 20
 cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
 # run Celery worker for Cyphon with Celery configuration stored in celeryapp
-su -m cyphon -c 'celery worker -A cyphon -l ERROR'
+su-exec cyphon celery worker -A cyphon -l ERROR

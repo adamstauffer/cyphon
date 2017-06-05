@@ -130,8 +130,6 @@ EMAIL = {
     'USE_TLS': True,
 }
 
-GCM_SENDER_ID = ''
-
 GEOIP = {
     'GEOIP_PATH': os.getenv('GEOIP_PATH', '/usr/share/GeoIP/'),
     'CITY_DB': 'GeoLite2-City.mmdb',
