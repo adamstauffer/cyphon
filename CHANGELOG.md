@@ -8,13 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+<a name="1.2.0"></a>
+## [1.2.0](https://github.com/dunbarcyber/cyphon/compare/1.1.3...1.2.0) (2017-06-05)
+
 ### Added
 
+- **cyclops:** added built-in Cyclops integration ([d4baf47](https://github.com/dunbarcyber/cyphon/commit/d4baf47), [2f7f574](https://github.com/dunbarcyber/cyphon/commit/2f7f574))
 - **cyphon.dashboard:** added Categories to admin dashboard ([dbfb658](https://github.com/dunbarcyber/cyphon/commit/dbfb658))
 - **cyphon.dashboard:** added "Latest Cyphon News" to admin dashboard ([910f2fd](https://github.com/dunbarcyber/cyphon/commit/910f2fd))
+- **cyphon.settings:** added settings for Cyclops integration ([d4baf47](https://github.com/dunbarcyber/cyphon/commit/d4baf47), [2f7f574](https://github.com/dunbarcyber/cyphon/commit/2f7f574))
+- **docs:** added docs for push notifications ([1c98e3b](https://github.com/dunbarcyber/cyphon/commit/1c98e3b))
+- **docs:** added docs for configuring Cyclops ([1c98e3b](https://github.com/dunbarcyber/cyphon/commit/1c98e3b))
 
 ### Changed
 
+- **Dockerfile:** Docker image is now based on Alpine Linux ([517af76](https://github.com/dunbarcyber/cyphon/commit/517af76))
 - **alarms, monitors, watchdogs:** Monitors and Watchdogs are now sorted by name ([0c98fc9](https://github.com/dunbarcyber/cyphon/commit/0c98fc9))
 - **sifter:** all Rules and SieveNodes are now sorted by name ([b9128f3](https://github.com/dunbarcyber/cyphon/commit/b9128f3))
 
@@ -29,9 +37,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ### Added
 
 - **categories:** added REST API endpoint for Categories ([360dc56](https://github.com/dunbarcyber/cyphon/commit/360dc56))
-- **cyclops:** added built in cyclops integration ([d4baf47](https://github.com/dunbarcyber/cyphon/commit/d4baf47))
-- **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9))
-- **docs:** added instructions on how to configure Cyclops ([1c98e3b](https://github.com/dunbarcyber/cyphon/commit/1c98e3b))
 - **docs:** added email tutorial ([d8fd982](https://github.com/dunbarcyber/cyphon/commit/d8fd982))
 - **docs:** added Logstash tutorial ([69769f9](https://github.com/dunbarcyber/cyphon/commit/69769f9), [1c56516](https://github.com/dunbarcyber/cyphon/commit/1c56516))
 - **docs:** added minimum system requirements ([d00b95](https://github.com/dunbarcyber/cyphon/commit/d00b95))
