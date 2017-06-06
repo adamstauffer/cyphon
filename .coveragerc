@@ -3,7 +3,7 @@ omit =
   */tests/*
   */migrations/*
 source =
-  cyphon
+  .
 
 [report]
 exclude_lines =
