@@ -36,6 +36,7 @@ Contents
    getting-started/getting-started
    user-manual/user-manual
    tutorials/tutorials
+   faqs
    dev-guide/dev-guide
    api
    contributing/contributing
