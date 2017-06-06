@@ -1,6 +1,7 @@
 .tox/
 .python-version
-.coverage*
+.coverage
+.coverage.*
 *.egg-info
 build/
 dist/
