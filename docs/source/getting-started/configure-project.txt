@@ -15,6 +15,7 @@ The ``config`` directory contains settings for:
 
     * :ref:`environmental-variables`
     * :ref:`django-config`
+    * :ref:`cyclops-config`
     * :ref:`nginx-config`
     * :ref:`logstash-config`
     * :ref:`elasticsearch-config`
