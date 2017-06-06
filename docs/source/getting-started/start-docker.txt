@@ -8,7 +8,7 @@ Starting Docker Containers
 * :ref:`development-environment`
 * :ref:`testing-environment`
 
-The Cyphondock_ project contains several Docker Compose files used for deploying to
+The `Cyphondock`_ project contains several Docker Compose files used for deploying to
 development, testing, and production environments:
 
     * ``docker-compose.yml``: the base configuration for the project
