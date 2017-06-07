@@ -1,5 +1,3 @@
-Cyphon will be officially released on April 4, 2017. Until then, some of the links below may be inactive.
-
 .. image:: https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master
     :target: https://travis-ci.org/dunbarcyber/cyphon
     :alt: Build Status
@@ -20,25 +18,29 @@ Cyphon will be officially released on April 4, 2017. Until then, some of the lin
     :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. container:: clearfix
+
+    .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/cyphon-logo.png
+        :alt: Cyphon
 
 ######
 Cyphon
 ######
 
 ***********************
-Collect, Filter, Create
+Collect, Alert, Respond
 ***********************
 
-Cyphon ends the headaches that traditionally come with data management by streamlining all related processes through a single platform. Cyphon receives, processes, and triages data from emails, log messages, social media, and other online sources.
+Cyphon is an incident-response platform that receives, processes, and triages events to create a more efficient analytic workflow — aggregating data, bundling and prioritizing alerts, and empowering analysts to investigate and document incidents.
 
     **Collect**
-        Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze.
+        Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze. You can also enhance your data with automated analyses, like geocoding.
 
     **Filter**
-        Cyphon filters data as it comes in, so you only gather the data you need. It lets you search the data you’ve collected by field name or data type to find exactly what you’re looking for.
+        Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. You can prioritize alerts using custom rulesets, and bundle related alerts so you don't get inundated.
 
     **Create**
-        Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. It also lets you enhance your data with automated analyses, like geocoding.
+        Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA intergration, they can escalate important alerts by creating a ticket in Service Desk.
 
 
 *********
@@ -53,12 +55,12 @@ Many businesses rely on emails to manage alert notifications, which leaves their
 Social Media Monitoring
 =======================
 
-Leveraging available publicly available APIs, Cyphon can collect data from streaming sources. Search is based on keywords, geofencing, and adhoc parameters. Cyphon supports the current version of the `Twitter Public Streams API <https://dev.twitter.com/streaming/public>`_.
+Leveraging publicly available APIs, Cyphon can collect data from streaming sources. Search is based on keywords, geofencing, and adhoc parameters. Cyphon supports the current version of the `Twitter Public Streams API <https://dev.twitter.com/streaming/public>`_.
 
 IoT and Sensor Data Processing
 ==============================
 
-Cyphon can process high volume event flow from any sensor type, offering a unique way to analyze information from physical environments.  
+Cyphon can process events from any sensor type, offering a unique way to analyze information from physical environments.  
 
 
 ********
