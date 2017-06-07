@@ -12,18 +12,17 @@
 Cyphon Documentation
 ####################
 
-Cyphon is a big data platform that aggregates, standardizes,
-and enhances data for easier analysis. With Cyphon you can:
+Cyphon is an incident-response platform that receives, processes, and triages events to create a more efficient analytic workflow — aggregating data, bundling and prioritizing alerts, and empowering analysts to investigate and document incidents.
 
-* **Collect** data from a variety of sources, 
-  including email, social media, and logs
+    **Collect**
+        Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze. You can also enhance your data with automated analyses, like geocoding.
 
-* **Filter** data as it comes in, so it can be 
-  parsed, analyzed, and easily searched
+    **Alert**
+        Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. You can prioritize alerts using custom rulesets, and bundle related alerts so you don't get inundated.
 
-* **Enhance** data with automated analyses
+    **Respond**
+        Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA intergration, they can escalate important alerts by creating a ticket in Service Desk.
 
-* **Create** alerts for important data as it arrives
 
 ********
 Contents
@@ -32,7 +31,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   What is Cyphon? <intro>
+   intro
    getting-started/getting-started
    user-manual/user-manual
    tutorials/tutorials

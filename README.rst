@@ -36,10 +36,10 @@ Cyphon is an incident-response platform that receives, processes, and triages ev
     **Collect**
         Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze. You can also enhance your data with automated analyses, like geocoding.
 
-    **Filter**
+    **Alert**
         Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. You can prioritize alerts using custom rulesets, and bundle related alerts so you don't get inundated.
 
-    **Create**
+    **Respond**
         Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA intergration, they can escalate important alerts by creating a ticket in Service Desk.
 
 
@@ -67,18 +67,12 @@ Cyphon can process events from any sensor type, offering a unique way to analyze
 Features
 ********
 
-- Aggregates data from numerous sources: email, logs, social media, APIs, and more
-- Generates custom alerts with push notifications
-- Throttles alerts and bundles related incidents
-- View incidents by criticality level
-- Workflow for handling alerts and tracking work performed
-
-
-*************
-Visualization
-*************
-
-To help your organization make the most of Cyphon, we’ve developed `Cyclops <https://dunbarcyber.github.io/dunbarcyber/cyclops>`__ – a user interface for managing alerts. Cyclops allows you to easily view, assign, and investigate Cyphon alerts. It provides an “eye” into your data, enabling you to respond to issues quickly and effectively.
+- Aggregate data from numerous sources: email, logs, social media, and APIs
+- Enhance data with automated analyses, like geoip
+- Generate custom alerts with push notifications
+- Throttle alerts and bundle related incidents
+- View alerts by category, priority, and source
+- Investigate alerts and track work performed
 
 
 ************
@@ -94,16 +88,11 @@ Deployment
 
 Cyphon works with the help of several open source projects. To get Cyphon up and running, you'll need to install all of its dependencies. We've simplified this process by using `Docker <https://www.docker.com/>`__, which allows you to easily deploy an application as a set of microservices. Additionally, we've created a set of files for running Cyphon in both development and production environments. Employing a Docker Compose file enables you to quickly install and run Cyphon and the other services it uses, including:
 
-* `PostgreSQL <https://www.postgresql.org/>`__ relational database
-* `RabbitMQ <https://www.rabbitmq.com/>`__ message broker
-* `Logstash <https://www.elastic.co/products/logstash/>`__ data ingestion tool
+    * `PostgreSQL <https://www.postgresql.org/>`__ relational database
+    * `RabbitMQ <https://www.rabbitmq.com/>`__ message broker
+    * `Logstash <https://www.elastic.co/products/logstash/>`__ data ingestion tool
 
-Our Docker Compose files are available on GitHub as `Cyphondock <https://github.com/dunbarcyber/cyphondock>`__.
-
-If you'd like to work with our Docker images directly, you can find them on Docker Hub:
-
-- `Cyphon image <https://hub.docker.com/r/dunbar/cyphon/>`_
-- `Cyclops image <https://hub.docker.com/r/dunbar/cyclops/>`_
+Our Docker Compose files are available on GitHub as `Cyphondock <https://github.com/dunbarcyber/cyphondock>`__. If you'd like to work with our Docker image directly, you can find it on `Docker Hub <https://hub.docker.com/r/dunbar/cyphon/>`__.
 
 
 *************
