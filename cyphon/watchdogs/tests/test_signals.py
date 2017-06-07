@@ -20,10 +20,13 @@ Tests signals in the Watchdog app.
 
 # standard library
 import logging
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
-from django.test import TransactionTestCase 
+from django.test import TransactionTestCase
 
 # local
 from alerts.models import Alert

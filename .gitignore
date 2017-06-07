@@ -1,3 +1,8 @@
+coverage.xml
+.tox/
+.python-version
+.coverage
+.coverage.*
 *.egg-info
 build/
 dist/

@@ -19,7 +19,10 @@
 """
 
 # standard library
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.test import TestCase
@@ -57,5 +60,5 @@ class MailMungerTestCase(TestCase):
             company=mailmunger.distillery.company
         )
 
-        mailmunger.distillery.save_data.assert_called_once()
+        assert mailmunger.distillery.save_data.call_count == 1
         self.assertEqual(doc_id, mock_doc_id)

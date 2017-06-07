@@ -20,7 +20,10 @@ Tests the Faucet class.
 
 # standard library
 from unittest import skip
-from unittest.mock import Mock, call, patch
+try:
+    from unittest.mock import Mock, call, patch
+except ImportError:
+    from mock import Mock, call, patch
 
 # third party
 from django.contrib.auth import get_user_model
@@ -168,7 +171,7 @@ class SendToChutesTestCase(FaucetTestCase):
         """
         data = [Mock()]
         with patch('sifter.datasifter.datachutes.models.DataChute.bulk_process') \
-                   as mock_process: 
+                   as mock_process:
             search_count = DataChute.objects.find_enabled()\
                                       .filter(endpoint=self.search_faucet.endpoint).count()
             stream_count = DataChute.objects.find_enabled()\
@@ -176,7 +179,7 @@ class SendToChutesTestCase(FaucetTestCase):
             self.search_faucet.send_to_chutes(data)
             self.assertEqual(mock_process.call_count, search_count)
 
-            self.stream_faucet.send_to_chutes(data)            
+            self.stream_faucet.send_to_chutes(data)
             self.assertEqual(mock_process.call_count, stream_count)
             self.assertEqual(mock_process.call_args, call(data=data))
 

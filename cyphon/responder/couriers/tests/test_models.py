@@ -19,7 +19,10 @@ Tests |Courier| model methods.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.test import TestCase

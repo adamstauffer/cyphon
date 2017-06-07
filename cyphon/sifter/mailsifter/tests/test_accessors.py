@@ -21,7 +21,10 @@ Tests accessor functions for the mailsifter package.
 # standard library
 from email.mime.multipart import MIMEMultipart
 import datetime
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from testfixtures import LogCapture

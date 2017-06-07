@@ -22,7 +22,10 @@
 import logging
 import os.path
 from unittest import TestCase, skipIf
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from geoip2.errors import AddressNotFoundError

@@ -19,7 +19,10 @@ Tests signals for Distilleries.
 """
 
 # standard library
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.test import TransactionTestCase

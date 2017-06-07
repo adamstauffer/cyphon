@@ -1,0 +1,21 @@
+[run]
+omit =
+  */tests/*
+  */migrations/*
+source =
+  .
+
+[report]
+exclude_lines =
+    def __repr__
+    raise NotImplementedError
+    pass
+omit =
+  */tests/*
+  */migrations/*
+
+[paths]
+source =
+  cyphon
+  .tox/*/lib/python*/site-packages/cyphon
+  .tox/pypy*/site-packages/cyphon

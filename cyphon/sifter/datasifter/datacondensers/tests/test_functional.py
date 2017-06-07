@@ -21,7 +21,10 @@ Functional tests for the DataCondenser app.
 # standard library
 import json
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.core.exceptions import ValidationError

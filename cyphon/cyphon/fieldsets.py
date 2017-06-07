@@ -18,6 +18,7 @@
 Defines a |QueryFieldset| class. |QueryFieldsets| are used to construct
 queries to data stores.
 """
+import collections
 
 # local
 from cyphon.choices import FIELD_TYPE_CHOICES, OPERATOR_CHOICES
@@ -64,13 +65,11 @@ class QueryFieldset(object):
         assert self.operator in self.OPERATORS
 
     def __str__(self):
-        return "%s: %s" % (self.__class__.__name__, self.__dict__)
-
-    @property
-    def __dict__(self):
-        return {
-            'field_name': self.field_name,
-            'field_type': self.field_type,
-            'operator': self.operator,
-            'value': self.value
-        }
+        items = collections.OrderedDict([
+            ('field_name', self.field_name),
+            ('field_type', self.field_type),
+            ('operator', self.operator),
+            ('value', self.value),
+        ])
+        items_str = '{' + ', '.join('%r: %r' % i for i in items.items()) + '}'
+        return "%s: %s" % (self.__class__.__name__, items_str)

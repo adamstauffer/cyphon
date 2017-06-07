@@ -20,7 +20,10 @@ Tests the Watchdog and Triigger classes.
 
 # standard library
 import logging
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 import threading
 
 # third party

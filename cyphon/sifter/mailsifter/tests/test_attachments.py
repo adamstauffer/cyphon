@@ -21,7 +21,10 @@ Tests the attchement helper functions of the mailsifter package.
 # standard library
 import datetime
 import os
-from unittest.mock import patch, Mock
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.conf import settings

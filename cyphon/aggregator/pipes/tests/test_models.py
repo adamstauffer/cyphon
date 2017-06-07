@@ -19,7 +19,10 @@ Tests the Pipe class and the related RateLimit and SpecSheet classes.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.test import TestCase

@@ -20,7 +20,10 @@ Tests views for Monitors.
 
 # standard library
 from collections import OrderedDict
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from rest_framework import status

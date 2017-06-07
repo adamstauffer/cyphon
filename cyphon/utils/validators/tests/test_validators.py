@@ -23,7 +23,10 @@ within the MongoDb document prior to saving.
 # standard library
 from datetime import timedelta
 from unittest import TestCase
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.core.exceptions import ValidationError
