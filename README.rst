@@ -51,7 +51,11 @@ Use Cases
 Incident Management
 ===================
 
-Many businesses rely on emails to manage alert notifications, which leaves their networks susceptible to overlooked incidents, alert fatigue, and knowledge drain. Cyphon closes gaps in data management by collecting detailed information from a variety of sources – including email, log messages, APIs, and more. By giving analysts complete access to all these data sources through one platform, Cyphon maximizes data coverage while minimizing the time and energy needed to monitor networks. Today, Cyphon supports integrations with Bro, Snort, Nessus, and other popular security products.
+Many organizations manage post-processed security events as email notifications, which is incredibly inefficient. An inbox flooded with alert notifications creates an environment where critical issues are overlooked and rarely investigated.
+
+Cyphon eliminates this issue by throttling events and prioritizing them based on user-defined rules. Analysts can quickly investigate incidents by correlating other data sets against indicators that matter. They can then annonate alerts with the results of their analysis. 
+
+Today, Cyphon supports integrations with Bro, Snort, Nessus, and other popular security products.
 
 Social Media Monitoring
 =======================
