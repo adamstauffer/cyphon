@@ -21,6 +21,7 @@
 .. container:: clearfix
 
     .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/cyphon-logo.png
+        :target: https://cyphon.io
         :alt: Cyphon
 
 ######
