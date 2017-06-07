@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Defines Autocomplete models for use in admin pages for the DataCondensers app.
+Defines Autocomplete models for use in Condenser admin pages.
 """
 
 # standard library
@@ -32,8 +32,8 @@ from sifter.condensers.models import Condenser, Fitting
 
 class FilterTargetFieldsAutocomplete(autocomplete_light.AutocompleteModelBase):
     """
-    Defines autocomplete rules for target_fields on the DataFitting and
-    DataCondenser admin pages.
+    Defines autocomplete rules for target_fields on Fitting and
+    Condenser admin pages.
     """
     model = BottleField
     search_fields = ('field_name', )
@@ -55,7 +55,7 @@ class FilterTargetFieldsAutocomplete(autocomplete_light.AutocompleteModelBase):
 
 class FilterTargetFieldsByBottle(FilterTargetFieldsAutocomplete):
     """
-    Defines autocomplete rules for target_field on the DataCondenser admin page.
+    Defines autocomplete rules for target_field on a Condenser admin page.
     """
     attrs = {
         'data-autocomplete-minimum-characters': 0,
@@ -64,7 +64,7 @@ class FilterTargetFieldsByBottle(FilterTargetFieldsAutocomplete):
 
     def choices_for_request(self):
         """
-        Filters target_field options based on a selected Bottle/DataCondenser
+        Filters target_field options based on a selected Bottle/Condenser
         and previously selected target_fields.
         """
         choices = ()
@@ -72,10 +72,10 @@ class FilterTargetFieldsByBottle(FilterTargetFieldsAutocomplete):
         # text typed in autocomplete input
         query = self.request.GET.get('q', '').lower().strip()
 
-        # selected bottle on DataCondenser admin page
+        # selected bottle on Condenser admin page
         bottle_id = self.request.GET.get('bottle', None)
 
-        # list of target_fields already selected on DataCondenser admin page
+        # list of target_fields already selected on Condenser admin page
         target_field_list = self.request.GET.get('target_field_list', None)
 
         if bottle_id:
@@ -94,7 +94,7 @@ class FilterTargetFieldsByBottle(FilterTargetFieldsAutocomplete):
 
 class FilterTargetFieldsByCondenser(FilterTargetFieldsAutocomplete):
     """
-    Defines autocomplete rules for target_field on the DataFitting admin page.
+    Defines autocomplete rules for target_field on a Fitting admin page.
     """
     model = None
 
@@ -115,7 +115,7 @@ class FilterTargetFieldsByCondenser(FilterTargetFieldsAutocomplete):
 
     def choices_for_request(self):
         """
-        Filters target_field options based on a selected Bottle/DataCondenser
+        Filters target_field options based on a selected Bottle/Condenser
         and previously selected target_fields.
         """
         assert issubclass(self.model, Condenser), \
@@ -126,7 +126,7 @@ class FilterTargetFieldsByCondenser(FilterTargetFieldsAutocomplete):
         # text typed in autocomplete input
         query = self.request.GET.get('q', '').lower().strip()
 
-        # selected condenser on DataFitting admin page
+        # selected condenser on Fitting admin page
         condenser_id = self.request.GET.get('condenser', None)
 
         if condenser_id:
