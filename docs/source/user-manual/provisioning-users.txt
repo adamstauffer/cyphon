@@ -9,6 +9,20 @@ Provisioning Users
     :align: left
     :alt: Users
 
+*********
+Superuser
+*********
+
+If you started Cyphon in development mode using `Cyphondock`_, it should have created a superuser using the ``CYPHON_USERNAME`` and ``CYPHON_PASSWORD`` settings defined in your `.config/env/cyphon.env <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/env/cyphon.env#L1-L2>`__ file.
+
+If you started Cyphon in production mode, you’ll need to create a superuser account manually. You can find instructions under :ref:`create-superuser`.
+
+Once you've logged in as a superuser, can you add additional users.
+
+************
+Adding Users
+************
+
 You can manage users and groups through the "People and Permissions" panel on Cyphon's main admin page.
 
 .. image:: ../_static/images/admin/user-admin.png

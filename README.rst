@@ -1,5 +1,3 @@
-Cyphon will be officially released on April 4, 2017. Until then, some of the links below may be inactive.
-
 .. image:: https://travis-ci.org/dunbarcyber/cyphon.svg?branch=master
     :target: https://travis-ci.org/dunbarcyber/cyphon
     :alt: Build Status
@@ -20,25 +18,29 @@ Cyphon will be officially released on April 4, 2017. Until then, some of the lin
     :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. container:: clearfix
+
+    .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/cyphon-logo.png
+        :alt: Cyphon
 
 ######
 Cyphon
 ######
 
 ***********************
-Collect, Filter, Create
+Collect, Alert, Respond
 ***********************
 
-Cyphon ends the headaches that traditionally come with data management by streamlining all related processes through a single platform. Cyphon receives, processes, and triages data from emails, log messages, social media, and other online sources.
+Cyphon is an incident-response platform that receives, processes, and triages events to create a more efficient analytic workflow — aggregating data, bundling and prioritizing alerts, and empowering analysts to investigate and document incidents.
 
     **Collect**
-        Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze.
+        Cyphon collects data from a variety of sources, including emails, log messages, and social media. It lets you shape the data however you like, so it’s easier for you to analyze. You can also enhance your data with automated analyses, like geocoding.
 
-    **Filter**
-        Cyphon filters data as it comes in, so you only gather the data you need. It lets you search the data you’ve collected by field name or data type to find exactly what you’re looking for.
+    **Alert**
+        Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. You can prioritize alerts using custom rulesets, and bundle related alerts so you don't get inundated.
 
-    **Create**
-        Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. It also lets you enhance your data with automated analyses, like geocoding.
+    **Respond**
+        Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA intergration, they can escalate important alerts by creating a ticket in Service Desk.
 
 
 *********
@@ -53,30 +55,24 @@ Many businesses rely on emails to manage alert notifications, which leaves their
 Social Media Monitoring
 =======================
 
-Leveraging available publicly available APIs, Cyphon can collect data from streaming sources. Search is based on keywords, geofencing, and adhoc parameters. Cyphon supports the current version of the `Twitter Public Streams API <https://dev.twitter.com/streaming/public>`_.
+Leveraging publicly available APIs, Cyphon can collect data from streaming sources. Search is based on keywords, geofencing, and adhoc parameters. Cyphon supports the current version of the `Twitter Public Streams API <https://dev.twitter.com/streaming/public>`_.
 
 IoT and Sensor Data Processing
 ==============================
 
-Cyphon can process high volume event flow from any sensor type, offering a unique way to analyze information from physical environments.  
+Cyphon can process events from any sensor type, offering a unique way to analyze information from physical environments.  
 
 
 ********
 Features
 ********
 
-- Aggregates data from numerous sources: email, logs, social media, APIs, and more
-- Generates custom alerts with push notifications
-- Throttles alerts and bundles related incidents
-- View incidents by criticality level
-- Workflow for handling alerts and tracking work performed
-
-
-*************
-Visualization
-*************
-
-To help your organization make the most of Cyphon, we’ve developed `Cyclops <https://dunbarcyber.github.io/dunbarcyber/cyclops>`__ – a user interface for managing alerts. Cyclops allows you to easily view, assign, and investigate Cyphon alerts. It provides an “eye” into your data, enabling you to respond to issues quickly and effectively.
+- Aggregate data from numerous sources: email, logs, social media, and APIs
+- Enhance data with automated analyses, like geoip
+- Generate custom alerts with push notifications
+- Throttle alerts and bundle related incidents
+- View alerts by category, priority, and source
+- Investigate alerts and track work performed
 
 
 ************
@@ -92,16 +88,11 @@ Deployment
 
 Cyphon works with the help of several open source projects. To get Cyphon up and running, you'll need to install all of its dependencies. We've simplified this process by using `Docker <https://www.docker.com/>`__, which allows you to easily deploy an application as a set of microservices. Additionally, we've created a set of files for running Cyphon in both development and production environments. Employing a Docker Compose file enables you to quickly install and run Cyphon and the other services it uses, including:
 
-* `PostgreSQL <https://www.postgresql.org/>`__ relational database
-* `RabbitMQ <https://www.rabbitmq.com/>`__ message broker
-* `Logstash <https://www.elastic.co/products/logstash/>`__ data ingestion tool
+    * `PostgreSQL <https://www.postgresql.org/>`__ relational database
+    * `RabbitMQ <https://www.rabbitmq.com/>`__ message broker
+    * `Logstash <https://www.elastic.co/products/logstash/>`__ data ingestion tool
 
-Our Docker Compose files are available on GitHub as `Cyphondock <https://github.com/dunbarcyber/cyphondock>`__.
-
-If you'd like to work with our Docker images directly, you can find them on Docker Hub:
-
-- `Cyphon image <https://hub.docker.com/r/dunbar/cyphon/>`_
-- `Cyclops image <https://hub.docker.com/r/dunbar/cyclops/>`_
+Our Docker Compose files are available on GitHub as `Cyphondock <https://github.com/dunbarcyber/cyphondock>`__. If you'd like to work with our Docker image directly, you can find it on `Docker Hub <https://hub.docker.com/r/dunbar/cyphon/>`__.
 
 
 *************

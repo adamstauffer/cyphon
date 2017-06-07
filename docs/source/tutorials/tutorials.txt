@@ -8,4 +8,4 @@ Tutorials
    :maxdepth: 2
 
    email-tutorial
-   logstash-tutorial
+   Generating Alerts from Logstash <logstash-tutorial>
