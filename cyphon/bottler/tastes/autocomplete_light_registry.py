@@ -81,7 +81,7 @@ class FilterFieldsByContainer(FilterFieldsAutocompleteBase):
         # text typed in autocomplete input
         query = self.request.GET.get('q', '').lower().strip()
 
-        # selected bottle on Container admin page
+        # selected container on Taste admin page
         container_id = self.request.GET.get('container', None)
 
         if container_id:
