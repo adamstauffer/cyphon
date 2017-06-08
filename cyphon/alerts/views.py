@@ -20,7 +20,6 @@ Provides views for Alerts.
 
 # standard library
 import datetime
-import importlib
 import json
 
 # third party
@@ -29,7 +28,6 @@ from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django.utils import timezone
 from rest_framework.decorators import list_route
-from rest_framework.filters import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.pagination import (
@@ -167,8 +165,7 @@ class AlertViewSet(CustomModelViewSet):
     @staticmethod
     def _counts_by_field(queryset, field_name, choices):
         """
-        Provides a REST API endpoint for GET requests for alert counts
-        by level.
+
         """
         counts = count_by_group(
             queryset=queryset,
@@ -218,14 +215,10 @@ class AlertViewSet(CustomModelViewSet):
         msg = 'A maximum of %s days is permitted' % self.MAX_DAYS
         return Response({'error': msg})
 
-    @list_route(methods=['get'], url_path='levels')
-    def counts_by_level(self, request):
+    def _catch_days_param_error(self, days):
         """
-        Provides a REST API endpoint for GET requests for alert counts
-        by level.
-        """
-        days = request.query_params.get('days')
 
+        """
         try:
             days = int(days)
             if days > self.MAX_DAYS:
@@ -233,13 +226,32 @@ class AlertViewSet(CustomModelViewSet):
         except (TypeError, ValueError):
             return self._handle_missing_days_param()
 
-        queryset = self._filter_by_start_date(days)
-        counts = self._counts_by_field(
-            queryset=queryset,
-            field_name='level',
-            choices=ALERT_LEVEL_CHOICES
-        )
-        return Response(counts)
+    def _get_counts(self, request, field_name, choices):
+        """
+
+        """
+        days = request.query_params.get('days')
+
+        error = self._catch_days_param_error(days)
+
+        if error is not None:
+            queryset = self._filter_by_start_date(days)
+            counts = self._counts_by_field(
+                queryset=queryset,
+                field_name=field_name,
+                choices=choices
+            )
+            return Response(counts)
+        else:
+            return error
+
+    @list_route(methods=['get'], url_path='levels')
+    def counts_by_level(self, request):
+        """
+        Provides a REST API endpoint for GET requests for alert counts
+        by level.
+        """
+        return self._get_counts(request, 'level', ALERT_LEVEL_CHOICES)
 
     @list_route(methods=['get'], url_path='statuses')
     def counts_by_status(self, request):
@@ -247,22 +259,7 @@ class AlertViewSet(CustomModelViewSet):
         Provides a REST API endpoint for GET requests for alert counts
         by status.
         """
-        days = request.query_params.get('days')
-
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
-
-        queryset = self._filter_by_start_date(days)
-        counts = self._counts_by_field(
-            queryset=queryset,
-            field_name='status',
-            choices=ALERT_STATUS_CHOICES
-        )
-        return Response(counts)
+        return self._get_counts(request, 'status', ALERT_STATUS_CHOICES)
 
     @list_route(methods=['get'], url_path='collections')
     def counts_by_collection(self, request):
@@ -272,22 +269,20 @@ class AlertViewSet(CustomModelViewSet):
         """
         days = request.query_params.get('days')
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
+        error = self._catch_days_param_error(days)
 
-        queryset = self._filter_by_start_date(days)
-        distilleries = Distillery.objects.filter(alerts__in=queryset)
-        counts = {}
+        if error is not None:
+            queryset = self._filter_by_start_date(days)
+            distilleries = Distillery.objects.filter(alerts__in=queryset)
+            counts = {}
 
-        for distillery in distilleries:
-            filtered_qs = queryset.filter(distillery=distillery)
-            counts[str(distillery)] = filtered_qs.count()
+            for distillery in distilleries:
+                filtered_qs = queryset.filter(distillery=distillery)
+                counts[str(distillery)] = filtered_qs.count()
 
-        return Response(counts)
+            return Response(counts)
+        else:
+            return error
 
     @list_route(methods=['get'], url_path='locations')
     def locations(self, request):
@@ -302,24 +297,22 @@ class AlertViewSet(CustomModelViewSet):
         """
         days = request.query_params.get('days')
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
+        error = self._catch_days_param_error(days)
 
-        queryset = self._filter_by_start_date(days)
-        location_qs = queryset.filter(location__isnull=False)
-        fields = (
-            'pk',
-            'location',
-            'title',
-            'level',
-            'incidents',
-        )
-        geojson = serialize('geojson', location_qs, fields=fields)
-        return Response(json.loads(geojson))
+        if error is not None:
+            queryset = self._filter_by_start_date(days)
+            location_qs = queryset.filter(location__isnull=False)
+            fields = (
+                'pk',
+                'location',
+                'title',
+                'level',
+                'incidents',
+            )
+            geojson = serialize('geojson', location_qs, fields=fields)
+            return Response(json.loads(geojson))
+        else:
+            return error
 
     @list_route(methods=['get'], url_path='level-timeseries')
     def level_timeseries(self, request):
@@ -329,19 +322,17 @@ class AlertViewSet(CustomModelViewSet):
         """
         days = request.query_params.get('days')
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
+        error = self._catch_days_param_error(days)
 
-        counts = self._timeseries(
-            days=days,
-            field_name='level',
-            choices=ALERT_LEVEL_CHOICES
-        )
-        return Response(counts)
+        if error is not None:
+            counts = self._timeseries(
+                days=days,
+                field_name='level',
+                choices=ALERT_LEVEL_CHOICES
+            )
+            return Response(counts)
+        else:
+            return error
 
     @list_route(methods=['get'], url_path='distilleries')
     def distilleries(self, request):
