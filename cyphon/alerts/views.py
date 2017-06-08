@@ -234,16 +234,16 @@ class AlertViewSet(CustomModelViewSet):
 
         error = self._catch_days_param_error(days)
 
-        if error is not None:
-            queryset = self._filter_by_start_date(days)
+        if error:
+            return error
+        else:
+            queryset = self._filter_by_start_date(int(days))
             counts = self._counts_by_field(
                 queryset=queryset,
                 field_name=field_name,
                 choices=choices
             )
             return Response(counts)
-        else:
-            return error
 
     @list_route(methods=['get'], url_path='levels')
     def counts_by_level(self, request):
@@ -271,8 +271,10 @@ class AlertViewSet(CustomModelViewSet):
 
         error = self._catch_days_param_error(days)
 
-        if error is not None:
-            queryset = self._filter_by_start_date(days)
+        if error:
+            return error
+        else:
+            queryset = self._filter_by_start_date(int(days))
             distilleries = Distillery.objects.filter(alerts__in=queryset)
             counts = {}
 
@@ -281,8 +283,6 @@ class AlertViewSet(CustomModelViewSet):
                 counts[str(distillery)] = filtered_qs.count()
 
             return Response(counts)
-        else:
-            return error
 
     @list_route(methods=['get'], url_path='locations')
     def locations(self, request):
@@ -299,8 +299,10 @@ class AlertViewSet(CustomModelViewSet):
 
         error = self._catch_days_param_error(days)
 
-        if error is not None:
-            queryset = self._filter_by_start_date(days)
+        if error:
+            return error
+        else:
+            queryset = self._filter_by_start_date(int(days))
             location_qs = queryset.filter(location__isnull=False)
             fields = (
                 'pk',
@@ -311,8 +313,6 @@ class AlertViewSet(CustomModelViewSet):
             )
             geojson = serialize('geojson', location_qs, fields=fields)
             return Response(json.loads(geojson))
-        else:
-            return error
 
     @list_route(methods=['get'], url_path='level-timeseries')
     def level_timeseries(self, request):
@@ -324,15 +324,15 @@ class AlertViewSet(CustomModelViewSet):
 
         error = self._catch_days_param_error(days)
 
-        if error is not None:
+        if error:
+            return error
+        else:
             counts = self._timeseries(
-                days=days,
+                days=int(days),
                 field_name='level',
                 choices=ALERT_LEVEL_CHOICES
             )
             return Response(counts)
-        else:
-            return error
 
     @list_route(methods=['get'], url_path='distilleries')
     def distilleries(self, request):
