@@ -13,6 +13,20 @@ With Cyphon, you can:
     - View alerts by category, priority, and source
     - Investigate alerts and track work performed
 
+.. figure:: _static/images/screenshots/cyphon-admin.png
+    :alt: Cyphon admin
+
+    Cyphon admin dashboard.
+
+.. figure:: _static/images/screenshots/cyclops-dashboard.png
+    :alt: Cyclops UI dashboard
+
+    Cyclops UI dashboard view.
+
+.. figure:: _static/images/screenshots/cyclops-alerts.png
+    :alt: Cyclops UI alerts
+
+    Cyclops UI alerts view.
 
 *********
 Use Cases
