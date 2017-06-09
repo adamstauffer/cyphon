@@ -55,6 +55,7 @@ class RequireLockTest(TestCase):
         command = 'LOCK TABLE %s IN %s MODE' % (self.model._meta.db_table, lock)
 
         mock_cursor = Mock()
+        mock_cursor.return_value = []
         mock_cursor.__enter__ = Mock(return_value=mock_cursor)
         mock_cursor.__exit__ = Mock(return_value=[])
         mock_cursor.execute = Mock()
