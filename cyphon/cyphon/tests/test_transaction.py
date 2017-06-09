@@ -56,7 +56,7 @@ class RequireLockTest(TestCase):
 
         mock_cursor = Mock()
         mock_cursor.__enter__ = Mock(return_value=mock_cursor)
-        mock_cursor.__exit__ = Mock(return_value=None)
+        mock_cursor.__exit__ = Mock(return_value=[])
         mock_cursor.execute = Mock()
 
         with patch('cyphon.transaction.db.connection.cursor',
