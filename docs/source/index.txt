@@ -21,7 +21,7 @@ Cyphon is an incident-response platform that receives, processes, and triages ev
         Cyphon creates alerts for important data as it arrives, so you’re notified when something of interest happens. You can prioritize alerts using custom rulesets, and bundle related alerts so you don't get inundated.
 
     **Respond**
-        Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA intergration, they can escalate important alerts by creating a ticket in Service Desk.
+        Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA integration, they can escalate important alerts by creating a ticket in Service Desk.
 
 
 ********
