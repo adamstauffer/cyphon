@@ -35,6 +35,7 @@ Contents
    getting-started/getting-started
    user-manual/user-manual
    tutorials/tutorials
+   glossary
    faqs
    support
    dev-guide/dev-guide
