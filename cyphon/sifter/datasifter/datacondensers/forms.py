@@ -22,6 +22,7 @@ Defines forms for DataFittings and DataCondensers.
 import autocomplete_light
 
 # local
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from sifter.condensers.forms import (
     CondenserForm,
     FittingForm,
@@ -62,9 +63,12 @@ class DataFittingForm(FittingForm):
         autocomplete_names = {
             'target_field': 'FilterTargetFieldsByDataCondenser'
         }
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByDataCondenser'),
+        }
 
 
-class DataFittingInlineForm(FittingInlineForm):
+class DataFittingInlineForm(FittingInlineForm, AutoCompleteModelFormMixin):
     """
     Defines an inline form for adding or updating a DataFitting using
     autocomplete fields.
@@ -72,4 +76,6 @@ class DataFittingInlineForm(FittingInlineForm):
 
     class Meta(FittingInlineForm.Meta):
         model = DataFitting
-
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByBottle'),
+        }

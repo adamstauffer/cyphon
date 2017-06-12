@@ -21,9 +21,9 @@ Tests for the locking database tables.
 # standard library
 from unittest import TestCase
 try:
-    from unittest.mock import MagicMock, Mock, patch
+    from unittest.mock import MagicMock, patch
 except ImportError:
-    from mock import MagicMock, Mock, patch
+    from mock import MagicMock, patch
 
 # third party
 from django.db import transaction

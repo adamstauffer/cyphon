@@ -149,7 +149,6 @@ class AutocompleteElement(HtmlElement):
         super(AutocompleteElement, self).__init__(*args, **kwargs)
         self.driver = driver
         self.path = '//span[@data-input-id="id_%s-autocomplete"]' % self.locator
-        print(self.path)
         self.name = self.locator + '-autocomplete'
 
     def click(self):
