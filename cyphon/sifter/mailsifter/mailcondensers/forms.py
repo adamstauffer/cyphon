@@ -76,4 +76,6 @@ class MailFittingInlineForm(FittingInlineForm):
 
     class Meta(FittingInlineForm.Meta):
         model = MailFitting
-
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByBottle'),
+        }
