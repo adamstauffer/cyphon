@@ -20,11 +20,9 @@ Defines forms for Tastes.
 
 # third party
 from autocomplete_light import forms as auto_forms
-from autocomplete_light.widgets import ChoiceWidget
-# from autocomplete_light.widgets import ChoiceWidget
 
 # local
-from cyphon.autocomplete import AutoCompleteModelFormMixin
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from .models import Taste
 
 

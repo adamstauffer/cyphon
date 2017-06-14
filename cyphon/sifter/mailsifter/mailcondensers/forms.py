@@ -22,6 +22,7 @@ Defines forms for MailFittings and MailCondensers.
 import autocomplete_light
 
 # local
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from sifter.condensers.forms import (
     CondenserForm,
     FittingForm,
@@ -51,7 +52,7 @@ class MailCondenserForm(CondenserForm):
         model = MailCondenser
 
 
-class MailFittingForm(FittingForm):
+class MailFittingForm(FittingForm, AutoCompleteModelFormMixin):
     """
     Defines a form for adding or updating a MailFitting using autocomplete
     fields.
@@ -61,6 +62,9 @@ class MailFittingForm(FittingForm):
         model = MailFitting
         autocomplete_names = {
             'target_field': 'FilterTargetFieldsByMailCondenser'
+        }
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByMailCondenser'),
         }
 
 
@@ -72,4 +76,6 @@ class MailFittingInlineForm(FittingInlineForm):
 
     class Meta(FittingInlineForm.Meta):
         model = MailFitting
-
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByBottle'),
+        }

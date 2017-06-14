@@ -19,10 +19,18 @@
 """
 
 # third party
-from autocomplete_light.widgets import ChoiceWidget
+from autocomplete_light.widgets import ChoiceWidget as _ChoiceWidget
 
 # local
 from utils.choices.choices import get_choice_by_value
+
+
+class ChoiceWidget(_ChoiceWidget):
+
+    def build_attrs(self, extra_attrs=None, autocomplete=None, **kwargs):
+        extra_attrs.update(getattr(autocomplete, 'attrs', {}))
+        return super(ChoiceWidget, self).build_attrs(
+            extra_attrs, autocomplete, **kwargs)
 
 
 class AutoCompleteModelFormMixin(object):
