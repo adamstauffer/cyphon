@@ -87,6 +87,9 @@ class AlertViewSet(CustomModelViewSet):
             return self.queryset.all()
 
     def partial_update(self, request, pk):
+        """
+        Performs a patch request to update an alert.
+        """
         alert = self.get_object()
         serializer = AlertUpdateSerializer(alert, data=request.data)
 
