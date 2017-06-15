@@ -167,6 +167,7 @@ class Context(models.Model):
 
     class Meta:
         unique_together = ['name', 'primary_distillery']
+        ordering = ['name', 'primary_distillery', 'related_distillery']
 
     def __str__(self):
         return self.name
