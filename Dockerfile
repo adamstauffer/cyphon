@@ -43,6 +43,7 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       su-exec \
  && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
  && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so \
+ && ln -s /usr/lib/libproj.so.12 /usr/lib/libproj.so \
  && apk add -U \
       --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       -t build-deps \
