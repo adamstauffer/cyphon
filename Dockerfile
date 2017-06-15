@@ -38,12 +38,12 @@ COPY requirements.txt $CYPHON_HOME/requirements.txt
 RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       binutils \
       gdal \
-      py-gdal \
       postgis \
+      proj4-dev \
+      py-gdal \
       su-exec \
  && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
  && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so \
- && ln -s /usr/lib/libproj.so.12 /usr/lib/libproj.so \
  && apk add -U \
       --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       -t build-deps \
@@ -54,7 +54,6 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       postgis \
       postgresql-dev \
       python3-dev \
-      proj4-dev \
  && pip install -r $CYPHON_HOME/requirements.txt \
  && apk del build-deps
 
