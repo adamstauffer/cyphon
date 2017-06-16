@@ -30,7 +30,7 @@ class Mock(MagicMock):
 
 MOCK_MODULES = [
     'elasticsearch',
-    'gdal',
+    'django.contrib.gis.gdal.libgdal',
 ]
 
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
