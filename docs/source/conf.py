@@ -29,7 +29,7 @@ class Mock(MagicMock):
         return MagicMock()
 
 MOCK_MODULES = [
-    'ctypes',
+    'django.contrib.gis.gdal',
     'elasticsearch',
 ]
 
