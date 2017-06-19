@@ -24,16 +24,32 @@ except ImportError:
 
 
 class Mock(MagicMock):
+
     @classmethod
     def __getattr__(cls, name):
+        if name == 'default_app_config':
+            raise AttributeError()
         return MagicMock()
 
+
+def make_mock(mod_name, *args, **kwargs):
+    mock = Mock(*args, **kwargs)
+    mock.__name__ = ''
+    mock.__path__ = []
+    mock.__file__ = ''
+    return mock
+
+
 MOCK_MODULES = [
-    'django.contrib.gis.gdal',
+    'django.contrib.gis',
+    'django.contrib.gis.db',
+    'django.contrib.gis.db.models',
+    'django.contrib.gis.geos',
     'elasticsearch',
 ]
 
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+sys.modules.update((mod_name, make_mock(mod_name)) for mod_name in MOCK_MODULES)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -43,6 +59,10 @@ sys.path.insert(0, os.path.abspath('../../cyphon'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'cyphon.settings.sphinx'
 import django
 django.setup()
+
+
+import target.locations.models
+target.locations.models.Location.objects = MagicMock()
 
 # sys.path.insert(0, os.path.abspath('..'))
 # from django.conf import settings
