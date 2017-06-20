@@ -15,6 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
+Provides functions for analyzing the sentiment of text.
+
+======================  ================================================
+Function                Description
+======================  ================================================
+:func:`~clean_text`     Removes links and special characters from text.
+:func:`~get_polarity`   Gets the degree of polarity of text.
+:func:`~get_sentiment`  Classifies the sentiment of text.
+======================  ================================================
 
 """
 

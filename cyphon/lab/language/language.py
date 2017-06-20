@@ -15,6 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
+Provides a function for classifying the language of text.
+
+======================  ================================================
+Constant                Description
+======================  ================================================
+:const:`~PROBABILTY`    Level of certainty needed to assign a language.
+:const:`~LANGUAGES`     A list of supported languages.
+======================  ================================================
+
+======================  ================================================
+Function                Description
+======================  ================================================
+:func:`~get_language`   Classifies the language of text.
+======================  ================================================
 
 """
 
@@ -32,7 +46,8 @@ LANGUAGES = ['da', 'nl', 'en', 'fi', 'fr', 'de', 'hu', 'it',
              'nb', 'pt', 'ro', 'ru', 'es', 'sv', 'tr']
 """|list| of |str|
 
-ISO 639-1 codes for supported languages.
+ISO 639-1 codes for supported languages. These are languages supported
+by MongoDB's text index.
 """
 
 
@@ -63,8 +78,6 @@ def get_language(text):
     for more info.
 
     """
-    # languages supported by MongoDB's text index
-
     results = detect_langs(text)
     for result in results:
         if result.lang in LANGUAGES and result.prob >= PROBABILTY:
