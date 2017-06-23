@@ -45,7 +45,6 @@ LOGGER = logging.getLogger(__name__)
 
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
-
 # HOSTNAME is used to send out an email to new users once an
 # administrator adds them.
 
@@ -83,6 +82,18 @@ APPUSERS = {
 CODEBOOKS = {
     'CODENAME_PREFIX': '**',  # prefix for displayed CodeNames
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
+}
+
+CYCLOPS = {
+    'ENABLED': True,
+    'VERSION': '0.4.0',
+    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
+    'MAPBOX_ACCESS_TOKEN': '',
+    'LOCAL_ASSETS_ENABLED': False,
+    'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+    'LOCAL_FOLDER_NAME': 'cyclops',
+    'LOCAL_CSS_FILENAME': 'cyclops.css',
+    'LOCAL_JS_FILENAME': 'cyclops.js',
 }
 
 DATASIFTER = {
@@ -194,6 +205,7 @@ MONGODB = {
 
 NOTIFICATIONS = {
     'PUSH_NOTIFICATION_KEY': '',
+    'GCM_SENDER_ID': '',
     'IGNORED_ALERT_LEVELS': ['INFO'],
 }
 
@@ -255,6 +267,7 @@ REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
 
 ALLOWED_HOSTS = HOST_SETTINGS['ALLOWED_HOSTS']
 CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
+LOGIN_REDIRECT_URL = '/app/'
 
 DATABASES = {
     'default': {
@@ -338,6 +351,7 @@ INSTALLED_APPS = (
     'codebooks',
     'companies',
     'contexts',
+    'cyclops',
     'cyphon.settings',
     'distilleries',
     'httmock',
@@ -456,6 +470,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(HOME_DIR, 'static')
+
+STATICFILES_DIRS = []
+
+if CYCLOPS['LOCAL_ASSETS_ENABLED']:
+    STATICFILES_DIRS += [
+        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
+    ]
 
 MEDIA_URL = '/media/'
 

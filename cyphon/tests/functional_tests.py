@@ -142,6 +142,7 @@ def _web_driver_available():
         return True
     except (ConnectionRefusedError, NameError, RuntimeError,
             WebDriverException) as error:
+        print(error)
         _LOGGER.warning('No WebDriver available for functional tests, '
                         'so those tests will be skipped.')
         return False

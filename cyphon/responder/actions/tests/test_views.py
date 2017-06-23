@@ -19,7 +19,10 @@ Tests the Pipe class and the related RateLimit and SpecSheet classes.
 """
 
 # standard library
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from rest_framework import status

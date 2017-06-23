@@ -92,7 +92,9 @@ class Rule(models.Model):
                     'if the data does NOT match the condition.')
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
         ordering = ['name']
 
@@ -212,8 +214,11 @@ class StringRule(Rule):
         help_text=_('The type of comparison to make.')
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def _get_string(self, data):
         """
@@ -240,8 +245,11 @@ class FieldRule(Rule):
                     'by the Rule.')
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def _get_value(self, data):
         """
@@ -412,8 +420,11 @@ class SieveNode(models.Model):
     object_id = models.PositiveIntegerField()
     node_object = GenericForeignKey()
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['sieve']
         unique_together = ('sieve', 'content_type', 'object_id')
 
     def __str__(self):

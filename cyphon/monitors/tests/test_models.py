@@ -20,7 +20,10 @@ Tests the Monitor class.
 
 # standard library
 from datetime import datetime
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 import logging
 
 # third party

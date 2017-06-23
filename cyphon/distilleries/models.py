@@ -40,6 +40,7 @@ from django.utils.translation import ugettext_lazy as _
 from categories.models import Category
 from companies.models import Company
 from cyphon.documents import DocumentObj
+from cyphon.models import SelectRelatedManager
 from bottler.containers.models import Container
 from distilleries import signals
 from utils.dateutils.dateutils import parse_date
@@ -51,31 +52,11 @@ _PAGE_SIZE = settings.PAGE_SIZE
 _LOGGER = logging.getLogger(__name__)
 
 
-class DistilleryManager(models.Manager):
+class DistilleryManager(SelectRelatedManager):
     """Manage |Distillery| objects.
 
     Adds methods to the default Django model manager.
     """
-
-    def get_queryset(self):
-        """Get the initial |Distillery| queryset.
-
-        Overrides the default `get_queryset` method to also select
-        related objects.
-
-        Returns
-        -------
-        |Queryset|
-            A |Queryset| of |Distilleries|.
-
-        See also
-        --------
-        Django's documentation contains instructions on how to
-        `select related`_ objects and `modify an initial queryset`_.
-
-        """
-        default_queryset = super(DistilleryManager, self).get_queryset()
-        return default_queryset.select_related()
 
     def get_by_natural_key(self, backend, warehouse_name, collection_name):
         """Get a |Distillery| by its natural key.

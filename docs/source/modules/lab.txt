@@ -17,6 +17,7 @@ Subpackages
     lab.geoip
     lab.language
     lab.procedures
+    lab.sentiment
 
 Submodules
 ----------

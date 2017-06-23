@@ -20,7 +20,10 @@ Tests the DataChute class.
 
 # standard library
 import logging
-from unittest.mock import call, Mock, patch
+try:
+    from unittest.mock import Mock, call, patch
+except ImportError:
+    from mock import Mock, call, patch
 
 # third party
 from django.test import TestCase

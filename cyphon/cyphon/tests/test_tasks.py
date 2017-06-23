@@ -19,7 +19,10 @@ Tests Permissions classes.
 """
 
 # standard library
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.test import TestCase

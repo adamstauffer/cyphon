@@ -19,7 +19,10 @@ Tests the Pump class.
 """
 
 # standard library
-from unittest.mock import Mock, call, patch
+try:
+    from unittest.mock import Mock, call, patch
+except ImportError:
+    from mock import Mock, call, patch
 
 # third party
 from django.contrib.auth import get_user_model

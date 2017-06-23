@@ -1,7 +1,7 @@
-lab.language.classifier
+lab.sentiment.sentiment
 =======================
 
-.. automodule:: lab.language.classifier
+.. automodule:: lab.sentiment.sentiment
     :members:
     :undoc-members:
     :show-inheritance:

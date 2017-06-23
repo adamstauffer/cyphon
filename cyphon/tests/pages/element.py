@@ -32,12 +32,14 @@ TIMEOUT = 1
 
 SLEEP = 0.5
 
+
 class HtmlElement(object):
     """
     Base element class.
     """
 
-    def __init__(self):
+    def __init__(self, locator=''):
+        self.locator = locator
         self.timeout = TIMEOUT
 
 
@@ -142,8 +144,9 @@ class AutocompleteElement(HtmlElement):
     """
 
     """
-    def __init__(self, driver):
-        super(AutocompleteElement, self).__init__()
+
+    def __init__(self, driver, *args, **kwargs):
+        super(AutocompleteElement, self).__init__(*args, **kwargs)
         self.driver = driver
         self.path = '//span[@data-input-id="id_%s-autocomplete"]' % self.locator
         self.name = self.locator + '-autocomplete'

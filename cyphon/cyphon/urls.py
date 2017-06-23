@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from rest_framework.routers import DefaultRouter
 import rest_framework_jwt.views as rest_views
 # from rest_framework_docs.views import DRFDocsView
@@ -34,6 +34,7 @@ from alerts.views import AlertViewSet, CommentViewSet
 from appusers.views import AppUserViewSet
 from categories.views import CategoryViewSet
 from contexts.views import ContextViewSet, ContextFilterViewSet
+from cyclops.views import application, manifest
 from bottler.bottles.views import BottleViewSet, BottleFieldViewSet
 from bottler.containers.views import ContainerViewSet
 from bottler.labels.views import LabelFieldViewSet, LabelViewSet
@@ -52,12 +53,37 @@ from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 urlpatterns = [
     # url(r'^$', 'dashboard.views.index', name='index'),
-    url(r'^$', RedirectView.as_view(url='admin/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
+
+# CYCLOPS
+if settings.CYCLOPS['ENABLED']:
+    urlpatterns += [
+        url(
+            r'^login/$',
+            auth_views.login,
+            {'template_name': 'cyclops/login.html'},
+            name='login'
+        ),
+        url(
+            r'^logout/',
+            auth_views.logout,
+            {'next_page': 'login'},
+            name='logout'
+        ),
+        url(r'^manifest.json$', manifest, name='manifest.json'),
+        url(r'^sw.js$', TemplateView.as_view(
+            template_name="cyclops/sw.js",
+            content_type='application/javascript',
+        ), name='service_worker'),
+        url(r'^app/', application, name='cyclops'),
+        url(r'^$', RedirectView.as_view(url='app/')),
+    ]
+else:
+    urlpatterns += [url(r'^$', RedirectView.as_view(url='admin/'))]
 
 # REST API
 router = DefaultRouter()

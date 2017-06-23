@@ -20,25 +20,45 @@
 #
 ############################################################
 
-FROM python:3.6
+FROM python:3.6-alpine
 
 MAINTAINER Leila Hadj-Chikh <leila.hadj-chikh@dunbarsecured.com>
+
+ARG UID=1000
+ARG GID=1000
 
 ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
 
-# update the list of available packages and their versions
-# and install postgis and its dependencies
-RUN apt-get update && apt-get install -y \
+# copy requirements.txt to the image
+COPY requirements.txt $CYPHON_HOME/requirements.txt
+
+# install Alpine and Python dependencies
+RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       binutils \
-      gdal-bin \
-      libproj-dev \
+      gdal \
       postgis \
-      sendmail
+      proj4-dev \
+      py-gdal \
+      su-exec \
+ && ln -s /usr/lib/libgdal.so.20 /usr/lib/libgdal.so \
+ && ln -s /usr/lib/libgeos_c.so.1 /usr/lib/libgeos_c.so \
+ && apk add -U \
+      --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
+      -t build-deps \
+      build-base \
+      libffi-dev \
+      linux-headers \
+      musl-dev \
+      postgis \
+      postgresql-dev \
+      python3-dev \
+ && pip install -r $CYPHON_HOME/requirements.txt \
+ && apk del build-deps
 
 # create unprivileged user
-RUN groupadd -r cyphon && useradd -r -g cyphon cyphon
+RUN addgroup -S -g $GID cyphon && adduser -S -G cyphon -u $UID cyphon
 
 # create application subdirectories
 RUN mkdir -p $CYPHON_HOME \
@@ -52,16 +72,10 @@ COPY cyphon $CYPHON_HOME/cyphon
 # copy entrypoint scripts to the image
 COPY entrypoints $CYPHON_HOME/entrypoints
 
-# copy requirements.txt to the image
-COPY requirements.txt $CYPHON_HOME/requirements.txt
-
-# install python dependencies
-RUN pip install -r $CYPHON_HOME/requirements.txt
-
-COPY cyphon/cyphon/settings/base.example.py cyphon/cyphon/settings/base.py
-COPY cyphon/cyphon/settings/conf.example.py cyphon/cyphon/settings/conf.py
-COPY cyphon/cyphon/settings/dev.example.py cyphon/cyphon/settings/dev.py
-COPY cyphon/cyphon/settings/prod.example.py cyphon/cyphon/settings/prod.py
+COPY cyphon/cyphon/settings/base.example.py $CYPHON_HOME/cyphon/cyphon/settings/base.py
+COPY cyphon/cyphon/settings/conf.example.py $CYPHON_HOME/cyphon/cyphon/settings/conf.py
+COPY cyphon/cyphon/settings/dev.example.py $CYPHON_HOME/cyphon/cyphon/settings/dev.py
+COPY cyphon/cyphon/settings/prod.example.py $CYPHON_HOME/cyphon/cyphon/settings/prod.py
 
 # set owner:group and permissions
 RUN chown -R cyphon:cyphon $CYPHON_HOME \

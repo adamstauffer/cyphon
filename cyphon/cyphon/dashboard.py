@@ -164,6 +164,7 @@ class CyphonIndexDashboard(Dashboard):
             column=1,
             css_classes=('grp-collapse grp-closed',),
             models=(
+                'categories.models.Category',
                 'distilleries.models.Distillery',
             ),
         ))
@@ -215,6 +216,18 @@ class CyphonIndexDashboard(Dashboard):
             models=(
                 'appusers.models.AppUser',
                 'django.contrib.auth.models.Group',
+            ),
+        ))
+
+        self.children.append(modules.ModelList(
+            _('Records'),
+            column=2,
+            collapsible=False,
+            models=(
+                'responder.dispatches.models.Dispatch',
+                'aggregator.invoices.models.Invoice',
+                'ambassador.stamps.models.Stamp',
+                'aggregator.streams.models.Stream',
             ),
         ))
 
@@ -280,16 +293,11 @@ class CyphonIndexDashboard(Dashboard):
         #     ),
         # ))
 
-        self.children.append(modules.ModelList(
-            _('Records'),
+        self.children.append(modules.RecentActions(
+            _('Recent Actions'),
             column=3,
             collapsible=False,
-            models=(
-                'responder.dispatches.models.Dispatch',
-                'aggregator.invoices.models.Invoice',
-                'ambassador.stamps.models.Stamp',
-                'aggregator.streams.models.Stream',
-            ),
+            limit=3,
         ))
 
         self.children.append(modules.LinkList(
@@ -304,9 +312,9 @@ class CyphonIndexDashboard(Dashboard):
             ]
         ))
 
-        self.children.append(modules.RecentActions(
-            _('Recent Actions'),
-            limit=3,
-            collapsible=False,
+        self.children.append(modules.Feed(
+            _('Latest Cyphon News'),
+            feed_url='https://www.cyphon.io/blog?format=rss&utm_source=admin',
             column=3,
+            limit=3,
         ))

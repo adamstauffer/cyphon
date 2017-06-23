@@ -65,6 +65,18 @@ CODEBOOKS = {
     'CODENAME_SUFFIX': '**',  # suffix for displayed CodeNames
 }
 
+CYCLOPS = {
+    'ENABLED': True,
+    'VERSION': '0.4.0',
+    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
+    'MAPBOX_ACCESS_TOKEN': '',
+    'LOCAL_ASSETS_ENABLED': False,
+    'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
+    'LOCAL_FOLDER_NAME': 'cyclops',
+    'LOCAL_CSS_FILENAME': 'cyclops.css',
+    'LOCAL_JS_FILENAME': 'cyclops.js',
+}
+
 DATASIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,
@@ -174,6 +186,7 @@ MONGODB = {
 
 NOTIFICATIONS = {
     'PUSH_NOTIFICATION_KEY': '',
+    'GCM_SENDER_ID': '',
     'IGNORED_ALERT_LEVELS': ['INFO'],
 }
 

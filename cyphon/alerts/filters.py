@@ -36,7 +36,8 @@ from cyphon.choices import ALERT_LEVEL_CHOICES, ALERT_STATUS_CHOICES
 from distilleries.models import Distillery
 from tags.models import Tag
 from utils.dbutils.dbutils import join_query
-from .models import Alert  #, Comment
+from warehouses.models import Warehouse
+from .models import Alert
 
 LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +58,13 @@ class AlertFilter(FilterSet):
 
     collection = django_filters.ModelMultipleChoiceFilter(
         name='distillery',
+        label='Collections',
         queryset=Distillery.objects.have_alerts()
+    )
+    warehouse = django_filters.ModelMultipleChoiceFilter(
+        name='distillery__collection__warehouse',
+        label='Warehouses',
+        queryset=Warehouse.objects.all()
     )
     after = django_filters.DateTimeFilter(
         name='created_date',

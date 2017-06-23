@@ -20,7 +20,10 @@ Provides decorators for frequently used patches.
 """
 
 # standard library
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 DEFAULT = object()
 

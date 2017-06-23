@@ -19,7 +19,10 @@ Tests the StreamController class.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.contrib.auth import get_user_model

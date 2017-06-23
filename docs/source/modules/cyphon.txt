@@ -19,6 +19,7 @@ Submodules
    cyphon.celeryapp
    cyphon.choices
    cyphon.dashboard
+   cyphon.documents
    cyphon.fieldsets
    cyphon.filters
    cyphon.forms

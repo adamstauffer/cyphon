@@ -25,7 +25,7 @@ rm -f celerybeat.pid
 rm -f celerybeat-schedule.pid
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
 # run Celery beat for Cyphon with Celery configuration stored in celeryapp
-su -m cyphon -c 'celery beat -A cyphon -l ERROR'
+su-exec cyphon celery beat -A cyphon -l ERROR

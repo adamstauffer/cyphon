@@ -20,16 +20,21 @@ Tests the receiver module.
 
 # standard library
 from collections import OrderedDict
+import copy
 import json
 import logging
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.test import TransactionTestCase
 from testfixtures import LogCapture
 
 # local
-from receiver.receiver import process_msg, LOGGER
+from cyphon.documents import DocumentObj
+from receiver.receiver import create_doc_obj, process_msg, LOGGER
 from tests.fixture_manager import get_fixtures
 
 LOGGER.removeHandler('console')
@@ -69,13 +74,25 @@ class ProcessMsgTestCase(TransactionTestCase):
     def tearDown(self):
         logging.disable(logging.NOTSET)
 
+    def test_create_doc_obj(self):
+        """
+        Tests the create_doc_obj function.
+        """
+        doc_obj = create_doc_obj(self.msg)
+        expected_doc = copy.deepcopy(self.doc)
+        expected_doc['_id'] = self.doc['@uuid']
+        self.assertTrue(isinstance(doc_obj, DocumentObj))
+        self.assertEqual(doc_obj.doc_id, self.doc['@uuid'])
+        self.assertEqual(doc_obj.collection, self.doc['collection'])
+        self.assertEqual(doc_obj.data, expected_doc)
+
     @patch('receiver.receiver.LogChute.objects.process')
     def test_process_msg_logchutes(self, mock_process):
         """
         Tests the process_msg function for LogChutes.
         """
         self.kwargs['method'].routing_key = 'logchutes'
-        with patch('receiver.receiver._create_doc_obj',
+        with patch('receiver.receiver.create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
             process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
@@ -87,7 +104,7 @@ class ProcessMsgTestCase(TransactionTestCase):
         Tests the process_msg function for DataChutes.
         """
         self.kwargs['method'].routing_key = 'datachutes'
-        with patch('receiver.receiver._create_doc_obj',
+        with patch('receiver.receiver.create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
             process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
@@ -99,7 +116,7 @@ class ProcessMsgTestCase(TransactionTestCase):
         Tests the process_msg function for Watchdogs.
         """
         self.kwargs['method'].routing_key = 'watchdogs'
-        with patch('receiver.receiver._create_doc_obj',
+        with patch('receiver.receiver.create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
             process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)
@@ -111,7 +128,7 @@ class ProcessMsgTestCase(TransactionTestCase):
         Tests the process_msg function for Monitors.
         """
         self.kwargs['method'].routing_key = 'monitors'
-        with patch('receiver.receiver._create_doc_obj',
+        with patch('receiver.receiver.create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
             process_msg(**self.kwargs)
             mock_create.assert_called_once_with(self.decoded_msg)

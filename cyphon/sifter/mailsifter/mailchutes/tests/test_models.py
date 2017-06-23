@@ -20,7 +20,10 @@ Tests the MailChute class.
 
 # standard library
 from email.mime.text import MIMEText
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.test import TestCase, TransactionTestCase

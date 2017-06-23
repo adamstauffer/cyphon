@@ -19,7 +19,10 @@ Tests signal recievers in the MailSifter package.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django_mailbox.signals import message_received
@@ -42,4 +45,4 @@ class HandleMessageTestCase(TestCase):
                 as mock_process:
             message_received.send(sender='message_received',
                                   message=mock_message)
-            mock_process.assert_called_once()
+            assert mock_process.call_count == 1

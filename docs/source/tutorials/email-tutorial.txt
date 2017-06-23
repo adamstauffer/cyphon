@@ -259,7 +259,7 @@ Step 8: Watchdog
 
     Now that the we've made a Chute to save the messages, we need to create a Watchdog to generate Alerts from them.
 
-Let's start by making some DataRules to identify differenr kinds of daily reports. Under the "Sifting Data" panel on the main admin page, click on "JSON Data" and create the following DataRules:
+Let's start by making some DataRules to identify different kinds of daily reports. Under the "Sifting Data" panel on the main admin page, click on "JSON Data" and create the following DataRules:
 
     ===============================  ===========  =========  ==============  =======
     DataRule Name                    Field Name   Operator   Value           Regex  
