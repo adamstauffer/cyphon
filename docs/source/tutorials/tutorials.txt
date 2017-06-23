@@ -9,3 +9,4 @@ Tutorials
 
    email-tutorial
    logstash-tutorial
+   twitter-tutorial
