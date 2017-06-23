@@ -77,5 +77,5 @@ class FittingAdmin(admin.ModelAdmin):
     ]
     list_display_links = ['id', ]
     related_lookup_fields = {
-        'generic': [['content_type', 'object_id'], ],
+        'generic': [['object_id', 'content_type'], ],
     }
