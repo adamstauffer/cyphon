@@ -94,7 +94,7 @@ def _get_saucelabs_driver(capabilities):
     """
     username = _SAUCE_SETTINGS['USERNAME']
     access_key = _SAUCE_SETTINGS['ACCESS_KEY']
-    hub_url = '%s:%s@localhost:4445' % (username, access_key)
+    hub_url = '%s:%s@ondemand.saucelabs.com' % (username, access_key)
     return Remote(
         command_executor='http://%s/wd/hub' % hub_url,
         desired_capabilities=capabilities
