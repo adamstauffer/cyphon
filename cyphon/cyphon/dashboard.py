@@ -288,6 +288,7 @@ class CyphonIndexDashboard(Dashboard):
                 'responder.dispatches.models.Dispatch',
                 'aggregator.invoices.models.Invoice',
                 'ambassador.stamps.models.Stamp',
+                'aggregator.streams.models.Stream',
             ),
         ))
 
