@@ -21,9 +21,9 @@
 # third party
 from django.contrib import admin
 
-# local
-from ambassador.platforms.admin import PlatformAdmin
-from .models import Reservoir
 
-
-admin.site.register(Reservoir, PlatformAdmin)
+class PlatformAdmin(admin.ModelAdmin):
+    """
+    Customizes admin pages for Platform subclasses.
+    """
+    list_display = ['name']
