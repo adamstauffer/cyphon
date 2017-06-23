@@ -67,6 +67,10 @@ class Taste(Teaser):
 
     objects = TasteManager()
 
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['container']
+
     def __str__(self):
         return str(self.container)
-
