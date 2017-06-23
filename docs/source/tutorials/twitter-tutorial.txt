@@ -304,7 +304,7 @@ We now have all the pieces to make a Container. Create a Container called "post"
             "link": "URLField",
             "name": "CharField (Account)",
             "profile_pic": "URLField",
-            "refid": "CharField",
+            "ref_id": "CharField",
             "screen_name": "CharField (Account)"
         }
     }
@@ -354,7 +354,7 @@ Under the "Condensing Data" panel on the main admin page, click "JSON Data," and
 
 Next, we'll create DataCondensers to map these DataParsers to the fields of the "post" Bottle and its nested "user" Bottle.
 
-Create a DataCondenser called "user" and associate it with the "user" Bottle. Add the following DataFittings:
+Create a DataCondenser called "twitter__user" and associate it with the "user" Bottle. Add the following DataFittings:
 
     ============  ===========================================
     Target Field  Parser (data parser)
@@ -366,7 +366,7 @@ Create a DataCondenser called "user" and associate it with the "user" Bottle. Ad
     screen_name   user.screen_name__COPY (data parser)
     ============  ===========================================
 
-Now create another DataCondenser called "post," and associate it with the "post" Bottle. Add the following DataFittings:
+Now create another DataCondenser called "twitter__post," and associate it with the "post" Bottle. Add the following DataFittings:
 
     ============  ===========================================
     Target Field  Parser 
@@ -376,7 +376,7 @@ Now create another DataCondenser called "post," and associate it with the "post"
     location      coordinates.coordinates__COPY (data parser)
     ref_id        id_str__COPY (data parser)
     text          text__COPY (data parser)
-    user          user (data condenser)
+    user          twitter__user (data condenser)
     ============  ===========================================
 
 
@@ -439,9 +439,9 @@ Step 4: Munger
 Open the "Sifting Data" panel, and click on "JSON Data." Create a DataMunger with the following properties:
 
     =====================  ============================
-    DataMunger.name        Social Media
+    DataMunger.name        tweets
     DataMunger.distillery  elasticsearch.cyphon.social
-    DataMunger.condenser   post
+    DataMunger.condenser   twitter__post
     =====================  ============================
 
 
@@ -461,7 +461,7 @@ Create a DataChute with the following properties:
 
     ==================  ========================
     DataChute.sieve     
-    DataChute.munger    Social Media
+    DataChute.munger    tweets
     DataChute.endpoint  Twitter PublicStreamsAPI
     DataChute.enabled   True
     ==================  ========================
@@ -543,7 +543,7 @@ Step 8: Stream
         :width: 75px
         :align: left
 
-    Finally, we need to connect Cyphon to a Twitter stream, so it can start gathering tweets. To do this, follow the instructions under :ref:`twitter-setup`.
+    Finally, we need to connect Cyphon to a Twitter stream, so it can start gathering tweets. To do this, follow the instructions under :ref:`twitter-setup`. When you're done, make sure the "twitter" Reservoir is enabled (under "App Configurations > Data Collection").
 
 You should now be receiving tweets! You can double-check this by clicking on "Streams" under the "Records" panel of the admin page. You should see a stream for "Twitter PublicStreamsAPI: Twitter".
 
@@ -552,4 +552,4 @@ You should now be receiving tweets! You can double-check this by clicking on "St
 Conclusion
 **********
 
-In this tutorial, we showed you how to collect, analyze, and generate Alerts from tweets. Now that you have a basic idea of how to filter tweets and set up rules, you can create more advanced rulesets that generate high-, medium-, and low-level Alerts based on the polarity of tweets.
+In this tutorial, we showed you how to collect, analyze, and generate Alerts from tweets. Now that you have a basic idea of how to filter tweets and set up rules, you can experiment with more advanced rulesets that generate high-, medium-, and low-level Alerts.
