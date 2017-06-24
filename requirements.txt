@@ -15,7 +15,7 @@ django-grappelli==2.10.1
 django-mailbox==4.5.4
 django-picklefield==0.3.2
 djangorestframework==3.6.3
-djangorestframework-jwt==1.10.0
+djangorestframework-jwt==1.11.0
 docutils==0.13.1
 drfdocs==0.0.11
 elasticsearch==5.4.0
