@@ -40,7 +40,7 @@ ALERT_OUTCOME_CHOICES = (
 )
 
 #: Workflow states for |Alerts|.
-ALERT_STATUS_CHOICES = (
+ALERT_STuerATUS_CHOICES = (
     ('NEW', 'New'),
     ('BUSY', 'Busy'),
     ('DONE', 'Done'),

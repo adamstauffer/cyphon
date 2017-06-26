@@ -22,7 +22,7 @@ import re
 from bottler.datafields.models import DataField
 
 
-class SearchQueryParameterValue:
+class SearchParameterValue:
     """Base class for parsing parameter values.
 
     Attributes
@@ -43,18 +43,8 @@ class SearchQueryParameterValue:
         """
         return not bool(self.errors)
 
-    def _add_error(self, error):
-        """Adds an error to the current list of value errors.
 
-        Parameters
-        ----------
-        error : str
-            Error message to add.
-        """
-        self.errors.append(error)
-
-
-class SearchQueryParameterKeywordValue(SearchQueryParameterValue):
+class KeywordValue(SearchParameterValue):
     EMPTY_VALUE = 'Keyword value is empty.'
     """str
 
@@ -73,10 +63,37 @@ class SearchQueryParameterKeywordValue(SearchQueryParameterValue):
         self.keyword = parameter.strip('"')
 
         if not self.keyword:
-            self._add_error(SearchQueryParameterKeywordValue.EMPTY_VALUE)
+            self.errors.append(KeywordValue.EMPTY_VALUE)
+
+class FieldOperators:
+    EQUALS = '='
+    GREATER_THAN = '>'
+    LESS_THAN = '<'
+    GREATER_THAN_OR_EQUAL = '>='
+    LESS_THAN_OR_EQUAL = '<='
+    NOT_EQUAL = '!='
+    ALL = [
+        EQUALS,
+        GREATER_THAN,
+        LESS_THAN,
+        GREATER_THAN_OR_EQUAL,
+        LESS_THAN_OR_EQUAL,
+        NOT_EQUAL,
+    ]
+    BOOLEAN_OPERATORS = dict([(EQUALS, 'eq')])
+    TEXT_OPERATORS = dict([(EQUALS, 'regex')])
+    DATE_OPERATORS = dict([
+        (GREATER_THAN, 'gt'),
+        (LESS_THAN, 'lt'),
+        (GREATER_THAN_OR_EQUAL, 'gte'),
+        (LESS_THAN_OR_EQUAL, 'lte'),
+    ])
+    NUMBER_FIELDS = ['FloatField', 'IntegerField']
+    NUMBER_OPERATORS = [ALL]
 
 
-class SearchQueryParameterFieldValue(SearchQueryParameterValue):
+
+class FieldValue(SearchParameterValue):
     FIELD_REGEX = re.compile(
         r'(?P<field_name>^\w[\w.]*)'  # Name of the field
         r'(?P<operator>[=<>!]{1,2})'  # Operator to compare value with
@@ -133,10 +150,10 @@ class SearchQueryParameterFieldValue(SearchQueryParameterValue):
         -------
         MatchObject or None
         """
-        return SearchQueryParameterFieldValue.FIELD_REGEX.search(parameter)
+        return FieldValue.FIELD_REGEX.search(parameter)
 
     @staticmethod
-    def _get_bottle_field(field_name):
+    def _get_data_field(field_name):
         """Returns the matching bottle field of the given field_name.
 
         Parameters
@@ -164,37 +181,64 @@ class SearchQueryParameterFieldValue(SearchQueryParameterValue):
         """
         super().__init__()
 
-        parsed = SearchQueryParameterFieldValue._parse_parameter(parameter)
+        parsed = FieldValue._parse_parameter(parameter)
 
         if parsed:
             field_name, self.operator, self.value = parsed.groups()
 
-            self.field = SearchQueryParameterFieldValue._get_bottle_field(
+            self.field = FieldValue._get_data_field(
                 field_name
             )
 
             if self.field is None:
                 self._add_field_does_not_exist_error(field_name)
 
-            if self.operator not in SearchQueryParameterFieldValue.OPERATORS:
+            if self.operator not in FieldValue.OPERATORS:
                 self._add_invalid_operator_error(self.operator)
 
             if not self.value:
-                self._add_error(SearchQueryParameterFieldValue.EMPTY_VALUE)
+                self.errors.append(FieldValue.EMPTY_VALUE)
         else:
-            self._add_error(SearchQueryParameterFieldValue.INVALID_PARAMETER)
+            self.errors.append(FieldValue.INVALID_PARAMETER)
 
     @property
-    def name(self):
-        return self.field.field_name
+    def field_name(self):
+        """Returns the field_name of the matching DataField.
+
+        Returns
+        -------
+        str
+        """
+        if self.field:
+            return self.field.field_name
+        else:
+            return None
 
     @property
-    def type(self):
-        return self.field.field_type
+    def field_type(self):
+        """Returns the field_type of the matching DataField.
+
+        Returns
+        -------
+        str
+        """
+        if self.field:
+            return self.field.field_type
+        else:
+            return None
 
     @property
-    def pk(self):
-        return self.field.pk
+    def field_pk(self):
+        """Returns the primary key of the matching DataField.
+
+        Returns
+        -------
+        int
+        """
+        if self.field:
+            return self.field.pk
+        else:
+            return None
 
     def _add_field_does_not_exist_error(self, field_name):
         """Adds a FIELD_DOES_NOT_EXIST error to the current list of errors.
@@ -205,8 +249,8 @@ class SearchQueryParameterFieldValue(SearchQueryParameterValue):
             Name of the field that doesn't exist.
 
         """
-        self._add_error(
-            SearchQueryParameterFieldValue.FIELD_DOES_NOT_EXIST.format(
+        self.errors.append(
+            FieldValue.FIELD_DOES_NOT_EXIST.format(
                 field_name
             )
         )
@@ -220,6 +264,6 @@ class SearchQueryParameterFieldValue(SearchQueryParameterValue):
             String that was attempted to be used as an operator.
 
         """
-        self._add_error(
-            SearchQueryParameterFieldValue.INVALID_OPERATOR.format(operator)
+        self.errors.append(
+            FieldValue.INVALID_OPERATOR.format(operator)
         )

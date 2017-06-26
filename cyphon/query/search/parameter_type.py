@@ -19,7 +19,7 @@
 import re
 
 
-class SearchQueryParameterType:
+class SearchParameterType:
     """
     Contains values and helper functions to determine a search query
     parameter's type.
@@ -43,15 +43,9 @@ class SearchQueryParameterType:
     String indicating that a parameter is a distillery filter.
     """
 
-    ALL = [KEYWORD, FIELD, DISTILLERY]
-    """list of str
-
-    All of the possible parameter types.
-    """
-
     TYPE_CHECK_REGEX_MAP = [
         (KEYWORD, r'^\".*\"$|^\w[\w.]*$'),
-        (DISTILLERY, r'^source=\*?[\w.]+$'),
+        (DISTILLERY, r'^source=(?:\*?[\w.]+\*?)?$'),
         (FIELD, r'^\w[\w.]*[=<>!]{1,2}(?:$|\".*\"$|[\w.]*$)')
     ]
 
@@ -69,24 +63,8 @@ class SearchQueryParameterType:
         str or None
             Parameter type.
         """
-        for type_check in SearchQueryParameterType.TYPE_CHECK_REGEX_MAP:
+        for type_check in SearchParameterType.TYPE_CHECK_REGEX_MAP:
             if re.match(type_check[1], parameter):
                 return type_check[0]
 
         return None
-
-    @staticmethod
-    def is_valid_type(parameter_type):
-        """Determines if the given string is a valid parameter type.
-
-        Parameters
-        ----------
-        parameter_type : str
-            Parameter type to check the validity of.
-
-        Returns
-        -------
-        bool
-            If the given string is a valid parameter type.
-        """
-        return parameter_type in SearchQueryParameterType.ALL

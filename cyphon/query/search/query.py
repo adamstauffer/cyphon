@@ -21,12 +21,106 @@
 # standard library
 import re
 
-from .parameter import SearchQueryParameter
-from .parameter_type import SearchQueryParameterType
-from cyphon.choices import TEXT_FIELDS
+# local
+from .parameter import SearchParameter
+from .parameter_type import SearchParameterType
+from .parameter_value import (
+    KeywordValue,
+    FieldValue,
+)
 from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
 from engines.queries import EngineQuery
+
+
+class SearchQueryErrors:
+    EMPTY_SEARCH_QUERY = 'Search query is empty.'
+
+    MULTPIPLE_DISTILLERY_PARAMETERS = (
+        'There can only be one instance of the `source=` parameter.'
+    )
+    """str
+
+    Error message explaining that there can only be one
+    SearchQueryParameter that has the SearchQueryParameterType.DISTILLERY
+    type.
+    """
+
+    @staticmethod
+    def _create_parameter_error_dict(parameter):
+        """Creates a dictionary that explains a parameter's errors.
+
+        Parameters
+        ----------
+        parameter : SearchParameter
+            Parameter that contains errors.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the original parameter, the index location
+            of the parameter in the search query, the parameters type,
+            and the list of errors associated with the parameter.
+        """
+        return {
+            'parameter': parameter.parameter,
+            'type': parameter.type,
+            'index': parameter.index,
+            'errors': parameter.errors,
+        }
+
+    def __init__(self, parameters):
+        self.query = []
+        self.parameters = []
+        self._get_errors(parameters)
+
+    def has_errors(self):
+        return bool(self.query) or bool(self.parameters)
+
+    def as_dict(self):
+        """Creates a dictionary object based on the query parameters.
+
+        Returns
+        -------
+        dict
+        """
+        errors = {}
+
+        if self.query:
+            errors['query'] = self.query
+
+        if self.parameters:
+            errors['parameters'] = ([
+                SearchQueryErrors._create_parameter_error_dict(parameter)
+                for parameter
+                in self.parameters
+            ])
+
+        return errors
+
+    def _get_errors(self, parameters):
+        """Creates a dictionary explaining the search query's errors.
+
+        Parameters
+        ----------
+        parameters : list of SearchParameter
+            SearchQueryParameter instances that may have errors.
+        """
+        collection_parameter_count = 0
+
+        if not parameters:
+            self.query.append(SearchQueryErrors.EMPTY_SEARCH_QUERY)
+            return
+
+        for parameter in parameters:
+            if not parameter.is_valid():
+                self.parameters.append(parameter)
+            if parameter.type is SearchParameterType.DISTILLERY:
+                collection_parameter_count += 1
+
+        if collection_parameter_count > 1:
+            self.query.append(SearchQuery.MULTPIPLE_DISTILLERY_PARAMETERS)
+
 
 class SearchQuery:
     """List of SearchQueryParameters used to search collections.
@@ -36,7 +130,7 @@ class SearchQuery:
 
     Attributes
     ----------
-    parameters : list of SearchQueryParameter
+    parameters : list of SearchParameter
         Parsed parameter strings of the search query.
     """
 
@@ -75,82 +169,33 @@ class SearchQuery:
             operator, and value.
         """
         return [
-            SearchQueryParameter(index, parameter)
+            SearchParameter(index, parameter)
             for index, parameter
             in enumerate(re.findall(SearchQuery.PARAMETERS_REGEX, query))
-        ]
-
-    @staticmethod
-    def _create_parameter_error(parameter):
-        """Creates a dictionary that explains a parameter's errors.
-
-        Parameters
-        ----------
-        parameter : SearchQueryParameter
-            Parameter that contains errors.
-
-        Returns
-        -------
-        dict
-            Dictionary containing the original parameter, the index location
-            of the parameter in the search query, the parameters type,
-            and the list of errors associated with the parameter.
-        """
-        return {
-            'parameter': parameter.parameter,
-            'type': parameter.type,
-            'index': parameter.index,
-            'errors': parameter.errors,
-        }
-
-    @staticmethod
-    def _get_errors(parameters):
-        """Creates a dictionary explaining the search query's errors.
-
-        Parameters
-        ----------
-        parameters : list of SearchQueryParameter
-            SearchQueryParameter instances that may have errors.
-
-        Returns
-        -------
-        dict
-            Dictionary containing the overall query errors and the
-            individual parameter errors.
-        """
-        collection_parameter_count = 0
-        parameter_errors = []
-        query_errors = []
-        errors = {}
-
-        if not parameters:
-            errors['query'] = ['Search query is empty.']
-            return errors
-
-        for parameter in parameters:
-            if not parameter.is_valid():
-                parameter_errors += SearchQuery._create_parameter_error(
-                    parameter
-                )
-            if parameter.type is SearchQueryParameterType.DISTILLERY:
-                collection_parameter_count += 1
-
-        if collection_parameter_count > 1:
-            query_errors.append(SearchQuery.MULTPIPLE_DISTILLERY_PARAMETERS)
-
-        if parameter_errors:
-            errors['parameters'] = parameter_errors
-
-        if query_errors:
-            errors['query'] = query_errors
-
-        return errors
+            ]
 
     @staticmethod
     def _is_field_on_distillery(distillery, field_id):
-        if distillery.container.bottle.fields.all().exists(pk=field_id):
+        """Determines if a DataField is on a distillery.
+
+        Parameters
+        ----------
+        distillery : Distillery
+            Distillery to look for the DataField on.
+        field_id : int
+            ID of the DataField.
+
+        Returns
+        -------
+        bool
+            If the Distillery contains the DataField
+        """
+        bottle = distillery.container.bottle
+        label = distillery.container.label
+
+        if bottle.fields.all().exists(pk=field_id):
             return True
-        if distillery.container.label.fields.all().exists(pk=field_id):
+        if label and label.fields.all().exists(pk=field_id):
             return True
 
         return False
@@ -161,11 +206,13 @@ class SearchQuery:
 
         Parameters
         ----------
-        parameters : list of SearchQueryParameter
+        parameters : list of SearchParameter
+            Parameters to sort.
 
         Returns
         -------
         dict of SearchQueryParameter
+            SearchQueryParameters indexed by their type property.
         """
         sorted_parameters = {}
 
@@ -178,18 +225,24 @@ class SearchQuery:
         return sorted_parameters
 
     @staticmethod
-    def _get_keyword_fieldsets(distillery, keywords):
-        """
+    def _get_keyword_fieldsets(distillery, parameter_values):
+        """Creates QueryFieldsets from
 
         Parameters
         ----------
         distillery : Distillery
-        keywords : SearchQueryParameterKeywordValue
+        parameter_values : list of KeywordValue
 
         Returns
         -------
 
         """
+        keywords = ([
+            parameter_value.keyword
+            for parameter_value
+            in parameter_values
+        ])
+
         return ([
             QueryFieldset(
                 field_name=field.field_name,
@@ -208,7 +261,7 @@ class SearchQuery:
         Parameters
         ----------
         distillery : Distillery
-        fields : SearchQueryParameterFieldValue
+        fields : list of FieldValue
 
         Returns
         -------
@@ -216,18 +269,30 @@ class SearchQuery:
         """
         return ([
             QueryFieldset(
-                field_name=field.name,
-                field_type=field.type,
+                field_name=field.field_name,
+                field_type=field.field_type,
                 operator=field.operator,
                 value=field.value
             )
             for field
             in fields
-            if SearchQuery._is_field_on_distillery(distillery, field.pk)
+            if SearchQuery._is_field_on_distillery(distillery, field.field_pk)
         ])
 
     @staticmethod
     def _get_fieldsets(distillery, fields, keywords):
+        """Creates a list of QueryFieldsets based on a Distillery.
+
+        Parameters
+        ----------
+        distillery : Distillery
+        fields : list of SearchQueryFieldParameterValue
+        keywords : list of KeywordValue
+
+        Returns
+        -------
+        list of QueryFieldset
+        """
         fieldsets = []
 
         if keywords:
@@ -250,7 +315,7 @@ class SearchQuery:
             Search query string
         """
         self.parameters = SearchQuery._get_parameters(query)
-        self.errors = SearchQuery._get_errors(self.parameters)
+        self._errors = SearchQueryErrors(self.parameters)
 
     def is_valid(self):
         """Determines if the SearchQuery is valid.
@@ -260,12 +325,25 @@ class SearchQuery:
         bool
             If the SearchQuery is valid.
         """
-        return not bool(self.errors)
+        return not self._errors.has_errors()
+
+    @property
+    def errors(self):
+        return self._errors.as_dict()
 
     def get_results(self):
-        assert self.is_valid(), (
-            'Can only call `.get_results()` on a valid query.'
-        )
+        """Returns search results for each Distillery indexed by Distillery.
+
+        Returns
+        -------
+        dict of list of dict
+
+        Raises
+        ------
+        AssertionError
+            If the SearchQuery is not valid.
+        """
+        assert self.is_valid(), 'Can only get results of a valid SearchQuery.'
 
         distilleries = Distillery.objects.all()
         results = {}
@@ -276,8 +354,8 @@ class SearchQuery:
         for distillery in distilleries:
             fieldsets = SearchQuery._get_fieldsets(
                 distillery,
-                sorted_parameters[SearchQueryParameterType.FIELD] or [],
-                sorted_parameters[SearchQueryParameterType.KEYWORD] or []
+                sorted_parameters[SearchParameterType.FIELD] or [],
+                sorted_parameters[SearchParameterType.KEYWORD] or []
             )
 
             engine_query = EngineQuery(subqueries=fieldsets, joiner='OR')
