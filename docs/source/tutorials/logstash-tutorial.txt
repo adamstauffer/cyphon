@@ -1,8 +1,8 @@
 .. _logstash-tutorial:
 
-######################################
-Generating Alerts from Logstash Output
-######################################
+###############################
+Generating Alerts from Logstash
+###############################
 
 .. note::
 

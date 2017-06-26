@@ -60,9 +60,11 @@ class Platform(models.Model):
                             choices=PLATFORM_CHOICES)
     enabled = models.BooleanField(default=True)
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
-

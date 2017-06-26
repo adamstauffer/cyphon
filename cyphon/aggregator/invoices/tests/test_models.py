@@ -32,12 +32,23 @@ class InvoiceTestCase(TestCase):
     """
     fixtures = get_fixtures(['invoices'])
 
-    # def test_str(self):
-    #     """
-    #     Tests the __str__ method of the Record class.
-    #     """
-    #     invoice = Invoice.objects.get(pk=1)
-    #     actual = str(invoice)
-    #     expected = 'PK 1: Twitter SearchAPI (200) 2015-01-01 07:00:00+00:00'
-    #     self.assertEqual(actual, expected)
+    def test_str(self):
+        """
+        Tests the __str__ method of the Invoice class.
+        """
+        invoice = Invoice.objects.get(pk=1)
+        actual = str(invoice)
+        expected = 'PK 1: Twitter SearchAPI (200) 2015-01-01 07:00:00+00:00'
+        self.assertEqual(actual, expected)
 
+    def test_query_str(self):
+        """
+        Tests the query_str method of the Invoice class.
+        """
+        invoice = Invoice.objects.get(pk=1)
+        actual = invoice.query_str()
+        expected = """{
+    "bar": "foo",
+    "foo": "bar"
+}"""
+        self.assertEqual(actual, expected)

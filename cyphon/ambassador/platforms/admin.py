@@ -22,8 +22,8 @@
 from django.contrib import admin
 
 
-class ChuteAdmin(admin.ModelAdmin):
+class PlatformAdmin(admin.ModelAdmin):
     """
-    Customizes admin pages for Chutes.
+    Customizes admin pages for Platform subclasses.
     """
-    list_display = ['id', 'sieve', 'munger', 'enabled']
+    list_display = ['name']

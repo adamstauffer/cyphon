@@ -97,8 +97,11 @@ class Parser(models.Model):
                     'may be used to construct a link to a Twitter profile. ')
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -227,6 +230,7 @@ class StringParser(Parser):
 
     class Meta:
         abstract = True
+        ordering = ['name']
 
 
 class FieldParser(Parser):
@@ -255,6 +259,7 @@ class FieldParser(Parser):
 
     class Meta:
         abstract = True
+        ordering = ['name']
 
     def clean(self):
         """
