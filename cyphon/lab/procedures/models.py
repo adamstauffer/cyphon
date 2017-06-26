@@ -20,36 +20,15 @@
 
 # standard library
 import importlib
-import logging
 
 # third party
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 
 # local
+from cyphon.models import GetByNameManager
 from lab.registry import LAB_CHOICES
 from utils.parserutils import parserutils
 from utils.validators.validators import IDENTIFIER_VALIDATOR
-
-
-LOGGER = logging.getLogger(__name__)
-
-
-class ProtocolManager(models.Manager):
-    """
-    Adds methods to the default model manager.
-    """
-
-    def get_by_natural_key(self, package, module, function):
-        """
-        Allows retrieval of a Lab by its natural key instead of its
-        primary key.
-        """
-        try:
-            return self.get(package=package, module=module, function=function)
-        except ObjectDoesNotExist:
-            LOGGER.error('%s "%s.%s.%s" does not exist',
-                         self.model.__name__, package, module, function)
 
 
 class Protocol(models.Model):
@@ -78,7 +57,7 @@ class Protocol(models.Model):
         validators=[IDENTIFIER_VALIDATOR]
     )
 
-    objects = ProtocolManager()
+    objects = GetByNameManager()
 
     class Meta:
         """
@@ -124,6 +103,8 @@ class Procedure(models.Model):
     name = models.CharField(max_length=255, unique=True)
     protocol = models.ForeignKey(Protocol)
     field_name = models.CharField(max_length=255, blank=True, null=True)
+
+    objects = GetByNameManager()
 
     def __str__(self):
         return self.name
