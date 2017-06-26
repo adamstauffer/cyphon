@@ -181,11 +181,11 @@ Open the "Shaping Data" panel on Cyphon's main admin page, and create the follow
     Field Name        Field Type             Target Type
     ================  =====================  ===========
     created_date      DateTimeField          DateTime
-    ref_id            CharField              
     link              URLField
     location          PointField             Location            
     name              CharField              Account
     profile_pic       URLField
+    ref_id            CharField              
     screen_name       CharField              Account
     text              TextField              Keyowrd 
     ================  =====================  ===========
