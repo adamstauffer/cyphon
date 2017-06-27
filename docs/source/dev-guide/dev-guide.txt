@@ -10,3 +10,4 @@ Developer Guide
    Architecture <../architecture/overview>
    using-fixtures
    graphing-models
+   testing
