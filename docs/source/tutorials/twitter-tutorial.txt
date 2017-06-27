@@ -143,17 +143,17 @@ The raw data for this tweet might look like this::
 
 Yikes! We're only interested in a fraction of this information, so we'd like to condense all this into the following format::
 
-    {
-        "ref_id": "849699711376293888",
-        "coordinates": [-76.661301, 39.489207],
+    {  
         "created_date": "2017-04-16T14:05:17.000Z",
         "link": "https://twitter.com/cyphonproject/status/849699711376293888",
+        "location": [-76.661301, 39.489207],
+        "ref_id": "849699711376293888",
         "text": "Cyphon Release 1.0.0   https://t.co/Nn4Yo6ba6m",
         "user": {
-            "ref_id": "834789750624116736",
             "link": "https://twitter.com/cyphonproject",
             "name": "The Cyphon Project",
             "profile_pic": "http://pbs.twimg.com/profile_images/872533195794903041/ZH7OQlO3_normal.jpg",
+            "ref_id": "834789750624116736",
             "screen_name": "cyphonproject"
         }
     }
@@ -553,3 +553,4 @@ Conclusion
 **********
 
 In this tutorial, we showed you how to collect, analyze, and generate Alerts from tweets. Now that you have a basic idea of how to filter tweets and set up rules, you can experiment with more advanced rulesets that generate high-, medium-, and low-level Alerts.
+
