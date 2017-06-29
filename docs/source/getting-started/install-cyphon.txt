@@ -67,7 +67,7 @@ Give that user ownership of the Elasticsearch data directory if appropriate. If 
 Git Repositories
 ****************
 
-If you intend to deploy your Cyphon instance using Docker Compose, you can clone our Cyphon dock Git repository::
+If you intend to deploy your Cyphon instance using Docker Compose, you can clone our Cyphondock Git repository::
 
     $ git clone https://github.com/dunbarcyber/cyphondock.git /opt/cyphon/cyphondock
 
