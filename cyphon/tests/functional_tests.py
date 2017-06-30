@@ -21,14 +21,17 @@ Functional test case classes.
 # standard library
 import logging
 import os
+import socket
 import unittest
 
 # third party
+import backoff
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver import Chrome, Firefox, Remote
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.common.exceptions import WebDriverException
 
 # local
@@ -131,6 +134,7 @@ def get_web_driver(name=None):
         return _get_local_driver(browser)
 
 
+@backoff.on_exception(backoff.expo, socket.timeout, max_tries=3)
 def _web_driver_available():
     """
     Return a Boolean indicating whether a Selenium web driver is
@@ -148,6 +152,7 @@ def _web_driver_available():
         return False
 
 
+RemoteConnection.set_timeout(10)
 if _TEST_SETTINGS['ENABLED']:
     FUNCTIONAL_TESTS_ENABLED = _web_driver_available()
 else:
@@ -166,11 +171,17 @@ class FunctionalTest(StaticLiveServerTestCase):
         super(FunctionalTest, self).__init__(*args, **kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        super(FunctionalTest, cls).setUpClass()
+    @backoff.on_exception(backoff.expo, socket.timeout, max_tries=3)
+    def set_up_driver(cls):
         cls.driver = get_web_driver(cls.__name__)
         cls.driver.implicitly_wait(10)
         cls.driver.maximize_window()
+
+    @classmethod
+    def setUpClass(cls):
+        cls.host = socket.gethostbyname(socket.gethostname())
+        super(FunctionalTest, cls).setUpClass()
+        cls.set_up_driver()
 
     @classmethod
     def tearDownClass(cls):
@@ -198,9 +209,27 @@ class AdminFunctionalTest(FunctionalTest):
 
     def setUp(self):
         self._create_superuser()
-        self.driver.get(self.live_server_url + self.url)
+        self.open(self.url)
+        self.login()
+
+    def login(self):
         self.page = LoginPage(self.driver)
         self.page.login(self.username, self.password)
+
+    def open(self, url, retries=3):
+        while True:
+            try:
+                self.driver.get(self.live_server_url + url)
+                break
+            except socket.timeout:
+                self.driver.quit()
+                self.driver = get_web_driver(self.__class__.__name__)
+                self.driver.implicitly_wait(10)
+                self.driver.maximize_window()
+                self.login()
+                retries -= 1
+                if retries <= 0:
+                    raise
 
 
 class ModelAdminFunctionalTest(AdminFunctionalTest):

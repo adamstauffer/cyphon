@@ -56,7 +56,7 @@ class LanguageTestCase(TestCase):
         self.mock_lang.lang = 'en'
         with patch('lab.language.language.detect_langs',
                    return_value=[self.mock_lang]):
-            self.assertEqual(get_language('hi there'), 'none')
+            self.assertEqual(get_language('this is english'), 'none')
 
     def test_at_threshold(self):
         """
@@ -67,7 +67,7 @@ class LanguageTestCase(TestCase):
         self.mock_lang.lang = 'en'
         with patch('lab.language.language.detect_langs',
                    return_value=[self.mock_lang]):
-            self.assertEqual(get_language('hi there'), 'en')
+            self.assertEqual(get_language('this is english'), 'en')
 
     def test_above_threshold(self):
         """
@@ -78,10 +78,11 @@ class LanguageTestCase(TestCase):
         self.mock_lang.lang = 'en'
         with patch('lab.language.language.detect_langs',
                    return_value=[self.mock_lang]):
-            self.assertEqual(get_language('hi there'), 'en')
+            self.assertEqual(get_language('this is english'), 'en')
 
     def test_english(self):
         """
         Tests the get_language() function for English text.
         """
-        self.assertEqual(get_language('hi there'), 'en')
+        self.assertEqual(get_language('this is english'), 'en')
+        self.assertEqual(get_language('habla Espanol?'), 'es')
