@@ -15,7 +15,7 @@ File Structure
 
 If you plan on using Cyphon in a production environment, we recommend creating specific directories for your data stores. This will make it easier to locate and backup your data.
 
-The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ Git repository. (If you would like to use other directories for storing your data, just make sure those changes are reflected in your Docker Compose files.)
+The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ GitHub repository. (If you would like to use other directories for storing your data, just make sure those changes are reflected in your Docker Compose files.)
 
 .. note::
 
@@ -61,15 +61,13 @@ Give that user ownership of the Elasticsearch data directory if appropriate. If 
     $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
 
 
-.. _git-repositories:
+.. _installation:
 
-****************
-Git Repositories
-****************
+************
+Installation
+************
 
-If you intend to deploy your Cyphon instance using Docker Compose, you can clone our Cyphondock Git repository::
-
-    $ git clone https://github.com/dunbarcyber/cyphondock.git /opt/cyphon/cyphondock
+Cyphon is most easily installed using `Docker`_. We maintain a collection of Docker Compose files for this purpose. See our `Cyphondock documentation <http://cyphondock.readthedocs.io/en/latest/>`__ for instructions on this kind of deployment.  
 
 If you prefer not to use Docker to deploy your Cyphon instance, or if you want to use Cyphon in a development environment, you can clone the Git repository for Cyphon itself::
 
