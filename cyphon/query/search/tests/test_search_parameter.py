@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Tests for the SearchQueryParameterType class.
+Tests for the SearchQueryParameter class.
 """
 
-# standard library
-from unittest import TestCase
+# third party
+from django.test import TestCase
 
 # local
-from query.search.parameter_type import SearchParameterType
+from query.search.search_parameter import SearchParameterType
 
 
-class SearchQueryParameterTypeTestCase(TestCase):
+class SearchParameterTypeTestCase(TestCase):
     """
     Tests the SearchQueryParameterType class.
     """
@@ -54,10 +54,10 @@ class SearchQueryParameterTypeTestCase(TestCase):
     """
 
     VALID_DISTILLERIES = [
-        'source=',
-        'source=*.mail',
-        'source=personal.mail',
-        'source=persona*',
+        '@source=',
+        '@source=*.mail',
+        '@source=personal.mail',
+        '@source=persona*',
     ]
     """list of str
 
@@ -81,7 +81,7 @@ class SearchQueryParameterTypeTestCase(TestCase):
         Tests that get_parameter_type returns KEYWORD for valid keywords
         search parameter strings.
         """
-        for keyword in SearchQueryParameterTypeTestCase.VALID_KEYWORDS:
+        for keyword in SearchParameterTypeTestCase.VALID_KEYWORDS:
             self.assertEquals(
                 SearchParameterType.get_parameter_type(keyword),
                 SearchParameterType.KEYWORD,
@@ -93,7 +93,7 @@ class SearchQueryParameterTypeTestCase(TestCase):
         Tests that get_parameter_type returns FIELD for valid field search
         parameter strings.
         """
-        for field in SearchQueryParameterTypeTestCase.VALID_FIELDS:
+        for field in SearchParameterTypeTestCase.VALID_FIELDS:
             self.assertEquals(
                 SearchParameterType.get_parameter_type(field),
                 SearchParameterType.FIELD,
@@ -105,7 +105,7 @@ class SearchQueryParameterTypeTestCase(TestCase):
         Tests that get_parameter_type returns DISTILLERY for a distillery
         filter parameter strings.
         """
-        for distillery in SearchQueryParameterTypeTestCase.VALID_DISTILLERIES:
+        for distillery in SearchParameterTypeTestCase.VALID_DISTILLERIES:
             self.assertEquals(
                 SearchParameterType.get_parameter_type(distillery),
                 SearchParameterType.DISTILLERY,
@@ -116,7 +116,7 @@ class SearchQueryParameterTypeTestCase(TestCase):
         """
         Tests that get_parameter_type returns None for an invalid parameters.
         """
-        for parameter in SearchQueryParameterTypeTestCase.INVALID_PARAMETERS:
+        for parameter in SearchParameterTypeTestCase.INVALID_PARAMETERS:
             self.assertIsNone(
                 SearchParameterType.get_parameter_type(parameter),
                 '`{}` is not a distillery filter'.format(parameter)

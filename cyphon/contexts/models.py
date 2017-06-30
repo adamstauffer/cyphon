@@ -319,7 +319,7 @@ class Context(models.Model):
         query terms defined by the Context's ContextFilters. If the
         Context has no ContextFilters, returns an empty list.
         """
-        fieldsets = [cfilter.create_fieldset(data) \
+        fieldsets = [cfilter.create_fieldsets(data) \
                      for cfilter in self.filters.all()]
         if fieldsets:
             return EngineQuery(fieldsets, self.filter_logic)

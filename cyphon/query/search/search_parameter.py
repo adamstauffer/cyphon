@@ -45,9 +45,14 @@ class SearchParameterType:
 
     TYPE_CHECK_REGEX_MAP = [
         (KEYWORD, r'^\".*\"$|^\w[\w.]*$'),
-        (DISTILLERY, r'^source=(?:\*?[\w.]+\*?)?$'),
+        (DISTILLERY, r'^@source=(?:\*?[\w.]+\*?)?$'),
         (FIELD, r'^\w[\w.]*[=<>!]{1,2}(?:$|\".*\"$|[\w.]*$)')
     ]
+    """list of tuple
+    
+    Search parameter types paired with a regex pattern that determines if
+    a string is that parameter type.
+    """
 
     @staticmethod
     def get_parameter_type(parameter):
@@ -68,3 +73,61 @@ class SearchParameterType:
                 return type_check[0]
 
         return None
+
+
+class SearchParameter:
+    """
+
+    Attributes
+    ----------
+    errors : list of str
+        Errors that occurred while parsing data from the parameter string.
+    index : int
+        Index of the parameter in the search query string.
+    parameter : str
+        Parameter string this instance was made from.
+    type : str
+        The type of parameter.
+    """
+    def __init__(self, index, parameter, parameter_type):
+        self.errors = []
+        self.index = index
+        self.parameter = parameter
+        self.type = parameter_type
+
+    def is_valid(self):
+        """Checks if any errors occurred during parsing.
+
+        Returns
+        -------
+        bool
+            If the search parameter is valid.
+        """
+        return not bool(self.errors)
+
+    def get_parameter_info(self):
+        """Returns a dict of info about the parameter.
+
+        Used for debugging purposes and creating error messages.
+
+        Returns
+        -------
+        dict
+        """
+        return {
+            'parameter': self.parameter,
+            'index': self.index,
+            'type': self.type,
+            'errors': self.errors,
+        }
+
+    def _add_error(self, error):
+        """Adds an error message to the parameter.
+
+        Parameters
+        ----------
+        error : str
+            Message explaining an error that occurred while parsing the
+            parameter.
+        """
+        self.errors.append(error)
