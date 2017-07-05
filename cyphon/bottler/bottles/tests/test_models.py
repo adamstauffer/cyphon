@@ -64,7 +64,7 @@ class BottleFieldManagerTestCase(BottleBaseTestCase):
         """
         with LogCapture() as log_capture:
             BottleField.objects.get_by_natural_key('dummy_field')
-            expected =uer 'BottleField "dummy_field" does not exist'
+            expected = 'BottleField "dummy_field" does not exist'
             log_capture.check(
                 ('bottler.datafields.models', 'ERROR', expected),
             )
