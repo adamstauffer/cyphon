@@ -55,7 +55,7 @@ class Invoice(Record):
     objects = RecordManager()
 
     def __str__(self):
-        return '%s: %s' % (self.task, self.stamp)
+        return str(self.stamp)
 
     def query_str(self):
         """
@@ -65,4 +65,3 @@ class Invoice(Record):
         return json.dumps(ordered_query, indent=4)
 
     query_str.short_description = 'query'
-

@@ -1,21 +1,22 @@
 amqp==2.1.4
 anyjson==0.3.3
+backoff==1.4.3
 beautifulsoup4==4.6.0
 billiard==3.5.0.2
 bleach==2.0.0
 celery==4.0.2
 cryptography==1.9
-Django==1.11.2
+Django==1.11.3
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
 django-constance==2.0.0
 django-cors-headers==2.1.0
-django-extensions==1.7.9
+django-extensions==1.8.0
 django-filter==1.0.4
 django-grappelli==2.10.1
 django-mailbox==4.5.4
-django-picklefield==0.3.2
+django-picklefield==1.0.0
 djangorestframework==3.6.3
-djangorestframework-jwt==1.10.0
+djangorestframework-jwt==1.11.0
 docutils==0.13.1
 drfdocs==0.0.11
 elasticsearch==5.4.0
@@ -34,7 +35,7 @@ oauth2==1.9.0.post1
 oauthlib==2.0.2
 pika==0.10.0
 psycopg2==2.7.1
-PyJWT==1.5.0
+PyJWT==1.5.2
 pymongo==3.4.0
 python-dateutil==2.6.0
 pytz==2017.2
@@ -45,6 +46,7 @@ sauceclient==1.0.0
 selenium==3.4.3
 six==1.10.0
 testfixtures==5.1.1
+textblob==0.12.0
 tlslite==0.4.9
 tweepy==3.5.0
 urllib3==1.21.1

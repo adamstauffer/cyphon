@@ -173,16 +173,21 @@ Click "Save" to save the Plumber.
 
     **Adding a Plumber for Twitter.**
 
-You should now be able to create a Twitter stream.
-
-
-.. _add-filters:
 
 ***********
 Add Filters
 ***********
 
 To filter your Twitter stream, first create search parameters for the locations, keywords, and user accounts you wish to follow. These are located in the "Filtering Data" panel of Cyphon's main admin page. You can then use these search parameters to create your Filters.
+
+
+***********
+Final Steps
+***********
+
+Now that authentication and filters are set up, make sure the "twitter" Reservoir is enabled, and Cyphon will automatically start receiving tweets.
+
+Refer to the :ref:`twitter-tutorial` for an example of how to generate Alerts from tweets.
 
 .. image:: ../_static/images/admin/filtering-data-admin.png
     :alt: App Configurations

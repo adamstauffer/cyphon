@@ -186,6 +186,23 @@ class AlertBasicAPITests(AlertBaseAPITests):
         response = self.get_api_response(self.obj_url, is_staff=False)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_patch_alert(self):
+        """
+        Tests the partial_update view of the Alerts endpoint.
+        """
+        self.user.use_redaction = False
+        response = self.patch_to_api('4/', {
+            'level': 'MEDIUM',
+            'status': 'BUSY',
+        })
+        updated_alert = ALERT_DETAIL.copy()
+        updated_alert['level'] = 'MEDIUM'
+        updated_alert['status'] = 'BUSY'
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), updated_alert)
+        self.assertEqual(response.data.get('level'), 'MEDIUM')
+        self.assertEqual(response.data.get('status'), 'BUSY')
+
 
 class AlertCollectionAPITests(AlertBaseAPITests):
     """

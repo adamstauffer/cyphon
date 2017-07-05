@@ -6,7 +6,6 @@ Starting Docker Containers
 
 * :ref:`production-environment`
 * :ref:`development-environment`
-* :ref:`testing-environment`
 
 The `Cyphondock`_ project contains several Docker Compose files used for deploying to
 development, testing, and production environments:
@@ -128,22 +127,3 @@ Elasticsearch, or MongoDB. Instead, it allows those services to
 automatically configure the locations for their data volumes. This 
 prevents any confusion of dev and production data if the production 
 environment is used at a later time. See Docker's `documentation <https://docs.docker.com/engine/tutorials/dockervolumes/>`_ to learn more about data volumes.
-
-
-.. _testing-environment:
-
-*******************
-Testing Environment
-*******************
-
-Settings for the testing environment are found in ``docker-compose.travis.yml``. 
-This file contains the minimum services needed to run the test suite. 
-To start the testing environment and run tests::
-
-    $ cd /opt/cyphon/cyphondock
-    $ sudo docker-compose -f docker-compose.travis.yml up -d
-    $ sudo docker exec cyphondock_cyphon_1 python manage.py test --noinput
-
-.. note:: If you'd like to see more output when running tests, include  
-          the ``--verbosity=2`` flag after the ``python manage.py test`` 
-          command.

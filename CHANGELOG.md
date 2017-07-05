@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+
+<a name="1.3.0"></a>
+## [1.3.0](https://github.com/dunbarcyber/cyphon/compare/1.2.0...1.3.0) (2017-06-28)
+
+### Added
+
+- Tox configuration - [PR #92](https://github.com/dunbarcyber/cyphon/pull/92) ([1299f58](https://github.com/dunbarcyber/cyphon/commit/1299f58))
+- **docs:** added screenshots to overview ([f807d4a](https://github.com/dunbarcyber/cyphon/commit/f807d4a))
+- **docs:** added FAQs page ([7488729](https://github.com/dunbarcyber/cyphon/commit/7488729))
+- **docs:** added support page ([f022900](https://github.com/dunbarcyber/cyphon/commit/f022900))
+- **docs:** added testing page to dev guide ([a9e6a4e](https://github.com/dunbarcyber/cyphon/commit/a9e6a4e))
+- **docs:** added Twitter tutorial - [PR #113](https://github.com/dunbarcyber/cyphon/pull/113) ([56e7e74](https://github.com/dunbarcyber/cyphon/commit/56e7e74))
+- **lab.sentiment:** added sentiment analysis - [PR #108](https://github.com/dunbarcyber/cyphon/pull/108) ([859f9b7](https://github.com/dunbarcyber/cyphon/commit/859f9b7))
+
+### Changed
+
+- upgraded to Django 1.11 - [PR #101](https://github.com/dunbarcyber/cyphon/pull/101) ([d4cd82b](https://github.com/dunbarcyber/cyphon/commit/d4cd82b))
+- **alerts:** Alerts can be filtered by Warehouse ([19c37e9](https://github.com/dunbarcyber/cyphon/commit/19c37e9))
+- **ambassador.platforms:** Platforms are ordered by name ([0381433](https://github.com/dunbarcyber/cyphon/commit/0381433))
+- **bottler.tastes**: Tastes are ordered by container ([972a35c](https://github.com/dunbarcyber/cyphon/commit/972a35c))
+- **contexts:** Contexts are ordered by name ([174eb81](https://github.com/dunbarcyber/cyphon/commit/174eb81))
+- **parsers:** Parsers are ordered by name ([4daf0fa](https://github.com/dunbarcyber/cyphon/commit/4daf0fa))
+- **sifter.condensers:** Condensers are ordered by name ([4daf0fa](https://github.com/dunbarcyber/cyphon/commit/4daf0fa))
+
+### Fixed
+
+- **Dockerfile**: fixed issue with proj4 library - [PR #106](https://github.com/dunbarcyber/cyphon/pull/106) ([900760d](https://github.com/dunbarcyber/cyphon/commit/900760d))
+- **docs**: mocked out GDAL in Sphinx build - [PR #107](https://github.com/dunbarcyber/cyphon/pull/107) ([d1ab82e](https://github.com/dunbarcyber/cyphon/commit/d1ab82e))
+- **sifter.chutes**: added Chute ID to admin list display ([2abb5f0](https://github.com/dunbarcyber/cyphon/commit/2abb5f0))
+- **tests**: fixed URL for SauceLabs - [PR #112](https://github.com/dunbarcyber/cyphon/pull/112) ([a2feddd](https://github.com/dunbarcyber/cyphon/commit/a2feddd))
+
+### Removed
+
+- **docs:** removed list of dependencies ([b2678bb](https://github.com/dunbarcyber/cyphon/commit/b2678bb))
+- **docs:** removed testing env from starter-docker.txt ([cf766b8](https://github.com/dunbarcyber/cyphon/commit/cf766b8))
+
+
 <a name="1.2.0"></a>
 ## [1.2.0](https://github.com/dunbarcyber/cyphon/compare/1.1.3...1.2.0) (2017-06-05)
 

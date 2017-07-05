@@ -14,4 +14,4 @@ Submodules
 
 .. toctree::
 
-   lab.language.classifier
+   lab.language.language
