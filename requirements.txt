@@ -37,7 +37,7 @@ pika==0.10.0
 psycopg2==2.7.1
 PyJWT==1.5.2
 pymongo==3.4.0
-python-dateutil==2.6.0
+python-dateutil==2.6.1
 pytz==2017.2
 requests==2.18.1
 requests-oauthlib==0.8.0
