@@ -26,8 +26,8 @@ You should also change the Django ``SECRET_KEY`` to something unique.
 You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
 
 The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general 
-settings for Django and other third party apps used by Cyphon. At a 
-minimum, you should configure the `BASE_URL` setting in the ``dev.py`` 
+settings for Django and other third` party apps used by Cyphon. At a 
+minimum, you should configure the ``BASE_URL`` setting in the ``dev.py`` 
 and ``prod.py`` files. You can read more about Django's settings in  
 `Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
 
