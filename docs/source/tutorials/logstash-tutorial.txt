@@ -79,7 +79,7 @@ Step 2: Logstash
 ****************
 
 Once Filebeat is setup, we can configure Logstash to receive the logs. Consult Logstash's
-`official documentation <https://www.elastic.co/guide/en/logstash/current/index.html>`__ for full details.
+`official documentation <https://www.elastic.co/guide/en/logstash/current/index.html>`__ for full details. You can also find an example of this Logstash pipeline on `Cyphondock <https://github.com/dunbarcyber/cyphondock/tree/master/config-COPYME/logstash/pipeline/>`__.
 
 Input
 =====
