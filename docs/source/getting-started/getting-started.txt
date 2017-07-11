@@ -7,9 +7,9 @@ Getting Started
 .. toctree::
    :maxdepth: 2
 
-   system-requirements
    install-cyphon
    configure-project
    securing-cyphon
+   start-services
    load-settings
    create-superuser

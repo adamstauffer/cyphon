@@ -4,71 +4,64 @@
 Installing Cyphon
 #################
 
-How you install Cyphon depends on whether you want to use it in a production environment, a development environment, or both.
+* :ref:`docker-install`
+* :ref:`virtual-machine`
+* :ref:`manual-install`
 
 
-.. _file-structure:
+.. _docker-install:
 
-**************
-File Structure
-**************
-
-If you plan on using Cyphon in a production environment, we recommend creating specific directories for your data stores. This will make it easier to locate and backup your data.
-
-The following instructions will create a file structure compatible with the Docker Compose files available in our `Cyphondock`_ GitHub repository. (If you would like to use other directories for storing your data, just make sure those changes are reflected in your Docker Compose files.)
-
-.. note::
-
-    These instructions create directories for both MongoDB and Elasticsearch. Although you can use both as backends if you'd like, you will likely only use one of them. You can skip instructions for whichever one you don't intend to use.
-
-First, create directories for the project::
-
-    $ sudo mkdir -p /opt/cyphon /opt/cyphon/data
-    $ cd /opt/cyphon/data
-    $ sudo mkdir elasticsearch mongodb postgresql
-
-Give the current user ownership of the ``/opt/cyphon`` directory and 
-its subdirectories::
-
-    $ sudo chown -R $(whoami):$(whoami) /opt/cyphon
-
-Next, create users and groups for MongoDB and PostgreSQL::
-
-    $ sudo groupadd -r mongodb && sudo useradd -r -g mongodb mongodb
-    $ sudo groupadd -r postgres && sudo useradd -r -g postgres postgres
-
-.. warning::
-
-    For greater security, be sure to change the default passwords of these users and groups using the ``sudo passwd <account name>`` and ``sudo passwd -g <group name>`` commands.
-
-Give these new users ownership of their respective directories::
-
-    $ sudo chown mongodb:mongodb /opt/cyphon/data/mongodb
-    $ sudo chown postgres:postgres /opt/cyphon/data/postgresql
-
-The Elasticsearch data directory needs to be owned by uid ``1000``, so double-check that this uid corresponds to your current user::
-
-    $ id -u $(whoami)
-
-If this shows ``1000``, you should be good. If not, find out which user has uid ``1000``::
-
-    $ awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd
-
-Give that user ownership of the Elasticsearch data directory if appropriate. If no such user exists, create a new user for Elasticsearch with that uid and give it ownership instead::
-
-    $ sudo groupadd -r -g 1000 elasticsearch
-    $ sudo useradd -r -g 1000 -u 1000 elasticsearch
-    $ sudo chown elasticsearch:elasticsearch /opt/cyphon/data/elasticsearch
-
-
-.. _installation:
-
-************
-Installation
-************
+******
+Docker
+******
 
 Cyphon is most easily installed using `Docker`_. We maintain a collection of Docker Compose files for this purpose. See our `Cyphondock documentation <http://cyphondock.readthedocs.io/en/latest/>`__ for instructions on this kind of deployment.  
 
-If you prefer not to use Docker to deploy your Cyphon instance, or if you want to use Cyphon in a development environment, you can clone the Git repository for Cyphon itself::
 
-    $ git clone https://github.com/dunbarcyber/cyphon.git /opt/cyphon/cyphon
+.. _virtual-machine:
+
+***************
+Virtual Machine
+***************
+
+If you'd like a quick way to try out Cyphon, you can download our `virtual machine image <https://www.cyphon.io/cyphon-vm/>`__.
+
+
+.. _manual-install:
+
+**************
+Manual Install
+**************
+
+Services
+--------
+
+If you prefer to manually install Cyphon, you'll need to have running instances of the following services:
+    
+    * `PostgreSQL`_/`PostGIS <http://postgis.net/>`__
+    * `RabbitMQ`_
+    * `Logstash`_
+    * `Elasticsearch`_ and/or `MongoDB`_
+    * `Nginx <https://www.nginx.com/>`__ or `Apache <https://www.apache.org/>`__
+
+Cyphon
+------
+
+Clone the project from GitHub::
+
+    $ git clone https://github.com/dunbarcyber/cyphon.git
+
+Use the example files in ``./cyphon/cyphon/settings`` to create your own ``conf.py``, ``base.py``, ``dev.py``, and ``prod.py`` files.
+
+Dependencies
+------------
+
+Cyphon is compatible with Python 3.4 or higher. To install Cyphon's required Python packages, run the setup script::
+
+    $ python3 setup.py install
+
+
+GeoLite2 City Database
+----------------------
+
+Cyphon's :ref:`GeoIP <geoip>` package requires the `GeoLite2 City database <https://dev.maxmind.com/geoip/geoip2/geolite2/>`__. Download this database and update the ``GEOIP`` setting in ``./cyphon/cyphon/settings/conf.py`` with the path to the database.
