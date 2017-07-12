@@ -7,6 +7,8 @@ receiver
     :width: 60px
     :align: left
 
+.. include:: ../summaries/receiver.summary.txt
+
 Subpackages
 -----------
 
