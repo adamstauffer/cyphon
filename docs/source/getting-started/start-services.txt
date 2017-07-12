@@ -45,7 +45,7 @@ You can serve files using either an Nginx or Apache web server. For details, see
 Celery Tasks
 ************
 
-Cyphon uses `Celery <http://www.celeryproject.org/>`__ to run periodic tasks, like checking email.
+Cyphon uses `Celery <http://www.celeryproject.org/>`__ to run periodic tasks, like checking email. These tasks are defined in the ``CELERYBEAT_SCHEDULE`` setting of the ``./cyphon/settings/base.py`` file.
 
 To start these tasks, issue the following commands from Cyphon's main directory::
 
@@ -59,7 +59,7 @@ For more info, see Celery's documentation for `periodic tasks <http://docs.celer
 Receiver
 ********
 
-Cyphon's :ref:`receiver` package is responsible for processing log messages sent to RabbitMQ from Logstash. These messages can be processed by :ref:`Watchdogs<watchdogs-overview>`, :ref:`Monitors<monitors-overview>`, or :ref:`LogChutes<logchutes>`. To create queue consumers for processing log messages, run the ``./cyphon/receiver/receiver.py`` script, specifying the type and number of queue consumers, e.g.::
+Cyphon's :ref:`Receiver<receiver>` package is responsible for processing log messages sent to RabbitMQ from Logstash. These messages can be processed by :ref:`Watchdogs<watchdogs-overview>`, :ref:`Monitors<monitors-overview>`, or :ref:`LogChutes<logchutes>`. To create queue consumers for processing log messages, run the ``./cyphon/receiver/receiver.py`` script, specifying the type and number of queue consumers, e.g.::
 
     $ python ./cyphon/receiver/receiver.py watchdogs 4 &
 
