@@ -24,8 +24,7 @@ import logging
 
 # third party
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.db import transaction
+from django.db import IntegrityError, models, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -155,7 +154,7 @@ class Watchdog(Alarm):
             with transaction.atomic():
                 alert.save()
             return alert
-        except Alert.IntegrityError:
+        except IntegrityError:
             with transaction.atomic():
                 alert.add_incident()
 
