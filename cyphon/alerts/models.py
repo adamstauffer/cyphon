@@ -19,9 +19,11 @@ Defines Alert class.
 """
 
 # standard library
+import hashlib
 import json
 import logging
 import urllib
+import time
 
 # third party
 import dateutil.parser
@@ -43,8 +45,9 @@ from cyphon.choices import (
 )
 from distilleries.models import Distillery
 from tags.models import Tag
+from utils.dateutils.dateutils import convert_time_to_seconds
 from utils.dbutils.dbutils import json_encodeable
-from utils.parserutils.parserutils import format_fields
+from utils.parserutils.parserutils import format_fields, get_dict_value
 
 _ALERT_SETTINGS = settings.ALERTS
 _PRIVATE_FIELD_SETTINGS = settings.PRIVATE_FIELDS
@@ -144,6 +147,7 @@ class Alert(models.Model):
     _ALARMS = _WATCHDOG | _MONITOR
 
     _DEFAULT_TITLE = 'No title available'
+    _HASH_FORMAT = '{fields}:{bucket:.0f}'
 
     level = models.CharField(
         max_length=20,
@@ -202,6 +206,13 @@ class Alert(models.Model):
     incidents = models.PositiveIntegerField(default=1)
     notes = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    muzzle_hash = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        db_index=True,
+        unique=True
+    )
 
     objects = AlertManager()
 
@@ -235,6 +246,23 @@ class Alert(models.Model):
 
         if not self.title or self.title == self._DEFAULT_TITLE:
             self.title = self._format_title()
+
+        if (self.alarm and
+                hasattr(self.alarm, 'muzzle') and
+                self.alarm.muzzle.enabled):
+            field_values = [
+                get_dict_value(field, self.data) or ''
+                for field in self.alarm.muzzle._get_fields()
+            ]
+            interval_seconds = convert_time_to_seconds(
+                self.alarm.muzzle.time_interval,
+                self.alarm.muzzle.time_unit
+            )
+            self.muzzle_hash = hashlib.sha256(
+                self._HASH_FORMAT.format(
+                    fields=':'.join(field_values),
+                    bucket=time.time() // interval_seconds
+                ).encode()).hexdigest()
 
         super(Alert, self).save(*args, **kwargs)
 

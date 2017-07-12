@@ -146,15 +146,18 @@ class Watchdog(Alarm):
             data=data
         )
 
-    @transaction.atomic
-    @require_lock(Alert, 'ACCESS EXCLUSIVE')
+    # @require_lock(Alert, 'ACCESS EXCLUSIVE')
     def _process_alert(self, alert):
         """
 
         """
-        if not self._is_muzzled(alert):
-            alert.save()
+        try:
+            with transaction.atomic():
+                alert.save()
             return alert
+        except Alert.IntegrityError:
+            with transaction.atomic():
+                alert.add_incident()
 
     def inspect(self, data):
         """Return an Alert level for a document.
