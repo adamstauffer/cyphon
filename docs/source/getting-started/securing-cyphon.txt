@@ -47,4 +47,4 @@ Access to their data should be protected by setting proper permissions for users
 RSA keys
 ========
 
-The ``KEYS_DIR`` setting in the Cyphon ``conf.py`` settings file specifies the directory in which Django stores RSA keys associated with :ref:`Passports<passports>`. Public access to this directory should be denied. Check your ``nginx.conf`` file to confirm this.
+The ``KEYS_DIR`` setting in the Cyphon ``conf.py`` settings file specifies the directory in which Django stores RSA keys associated with :ref:`Passports<passports>`. Public access to this directory should be denied.
