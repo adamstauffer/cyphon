@@ -4,36 +4,6 @@
 Project Configuration
 #####################
 
-Generic settings for the project are contained in the ``./config-COPYME`` 
-directory. Copy this directory to a new directory called ``config``, which 
-will be used by your project instance::
-
-    $ cd /opt/cyphon/cyphondock/
-    $ cp -R config-COPYME config
-
-The ``config`` directory contains settings for:
-
-    * :ref:`environmental-variables`
-    * :ref:`django-config`
-    * :ref:`cyclops-config`
-    * :ref:`nginx-config`
-    * :ref:`logstash-config`
-    * :ref:`elasticsearch-config`
-
-
-.. _environmental-variables:
-
-*********************
-Environment Variables
-*********************
-
-The ``./config/env/cyphon.env`` file contains default settings for 
-superusers created for various services. Use a text editor to 
-change the usernames and passwords to more secure options.
-
-You can read more about environment variables in `Docker's documentation <https://docs.docker.com/compose/environment-variables/>`_.
-
-
 .. _django-config:
 
 ******
@@ -41,12 +11,11 @@ Django
 ******
 
 Cyphon's backend is based on the `Django`_ web framework. Settings for the 
-Cyphon Django project are found in the ``./config/cyphon/settings`` 
-directory.
+Cyphon Django project are found in the ``cyphon/settings`` directory.
 
-The ``conf.py`` file contains settings specific to your Cyphon instance. 
-Using your favorite text editor, edit the ``conf.py`` file with the IP 
-address and/or domain name for your host machine::
+The ``conf.py`` file contains settings specific to your Cyphon instance, including credentials for connecting to PostgreSQL, RabbitMQ, Elasticsearch, and MongoDB.
+
+Edit the ``conf.py`` file with the IP address and/or domain name for your host machine::
 
     HOST_SETTINGS = {
        'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
@@ -56,9 +25,11 @@ address and/or domain name for your host machine::
 You should also change the Django ``SECRET_KEY`` to something unique. 
 You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
 
+Configure settings for PostgreSQL, RabbitMQ, Elasticsearch and/or MongoDB. (If you're deploying with `Cyphondock`_, you can use the default settings.)
+
 The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general 
-settings for Django and other third party apps used by Cyphon. At a 
-minimum, you should configure the `BASE_URL` setting in the ``dev.py`` 
+settings for Django and other third-party apps used by Cyphon. At a 
+minimum, you should configure the ``BASE_URL`` setting in the ``dev.py`` 
 and ``prod.py`` files. You can read more about Django's settings in  
 `Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
 
@@ -69,7 +40,7 @@ and ``prod.py`` files. You can read more about Django's settings in
 Cyclops
 *******
 
-Cyclops is an optional frontend that helps to mange alerts and data from
+Cyclops is an optional frontend that helps to manage alerts and data from
 Cyphon in real time. This product is under a different license than Cyphon,
 found `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`__.
 Make sure to take a quick look over it before using Cyclops in your use case.
@@ -95,38 +66,3 @@ You can sign up for an access token
 
 The next optional step would be to set up push notifications for Cyclops,
 which is explained in :ref:`push-notifications`.
-
-
-.. _nginx-config:
-
-*****
-Nginx
-*****
-
-Settings for the `Nginx <https://www.nginx.com/>`_ web server are in the
-``./config/nginx/nginx.conf`` file. You can use the default settings if 
-you like.
-
-
-.. _logstash-config:
-
-********
-Logstash
-********
-
-Cyphon receives data from logs using `Logstash`_ and `RabbitMQ`_. Logstash receives the logs and passes them to RabbitMQ, where Cyphon consumes them.
-
-To configure Logstash, you can use the example configuration files in ``./config/logstash``. See `Logstash's documentation <https://www.elastic.co/guide/en/logstash/current/config-setting-files.html>`__ for more information on these files. The Docker Compose files are already configured to create a Logstash container based on these configs.
-
-.. warning:: If you changed the RabbitMQ settings in the ``cyphon.env`` 
-             file, you will need to make sure your ``logstash.conf`` 
-             file reflects those changes.
-
-
-.. _elasticsearch-config:
-
-*************
-Elasticsearch
-*************
-
-Settings for the `Elasticsearch`_ search engine are in the ``./config/elasticsearch/`` folder. You can use the default settings if you like.

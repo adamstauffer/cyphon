@@ -12,7 +12,7 @@ Disclaimer
 
 The Cyphon project is provided as open source software, and we encourage you to report any security bugs, configuration issues, or comments related to Cyphon or Cyclops components. We’re extremely thankful for responsible security researchers that report vulnerabilities to us. To make a report, please `email us <CyphonProject@dunbarsecured.com>`__ with the full details, including steps to reproduce the issue. 
 
-We recommend that you follow security best practices when running Cyphon. Please consult the official documentation of any open source or commercially available products that are used as a component of (or are integrated) with Cyphon, and follow their recommended security practices. This disclaimer also applies to outside APIs, operating systems, or virtualization technologies.
+We recommend that you follow security best practices when running Cyphon. Please consult the official documentation of any open source or commercially available products that are used as a component of (or are integrated with) Cyphon, and follow their recommended security practices. This disclaimer also applies to outside APIs, operating systems, or virtualization technologies.
 
 
 .. _credentials:
@@ -20,17 +20,6 @@ We recommend that you follow security best practices when running Cyphon. Please
 ***********
 Credentials
 ***********
-
-Cyphon environment file
-=======================
-
-The `Cyphondock`_ ``cyphon.env`` file contains default usernames and passwords for:
-
-  - Cyphon
-  - PostgreSQL
-  - RabbitMQ
-
-Please change these values to secure your instance.
 
 Cyphon configuration file
 =========================
@@ -40,7 +29,7 @@ The Cyphon ``conf.py`` settings file contains default usernames and passwords fo
   - PostgreSQL
   - RabbitMQ
 
-If you're not setting these values through environment variables in the `Cyphondock`_ ``cyphon.env`` file, you should change the default values in ``conf.py``.
+If you're not setting these values through environment variables, you should change the default values in ``conf.py``.
 
 You should also change the Django ``SECRET_KEY`` to something unique. See the instructions on :ref:`configuring Django<django-config>` for details.
 
@@ -59,25 +48,3 @@ RSA keys
 ========
 
 The ``KEYS_DIR`` setting in the Cyphon ``conf.py`` settings file specifies the directory in which Django stores RSA keys associated with :ref:`Passports<passports>`. Public access to this directory should be denied. Check your ``nginx.conf`` file to confirm this.
-
-
-.. _ports:
-
-*****
-Ports
-*****
-
-`Cyphondock`_'s Docker Compose files for the production environment open the following ports on the host machine:
-
-========  =================================
-Port      Service
-========  =================================
-80        Cyphon - Nginx proxy
-443       Cyphon - Nginx proxy
-5000      Logstash
-5044      Logstash
-5601      Kibana - Nginx proxy
-15672     RabbitMQ management - Nginx proxy
-========  =================================
-
-Please restrict external access to these ports.

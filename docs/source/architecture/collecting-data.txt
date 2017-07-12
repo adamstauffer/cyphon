@@ -25,7 +25,7 @@ Cyphon collects emails using `Django Mailbox`_. Please see Django Mailbox's docu
 Logstash
 ********
 
-Cyphon collects log messages through `Logstash`_ and `RabbitMQ`_. `Cyphondock`_ contains Logstash configuration files you can use to get started. See the instructions on :ref:`configuring Logstash<logstash-config>` for more details.
+Cyphon collects log messages through `Logstash`_ and `RabbitMQ`_. `Cyphondock`_ contains Logstash configuration files you can use to get started. See the instructions on `configuring Logstash <http://cyphondock.readthedocs.io/en/latest/configure-project.html#logstash>`__ for more details.
 
 
 .. _external-APIs:
