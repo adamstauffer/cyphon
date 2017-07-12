@@ -156,7 +156,9 @@ class Watchdog(Alarm):
             return alert
         except IntegrityError:
             with transaction.atomic():
-                alert.add_incident()
+                old_alert = Alert.objects.filter(
+                    muzzle_hash=alert.muzzle_hash).first()
+                old_alert.add_incident()
 
     def inspect(self, data):
         """Return an Alert level for a document.
