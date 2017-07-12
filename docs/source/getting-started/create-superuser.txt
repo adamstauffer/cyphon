@@ -8,7 +8,7 @@ Creating a Superuser
 
     If you started Cyphon in development mode using `Cyphondock`_, it should have already created a superuser using the ``CYPHON_USERNAME`` and ``CYPHON_PASSWORD`` settings defined in your `.config/env/cyphon.env <https://github.com/dunbarcyber/cyphondock/blob/master/config-COPYME/env/cyphon.env#L1-L2>`__ file.
 
-You can create a Cyphon superuser from Cyphon's main directory containing the ``manage.py`` file using this command::
+You can create a Cyphon superuser from Cyphon's main directory using this command::
 
     $ python manage.py createsuperuser
 
