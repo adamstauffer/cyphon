@@ -64,7 +64,14 @@
       "title": "Acme Supply Co",
       "distillery": ["mongodb", "test_database", "test_posts"],
       "doc_id": 1,
-      "data": {"subject": "test doc"}
+      "data": {
+        "subject": "test doc",
+        "content": {
+            "link": "url",
+            "text": "foobar",
+            "bogus": "foobar"
+        }
+      }
     }
   },
   {

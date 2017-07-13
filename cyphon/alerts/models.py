@@ -48,7 +48,11 @@ from distilleries.models import Distillery
 from tags.models import Tag
 from utils.dateutils.dateutils import convert_time_to_seconds
 from utils.dbutils.dbutils import json_encodeable
-from utils.parserutils.parserutils import format_fields, get_dict_value
+from utils.parserutils.parserutils import (
+    abridge_dict,
+    format_fields,
+    get_dict_value
+)
 
 _ALERT_SETTINGS = settings.ALERTS
 _PRIVATE_FIELD_SETTINGS = settings.PRIVATE_FIELDS
@@ -363,6 +367,27 @@ class Alert(models.Model):
                 _LOGGER.warning('The document associated with id %s cannot be ' \
                                 + 'found in %s.', self.doc_id, self.distillery)
         return {}
+
+    def _get_schema(self):
+        """
+        Returns a list of DataFields in the Container associated with
+        the Alert's data.
+        """
+        if self.distillery:
+            return self.distillery.schema
+
+    @property
+    def tidy_data(self):
+        """
+        If the Alert's data is associated with a Container, returns a
+        dictionary of the Alert's data containing only the fields
+        in the Container. Otherwise, returns the Alert's data.
+        """
+        schema = self._get_schema()
+        if schema:
+            return abridge_dict(schema, self.data)
+        else:
+            return self.data
 
     def get_data_str(self):
         """
