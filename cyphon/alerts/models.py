@@ -23,6 +23,7 @@ import hashlib
 import json
 import logging
 import urllib
+import uuid
 import time
 
 # third party
