@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import hashlib
 import uuid
 
-from django.db import migrations, models, transaction
+from django.db import migrations, transaction
 
 
 def backfill_hashes(apps, schema_editor):

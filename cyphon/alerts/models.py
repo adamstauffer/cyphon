@@ -152,7 +152,8 @@ class Alert(models.Model):
     _ALARMS = _WATCHDOG | _MONITOR
 
     _DEFAULT_TITLE = 'No title available'
-    _HASH_FORMAT = '{fields}:{bucket:.0f}'
+    _HASH_FORMAT = ('{level}|{distillery}|{alarm_typpe}'
+                    '|{alarm_id}|{fields}|{bucket:.0f}')
 
     level = models.CharField(
         max_length=20,
@@ -255,9 +256,9 @@ class Alert(models.Model):
         if (self.alarm and
                 hasattr(self.alarm, 'muzzle') and
                 self.alarm.muzzle.enabled):
-            field_values = [
-                get_dict_value(field, self.data) or ''
-                for field in self.alarm.muzzle._get_fields()
+            fields = [
+                ':'.join((field, get_dict_value(field, self.data) or ''))
+                for field in sorted(self.alarm.muzzle._get_fields())
             ]
             interval_seconds = convert_time_to_seconds(
                 self.alarm.muzzle.time_interval,
@@ -265,7 +266,11 @@ class Alert(models.Model):
             )
             self.muzzle_hash = hashlib.sha256(
                 self._HASH_FORMAT.format(
-                    fields=':'.join(field_values),
+                    level=self.level,
+                    distillery=self.distillery,
+                    alarm_type=self.alarm_type,
+                    alarm_id=self.alarm_id,
+                    fields=','.join(fields),
                     bucket=time.time() // interval_seconds
                 ).encode()).hexdigest()
         else:
