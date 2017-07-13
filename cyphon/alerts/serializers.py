@@ -115,6 +115,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
     """
     assigned_user = AppUserSerializer()
     comments = CommentDetailSerializer(many=True)
+    data = serializers.JSONField(source='tidy_data')
     dispatches = DispatchSerializer(many=True)
     distillery = DistilleryDetailSerializer()
     location = serializers.JSONField(source='coordinates')
