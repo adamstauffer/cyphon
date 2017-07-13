@@ -263,6 +263,8 @@ class Alert(models.Model):
                     fields=':'.join(field_values),
                     bucket=time.time() // interval_seconds
                 ).encode()).hexdigest()
+        else:
+            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
 
         super(Alert, self).save(*args, **kwargs)
 
