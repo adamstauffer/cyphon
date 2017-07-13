@@ -8,21 +8,15 @@ import uuid
 from django.db import migrations, models
 
 
-def backfill_hashes(apps, schema_editor):
-    Alert = apps.get_model('alerts', 'Alert')
-    for obj in Alert.objects.all():
-        obj.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
-        obj.save()
-
-
 class Migration(migrations.Migration):
 
+    atomic = False
     dependencies = [
-        ('alerts', '0003_auto_20170320_1223'),
+        ('alerts', '0005_populate_muzzle_hashes'),
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.AlterField(
             model_name='alert',
             name='muzzle_hash',
             field=models.CharField(
@@ -30,11 +24,7 @@ class Migration(migrations.Migration):
                 db_index=True,
                 max_length=64,
                 null=True,
-                unique=True
+                unique=True,
             ),
-        ),
-        migrations.RunPython(
-            backfill_hashes,
-            reverse_code=migrations.RunPython.noop
         ),
     ]
