@@ -124,7 +124,8 @@ class AlertBasicAPITests(AlertBaseAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), ALERT_DETAIL)
         self.assertEqual(response.data.get('title'), 'Acme Supply Co')
-        self.assertEqual(response.data.get('data'), {'subject': 'test doc'})
+        self.assertEqual(response.data.get('data'),
+                         {'content': {'link': 'url', 'text': 'foobar'}})
 
     def test_get_redacted_alert(self):
         """
@@ -135,7 +136,8 @@ class AlertBasicAPITests(AlertBaseAPITests):
         response = self.get_api_response('4/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('title'), '**PEAK**')
-        self.assertEqual(response.data.get('data'), {'subject': 'test doc'})
+        self.assertEqual(response.data.get('data'),
+                         {'content': {'link': 'url', 'text': 'foobar'}})
 
     def test_user_w_alert_wo(self):
         """
@@ -190,12 +192,19 @@ class AlertBasicAPITests(AlertBaseAPITests):
         """
         Tests the partial_update view of the Alerts endpoint.
         """
+        self.maxDiff = None
         self.user.use_redaction = False
         response = self.patch_to_api('4/', {
             'level': 'MEDIUM',
             'status': 'BUSY',
         })
         updated_alert = ALERT_DETAIL.copy()
+        updated_alert['data'] = {
+            'content': {
+                'link': 'url',
+                'text': 'foobar',
+            }
+        }
         updated_alert['level'] = 'MEDIUM'
         updated_alert['status'] = 'BUSY'
         self.assertEqual(response.status_code, status.HTTP_200_OK)

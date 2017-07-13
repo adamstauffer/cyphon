@@ -27,9 +27,7 @@ ALERT_DETAIL = {
     'created_date': '2015-03-01T02:42:24.468404Z',
     'location': None,
     'assigned_user': None,
-    'data': {
-        'subject': 'test doc'
-    },
+    'data': {'content': {'link': 'url', 'text': 'foobar'}},
     'incidents': 1,
     'status': 'NEW',
     'link': 'http://localhost:8000/#/alerts?alertDetail=4',
