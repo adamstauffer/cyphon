@@ -344,11 +344,15 @@ class Alert(models.Model):
     @property
     def tidy_data(self):
         """
-        Returns a dictionary of the Alert's data containing only the fields
-        present in the associated Container.
+        If the Alert's data is associated with a Container, returns a
+        dictionary of the Alert's data containing only the fields
+        in the Container. Otherwise, returns the Alert's data.
         """
         schema = self._get_schema()
-        return abridge_dict(schema, self.data)
+        if schema:
+            return abridge_dict(schema, self.data)
+        else:
+            return self.data
 
     def get_data_str(self):
         """
