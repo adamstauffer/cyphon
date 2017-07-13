@@ -374,27 +374,3 @@ class Muzzle(models.Model):
                 cleaned_fields.append(cleaned_field)
 
         return cleaned_fields
-
-    def _get_start_time(self):
-        """
-        Returns a DateTime object equal to the current time minus the
-        Muzzle's time_interval.
-        """
-        minutes = convert_time_to_whole_minutes(self.time_interval,
-                                                self.time_unit)
-        return timezone.now() - datetime.timedelta(minutes=minutes)
-
-    def _get_filtered_alerts(self, alert):
-        """
-        Takes an Alert and returns a queryset of Alerts with the same
-        level and distillery that were generated within the Muzzle's
-        time frame.
-        """
-        time = self._get_start_time()
-        return Alert.objects.filter(
-            created_date__gte=time,
-            level=alert.level,
-            distillery=alert.distillery,
-            alarm_type=alert.alarm_type,
-            alarm_id=alert.alarm_id
-        ).order_by('created_date')
