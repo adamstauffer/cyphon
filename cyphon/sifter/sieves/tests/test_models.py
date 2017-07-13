@@ -148,6 +148,106 @@ class FieldRuleTestCase(TestCase):
         self.assertTrue(true_rule.is_match(data))
         self.assertFalse(false_rule.is_match(data))
 
+    def test_gt(self):
+        """
+        Tests the is_match method for a 'greater than' numeric comparison.
+        """
+        true_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:>',
+            value='20'
+        )
+        false_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:>',
+            value='21'
+        )
+        data = {'age': '21'}
+        self.assertTrue(true_rule.is_match(data))
+        self.assertFalse(false_rule.is_match(data))
+
+    def test_gte(self):
+        """
+        Tests the is_match method for a 'greater than or equal to'
+        numeric comparison.
+        """
+        true_rule1 = FieldRule(
+            field_name='age',
+            operator='FloatField:>=',
+            value='20'
+        )
+        true_rule2 = FieldRule(
+            field_name='age',
+            operator='FloatField:>=',
+            value='21'
+        )
+        false_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:>=',
+            value='22'
+        )
+        data = {'age': '21'}
+        self.assertTrue(true_rule1.is_match(data))
+        self.assertTrue(true_rule2.is_match(data))
+        self.assertFalse(false_rule.is_match(data))
+
+    def test_lt(self):
+        """
+        Tests the is_match method for a 'less than' numeric comparison.
+        """
+        true_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:<',
+            value='22'
+        )
+        false_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:<',
+            value='21'
+        )
+        data = {'age': '21'}
+        self.assertTrue(true_rule.is_match(data))
+        self.assertFalse(false_rule.is_match(data))
+
+    def test_lte(self):
+        """
+        Tests the is_match method for a 'less than or equal to'
+        numeric comparison.
+        """
+        true_rule1 = FieldRule(
+            field_name='age',
+            operator='FloatField:<=',
+            value='22'
+        )
+        true_rule2 = FieldRule(
+            field_name='age',
+            operator='FloatField:<=',
+            value='21'
+        )
+        false_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:<=',
+            value='20'
+        )
+        data = {'age': '21'}
+        self.assertTrue(true_rule1.is_match(data))
+        self.assertTrue(true_rule2.is_match(data))
+        self.assertFalse(false_rule.is_match(data))
+        self.assertFalse(false_rule.is_match(data))
+
+    def test_str_w_numeric(self):
+        """
+        Tests the is_match method for a numeric comparison with a
+        non-numeric value.
+        """
+        rule = FieldRule(
+            field_name='age',
+            operator='FloatField:<=',
+            value='20'
+        )
+        data = {'age': '1foobar'}
+        self.assertFalse(rule.is_match(data))
+
     def test_is_null(self):
         """
         Tests the is_match method for 'is null'.
