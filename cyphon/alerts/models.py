@@ -152,7 +152,7 @@ class Alert(models.Model):
     _ALARMS = _WATCHDOG | _MONITOR
 
     _DEFAULT_TITLE = 'No title available'
-    _HASH_FORMAT = ('{level}|{distillery}|{alarm_typpe}'
+    _HASH_FORMAT = ('{level}|{distillery}|{alarm_type}'
                     '|{alarm_id}|{fields}|{bucket:.0f}')
 
     level = models.CharField(
