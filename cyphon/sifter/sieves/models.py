@@ -20,6 +20,7 @@ Defines Rule, Sieve, and SieveNode classes.
 
 # standard library
 import logging
+import operator
 import re
 import sre_constants
 
@@ -32,7 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from cyphon.models import GetByNameManager
-from cyphon.choices import LOGIC_CHOICES, REGEX_CHOICES
+from cyphon.choices import LOGIC_CHOICES, RANGE_CHOICES, REGEX_CHOICES
 from lab.procedures.models import Protocol
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import regex_validator
@@ -114,6 +115,12 @@ class Rule(models.Model):
         if self.operator != 'EmptyField' and self.value in ['', None]:
             raise ValidationError(_('The value field is required.'))
 
+        if self.operator.startswith('FloatField'):
+            try:
+                float(self.value)
+            except ValueError:
+                raise ValidationError(_('A numeric value is required '
+                                        'for this type of comparison.'))
         if self.is_regex:
             regex_validator(self.value)
 
@@ -236,7 +243,7 @@ class FieldRule(Rule):
     )
     operator = models.CharField(
         max_length=40,
-        choices=list(REGEX_CHOICES) + list(DATAFIELD_CHOICES),
+        choices=list(REGEX_CHOICES) + list(RANGE_CHOICES) + list(DATAFIELD_CHOICES),
         help_text=_('The type of comparison to make.')
     )
     field_name = models.CharField(
@@ -273,6 +280,23 @@ class FieldRule(Rule):
         value = self._get_value(data)
         return value is None
 
+    def _numeric_match(self, data):
+        """
+
+        """
+        operators = {
+            '>': operator.gt,
+            '>=': operator.ge,
+            '<': operator.lt,
+            '<=': operator.le
+        }
+        try:
+            comparison = self._get_operator_value()
+            value = self._get_value(data)
+            return operators[comparison](float(value), float(self.value))
+        except ValueError:
+            return False
+
     def _check_value(self, value):
         """
         Takes a value and checks it against the Rule's logic. Returns the result
@@ -282,8 +306,8 @@ class FieldRule(Rule):
         methods = {
             'CharField': self._matches_regex,
             'EmptyField': self._is_null,
+            'FloatField': self._numeric_match,
         }
-        # TODO(LH): need other methods for other operator types, like IntegerField
 
         func = methods[operator_type]
         return func(value)
@@ -444,4 +468,3 @@ class SieveNode(models.Model):
         criterion. Otherwise, returns False.
         """
         return self.node_object.is_match(data)
-
