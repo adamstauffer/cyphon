@@ -136,23 +136,32 @@ class Watchdog(Alarm):
             data=data
         )
 
-    def _process_alert(self, alert):
+    def _is_muzzled(self):
         """
+        Returns a boolean indicates if the Watchdog has an enabled Muzzle.
+        """
+        return hasattr(self, 'muzzle') and self.muzzle.enabled
 
+    def _save_alert(self, alert):
         """
-        try:
-            with contextlib.ExitStack() as stack:
-                if (alert.alarm and
-                        hasattr(alert.alarm, 'muzzle') and
-                        alert.alarm.muzzle.enabled):
-                    stack.enter_context(transaction.atomic())
-                alert.save()
-            return alert
-        except IntegrityError:
-            with transaction.atomic():
-                old_alert = Alert.objects.filter(
-                    muzzle_hash=alert.muzzle_hash).first()
-                old_alert.add_incident()
+        Saves a new Alert to the database and returns the saved Alert.
+        """
+        with contextlib.ExitStack() as stack:
+            if self._is_muzzled():
+                stack.enter_context(transaction.atomic())
+            alert.save()
+        return alert
+
+    @staticmethod
+    @transaction.atomic
+    def _increment_incidents(alert):
+        """
+        Takes an Alert and increments a previous Alert that it
+        duplicates. Returns the previous Alert.
+        """
+        old_alert = Alert.objects.filter(muzzle_hash=alert.muzzle_hash).first()
+        old_alert.add_incident()
+        return old_alert
 
     def inspect(self, data):
         """Return an Alert level for a document.
@@ -196,7 +205,13 @@ class Watchdog(Alarm):
             alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
                 alert = self._create_alert(alert_level, doc_obj)
-                return self._process_alert(alert)
+
+                # save the alert or increment incidents on a previous
+                # alert it duplicates
+                try:
+                    return self._save_alert(alert)
+                except IntegrityError:
+                    return self._increment_incidents(alert)
 
 
 class TriggerManager(models.Manager):
