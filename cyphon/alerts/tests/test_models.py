@@ -426,6 +426,27 @@ class GetDataStrTestCase(AlertModelTestCase):
         self.assertEqual(actual, expected)
 
 
+class AlertTidyDataTestCase(AlertModelTestCase):
+    """
+    Tests the tidy_data property of an Alert.
+    """
+
+    def test_tidy_data_wo_distillery(self):
+        """
+        Tests the tidy_data property when the Alert has no Distillery.
+        """
+        self.alert.distillery = None
+        self.assertEqual(self.alert.tidy_data, self.alert.data)
+
+    def test_tidy_data_w_distillery(self):
+        """
+        Tests the tidy_data property when the Alert has no Distillery.
+        """
+        alert = Alert.objects.get(pk=4)
+        self.assertEqual(alert.tidy_data,
+                         {'content': {'link': 'url', 'text': 'foobar'}})
+
+
 class AddIncidentTestCase(AlertModelTestCase):
     """
     Tests the add_incident method of an Alert.

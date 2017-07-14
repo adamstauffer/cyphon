@@ -168,6 +168,54 @@ def get_dict_value(field_name, doc):
         return value
 
 
+def merge_dict(target, addition):
+    """Merge additional keys into a target dictionary.
+
+    Parameters
+    ----------
+    target : dict
+        The dict to mutate.
+
+    addition : dict
+        The dict containing keys to merge into the `target` dict.
+
+    Returns
+    -------
+    dict
+
+    """
+    for key in addition:
+        if key in target and isinstance(target[key], dict) \
+                and isinstance(addition[key], dict):
+            merge_dict(target[key], addition[key])
+        else:
+            target[key] = addition[key]
+
+
+def abridge_dict(schema, data):
+    """Abridge a data document to only include specified fields.
+
+    Parameters
+    ----------
+    schema : |list| of |DataFields|
+        The fields that should be included in the abridged dict.
+
+    data : dict
+        The dictionary to be tidied.
+
+    """
+    abridged_dict = {}
+    for field in schema:
+        value = get_dict_value(field.field_name, data)
+        if value:
+            keys = field.field_name.split('.')
+            val = {keys.pop(-1): value}
+            while len(keys):
+                val = {keys.pop(-1): val}
+            merge_dict(abridged_dict, val)
+    return abridged_dict
+
+
 def divide_into_groups(items, max_group_size):
     """Divide a list of items into a list of smaller lists.
 

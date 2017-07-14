@@ -26,6 +26,7 @@ from unittest import TestCase
 from bson import ObjectId
 
 # local
+from bottler.datafields.models import DataField
 from utils.parserutils import parserutils
 
 
@@ -109,6 +110,36 @@ class GetDictValueTestCase(TestCase):
         doc = {'a': {'b': [{'c': [100, [15, 20]]}, {'d': 40}], 'e': 10}}
         field = 'a.b[0].c[1][1]'
         self.assertEqual(parserutils.get_dict_value(field, doc), 20)
+
+
+class AbridgeDictTestCase(TestCase):
+    """
+    Tests the abridge_dict function.
+    """
+    schema = [
+        DataField(field_name='test1.foo', field_type='TextField'),
+        DataField(field_name='test1.bar', field_type='TextField'),
+        DataField(field_name='test3', field_type='TextField'),
+        DataField(field_name='test4', field_type='TextField'),
+    ]
+
+    def test_abridge_dict(self):
+        """
+        Tests method for getting a value from a nested dictionary.
+        """
+        doc = {
+            'test1': {
+                'foo': 1,
+                'bar': 2,
+                'bogus': 3
+            },
+            'test2': 4,  # not in schema
+            'test3': 5,
+            'test4': None  # null value
+        }
+        actual = parserutils.abridge_dict(self.schema, doc)
+        expected = {'test1': {'foo': 1, 'bar': 2}, 'test3': 5}
+        self.assertEqual(actual, expected)
 
 
 class DivideIntoGroupsTestCase(TestCase):
