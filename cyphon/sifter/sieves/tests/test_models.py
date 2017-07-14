@@ -264,7 +264,7 @@ class FieldRuleTestCase(TestCase):
 
     def test_invalid_regex(self):
         """
-        Tests the is_match method when the value is not a valid regex.
+        Tests the clean method when the value is not a valid regex.
         """
         valid_rule = FieldRule(
             field_name='subject',
@@ -277,6 +277,30 @@ class FieldRuleTestCase(TestCase):
             operator='CharField:x$',
             is_regex=True,
             value='[CRIT-999]'
+        )
+        try:
+            valid_rule.clean()
+        except ValidationError:
+            self.fail('Rule raised ValidationError unexpectedly')
+        with self.assertRaises(ValidationError):
+            self.assertFalse(invalid_rule.clean())
+
+    def test_invalid_number(self):
+        """
+        Tests the clean method when for a numeric comparison with a
+        non-numeric value.
+        """
+        valid_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:>',
+            is_regex=False,
+            value='20'
+        )
+        invalid_rule = FieldRule(
+            field_name='age',
+            operator='FloatField:>',
+            is_regex=False,
+            value='[20]'
         )
         try:
             valid_rule.clean()

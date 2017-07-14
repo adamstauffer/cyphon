@@ -115,8 +115,12 @@ class Rule(models.Model):
         if self.operator != 'EmptyField' and self.value in ['', None]:
             raise ValidationError(_('The value field is required.'))
 
-        # TODO(LH): add numeric validator
-
+        if self.operator.startswith('FloatField'):
+            try:
+                float(self.value)
+            except ValueError:
+                raise ValidationError(_('A numeric value is required '
+                                        'for this type of comparison.'))
         if self.is_regex:
             regex_validator(self.value)
 
