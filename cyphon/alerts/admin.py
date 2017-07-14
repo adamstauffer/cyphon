@@ -42,6 +42,7 @@ class AlertAdmin(admin.ModelAdmin):
         'display_title',
         'created_date',
         'content_date',
+        'last_modified',
         'alarm',
         'distillery',
         'doc_id',
@@ -55,6 +56,7 @@ class AlertAdmin(admin.ModelAdmin):
                 'display_title',
                 'created_date',
                 'content_date',
+                'last_modified',
             )
         }),
         (_('Workflow'), {
@@ -105,6 +107,7 @@ class AlertAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'content_date',
+        'last_modified',
         'level',
         'status',
         'outcome',
