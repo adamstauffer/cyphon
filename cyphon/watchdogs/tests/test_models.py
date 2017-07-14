@@ -205,13 +205,14 @@ class WatchdogTestCase(WatchdogBaseTestCase):
         # try to create a duplicate Alert
         results = self.email_wdog.process(doc_obj)
 
+        old_alert = Alert.objects.get(pk=alert.pk)
+
         # make sure no new Alert has been created
         self.assertEqual(Alert.objects.count(), alert_count + 1)
-        self.assertEqual(results, None)
 
         # check that the previous Alert was incremented
-        alert = Alert.objects.get(pk=alert.pk)
-        self.assertEqual(alert.incidents, old_incidents + 1)
+        self.assertEqual(old_alert.incidents, old_incidents + 1)
+        self.assertEqual(results, old_alert)
 
     @patch_find_by_id(DATA)
     def test_process_muzzled_disabled(self):
