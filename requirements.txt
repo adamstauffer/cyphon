@@ -2,7 +2,7 @@ amqp==2.2.1
 anyjson==0.3.3
 backoff==1.4.3
 beautifulsoup4==4.6.0
-billiard==3.5.0.2
+billiard==3.5.0.3
 bleach==2.0.0
 celery==4.0.2
 cryptography==1.9
