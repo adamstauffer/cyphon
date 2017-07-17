@@ -175,7 +175,7 @@ class Alert(models.Model):
     )
     created_date = models.DateTimeField(auto_now_add=True, db_index=True)
     content_date = models.DateTimeField(blank=True, null=True, db_index=True)
-    last_modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+    last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     assigned_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True,
