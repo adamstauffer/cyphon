@@ -637,14 +637,14 @@ class FieldSearchParameter(SearchParameter):
     def is_valid(self):
         return not bool(self.combined_errors)
 
-    def get_parameter_info(self):
-        """Returns a short serializable explanation of this SearchParameter.
+    def as_dict(self):
+        """Returns a JSON serializable representation of this object.
 
         Returns
         -------
         dict
         """
-        info = super(FieldSearchParameter, self).get_parameter_info()
+        info = super(FieldSearchParameter, self).as_dict()
 
         info.update({
             'field_name': self.field_name,

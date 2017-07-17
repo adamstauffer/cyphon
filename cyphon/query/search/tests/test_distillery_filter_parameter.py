@@ -192,7 +192,7 @@ class DistilleryFilterParameterTestCase(TestCase):
         """
         parameter = DistilleryFilterParameter(3, '@source=*.test_docs')
 
-        self.assertDictEqual(parameter.get_parameter_info(), {
+        self.assertDictEqual(parameter.as_dict(), {
             'parameter': '@source=*.test_docs',
             'type': SearchParameterType.DISTILLERY,
             'index': 3,
@@ -213,7 +213,7 @@ class DistilleryFilterParameterTestCase(TestCase):
         """
         parameter = DistilleryFilterParameter(3, '@source=bleh.bleh')
 
-        self.assertDictEqual(parameter.get_parameter_info(), {
+        self.assertDictEqual(parameter.as_dict(), {
             'parameter': '@source=bleh.bleh',
             'type': SearchParameterType.DISTILLERY,
             'index': 3,

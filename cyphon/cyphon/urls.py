@@ -45,6 +45,7 @@ from query.collectionqueries.views import (
     CollectionQueryViewSet,
     QueryFieldsetViewSet,
 )
+from query.search.views import search, search_alerts, search_distilleries, search_distillery
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
@@ -129,6 +130,7 @@ urlpatterns += [
 
     # REST API
     url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/search/', include('query.search.urls')),
     url(r'^api/v1/auth/',
         include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v1/notifications/', include('notifications.urls')),

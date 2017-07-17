@@ -134,26 +134,24 @@ class DistilleryFilterParameter(SearchParameter):
             self.collection,
         )
 
-    def get_parameter_info(self):
-        """Returns a dict of info about the parameter.
-
-        Used for debugging purposes and creating error messages.
+    def as_dict(self):
+        """Returns a JSON serializable representation of this object.
 
         Returns
         -------
         dict
         """
-        info = super(DistilleryFilterParameter, self).get_parameter_info()
-
+        info = super(DistilleryFilterParameter, self).as_dict()
+        distillery_names = [
+            str(distillery)
+            for distillery
+            in self.distilleries
+        ]
         info.update({
             'filter': self.filter,
             'collection': self.collection,
             'warehouse': self.warehouse,
-            'distilleries':[
-                str(distillery)
-                for distillery
-                in self.distilleries
-            ],
+            'distilleries': distillery_names,
         })
 
         return info

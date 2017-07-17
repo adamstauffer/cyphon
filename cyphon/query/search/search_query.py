@@ -26,9 +26,6 @@ from .search_parameter import SearchParameterType, SearchParameter
 from .field_search_parameter import FieldSearchParameter
 from .keyword_search_parameter import KeywordSearchParameter
 from .distillery_filter_parameter import DistilleryFilterParameter
-from cyphon.fieldsets import QueryFieldset
-from distilleries.models import Distillery
-from engines.queries import EngineQuery
 
 
 class UnknownParameter(SearchParameter):
@@ -61,20 +58,20 @@ class SearchQuery:
     ----------
     errors : list of str
         Errors that occurred during the parsing of the query.
-    parameter_errors : list of SearchParameter
+    invalid_parameters : list of SearchParameter
         Parameters that are not valid.
-    keywords : list of KeywordSearchParameter
+    keyword_parameters : list of KeywordSearchParameter
         Parameters that represent a keyword search.
-    fields : list of FieldSearchParameter
+    field_parameters : list of FieldSearchParameter
         Parameters that represent a field search.
-    distilleries : list of DistilleryFilterParameter
+    distillery_filter_parameter : DistilleryFilterParameter or None
         Parameters that are used to limit what distilleries are searched.
-    unknown : list of UnknownParameter
+    unknown_parameters : list of UnknownParameter
         Parameters that have no known type.
     """
 
     PARAMETERS_REGEX = re.compile(
-        r'\"(?:\"|\S.+?\")(?=\ |$)|\S+\"(?:\"|\S.+?\")|\S+'
+        r'\"(?:\"|\S.+?\")(?= |$)|\S+\"(?:\"|\S.+?\")|\S+'
     )
     """RegExp
 
@@ -94,54 +91,36 @@ class SearchQuery:
     Error message explaining that there was a problem parsing the query.
     """
 
-    MULTPIPLE_DISTILLERY_FILTERS = (
-        'There can only be one instance of the `source=` parameter.'
+    MULTIPLE_DISTILLERY_FILTERS = (
+        'Only one distillery filter is only allowed to be used '
+        'per search query. Parameter `{}` at index `{}` violates '
+        'this rule.'
     )
     """str
-
-    Error message explaining that there can only be one
-    SearchQueryParameter that has the SearchQueryParameterType.DISTILLERY
-    type.
+    
+    Error message explaining that there can only be one distillery filter
+    per search query.
     """
 
-    PARAMETER_TYPE_VALUES_MAP = dict([
-        (SearchParameterType.KEYWORD, (KeywordSearchParameter, 'keywords')),
-        (SearchParameterType.FIELD, (FieldSearchParameter, 'fields')),
-        (SearchParameterType.DISTILLERY, (DistilleryFilterParameter, 'distilleries')),
-        (None, (UnknownParameter, 'unknown')),
-    ])
-
     @staticmethod
-    def _is_data_field_on_distillery(data_field, distillery):
-        """Determines if a distillery contains the data_field
+    def _get_search_query_parameters(query):
+        """Parses the query string into it's individual string parameters.
 
         Parameters
         ----------
-        data_field : DataField
-        distillery : Distillery
-            Distillery to look for the DataField on.
+        query: str
 
         Returns
         -------
-        bool
-            If the Distillery contains the DataField
+        list of str
         """
-        if not data_field:
-            return False
+        return SearchQuery.PARAMETERS_REGEX.findall(query)
 
-        bottle_fields = distillery.container.bottle.fields
+    @staticmethod
+    def _get_keywords(parameters):
+        return [parameter.keyword for parameter in parameters]
 
-        if bottle_fields.filter(pk=data_field.pk).exists():
-            return True
-
-        if not distillery.container.label:
-            return False
-
-        label_fields = distillery.container.label.fields
-
-        return label_fields.filter(pk=data_field.pk).exists()
-
-    def __init__(self, query):
+    def __init__(self, query, ignored_parameter_types=None):
         """Constructor of a SearchQuery.
 
         Parameters
@@ -149,38 +128,74 @@ class SearchQuery:
         query : str
             Search query string
         """
+        self._parameter_setters = {
+            SearchParameterType.KEYWORD: self._add_keyword_parameter,
+            SearchParameterType.FIELD: self._add_field_parameter,
+            SearchParameterType.DISTILLERY: (
+                self._set_distillery_filter_parameter
+            ),
+            None: self._add_unknown_parameter,
+        }
         self.errors = []
-        self.parameter_errors = []
-        self.keywords = []
-        self.fields = []
-        self.distilleries = []
-        self.unknown = []
+        self.invalid_parameters = []
+        self.keyword_parameters = []
+        self.field_parameters = []
+        self.distillery_filter_parameter = None
+        self.unknown_parameters = []
 
         if not query:
-            self.errors.append(SearchQuery.EMPTY_SEARCH_QUERY)
+            self._add_empty_query_error()
             return
 
-        parameters = SearchQuery.PARAMETERS_REGEX.findall(query)
+        parameters = SearchQuery._get_search_query_parameters(query)
 
         if not parameters:
-            self.errors.append(SearchQuery.PARSING_ERROR.format(query))
+            self._add_parsing_error(query)
             return
 
-        for index, parameter in enumerate(parameters):
-            parameter_type = SearchParameterType.get_parameter_type(parameter)
-            parameter_type_values = SearchQuery.PARAMETER_TYPE_VALUES_MAP[
-                parameter_type
-            ]
+        self._add_search_parameters(parameters, ignored_parameter_types)
 
-            self._add_search_parameter(
-                index,
-                parameter,
-                parameter_type_values[0],
-                parameter_type_values[1],
-            )
+    @property
+    def distilleries(self):
+        """Returns the distilleries specified in the distillery filter param.
 
-        if len(self.distilleries) > 1:
-            self.errors.append(SearchQuery.MULTPIPLE_DISTILLERY_FILTERS)
+        Returns
+        -------
+        list of Distillery or None
+        """
+        return (
+            self.distillery_filter_parameter.distilleries
+            if self.distillery_filter_parameter
+            else None
+        )
+
+    @property
+    def keywords(self):
+        """Returns the keywords from the keyword parameters.
+
+        Returns
+        -------
+        list of str or None
+        """
+        return (
+            [parameter.keyword for parameter in self.keyword_parameters]
+            if self.keyword_parameters
+            else None
+        )
+
+    def as_dict(self):
+        """Returns a JSON serializable representation of this object instance.
+
+        Returns
+        -------
+        dict
+        """
+        return {
+            'errors': self.errors,
+            'keywords': self._get_keyword_parameters_as_dict(),
+            'fields': self._get_field_parameters_as_dict(),
+            'distilleries': self._get_distillery_filter_as_dict(),
+        }
 
     def is_valid(self):
         """Determines if the SearchQuery is valid.
@@ -189,157 +204,224 @@ class SearchQuery:
         -------
         bool
         """
-        return not self.errors and not self.parameter_errors
+        return not self.errors and not self.invalid_parameters
 
-    def get_error_dict(self):
-        """ Returns a dictionary explaining the query errors.
+    def _create_search_parameter(self, parameter_class, index, parameter):
+        """Creates a search parameter using the given class.
 
-        Returns
-        -------
-        dict
-        """
-        errors = {}
-
-        if self.errors:
-            errors['query'] = self.errors
-
-        if self.parameter_errors:
-            errors['parameters'] = self.parameter_errors
-
-        return errors
-
-    def get_results(self):
-        """Returns search results for each Distillery indexed by Distillery.
-
-        Returns
-        -------
-        dict of list of dict
-
-        Raises
-        ------
-        AssertionError
-            If the SearchQuery is not valid.
-        """
-        assert self.is_valid(), 'Can only get results of a valid SearchQuery.'
-
-        distilleries = (
-            self.distilleries[0].distilleries
-            if len(self.distilleries) is 1
-            else Distillery.objects.all()
-        )
-        results = []
-
-        for distillery in distilleries:
-            fieldsets = self._get_fieldsets(distillery)
-
-            if not fieldsets:
-                continue
-
-            engine_query = EngineQuery(subqueries=fieldsets, joiner='OR')
-            query_results = distillery.find(engine_query)
-
-            if query_results:
-                results.append({
-                    'count': query_results['count'],
-                    'distillery': distillery.pk,
-                    'results': query_results['results'],
-                })
-
-        return results
-
-    def _get_field_fieldsets(self, distillery):
-        """ Returns the field search fieldsets for a certain distillery.
+        Checks for search parameter validity as well.
 
         Parameters
         ----------
-        distillery : Distillery
+        parameter_class : SearchParameter Class
+        index : int
+        parameter : str
 
         Returns
         -------
-        list of QueryFieldset
+        SearchParameter
         """
-        if not self.fields:
-            return []
+        search_parameter = parameter_class(index, parameter)
 
-        return [
-            parameter.create_fieldset()
-            for parameter
-            in self.fields
-            if parameter.is_related_to_distillery(distillery)
-        ]
+        self._check_parameter_validity(search_parameter)
 
-    def _get_keyword_fieldsets(self, distillery):
-        """Returns the keyword fieldsets for a certain distillery.
+        return search_parameter
 
-        Parameters
-        ----------
-        distillery : Distillery
+    def _get_distillery_filter_distilleries(self):
+        """Returns the distilleries found from the distillery filter param.
 
         Returns
         -------
-        list of QueryFieldset
-        """
-        if not self.keywords:
-            return []
-
-        keywords = [parameter.keyword for parameter in self.keywords]
-
-        return [
-            QueryFieldset(
-                field_name=field.field_name,
-                field_type=field.field_type,
-                operator='regex',
-                value='|'.join(keywords),
-            )
-            for field
-            in distillery.get_text_fields()
-        ]
-
-    def _get_fieldsets(self, distillery):
-        """Returns the QueryFieldsets for a particular distillery.
-
-        Parameters
-        ----------
-        distillery : Distillery
-            Distillery to get the fieldsets for.
-
-        Returns
-        -------
-        list of QueryFieldsets
+        list of Distillery or None
         """
         return (
-            self._get_field_fieldsets(distillery) +
-            self._get_keyword_fieldsets(distillery)
+            self.distillery_filter_parameter.distilleries
+            if self.distillery_filter_parameter
+            else None
         )
 
+    def _get_keyword_parameters_as_dict(self):
+        """Returns a the parameter info for each keyword parameter.
+
+        Returns
+        -------
+        list of dict
+        """
+        return [keyword.as_dict() for keyword in self.keyword_parameters]
+
+    def _get_field_parameters_as_dict(self):
+        """Returns the parameter info for each field search parameter.
+
+        Returns
+        -------
+        list of dict
+        """
+        return [field.as_dict() for field in self.field_parameters]
+
+    def _get_distillery_filter_as_dict(self):
+        """Returns the distillery filter parameter info.
+
+        If the query does not have a distillery filter parameter, it
+        returns None instead.
+
+        Returns
+        -------
+        dict or None
+        """
+        return (
+            self.distillery_filter_parameter.as_dict()
+            if self.distillery_filter_parameter
+            else None
+        )
+
+    def _add_empty_query_error(self):
+        """Adds an EMPTY_SEARCH_QUERY error message to this instance."""
+        self._add_error(SearchQuery.EMPTY_SEARCH_QUERY)
+
+    def _add_parsing_error(self, query):
+        """Adds a PARSING_ERROR error message to the query instance.
+
+        Parameters
+        ----------
+        query: str
+            Failed string that wasn't parsed.
+        """
+        self._add_error(SearchQuery.PARSING_ERROR.format(query))
+
+    def _get_parameter_setter(self, parameter_type):
+        """Returns the parameter type's setter function.
+
+        Parameters
+        ----------
+        parameter_type : str
+
+        Returns
+        -------
+        (int, str) -> None
+        """
+        return self._parameter_setters[parameter_type]
+
+    def _add_search_parameters(self, parameters, ignored_parameter_types=None):
+        """Adds the parsed query parameters as objects to the class.
+
+        Parameters
+        ----------
+        parameters: list of str
+        ignored_parameter_types : list of str or None
+            Parameter types to ignore while parsing the parameters.
+        """
+        ignored_parameter_types = ignored_parameter_types or []
+
+        for index, parameter in enumerate(parameters):
+            parameter_type = SearchParameterType.get_parameter_type(parameter)
+
+            if parameter_type in ignored_parameter_types:
+                continue
+
+            parameter_setter = self._get_parameter_setter(parameter_type)
+            parameter_setter(index, parameter)
+
     def _add_parameter_error(self, parameter):
-        """Adds a SearchParameter error to the current list of errors.
+        """Adds a SearchParameter the the list of invalid parameters.
 
         Parameters
         ----------
         parameter : SearchParameter
         """
-        self.parameter_errors.append(parameter.get_parameter_info())
+        self.invalid_parameters.append(parameter.as_dict())
 
-    def _add_search_parameter(
-            self, index, parameter, search_parameter_class, field):
-        """Adds a search parameter to the instance.
+    def _add_error(self, error):
+        """Adds a search query error to the error list.
+
+        Parameters
+        ----------
+        error : str
+        """
+        self.errors.append(error)
+
+    def _add_multiple_distilleries_filters_error(self, parameter, index):
+        """Adds a MULTIPLE_DISTILLERY_FILTERS error to the list of errors.
+
+        Parameters
+        ----------
+        parameter : str
+            Parameter string that violated the rule.
+        index : int
+            Index of the parameter in the search string.
+        """
+        self.errors.append(
+            SearchQuery.MULTIPLE_DISTILLERY_FILTERS.format(parameter, index),
+        )
+
+    def _check_parameter_validity(self, parameter):
+        """Checks if a search parameter is valid.
+
+        If the parameter is invalid, it adds it to the list of
+        invalid parameters.
+
+        Parameters
+        ----------
+        parameter : SearchParameter
+        """
+        if not parameter.is_valid():
+            self.invalid_parameters.append(parameter)
+
+    def _add_keyword_parameter(self, index, parameter):
+        """Adds a keyword search parameter to the list of keyword parameters.
 
         Parameters
         ----------
         index : int
-            Index of the search parameter on the search query string.
+            Index of the parameter in the search query.
         parameter : str
-            String representation of the search parameter.
-        search_parameter_class : SearchParameter Class
-            Class that will parse the search parameter information.
-        field : str
-            Attribute of the SearchQuery that will store the created
-            SearchParameter instance.
         """
-        search_parameter = search_parameter_class(index, parameter)
+        search_parameter = self._create_search_parameter(
+            KeywordSearchParameter, index, parameter,
+        )
+        self.keyword_parameters.append(search_parameter)
 
-        if not search_parameter.is_valid():
-            self._add_parameter_error(search_parameter)
+    def _add_field_parameter(self, index, parameter):
+        """Adds a field search parameter to the list of field search parameters.
 
-        getattr(self, field).append(search_parameter)
+        Parameters
+        ----------
+        index : int
+            Index of the parameter in the search query.
+        parameter : str
+        """
+        search_parameter = self._create_search_parameter(
+            FieldSearchParameter, index, parameter,
+        )
+        self.field_parameters.append(search_parameter)
+
+    def _set_distillery_filter_parameter(self, index, parameter):
+        """Sets the queries distillery filter parameter.
+
+        Parameters
+        ----------
+        index : int
+            Index of the parameter in the search query.
+        parameter : str
+        """
+        search_parameter = self._create_search_parameter(
+            DistilleryFilterParameter, index, parameter,
+        )
+
+        if self.distillery_filter_parameter:
+            self._add_multiple_distilleries_filters_error(parameter, index)
+        else:
+            self.distillery_filter_parameter = search_parameter
+
+    def _add_unknown_parameter(self, index, parameter):
+        """Adds an unknown parameter to the list of unknown parameters.
+
+        Parameters
+        ----------
+        index : int
+            Index of the parameter in the search query.
+        parameter : str
+        """
+        search_parameter = self._create_search_parameter(
+            UnknownParameter, index, parameter,
+        )
+        self.unknown_parameters.append(search_parameter)

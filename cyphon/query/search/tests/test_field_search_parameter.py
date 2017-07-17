@@ -303,7 +303,7 @@ class FieldSearchParameterTestCase(TestCase):
 
         self.assertFalse(field_parameter.is_valid())
 
-        error_dict = field_parameter.get_parameter_info()
+        error_dict = field_parameter.as_dict()
 
         self.assertDictEqual(error_dict, {
             'parameter': 'meh=true',
@@ -319,7 +319,7 @@ class FieldSearchParameterTestCase(TestCase):
 
         self.assertFalse(field_parameter.is_valid())
 
-        error_dict = field_parameter.get_parameter_info()
+        error_dict = field_parameter.as_dict()
 
         self.assertDictEqual(error_dict, {
             'parameter': 'ip_address<"30.43.23"',

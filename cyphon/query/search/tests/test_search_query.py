@@ -18,41 +18,23 @@
 Tests for the SearchQuery class.
 """
 
-# standard library
-from unittest.mock import patch
-
 # third party
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 # local
-from distilleries.models import Distillery
-from engines.queries import EngineQuery
-from cyphon.fieldsets import QueryFieldset
 from query.search.search_query import SearchQuery, UnknownParameter
 from query.search.field_search_parameter import FieldSearchParameter
 from query.search.distillery_filter_parameter import DistilleryFilterParameter
-from query.search.keyword_search_parameter import KeywordSearchParameter
 from tests.fixture_manager import get_fixtures
-
-MOCK_RESULTS_LIST = [{'id': 1, 'content': 'content'}]
-
-MOCK_RESULTS = {
-    'count': 1,
-    'results': MOCK_RESULTS_LIST,
-}
-
-MOCK_FIND = patch(
-    'distilleries.models.Distillery.find',
-    return_value=MOCK_RESULTS,
-)
 
 
 class SearchQueryTestCase(TestCase):
     """
     Tests the SearchQuery class.
     """
-
-    fixtures = get_fixtures(['distilleries'])
+    user_model = get_user_model()
+    fixtures = get_fixtures(['distilleries', 'users', 'alerts', 'comments'])
 
     def test_empty_search_query_error(self):
         """
@@ -90,15 +72,15 @@ class SearchQueryTestCase(TestCase):
         )
 
         self.assertFalse(query.is_valid())
-        self.assertEqual(len(query.unknown), 2)
-        self.assertEqual(len(query.parameter_errors), 2)
+        self.assertEqual(len(query.unknown_parameters), 2)
+        self.assertEqual(len(query.invalid_parameters), 2)
         self.assertEqual(
-            query.parameter_errors[0],
-            unknown_parameter_1.get_parameter_info(),
+            query.invalid_parameters[0].as_dict(),
+            unknown_parameter_1.as_dict(),
         )
         self.assertEqual(
-            query.parameter_errors[1],
-            unknown_parameter_2.get_parameter_info(),
+            query.invalid_parameters[1].as_dict(),
+            unknown_parameter_2.as_dict(),
         )
 
     def test_parameter_index(self):
@@ -109,10 +91,10 @@ class SearchQueryTestCase(TestCase):
         query = SearchQuery('ip_address=34.25.12.32 "search phrase"')
 
         self.assertTrue(query.is_valid())
-        self.assertEqual(len(query.keywords), 1)
-        self.assertEqual(query.keywords[0].index, 1)
-        self.assertEqual(len(query.fields), 1)
-        self.assertEqual(query.fields[0].index, 0)
+        self.assertEqual(len(query.keyword_parameters), 1)
+        self.assertEqual(query.keyword_parameters[0].index, 1)
+        self.assertEqual(len(query.field_parameters), 1)
+        self.assertEqual(query.field_parameters[0].index, 0)
 
     def test_distillery_parameter(self):
         """
@@ -121,7 +103,10 @@ class SearchQueryTestCase(TestCase):
         query = SearchQuery('@source=*.test_logs')
 
         self.assertTrue(query.is_valid())
-        self.assertEqual(len(query.distilleries), 1)
+        self.assertIsNotNone(query.distillery_filter_parameter)
+        self.assertIsInstance(
+            query.distillery_filter_parameter, DistilleryFilterParameter,
+        )
 
     def test_parameter_errors(self):
         """
@@ -133,10 +118,10 @@ class SearchQueryTestCase(TestCase):
         query = SearchQuery(field_parameter_string)
 
         self.assertFalse(query.is_valid())
-        self.assertEqual(len(query.parameter_errors), 1)
+        self.assertEqual(len(query.invalid_parameters), 1)
         self.assertEqual(
-            query.parameter_errors[0],
-            field_parameter.get_parameter_info(),
+            query.invalid_parameters[0].as_dict(),
+            field_parameter.as_dict(),
         )
 
     def test_multiple_distillery_filters_error(self):
@@ -150,170 +135,7 @@ class SearchQueryTestCase(TestCase):
         self.assertEqual(len(query.errors), 1)
         self.assertEqual(
             query.errors[0],
-            SearchQuery.MULTPIPLE_DISTILLERY_FILTERS,
+            SearchQuery.MULTIPLE_DISTILLERY_FILTERS.format(
+                '@source=*.test_logs', 1,
+            ),
         )
-
-    def test_get_error_dict(self):
-        """
-        Tests that the query outputs the correct error dictionary
-        format.
-        """
-        field_parameter_string = 'field_name=blah'
-        distillery_parameter_string = '@source=*.test_meh'
-        field_parameter = FieldSearchParameter(2, field_parameter_string)
-        distillery_parameter = DistilleryFilterParameter(
-            1,
-            distillery_parameter_string,
-        )
-
-        query = SearchQuery(
-            '@source=*.test_logs {} {}'.format(
-                distillery_parameter_string,
-                field_parameter_string,
-            )
-        )
-
-        self.assertEqual(query.get_error_dict(), {
-            'query': [SearchQuery.MULTPIPLE_DISTILLERY_FILTERS],
-            'parameters': [
-                distillery_parameter.get_parameter_info(),
-                field_parameter.get_parameter_info(),
-            ]
-        })
-
-    def test_get_field_results(self):
-        """
-        Tests that field queries are turned into the correct
-        QueryFieldsets.
-        """
-        query = SearchQuery('ip_address=34.23.12.32 subject=blah')
-        matching_distilleries = Distillery.objects.filter(
-            container__bottle__name__in=['test_doc', 'mail']
-        )
-        ip_address_field = FieldSearchParameter(0, 'ip_address=34.23.12.32')
-        subject_field = FieldSearchParameter(1, 'subject=blah')
-        expected_results = [
-            {
-                'count': 1,
-                'distillery': distillery.pk,
-                'results': MOCK_RESULTS_LIST,
-            }
-            for distillery
-            in matching_distilleries
-        ]
-
-        self.assertTrue(query.is_valid())
-        self.assertEqual(len(query.fields), 2)
-
-        with MOCK_FIND as mock_find:
-            results = query.get_results()
-            self.assertEqual(
-                mock_find.call_count,
-                matching_distilleries.count(),
-            )
-            self.assertEqual(len(results), matching_distilleries.count())
-            self.assertListEqual(results, expected_results)
-            self.assertEqual(len(mock_find.call_args_list), 2)
-
-            ip_address_query = mock_find.call_args_list[0][0][0]
-
-            self.assertEqual(len(ip_address_query.subqueries), 1)
-            self.assertEqual(
-                vars(ip_address_query.subqueries[0]),
-                vars(ip_address_field.create_fieldset())
-            )
-            self.assertEqual(ip_address_query.joiner, 'OR')
-
-            subject_query = mock_find.call_args_list[1][0][0]
-
-            self.assertEqual(len(subject_query.subqueries), 1)
-            self.assertEqual(
-                vars(subject_query.subqueries[0]),
-                vars(subject_field.create_fieldset())
-            )
-            self.assertEqual(subject_query.joiner, 'OR')
-
-    def test_get_keyword_results(self):
-        """
-        Tests that keyword searchs are properly transformed into the
-        correct QueryFieldsets
-        """
-        query = SearchQuery('keyword "search phrase"')
-        distilleries = [distillery for distillery in Distillery.objects.all()]
-
-        self.assertTrue(query.is_valid())
-        self.assertEqual(len(query.keywords), 2)
-
-        with MOCK_FIND as mock_find:
-            results = query.get_results()
-
-            self.assertEqual(mock_find.call_count, len(distilleries))
-            self.assertEqual(len(results), len(distilleries))
-
-            for index, call_args in enumerate(mock_find.call_args_list):
-                text_fields = distilleries[index].get_text_fields()
-                expected_fieldsets = [
-                    QueryFieldset(
-                        field.field_name,
-                        field.field_type,
-                        'regex',
-                        'keyword|search phrase',
-                    )
-                    for field
-                    in text_fields
-                ]
-                engine_query = call_args[0][0]
-
-                self.assertEqual(len(engine_query.subqueries), len(text_fields))
-
-                for s_index, subquery in enumerate(engine_query.subqueries):
-                    self.assertEqual(
-                        vars(expected_fieldsets[s_index]),
-                        vars(subquery)
-                    )
-
-    def test_distillery_filter(self):
-        """
-        Tests that it filters the search by distillery and that all
-        keyword/field searches are present.
-        """
-        query = SearchQuery('@source=test_index.test_docs hello ip_address=56')
-        distillery = Distillery.objects.get(
-            collection__warehouse__name='test_index',
-            collection__name='test_docs',
-        )
-        text_fields = distillery.get_text_fields()
-        expected_fieldset_count = len(text_fields) + 1
-
-        with MOCK_FIND as mock_find:
-            results = query.get_results()
-
-            self.assertEqual(len(results), 1)
-            self.assertEqual(mock_find.call_count, 1)
-
-            subqueries = mock_find.call_args[0][0].subqueries
-
-            self.assertEqual(len(subqueries), expected_fieldset_count)
-
-            self.assertEqual(
-                vars(subqueries[0]),
-                vars(FieldSearchParameter(0, 'ip_address=56').create_fieldset()),
-            )
-
-            expected_text_fieldsets = [
-                QueryFieldset(
-                    field.field_name,
-                    field.field_type,
-                    'regex',
-                    'hello',
-                )
-                for field
-                in text_fields
-            ]
-            text_subqueries = subqueries[1:]
-
-            for index, subquery in enumerate(text_subqueries):
-                self.assertEqual(
-                    vars(expected_text_fieldsets[index]),
-                    vars(subquery),
-                )

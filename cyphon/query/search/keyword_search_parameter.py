@@ -50,14 +50,14 @@ class KeywordSearchParameter(SearchParameter):
         if not self.keyword:
             self._add_error(KeywordSearchParameter.EMPTY_VALUE)
 
-    def get_parameter_info(self):
+    def as_dict(self):
         """Returns dict explaining the parameter.
 
         Returns
         -------
         dict
         """
-        info = super(KeywordSearchParameter, self).get_parameter_info()
+        info = super(KeywordSearchParameter, self).as_dict()
 
         info['keyword'] = self.keyword
 

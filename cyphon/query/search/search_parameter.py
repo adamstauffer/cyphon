@@ -105,7 +105,7 @@ class SearchParameter:
         """
         return not bool(self.errors)
 
-    def get_parameter_info(self):
+    def as_dict(self):
         """Returns a dict of info about the parameter.
 
         Used for debugging purposes and creating error messages.

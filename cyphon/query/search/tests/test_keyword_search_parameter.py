@@ -56,7 +56,7 @@ class KeywordSearchParameterTestCase(TestCase):
         """
         parameter = KeywordSearchParameter(3, '"Oh my"')
 
-        self.assertDictEqual(parameter.get_parameter_info(), {
+        self.assertDictEqual(parameter.as_dict(), {
             'parameter': '"Oh my"',
             'type': 'keyword',
             'index': 3,
