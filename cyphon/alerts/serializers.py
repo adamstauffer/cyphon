@@ -27,7 +27,6 @@ from cyphon.choices import (
     ALERT_OUTCOME_CHOICES,
     ALERT_STATUS_CHOICES,
 )
-from appusers.models import AppUser
 from appusers.serializers import AppUserSerializer
 from distilleries.serializers import (
     DistilleryDetailSerializer,
@@ -36,11 +35,15 @@ from distilleries.serializers import (
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Alert, Comment
 
+
 class CommentSerializer(serializers.ModelSerializer):
     """
     Base serializer for the Comment class.
     """
-    class Meta:
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Comment
         fields = (
             'id',
@@ -49,6 +52,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'created_date',
             'content',
         )
+
 
 class CommentDetailSerializer(CommentSerializer):
     """
@@ -65,7 +69,9 @@ class AlertListSerializer(serializers.ModelSerializer):
     distillery = DistilleryListSerializer()
     title = serializers.CharField(source='display_title')
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         depth = 1
         fields = (
@@ -98,7 +104,10 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
         required=False,
         choices=ALERT_LEVEL_CHOICES,
     )
-    class Meta:
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         fields = (
             'assigned_user',
@@ -121,7 +130,9 @@ class AlertDetailSerializer(serializers.ModelSerializer):
     location = serializers.JSONField(source='coordinates')
     title = serializers.CharField(source='display_title')
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         depth = 2
         fields = (
