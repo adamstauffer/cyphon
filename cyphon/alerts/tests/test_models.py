@@ -27,6 +27,7 @@ except ImportError:
     from mock import patch
 
 # third party
+from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
 
@@ -670,18 +671,18 @@ class AlertSummaryWithCommentsTestCase(AlertModelTestCase):
             'subject': 'Welcome to Acme Supply Co',
             'body': 'example text'
         }
-        alert = Alert.objects.get(pk=1)
+        alert = Alert.objects.get(pk=3)
         alert.data = mock_doc
         actual = alert.summary(include_comments=True)
         expected = \
-"""Alert ID:     1
+"""Alert ID:     3
 Title:        Acme Supply Co
-Level:        HIGH
+Level:        MEDIUM
 Incidents:    1
-Created date: 2015-03-01 02:40:24.468404+00:00
+Created date: 2015-03-01 02:46:24.468404+00:00
 
-Collection:   elasticsearch.test_index.test_logs
-Document ID:  1
+Collection:   mongodb.test_database.test_posts
+Document ID:  3
 Source Data:  
 {
     "body": "example text",

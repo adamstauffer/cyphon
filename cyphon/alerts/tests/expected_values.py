@@ -240,7 +240,7 @@ ALERT_LIST = {
         'content_date': None,
         'outcome': None
     }, {
-        'title': 'No title available',
+        'title': 'Acme Supply Co',
         'id': 3,
         'url': 'http://testserver/api/v1/alerts/3/',
         'level': 'MEDIUM',
