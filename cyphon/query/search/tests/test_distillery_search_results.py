@@ -32,7 +32,6 @@ from query.search.distillery_search_results import (
     DistillerySearchResultsList,
 )
 from tests.test_fixture_manager import get_fixtures
-from query.search.distillery_filter_parameter import DistilleryFilterParameter
 from query.search.search_query import SearchQuery
 
 MOCK_RESULTS_LIST = [{'id': 1, 'content': 'content'}]

@@ -20,7 +20,6 @@
 
 # third party
 from django.conf import settings
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.response import Response
@@ -34,6 +33,7 @@ from .distillery_search_results import (
     DistillerySearchResultsList, DistillerySearchResults
 )
 from .search_parameter import SearchParameterType
+from .search_results import DEFAULT_PAGE_SIZE
 
 SEARCH_VIEW_NAME = 'search'
 ALERT_SEARCH_VIEW_NAME = AlertSearchResults.VIEW_NAME
@@ -153,6 +153,7 @@ def search_distillery(request, pk):
         if distillery:
             search_results = DistillerySearchResults(
                 search_query, page=page, page_size=page_size,
+                distillery=distillery,
             )
             response['results'] = search_results.as_dict(request)
 
@@ -182,9 +183,9 @@ def _get_query_params(query_params):
         page = 1
 
     try:
-        page_size = int(query_params.get('page_size', settings.PAGE_SIZE))
+        page_size = int(query_params.get('page_size', DEFAULT_PAGE_SIZE))
     except ValueError:
-        page_size = settings.PAGE_SIZE
+        page_size = DEFAULT_PAGE_SIZE
 
     return query, page, page_size
 

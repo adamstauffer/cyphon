@@ -19,15 +19,13 @@
 from functools import reduce
 
 # third party
-from django.conf import settings
 from django.urls import reverse
 
+# local
 from cyphon.fieldsets import QueryFieldset
-from bottler.datafields.models import DataField
-from engines.queries import EngineQuery
 from distilleries.models import Distillery
 from distilleries.serializers import DistilleryListSerializer
-from .field_search_parameter import FieldSearchParameter
+from engines.queries import EngineQuery
 from .search_results import SearchResults, DEFAULT_PAGE_SIZE
 
 
@@ -60,7 +58,7 @@ class DistillerySearchResults(SearchResults):
         Parameters
         ----------
         distillery : Distillery
-        field_parameters : list of FieldSearchParameter
+        field_parameters : list of query.search.field_search_parameter.FieldSearchParameter
 
         Returns
         -------
@@ -80,7 +78,7 @@ class DistillerySearchResults(SearchResults):
 
         Parameters
         ----------
-        text_field : DataField
+        text_field : bottler.datafields.models.DataField
         keywords : list of str
 
         Returns

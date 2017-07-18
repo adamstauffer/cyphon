@@ -195,6 +195,7 @@ class SearchQuery:
             'keywords': self._get_keyword_parameters_as_dict(),
             'fields': self._get_field_parameters_as_dict(),
             'distilleries': self._get_distillery_filter_as_dict(),
+            'unknown': self._get_unknown_parameters_as_dict(),
         }
 
     def is_valid(self):
@@ -226,6 +227,9 @@ class SearchQuery:
         self._check_parameter_validity(search_parameter)
 
         return search_parameter
+
+    def _get_unknown_parameters_as_dict(self):
+        return [parameter.as_dict() for parameter in self.unknown_parameters]
 
     def _get_distillery_filter_distilleries(self):
         """Returns the distilleries found from the distillery filter param.

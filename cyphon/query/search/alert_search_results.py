@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 
-from urllib import parse
-
 # third party
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Q
@@ -35,6 +33,7 @@ class AlertSearchResults(SearchResults):
     """
     """
     VIEW_NAME = 'search_alerts'
+
     @staticmethod
     def _serialize_alert_object(alert, request):
         """Returns a JSON serializable representation of an Alert.

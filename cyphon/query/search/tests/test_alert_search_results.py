@@ -22,8 +22,6 @@ Tests for the AlertSearchResults class.
 from django.test import TestCase
 from django.test import RequestFactory
 from django.contrib.auth import get_user_model
-from django.http.request import HttpRequest
-from rest_framework.request import Request
 
 # local
 from query.search.alert_search_results import AlertSearchResults
@@ -35,7 +33,7 @@ class AlertSearchResultsTestCase(TestCase):
     fixtures = get_fixtures(['alerts', 'comments'])
 
     def _get_request(self):
-        return Request(self.request_factory.get(''))
+        return self.request_factory.get('')
 
     def _get_search_results(self, query, page=1, page_size=10):
         return AlertSearchResults(self.user, query, page, page_size)

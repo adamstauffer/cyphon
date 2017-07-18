@@ -635,6 +635,12 @@ class FieldSearchParameter(SearchParameter):
         return self.errors
 
     def is_valid(self):
+        """Determines if the field is valid.
+
+        Returns
+        -------
+        bool
+        """
         return not bool(self.combined_errors)
 
     def as_dict(self):

@@ -45,7 +45,6 @@ from query.collectionqueries.views import (
     CollectionQueryViewSet,
     QueryFieldsetViewSet,
 )
-from query.search.views import search, search_alerts, search_distilleries, search_distillery
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
