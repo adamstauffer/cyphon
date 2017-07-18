@@ -127,6 +127,7 @@ EMAIL = {
     'HOST_USER': 'user@',
     'HOST_PASSWORD': 'you',
     'PORT': 587,
+    'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,
 }
 
