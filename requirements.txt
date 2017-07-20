@@ -49,4 +49,4 @@ testfixtures==5.1.1
 textblob==0.12.0
 tlslite==0.4.9
 tweepy==3.5.0
-urllib3==1.21.1
+urllib3==1.22
