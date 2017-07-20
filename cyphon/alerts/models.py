@@ -578,10 +578,26 @@ class Comment(models.Model):
         )
         ordering = ['id']
 
-    def summary(self):
-        """
+    def get_all_comments(self):
+        """Return all |Comments| associated with the |Alert|."""
+        return self.alert.comments.all()
 
-        """
+    def get_alert_assignee(self):
+        """Return the |AppUser| assigned to the |Alert|."""
+        return self.alert.assigned_user
+
+    def get_other_contributors(self):
+        """Get a list of |AppUsers| who have submitted related |Comments|."""
+        assigned_user = self.get_alert_assignee()
+        all_comments = self.get_all_comments()
+        users = set([comment.user for comment in all_comments])
+        if assigned_user:
+            users.add(assigned_user)
+        users.discard(self.user)
+        return list(users)
+
+    def summary(self):
+        """Return a summary of the comment."""
         user = self.user.get_full_name()
         date = self.created_date
         content = self.content

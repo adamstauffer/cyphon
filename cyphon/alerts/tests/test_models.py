@@ -27,11 +27,12 @@ except ImportError:
     from mock import patch
 
 # third party
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
 # local
-from alerts.models import Alert
+from alerts.models import Alert, Comment
 from companies.models import Company
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
@@ -701,4 +702,53 @@ I have something to say
 Jack Miller commented at 2015-03-01 02:42:24.468404+00:00:
 I have something to say about what you have to say"""
 
+        self.assertEqual(actual, expected)
+
+
+class CommentTestCase(TestCase):
+    """
+    Tests the Comment model methods.
+    """
+    fixtures = get_fixtures(['comments'])
+
+    def setUp(self):
+        self.comment = Comment.objects.get(pk=1)
+
+    def test_get_all_comments(self):
+        """
+        Tests the get_all_comments method.
+        """
+        results = self.comment.get_all_comments()
+        self.assertEqual(len(results), 2)
+
+    def test_get_alert_assignee(self):
+        """
+        Tests the get_alert_assignee method.
+        """
+        user_model = get_user_model()
+        actual = self.comment.get_alert_assignee()
+        expected = user_model.objects.get(pk=1)
+        self.assertEqual(actual, expected)
+
+    def test_get_other_contributors(self):
+        """
+        Tests the get_other_contributors method.
+        """
+        contributors = self.comment.get_other_contributors()
+        self.assertEqual(len(contributors), 1)
+        self.assertEqual(contributors[0].pk, 2)
+
+        comment = Comment.objects.get(pk=2)
+        contributors = comment.get_other_contributors()
+        self.assertEqual(len(contributors), 1)
+        self.assertEqual(contributors[0].pk, 1)
+
+    def test_summary(self):
+        """
+        Tests the summary method.
+        """
+        comment = Comment.objects.get(pk=1)
+        actual = comment.summary()
+        expected = ('John Smith commented at 2015-03-01 02:41:24.468404+00:00:\n'
+                    'I have something to say')
         self.assertEqual(actual, expected)
