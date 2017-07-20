@@ -27,7 +27,6 @@ except ImportError:
     from mock import patch
 
 # third party
-from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
 
