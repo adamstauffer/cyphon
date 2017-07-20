@@ -122,10 +122,11 @@ ELASTICSEARCH = {
 }
 
 EMAIL = {
+    'DEFAULT_FROM': 'webmaster@localhost',
     'NAME': 'Cyphon',
-    'HOST': 'smtp.gmail.com',
-    'HOST_USER': 'user@',
-    'HOST_PASSWORD': 'you',
+    'HOST': 'localhost',
+    'HOST_USER': '',
+    'HOST_PASSWORD': '',
     'PORT': 587,
     'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,

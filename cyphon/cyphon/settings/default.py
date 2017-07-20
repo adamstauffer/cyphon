@@ -141,10 +141,11 @@ ELASTICSEARCH = {
 }
 
 EMAIL = {
+    'DEFAULT_FROM': 'webmaster@localhost',
     'NAME': 'Cyphon',
-    'HOST': 'smtp.gmail.com',
-    'HOST_USER': 'user@',
-    'HOST_PASSWORD': 'you',
+    'HOST': 'localhost',
+    'HOST_USER': '',
+    'HOST_PASSWORD': '',
     'PORT': 587,
     'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,
@@ -458,6 +459,7 @@ EMAIL_HOST_PASSWORD = EMAIL['HOST_PASSWORD']
 EMAIL_PORT = EMAIL['PORT']
 EMAIL_SUBJECT_PREFIX = EMAIL['SUBJECT_PREFIX']
 EMAIL_USE_TLS = EMAIL['USE_TLS']
+DEFAULT_FROM_EMAIL = EMAIL['DEFAULT_FROM']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
