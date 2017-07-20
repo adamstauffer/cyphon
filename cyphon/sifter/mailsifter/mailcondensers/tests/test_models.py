@@ -21,7 +21,6 @@
 # standard library
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from unittest import TestCase
 try:
     from unittest.mock import patch
 except ImportError:
