@@ -18,19 +18,12 @@
 Tests Alert views.
 """
 
-# standard library
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
 # third party
 from django.conf import settings
 from django.test import TestCase
 
 # local
-from appusers.models import AppUser
-from alerts.models import Alert, Comment
+from alerts.models import Comment
 from alerts.services import compose_comment_email
 from tests.fixture_manager import get_fixtures
 
