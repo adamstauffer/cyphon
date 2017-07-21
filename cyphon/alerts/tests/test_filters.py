@@ -67,4 +67,4 @@ class AlertFilterTestCase(TestCase):
         """
         val = 'acme'
         filtered_alerts = self.alert_filter.filter_by_content(self.alerts, '', val)
-        self.assertEqual(filtered_alerts.count(), 2)
+        self.assertEqual(filtered_alerts.count(), 3)

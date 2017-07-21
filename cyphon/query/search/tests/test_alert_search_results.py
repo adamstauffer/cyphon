@@ -58,9 +58,9 @@ class AlertSearchResultsTestCase(TestCase):
         search_query = SearchQuery('"Some example notes"')
         alert_results = self._get_search_results(search_query)
 
-        self.assertEqual(alert_results.count, 1)
-        self.assertEqual(len(alert_results.results), 1)
-        self.assertEqual(alert_results.results[0].pk, 1)
+        self.assertEqual(alert_results.count, 2)
+        self.assertEqual(len(alert_results.results), 2)
+        self.assertEqual(alert_results.results[0].pk, 3)
 
     def test_data_search(self):
         """
@@ -79,13 +79,13 @@ class AlertSearchResultsTestCase(TestCase):
         search_query = SearchQuery('"Acme Supply co"')
         alert_results = self._get_search_results(search_query)
 
-        self.assertEqual(alert_results.count, 2)
+        self.assertEqual(alert_results.count, 3)
 
         alert_ids = [alert.pk for alert in alert_results.results]
 
-        self.assertEqual(alert_ids, [4, 1])
+        self.assertEqual(alert_ids, [4, 3, 1])
 
-    def test_comment_Search(self):
+    def test_comment_search(self):
         """
         Tests that the class searches through alert comments.
         """
@@ -103,10 +103,10 @@ class AlertSearchResultsTestCase(TestCase):
         alert_results = self._get_search_results(search_query)
         alert_results_as_dict = alert_results.as_dict(self._get_request())
 
-        self.assertEqual(alert_results_as_dict['count'], 2)
+        self.assertEqual(alert_results_as_dict['count'], 3)
         self.assertIsNone(alert_results_as_dict['next'])
         self.assertIsNone(alert_results_as_dict['previous'])
-        self.assertEqual(len(alert_results_as_dict['results']), 2)
+        self.assertEqual(len(alert_results_as_dict['results']), 3)
 
     def test_next_page(self):
         """
@@ -117,7 +117,7 @@ class AlertSearchResultsTestCase(TestCase):
         alert_results = self._get_search_results(search_query, page_size=1)
         alert_results_as_dict = alert_results.as_dict(self._get_request())
 
-        self.assertEqual(alert_results_as_dict['count'], 2)
+        self.assertEqual(alert_results_as_dict['count'], 3)
         self.assertEqual(
             alert_results_as_dict['next'],
             'http://testserver/api/v1/search/alerts/?page=2',
@@ -132,15 +132,14 @@ class AlertSearchResultsTestCase(TestCase):
         """
         search_query = SearchQuery('example')
         alert_results = self._get_search_results(
-            search_query, page=2, page_size=1,
+            search_query, page=3, page_size=1,
         )
         alert_results_as_dict = alert_results.as_dict(self._get_request())
 
-        self.assertEqual(alert_results_as_dict['count'], 2)
+        self.assertEqual(alert_results_as_dict['count'], 3)
         self.assertEqual(
             alert_results_as_dict['previous'],
-            'http://testserver/api/v1/search/alerts/?page=1',
+            'http://testserver/api/v1/search/alerts/?page=2',
         )
         self.assertIsNone(alert_results_as_dict['next'])
         self.assertEqual(len(alert_results_as_dict['results']), 1)
-
