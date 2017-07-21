@@ -18,13 +18,50 @@
 # standard library
 import os
 from unittest import TestCase
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 # local
-from utils.emailutils.emailutils import embed_image
+from utils.emailutils.emailutils import emails_enabled, embed_image
+
+
+class EmailsEnabledTestCase(TestCase):
+    """
+    Tests the emails_enabled function.
+    """
+
+    @patch('utils.emailutils.emailutils.config')
+    def test_setting_is_true(self, mock_config):
+        """
+        Tests the emails_enabled function when the Constance config is
+        True.
+        """
+        mock_config.EMAIL_NOTIFICATIONS_ENABLED = True
+        self.assertTrue(emails_enabled())
+
+    @patch('utils.emailutils.emailutils.config')
+    def test_setting_is_false(self, mock_config):
+        """
+        Tests the emails_enabled function when the Constance config is
+        False.
+        """
+        mock_config.EMAIL_NOTIFICATIONS_ENABLED = False
+        self.assertFalse(emails_enabled())
+
+    @patch('utils.emailutils.emailutils.config')
+    def test_setting_does_not_exist(self, mock_config):
+        """
+        Tests the emails_enabled function when the Constance config
+        doesn't exist.
+        """
+        del mock_config.EMAIL_NOTIFICATIONS_ENABLED
+        self.assertEqual(emails_enabled(), True)
 
 
 class EmbedImageTestCase(TestCase):

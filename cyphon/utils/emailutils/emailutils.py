@@ -22,6 +22,21 @@
 from email.mime.image import MIMEImage
 import os
 
+# third party
+from constance import config
+
+
+def emails_enabled():
+    """Return a Boolean indicating whether email notifcations are enabled.
+
+    Returns the Constance configuration for email notifcations if it
+    exists. Otherwise, returns True.
+    """
+    if hasattr(config, 'EMAIL_NOTIFICATIONS_ENABLED'):
+        return config.EMAIL_NOTIFICATIONS_ENABLED
+    else:
+        return True
+
 
 def embed_image(message, dir_path, file_name):
     """Attach an image to an email.
