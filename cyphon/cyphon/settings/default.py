@@ -146,7 +146,7 @@ EMAIL = {
     'HOST': 'localhost',
     'HOST_USER': '',
     'HOST_PASSWORD': '',
-    'PORT': 587,
+    'PORT': 25,
     'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,
 }
@@ -452,14 +452,14 @@ PASSWORD_MIN_LENGTH = 6
 PASSWORD_MAX_LENGTH = 30
 
 # This section is for sending email to users. This example is a gmail account.
-EMAIL_NAME = EMAIL['NAME']
-EMAIL_HOST = EMAIL['HOST']
-EMAIL_HOST_USER = EMAIL['HOST_USER']
-EMAIL_HOST_PASSWORD = EMAIL['HOST_PASSWORD']
-EMAIL_PORT = EMAIL['PORT']
-EMAIL_SUBJECT_PREFIX = EMAIL['SUBJECT_PREFIX']
-EMAIL_USE_TLS = EMAIL['USE_TLS']
-DEFAULT_FROM_EMAIL = EMAIL['DEFAULT_FROM']
+EMAIL_NAME = EMAIL.get('NAME', 'Cyphon')
+EMAIL_HOST = EMAIL.get('HOST', 'localhost')
+EMAIL_HOST_USER = EMAIL.get('HOST_USER', '')
+EMAIL_HOST_PASSWORD = EMAIL.get('HOST_PASSWORD', '')
+EMAIL_PORT = EMAIL.get('PORT', 25)
+EMAIL_SUBJECT_PREFIX = EMAIL.get('SUBJECT_PREFIX', '[Cyphon] ')
+EMAIL_USE_TLS = EMAIL.get('USE_TLS', True)
+DEFAULT_FROM_EMAIL = EMAIL.get('DEFAULT_FROM', 'webmaster@localhost')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
