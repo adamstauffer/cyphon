@@ -19,15 +19,20 @@
 """
 
 # third party
-from django.apps import AppConfig
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# local
+from utils.emailutils.emailutils import emails_enabled
+from .models import Comment
+from .services import compose_comment_email
 
 
-class WatchdogsConfig(AppConfig):
-    """Store metadata for the Watchdogs application."""
+@receiver(post_save, sender=Comment)
+def handle_comment_post_save_signal(sender, instance, created, **kwargs):
+    """Notify relevant users when a Comment on a Alert is saved."""
 
-    name = 'watchdogs'
-    verbose_name = 'Watchdogs'
-
-    def ready(self):
-        """Perform initialization tasks."""
-        import watchdogs.signals
+    if created and emails_enabled():
+        for user in instance.get_other_contributors():
+            email_message = compose_comment_email(instance, user)
+            email_message.send()

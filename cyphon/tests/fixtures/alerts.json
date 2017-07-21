@@ -47,8 +47,10 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
+      "title": "Acme Supply Co",
       "distillery": ["mongodb", "test_database", "test_posts"],
-      "doc_id": 3
+      "doc_id": 3,
+      "notes": "Some example notes."
     }
   },
   {

@@ -22,12 +22,12 @@
 from django.apps import AppConfig
 
 
-class WatchdogsConfig(AppConfig):
-    """Store metadata for the Watchdogs application."""
+class AlertsConfig(AppConfig):
+    """Store metadata for the Alerts application."""
 
-    name = 'watchdogs'
-    verbose_name = 'Watchdogs'
+    name = 'alerts'
+    verbose_name = 'Alerts'
 
     def ready(self):
         """Perform initialization tasks."""
-        import watchdogs.signals
+        import alerts.signals
