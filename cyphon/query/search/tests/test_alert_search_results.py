@@ -85,7 +85,7 @@ class AlertSearchResultsTestCase(TestCase):
 
         self.assertEqual(alert_ids, [4, 3, 1])
 
-    def test_comment_Search(self):
+    def test_comment_search(self):
         """
         Tests that the class searches through alert comments.
         """
