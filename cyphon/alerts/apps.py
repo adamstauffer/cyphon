@@ -14,4 +14,20 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
-default_app_config = 'alerts.apps.AlertsConfig'
+"""
+
+"""
+
+# third party
+from django.apps import AppConfig
+
+
+class AlertsConfig(AppConfig):
+    """Store metadata for the Alerts application."""
+
+    name = 'alerts'
+    verbose_name = 'Alerts'
+
+    def ready(self):
+        """Perform initialization tasks."""
+        import alerts.signals

@@ -14,4 +14,23 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
-default_app_config = 'alerts.apps.AlertsConfig'
+"""
+
+"""
+
+# third party
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# local
+from .models import Comment
+from .services import compose_comment_email
+
+
+@receiver(post_save, sender=Comment)
+def handle_comment_post_save_signal(sender, instance, created, **kwargs):
+    """Notify relevant users when a Comment on a Alert is saved."""
+    if created:
+        for user in instance.get_other_contributors():
+            email_message = compose_comment_email(instance, user)
+            email_message.send()
