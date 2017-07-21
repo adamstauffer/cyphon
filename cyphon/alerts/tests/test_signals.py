@@ -47,26 +47,41 @@ class CommentReceiverTestCase(TestCase):
         Tests that the handle_comment_post_save_signal receiver doesn't
         send an email when an existing alert is updated.
         """
-        with patch('alerts.signals.compose_comment_email') as mock_compose:
+        with patch('alerts.signals.emails_enabled', return_value=True):
+            with patch('alerts.signals.compose_comment_email') as mock_compose:
+                comment = Comment.objects.get(pk=1)
+                comment.save()
+                mock_compose.assert_not_called()
 
-            comment = Comment.objects.get(pk=1)
-            comment.save()
-            mock_compose.assert_not_called()
-
-    def test_new_alert(self):
+    def test_new_alert_emails_enabled(self):
         """
         Tests that the handle_comment_post_save_signal receiver doesn't
-        send an email when a new alert is updated.
+        send an email when a new alert is updated and email notifcations
+        are enabled.
         """
         mock_email = Mock()
-        mock_email.send = Mock()
-        with patch('alerts.signals.compose_comment_email',
-                   return_value=mock_email) as mock_compose:
+        with patch('alerts.signals.emails_enabled', return_value=True):
+            with patch('alerts.signals.compose_comment_email',
+                       return_value=mock_email) as mock_compose:
+                comment = Comment.objects.get(pk=1)
+                user = AppUser.objects.get(pk=2)
+                comment.pk = None
+                comment.save()
+                mock_compose.assert_called_with(comment, user)
+                self.assertEqual(mock_compose.call_count, 1)
+                self.assertEqual(mock_email.send.call_count, 1)
 
-            comment = Comment.objects.get(pk=1)
-            user = AppUser.objects.get(pk=2)
-            comment.pk = None
-            comment.save()
-            mock_compose.assert_called_with(comment, user)
-            self.assertEqual(mock_compose.call_count, 1)
-            self.assertEqual(mock_email.send.call_count, 1)
+    def test_new_alert_emails_disabled(self):
+        """
+        Tests that the handle_comment_post_save_signal receiver doesn't
+        send an email when a new alert is updated and email notifcations
+        are disabled.
+        """
+        mock_email = Mock()
+        with patch('alerts.signals.emails_enabled', return_value=False):
+            with patch('alerts.signals.compose_comment_email',
+                       return_value=mock_email) as mock_compose:
+                comment = Comment.objects.get(pk=1)
+                comment.pk = None
+                comment.save()
+                mock_compose.assert_not_called()
