@@ -49,6 +49,10 @@ def compose_comment_email(comment, user):
     user : |AppUser|
         The |AppUser| who should receive the email notification.
 
+    Returns
+    -------
+    :class:`django.core.mail.message.EmailMultiAlternatives`
+
     """
     context = {
         'comment': comment,
