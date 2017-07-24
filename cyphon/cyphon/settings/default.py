@@ -554,7 +554,7 @@ CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = OrderedDict([
     ('PUSH_NOTIFICATIONS_ENABLED', (False, 'Turn on push notifications')),
-    # ('EMAIL_NOTIFICATIONS_ENABLED', (True, 'Turn on email notifications')),
+    ('EMAIL_NOTIFICATIONS_ENABLED', (True, 'Turn on email notifications')),
 ])
 
 DJANGO_MAILBOX_ATTACHMENT_UPLOAD_TO = os.path.join(MEDIA_ROOT,
