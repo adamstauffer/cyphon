@@ -133,6 +133,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
             'data',
             'dispatches',
             'distillery',
+            'doc_id',
             'incidents',
             'level',
             'link',
