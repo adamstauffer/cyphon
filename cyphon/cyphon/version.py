@@ -52,7 +52,7 @@ def get_version():
     return version.group(0)
 
 
-CURRENT_VERSION = get_vesrsion() or ''
+CURRENT_VERSION = get_version() or ''
 """str
 
 Cached current version number of Cyphon created at initial runtime.
