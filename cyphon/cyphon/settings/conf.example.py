@@ -123,7 +123,6 @@ ELASTICSEARCH = {
 
 EMAIL = {
     'DEFAULT_FROM': 'webmaster@localhost',
-    'NAME': 'Cyphon',
     'HOST': 'localhost',
     'HOST_USER': '',
     'HOST_PASSWORD': '',

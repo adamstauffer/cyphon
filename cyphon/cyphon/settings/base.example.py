@@ -230,7 +230,6 @@ PASSWORD_MIN_LENGTH = 6
 PASSWORD_MAX_LENGTH = 30
 
 # This section is for sending email to users. This example is a gmail account.
-EMAIL_NAME = EMAIL.get('NAME', 'Cyphon')
 EMAIL_HOST = EMAIL.get('HOST', 'localhost')
 EMAIL_HOST_USER = EMAIL.get('HOST_USER', '')
 EMAIL_HOST_PASSWORD = EMAIL.get('HOST_PASSWORD', '')
