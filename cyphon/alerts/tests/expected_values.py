@@ -28,6 +28,7 @@ ALERT_DETAIL = {
     'location': None,
     'assigned_user': None,
     'data': {'content': {'link': 'url', 'text': 'foobar'}},
+    'doc_id': '1',
     'incidents': 1,
     'status': 'NEW',
     'link': 'http://localhost:8000/#/alerts?alertDetail=4',
