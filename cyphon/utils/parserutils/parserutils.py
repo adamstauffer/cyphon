@@ -468,7 +468,7 @@ def get_dup_key_val(errmsg):
 
     key_val = {}
 
-    for index in range(len(values)):
+    for index, value in enumerate(values):
         key_val[keys[index]] = restore_type_from_str(values[index])
 
     return key_val
