@@ -16,6 +16,7 @@ User Manual
    provisioning-users
    default-mail-handler
    push-notifications
+   email-notifications
    jira-setup
    jira-example
    twitter-setup
