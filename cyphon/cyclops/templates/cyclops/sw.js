@@ -52,12 +52,12 @@ var ICON_URL_CACHE = 'cyphon-icon-urls';
  * Service worker install step.
  */
 self.addEventListener('install', function(event) {
-  console.log('Installing service worker.');
+  // console.log('Installing service worker.');
 
   event.waitUntil(
     caches.open(ICON_URL_CACHE).then(function(cache) {
       return cache.addAll(getIconUrls()).then(function() {
-        console.log('Icon URL\'s cached.');
+        // console.log('Icon URL\'s cached.');
       });
     })
   );
@@ -67,11 +67,11 @@ self.addEventListener('install', function(event) {
  * Service worker push notification received.
  */
 self.addEventListener('push', function(event) {
-  console.log('Recieved push notification:', event);
+  // console.log('Recieved push notification:', event);
 
   event.waitUntil(
     getNotificationData().then(function(json) {
-      console.log('Parsed notification information:', json);
+      // console.log('Parsed notification information:', json);
 
       return showNotification({
         title: json.title,
@@ -79,18 +79,18 @@ self.addEventListener('push', function(event) {
         tag: json.tag,
       });
     }).catch(function(error) {
-      console.error(error);
+      // console.error(error);
     })
   );
 });
 
 self.addEventListener('message', function(event) {
-  console.log('Recieved message:', event);
+  // console.log('Recieved message:', event);
   saveNotificationUrl(event.data.notificationUrl);
 });
 
 self.addEventListener('notificationclick', function(event) {
-  console.log('Notification clicked:', event.notification.tag);
+  // console.log('Notification clicked:', event.notification.tag);
 
   var alertId = getAlertId(event.notification.tag);
   var url = '/app/alerts/' + alertId + '/';
@@ -199,7 +199,7 @@ function getDB() {
   // If database has already been opened, return resolved promise.
   if (openDBPromise) return openDBPromise;
 
-  console.log('Opening DB ...');
+  // console.log('Opening DB ...');
 
   // If database has not been opened, set the promise to the current
   // deferred object's promise so that any subsequent calls do not try
@@ -208,18 +208,18 @@ function getDB() {
   request = indexedDB.open(DB_NAME, DB_VERSION);
 
   request.onerror = function(event) {
-    console.error('Opening DB ERROR', event.target.errorCode);
+    // console.error('Opening DB ERROR', event.target.errorCode);
     deferred.reject(event);
   };
 
   request.onsuccess = function(event) {
     db = this.result;
     deferred.resolve(db);
-    console.log('Opening DB DONE');
+    // console.log('Opening DB DONE');
   };
 
   request.onupgradeneeded = function(event) {
-    console.log('Opening DB UPGRADE');
+    // console.log('Opening DB UPGRADE');
     createDatabase(event.currentTarget.result);
   };
 

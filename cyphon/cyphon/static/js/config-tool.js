@@ -27,13 +27,13 @@
             type: 'POST',
             data: serializedData,
             success: function(data) {
-                console.log(data); // log the returned json to the console
-                console.log("success"); // another sanity check
+                // console.log(data); // log the returned json to the console
+                // console.log("success"); // another sanity check
                 $testResult.val(data.result);
             },
             error: function(xhr, errmsg, err) {
                 $testResult.val(xhr.responseText);
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                // console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
 
