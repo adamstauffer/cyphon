@@ -19,16 +19,15 @@
 import re
 
 # local
-from .search_parameter import SearchParameter, SearchParameterType
 from bottler.bottles.models import BottleField
 from bottler.labels.models import LabelField
 from cyphon.fieldsets import QueryFieldset
+from .search_parameter import SearchParameter, SearchParameterType
 
 
-class FieldTypes:
-    """
-    DataField field_Types written as constants.
-    """
+class FieldTypes(object):
+    """DataField field_Types written as constants."""
+
     BOOLEAN = 'BooleanField'
     CHAR = 'CharField'
     CHOICE = 'ChoiceField'
@@ -37,7 +36,7 @@ class FieldTypes:
     FILE = 'FileField'
     FLOAT = 'FloatField'
     INT = 'IntegerField'
-    IP = 'GenericIPAddressField'
+    IP_ADDR = 'GenericIPAddressField'
     LIST = 'ListField'
     POINT = 'PointField'
     TEXT = 'TextField'
@@ -46,20 +45,21 @@ class FieldTypes:
 
 
 class FieldValueParsingError(Exception):
-    """
-    Custom error thrown when there's a problem parsing the field value.
-    """
+    """Custom error thrown when there's a problem parsing the field value."""
+
     pass
 
 
-class FieldValueParsers:
-    """
+class FieldValueParsers(object):
+    """Parse a field value.
+
     Collection of functions used to parse the field search value
     from a FieldSearchParameter.
     """
+
     BOOLEAN_CHOICES = ['true', 'false']
     """list of str
-    
+
     Possible string values someone can use to represent a boolean value.
     """
 
@@ -67,28 +67,28 @@ class FieldValueParsers:
         'Boolean field value must either be `true` or `false`.'
     )
     """str
-    
+
     Error message explaining that the given string is not a valid
     boolean representation.
     """
 
     INVALID_INTEGER_VALUE = 'Could not parse integer from value `{}`'
     """str
-    
+
     Error message explaining that the given string could not parse an
     integer value.
     """
 
     INVALID_FLOAT_VALUE = 'Could not parse float from value `{}`.'
     """str
-    
+
     Error message explaining that the given string could not parse
     a float value.
     """
 
     @staticmethod
     def boolean_parser(value):
-        """Parses a boolean string value.
+        """Parse a boolean string value.
 
         Parameters
         ----------
@@ -117,7 +117,7 @@ class FieldValueParsers:
 
     @staticmethod
     def text_parser(value):
-        """Parses a text value by stripping any quotation marks.
+        """Parse a text value by stripping any quotation marks.
 
         Parameters
         ----------
@@ -132,7 +132,7 @@ class FieldValueParsers:
 
     @staticmethod
     def int_parser(value):
-        """Parses an integer value from a string.
+        """Parse an integer value from a string.
 
         Parameters
         ----------
@@ -146,6 +146,7 @@ class FieldValueParsers:
         ------
         FieldValueParsingError
             If the integer could not be parsed from the string.
+
         """
         try:
             return int(value)
@@ -156,7 +157,7 @@ class FieldValueParsers:
 
     @staticmethod
     def float_parser(value):
-        """Parses a float value from a string.
+        """Parse a float value from a string.
 
         Parameters
         ----------
@@ -170,6 +171,7 @@ class FieldValueParsers:
         ------
         FieldValueParsingError
             If the float could not be parsed from the string.
+
         """
         try:
             return float(value)
@@ -179,19 +181,22 @@ class FieldValueParsers:
             )
 
 
-class FieldValue:
-    """
-    Handles parsing the value of a FieldSearchParameter.
+class FieldValue(object):
+    """Handle parsing the value of a FieldSearchParameter.
 
     Attributes
     ----------
     value : str
         Parsed string representation of the FieldSearchParameter value.
+
     errors : list of str
         Errors that occurred during parsing.
+
     parsed_value : any
         Parsed value from the string representation.
+
     """
+
     PARSERS = dict([
         (FieldTypes.BOOLEAN, FieldValueParsers.boolean_parser),
         (FieldTypes.CHAR, FieldValueParsers.text_parser),
@@ -201,7 +206,7 @@ class FieldValue:
         (FieldTypes.FILE, None),
         (FieldTypes.FLOAT, FieldValueParsers.float_parser),
         (FieldTypes.INT, FieldValueParsers.int_parser),
-        (FieldTypes.IP, FieldValueParsers.text_parser),
+        (FieldTypes.IP_ADDR, FieldValueParsers.text_parser),
         (FieldTypes.LIST, None),
         (FieldTypes.POINT, None),
         (FieldTypes.TEXT, FieldValueParsers.text_parser),
@@ -209,36 +214,39 @@ class FieldValue:
         (FieldTypes.EMBEDDED, None),
     ])
     """str of func
-    
+
     Field types mapped to the function responsible for parsing the value.
     """
 
     INVALID_FIELD_TYPE = '`{}` is an invalid field type.'
     """str
-    
+
     Error message explaining that the given field type isn't valid.
     """
 
     MISSING_PARSER = 'There is no parser for field types of `{}`.'
     """str
-    
+
     Error message explaining that there is no parser for the given field_type.
     """
 
     EMPTY_VALUE = 'Field value is an empty string.'
     """str
-    
+
     Error message explaining that the given value is empty.
     """
 
     def __init__(self, value, field_type):
-        """
+        """Initialize a FieldValue object.
+
         Parameters
         ----------
         value : str
             Value to parse.
+
         field_type : str
             The known field type of this value.
+
         """
         self.value = value
         self.errors = []
@@ -263,53 +271,56 @@ class FieldValue:
             self.errors.append(str(error))
 
 
-class FieldOperator:
-    """
-    Class representation of how to compare the value on the field.
+class FieldOperator(object):
+    """Class representation of how to compare the value on the field.
 
     Attributes
     ----------
     errors : list of str
         List of errors that occurred when parsing the operator.
+
     operator : str
         Operator string from the field search parameter.
+
     fieldset_operator : str
         The QueryFieldset operator equivalent to the given operator string.
+
     """
+
     EQUALS = '='
     """str
-    
+
     String indicating that the field should equal the given value.
     """
 
     GREATER_THAN = '>'
     """str
-    
+
     String indicating that the field should be greater than the given value.
     """
 
     LESS_THAN = '<'
     """str
-    
+
     String indicating that the field should be less than the given value.
     """
 
     GREATER_THAN_OR_EQUAL = '>='
     """str
-    
+
     String indicating that the field should be greater than or equal
     to the given value.
     """
 
     LESS_THAN_OR_EQUAL = '<='
     """str
-    
+
     String indicating that the field should be less than or equal to the
     given value.
     """
     NOT_EQUAL = '!='
     """str
-    
+
     String indicating that the field should not equal the given value.
     """
 
@@ -322,13 +333,13 @@ class FieldOperator:
         NOT_EQUAL,
     ]
     """list of str
-    
+
     List of all the possible field operator strings.
     """
 
     BOOLEAN_OPERATORS = dict([(EQUALS, 'eq')])
     """dict of str
-    
+
     Dictionary mapping of the the possible operator strings for
     boolean type values and their QueryFieldset operators.
     """
@@ -383,7 +394,7 @@ class FieldOperator:
         (FieldTypes.EMBEDDED, None),
     ])
     """dict of dict
-    
+
     Mapping of field types to their possible operators and their
     QueryFieldset equivalent.
     """
@@ -392,7 +403,7 @@ class FieldOperator:
         'There is no field operator mapping for fields of type `{}.`'
     )
     """str
-    
+
     Error message explaining that there is no field operator mapping
     for a particular field type.
     """
@@ -401,47 +412,13 @@ class FieldOperator:
         'The operator `{}` is not used for fields of type `{}`'
     )
     """str
-    
+
     Error message explaining that given operator string has no
     QueryFieldset operator equivalent for the particular field type.
     """
 
-    @staticmethod
-    def _get_operator_map(field_type):
-        """Returns the QueryFieldset operator map for a certain field_type.
-
-        Parameters
-        ----------
-        field_type : str
-
-        Returns
-        -------
-        dict of str or None
-        """
-        try:
-            return FieldOperator.FIELD_TYPES_TO_OPERATORS[field_type]
-        except KeyError:
-            return None
-
-    @staticmethod
-    def _get_fieldset_operator(operator_map, operator):
-        """Returns the matching QueryFieldset operator from an operator mapping.
-
-        Parameters
-        ----------
-        operator_map : dict of str
-        operator : str
-
-        Returns
-        -------
-        str or None
-        """
-        try:
-            return operator_map[operator]
-        except KeyError:
-            return None
-
     def __init__(self, operator, field_type):
+        """Initialize a FieldOperator object."""
         self.errors = []
         self.operator = operator
         field_mapping = FieldOperator._get_operator_map(field_type)
@@ -462,26 +439,70 @@ class FieldOperator:
                 FieldOperator.MISMATCHED_OPERATOR.format(operator, field_type)
             )
 
+    @staticmethod
+    def _get_operator_map(field_type):
+        """Return the QueryFieldset operator map for a certain field_type.
+
+        Parameters
+        ----------
+        field_type : str
+
+        Returns
+        -------
+        dict of str or None
+        """
+        try:
+            return FieldOperator.FIELD_TYPES_TO_OPERATORS[field_type]
+        except KeyError:
+            return None
+
+    @staticmethod
+    def _get_fieldset_operator(operator_map, operator):
+        """Return the matching QueryFieldset operator from an operator mapping.
+
+        Parameters
+        ----------
+        operator_map : dict of str
+
+        operator : str
+
+        Returns
+        -------
+        str or None
+
+        """
+        try:
+            return operator_map[operator]
+        except KeyError:
+            return None
+
 
 class FieldSearchParameter(SearchParameter):
-    """
+    """Parameter for searching values for s particular field.
+
     Attributes
     ----------
     field_name : str
         Name of the field to compare values against.
-    data_field: DataField or None
+
+    data_field : DataField or None
         DataField matching the given field_name. If one isn't found, this
         is None.
+
     operator : FieldOperator or None
         Class used to map the query operator value to a QueryFieldset operator.
         This is None if a data_field cannot be found.
+
     value : FieldValue
         Class used to parse the string value to compare against into a
         value for a QueryFieldset.
+
     combined_errors : list of str
         The combined errors of the parameter, operator, and value. If the
         date_field cannot be found, this will only return the parameter errors.
+
     """
+
     FIELD_REGEX = re.compile(
         r'(?P<field_name>^\w[\w.]*)'  # Name of the field
         r'(?P<operator>[=<>!]{1,2})'  # Operator to compare value with
@@ -522,71 +543,17 @@ class FieldSearchParameter(SearchParameter):
         'parameter is invalid.'
     )
 
-    @staticmethod
-    def _get_bottle_field(field_name):
-        """Returns the BottleField with the given field name.
-
-        Parameters
-        ----------
-        field_name : str
-            Name of the BottleField to look for.
-
-        Returns
-        -------
-            BottleField or None.
-        """
-        try:
-            return BottleField.objects.get(field_name__exact=field_name)
-        except BottleField.DoesNotExist:
-            return None
-
-    @staticmethod
-    def _get_label_field(field_name):
-        """Returns the label field with the given field name.
-
-        Parameters
-        ----------
-        field_name : str
-            Name of the label field to look for.
-
-        Returns
-        -------
-            LabelField or None
-        """
-        try:
-            return LabelField.objects.get(field_name__exact=field_name)
-        except LabelField.DoesNotExist:
-            return None
-
-    @staticmethod
-    def _get_data_field(field_name):
-        """Returns the data field object associated with the field_name.
-
-        Parameters
-        ----------
-        field_name : str
-            Field name to compare values against.
-
-        Returns
-        -------
-        BottleField or LabelField or None
-            The associated bottle/label field or None if the field
-            doesn't exist.
-        """
-        return (
-            FieldSearchParameter._get_bottle_field(field_name)
-            or FieldSearchParameter._get_label_field(field_name)
-        )
-
     def __init__(self, index, parameter):
-        """Parses the parameter string into a FieldSearchParameter.
+        """Parse the parameter string into a FieldSearchParameter.
 
         Parameters
         ----------
         index: int
             Index of the parameter in the query string.
+
         parameter : str
             String representation of a field search parameter.
+
         """
         super(FieldSearchParameter, self).__init__(
             index,
@@ -618,9 +585,65 @@ class FieldSearchParameter(SearchParameter):
         self.operator = FieldOperator(operator, self.data_field.field_type)
         self.value = FieldValue(value, self.data_field.field_type)
 
+    @staticmethod
+    def _get_bottle_field(field_name):
+        """Return the BottleField with the given field name.
+
+        Parameters
+        ----------
+        field_name : str
+            Name of the BottleField to look for.
+
+        Returns
+        -------
+            BottleField or None.
+
+        """
+        try:
+            return BottleField.objects.get(field_name__exact=field_name)
+        except BottleField.DoesNotExist:
+            return None
+
+    @staticmethod
+    def _get_label_field(field_name):
+        """Return the label field with the given field name.
+
+        Parameters
+        ----------
+        field_name : str
+            Name of the label field to look for.
+
+        Returns
+        -------
+            LabelField or None
+
+        """
+        try:
+            return LabelField.objects.get(field_name__exact=field_name)
+        except LabelField.DoesNotExist:
+            return None
+
+    @staticmethod
+    def _get_data_field(field_name):
+        """Return the data field object associated with the field_name.
+
+        Parameters
+        ----------
+        field_name : str
+            Field name to compare values against.
+
+        Returns
+        -------
+        BottleField or LabelField or None
+            The associated bottle/label field or None if the field
+            doesn't exist.
+        """
+        return FieldSearchParameter._get_bottle_field(field_name) or \
+            FieldSearchParameter._get_label_field(field_name)
+
     @property
     def combined_errors(self):
-        """Returns the combined errors of the parameter, operator, and value.
+        """Return the combined errors of the parameter, operator, and value.
 
         This will only combine the errors if a matching data_field object
         was found.
@@ -628,6 +651,7 @@ class FieldSearchParameter(SearchParameter):
         Returns
         -------
         list of str
+
         """
         if self.data_field:
             return self.errors + self.value.errors + self.operator.errors
@@ -635,20 +659,22 @@ class FieldSearchParameter(SearchParameter):
         return self.errors
 
     def is_valid(self):
-        """Determines if the field is valid.
+        """Determine if the field is valid.
 
         Returns
         -------
         bool
+
         """
         return not bool(self.combined_errors)
 
     def as_dict(self):
-        """Returns a JSON serializable representation of this object.
+        """Return a JSON serializable representation of this object.
 
         Returns
         -------
         dict
+
         """
         info = super(FieldSearchParameter, self).as_dict()
 
@@ -662,7 +688,7 @@ class FieldSearchParameter(SearchParameter):
         return info
 
     def is_related_to_distillery(self, distillery):
-        """Determines if a distillery contains the data_field of this parameter.
+        """Determine if a distillery contains the data_field of this parameter.
 
         Parameters
         ----------
@@ -672,6 +698,7 @@ class FieldSearchParameter(SearchParameter):
         Returns
         -------
         bool
+
         """
         if not self.data_field:
             return False
@@ -689,7 +716,7 @@ class FieldSearchParameter(SearchParameter):
         return label_fields.filter(field_name=self.field_name).exists()
 
     def create_fieldset(self):
-        """Creates a QueryFieldset from this parameter and a distillery.
+        """Create a QueryFieldset from this parameter and a distillery.
 
         Returns
         -------
@@ -699,6 +726,7 @@ class FieldSearchParameter(SearchParameter):
         ------
         AssertionError
             If the FieldSearchParameter is not valid.
+
         """
         assert self.is_valid(), FieldSearchParameter.CANNOT_CREATE_FIELDSET
 
