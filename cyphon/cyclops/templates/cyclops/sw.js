@@ -197,7 +197,9 @@ function getDB() {
   var request;
 
   // If database has already been opened, return resolved promise.
-  if (openDBPromise) return openDBPromise;
+  if (openDBPromise) {
+    return openDBPromise
+  };
 
   // console.log('Opening DB ...');
 
