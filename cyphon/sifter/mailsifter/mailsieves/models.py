@@ -44,12 +44,12 @@ class MailRule(Rule):
 
     objects = GetByNameManager()
 
-    def _get_string(self, email):
+    def _get_string(self, data):
         """
         Takes an email Message object and returns the Message component
         indicated by the MailRule's field_name.
         """
-        value = accessors.get_email_value(self.field_name, email)
+        value = accessors.get_email_value(self.field_name, data)
         return str(value)
 
 

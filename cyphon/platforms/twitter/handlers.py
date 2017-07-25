@@ -215,14 +215,21 @@ class SearchAPI(TwitterHandler):
         api = tweepy.API(auth)
         return tweepy.Cursor(api.search, **formatted_query)
 
-    def process_request(self, query):
-        """
-        Takes a ReservoirQuery, formats and submits it to the API, and
-        returns a Cargo object.
+    def process_request(self, obj):
+        """Convert a ReservoirQuery into an API request and get the response.
+
+        Parameters
+        ----------
+        obj : |ReservoirQuery|
+
+        Returns
+        -------
+        |Cargo|
+
         """
         try:
             # TODO(LH): handle rate limit
-            cursor = self._get_statuses(query)
+            cursor = self._get_statuses(obj)
             data = [status._json for status in cursor.items()]
             status_code = 200
         except tweepy.TweepError as error:
