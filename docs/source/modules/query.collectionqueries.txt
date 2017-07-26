@@ -19,7 +19,6 @@ Submodules
    query.collectionqueries.forms
    query.collectionqueries.models
    query.collectionqueries.serializers
-   query.collectionqueries.urls
    query.collectionqueries.views
 
 Module contents
