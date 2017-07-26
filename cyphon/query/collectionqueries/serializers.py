@@ -27,7 +27,10 @@ from warehouses.models import Collection
 
 
 class FieldsetSerializer(serializers.ModelSerializer):
-    class Meta:
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Fieldset
         fields = ['field_name', 'field_type', 'operator', 'value']
 
@@ -43,13 +46,15 @@ class CollectionQuerySerializer(serializers.ModelSerializer):
     # we'll define fieldsets using individual fields
     fieldsets = FieldsetSerializer(many=True)
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = CollectionQuery
         fields = ['collections', 'fieldsets', 'joiner']
 
         # values for these fields will be added automatically
         read_only_fields = ['created_by', 'created_date']
-        
+
         # include fields for child objects like fieldsets
         depth = 1
 
@@ -74,4 +79,3 @@ class CollectionQuerySerializer(serializers.ModelSerializer):
             Fieldset.objects.create(query=query, **fieldset)
 
         return query
-
