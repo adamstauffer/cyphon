@@ -38,7 +38,7 @@ class InspectionStepAdmin(admin.ModelAdmin):
     Customizes admin pages for InspectionSteps.
     """
     list_display = [
-        'id', 
+        'id',
         'inspection',
         'sieve',
         'result_value',
@@ -57,4 +57,3 @@ class InspectionAdmin(admin.ModelAdmin):
 
 admin.site.register(models.InspectionStep, InspectionStepAdmin)
 admin.site.register(models.Inspection, InspectionAdmin)
-

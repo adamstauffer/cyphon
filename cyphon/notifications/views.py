@@ -131,4 +131,3 @@ class TestNotifications(APIView):
         """
         send_push_notifications()
         return Response()
-
