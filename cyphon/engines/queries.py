@@ -286,7 +286,7 @@ class EngineQueryFieldset(BaseClass):
             If the method has not been implemented.
 
         """
-        return self.raise_attr_not_implemented()
+        return self.raise_method_not_implemented()
 
 
 class EngineQuery(BaseClass):
