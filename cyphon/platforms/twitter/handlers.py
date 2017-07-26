@@ -23,7 +23,6 @@ import datetime
 import logging
 
 # third party
-from django.conf import settings
 import tweepy
 
 # local
