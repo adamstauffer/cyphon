@@ -297,7 +297,7 @@ class ConfigToolAdmin(admin.ModelAdmin):
 class JSONDataAdmin(admin.ModelAdmin):
     """
     Provides a |ModelAdmin| for a model with a |JSONField| named `data`.
-    Creates a prettified version of the field for display. 
+    Creates a prettified version of the field for display.
     """
     readonly_fields = ('data_prettified',)
 

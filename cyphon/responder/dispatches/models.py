@@ -85,7 +85,7 @@ class Dispatch(Record):
 
     def get_title(self):
         """
-            
+
         """
         action = self.get_endpoint()
         return action.title
@@ -94,7 +94,7 @@ class Dispatch(Record):
 
     def get_user(self):
         """
-        
+
         """
         return self.stamp.user
 
@@ -110,4 +110,3 @@ class Dispatch(Record):
         # copy cargo.data to dispatch.data
         self.data = cargo.data
         self.save()
-

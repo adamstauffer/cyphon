@@ -66,7 +66,7 @@ class CollectionQueryForm(forms.Form):
             # TODO(LH): provide contingency if no Distillery is associated with
             # the warehouse
             distillery = Distillery.objects.get_by_natural_key(backend, database,
-                                                               collection) 
+                                                               collection)
             field_choices = self._get_field_choices(distillery.bottle)
             operator_choices = self._get_operator_choices()
 

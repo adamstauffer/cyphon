@@ -27,7 +27,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 def count_by_group(queryset, column, options):
     """
     Takes a QuerySet, a column name, and an options list (tuple of 2-tuples).
-    Returns a dictionary containing the number of records for each option. 
+    Returns a dictionary containing the number of records for each option.
     """
     counts = {}
 
@@ -64,4 +64,3 @@ def join_query(queries, logic):
             joined_query &= query
 
     return joined_query
-
