@@ -18,9 +18,6 @@
 Defines forms for DataFittings and DataCondensers.
 """
 
-# third party
-import autocomplete_light
-
 # local
 from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from sifter.condensers.forms import (

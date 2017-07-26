@@ -22,11 +22,7 @@ Serializers for Alerts.
 from rest_framework import serializers
 
 # local
-from cyphon.choices import (
-    ALERT_LEVEL_CHOICES,
-    ALERT_OUTCOME_CHOICES,
-    ALERT_STATUS_CHOICES,
-)
+from cyphon.choices import ALERT_LEVEL_CHOICES
 from appusers.serializers import AppUserSerializer
 from distilleries.serializers import (
     DistilleryDetailSerializer,

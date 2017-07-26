@@ -25,7 +25,6 @@ import json
 import logging
 
 # third party
-import autocomplete_light
 from django.conf.urls import url
 from django.contrib import admin
 from django.core.exceptions import ValidationError
