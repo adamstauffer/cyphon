@@ -310,7 +310,7 @@ class PublicStreamsAPI(TwitterHandler):
 
         return kwargs
 
-    def process_request(self, query):
+    def process_request(self, obj):
         """
         Method for processing a query with the Twitter Public Streams
         API.
@@ -318,10 +318,11 @@ class PublicStreamsAPI(TwitterHandler):
         auth = self.authenticate()
         listener = CustomStreamListener(faucet=self)
         stream = tweepy.Stream(auth, listener)
-        kwargs = self._format_query(query)
+        kwargs = self._format_query(obj)
         stream.filter(**kwargs)
 
         _LOGGER.info('Received %s objects from Twitter and saved %s of them',
-                     stream.listener.data_count, stream.listener.saved_data_count)
+                     stream.listener.data_count,
+                     stream.listener.saved_data_count)
 
         return Cargo(status_code=listener.status_code, notes=listener.notes)
