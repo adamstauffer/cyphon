@@ -301,7 +301,8 @@ class JSONDataAdmin(admin.ModelAdmin):
     """
     readonly_fields = ('data_prettified',)
 
-    def data_prettified(self, instance):
+    @staticmethod
+    def data_prettified(instance):
         """
         Displays sorted, pretty-printed JSON.
         """
@@ -311,4 +312,3 @@ class JSONDataAdmin(admin.ModelAdmin):
             LOGGER.error('Object has no data attribute.')
 
     data_prettified.short_description = 'data'
-

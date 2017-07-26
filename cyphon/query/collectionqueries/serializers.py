@@ -58,7 +58,8 @@ class CollectionQuerySerializer(serializers.ModelSerializer):
         # include fields for child objects like fieldsets
         depth = 1
 
-    def create(self, validated_data):
+    @staticmethod
+    def create(validated_data):
         """
         Takes validated JSON for a field-based query and returns a CollectionQuery
         object.
