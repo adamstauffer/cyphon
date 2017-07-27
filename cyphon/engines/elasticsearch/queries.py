@@ -452,8 +452,9 @@ class ElasticsearchQueryFieldset(EngineQueryFieldset):
         """
         geometry = polygon_feature['geometry']
 
-        assert geometry['type'] == 'Polygon', 'Feature is a %s not a Polygon' \
-            % geometry['type']
+        if geometry['type'] != 'Polygon':  # pragma: no cover
+            raise ValueError('Feature is a %s not a Polygon'
+                             % geometry['type'])
 
         return {
             'geo_polygon': {

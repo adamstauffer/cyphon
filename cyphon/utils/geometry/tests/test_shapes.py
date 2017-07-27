@@ -47,7 +47,7 @@ class ReverseCoordinateOrderTestCase(TestCase):
         """
         Tests the function reverse_coordinate_order for a 4-tuple.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             shapes.reverse_coordinate_order((1, 2, 3, 1))
 
 
@@ -432,7 +432,6 @@ class FactorPolygonTestCase(TestCase):
                  (0.025, 0.01), (0.05, -0.01), (0.0, -0.01))
         radius_km = 0.01
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             polygon = Polygon(coord)
             shapes.factor_polygon_into_circles(polygon, radius_km)
-

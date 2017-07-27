@@ -118,8 +118,8 @@ class FilterTargetFieldsByCondenser(FilterTargetFieldsAutocomplete):
         Filters target_field options based on a selected Bottle/Condenser
         and previously selected target_fields.
         """
-        assert issubclass(self.model, Condenser), \
-            'model must be a type of condenser'
+        if not issubclass(self.model, Condenser):  # pragma: no cover
+            raise TypeError('model must be a type of condenser')
 
         choices = ()
 
@@ -143,4 +143,3 @@ class FilterTargetFieldsByCondenser(FilterTargetFieldsAutocomplete):
                 choices = choices.filter(field_name__icontains=query)
 
         return self.order_choices(choices)[0:self.limit_choices]
-

@@ -61,8 +61,11 @@ class QueryFieldset(object):
         self.operator = operator
         self.value = value
 
-        assert self.field_type in self.FIELD_TYPES
-        assert self.operator in self.OPERATORS
+        if self.field_type not in self.FIELD_TYPES:  # pragma: no cover
+            raise ValueError('%s is not a valid field_type' % self.field_type)
+
+        if self.operator not in self.OPERATORS:  # pragma: no cover
+            raise ValueError('%s is not a valid operator' % self.operator)
 
     def __str__(self):
         items = collections.OrderedDict([

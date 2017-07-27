@@ -182,7 +182,8 @@ class SearchAPI(TwitterHandler):
         """
         coords = location.geom.tuple
 
-        assert len(coords) == 2, 'Location must be a point'
+        if len(coords) != 2:  # pragma: no cover
+            raise ValueError('Location must be a point')
 
         return '%s,%s,%skm' % (location.geom.tuple[1],
                                location.geom.tuple[0],

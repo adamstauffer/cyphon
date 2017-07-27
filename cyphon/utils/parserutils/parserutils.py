@@ -245,7 +245,8 @@ def divide_into_groups(items, max_group_size):
     [[]]
 
     """
-    assert max_group_size > 0, 'Maximum group size must be greater than 0'
+    if max_group_size <= 0:
+        raise ValueError('maximum group size must be greater than 0')
 
     items_copy = deepcopy(items)
     groups = []
@@ -464,7 +465,8 @@ def get_dup_key_val(errmsg):
     keys = re.split(r'_[0-9]+_', key)
     values = val.split(', : ')
 
-    assert len(keys) == len(values)
+    if len(keys) != len(values):  # pragma: no cover
+        raise ValueError('cannot match index keys with values')
 
     key_val = {}
 
@@ -522,4 +524,3 @@ def format_fields(field_data, include_empty=True):
             fields.append(joined_field)
 
     return '\n'.join(fields)
-
