@@ -30,7 +30,6 @@ from rest_framework.views import APIView
 # local
 from alerts.models import Alert
 from .serializers import SubscribeSerializer
-from .signals import send_push_notifications
 
 LEVEL_IMAGES = {
     'CRITICAL': '/assets/img/cyphon-push-notification-critical.png',
@@ -118,16 +117,3 @@ class NotificationView(APIView):
         }
 
         return Response(notification)
-
-
-class TestNotifications(APIView):
-    """
-    View specifically used to test notifications on the server.
-    """
-
-    def get(self, request):
-        """
-        Sends a push notication.
-        """
-        send_push_notifications()
-        return Response()
