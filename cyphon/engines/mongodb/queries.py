@@ -243,8 +243,10 @@ class MongoDbQueryFieldset(EngineQueryFieldset):
         """
         geometry = polygon_feature['geometry']
 
-        assert geometry['type'] in ['Polygon', 'MuliPolygon'], \
-            'Feature is a %s not a Polygon or MuiltPolygon' % geometry['type']
+        if geometry['type'] not in ['Polygon', 'MuliPolygon']:  # pragma: no cover
+            raise ValueError('Feature is a %s not a Polygon or MuiltPolygon'
+                             % geometry['type'])
+
         return {
             self.field_name: {
                 '$geoWithin': {

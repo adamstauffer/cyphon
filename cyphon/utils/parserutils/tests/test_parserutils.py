@@ -151,14 +151,14 @@ class DivideIntoGroupsTestCase(TestCase):
         """
         Tests divide_into_groups for negative group size.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             parserutils.divide_into_groups(['a', 'b', 'c', 'd', 'e'], -1)
 
     def test_group_size_of_zero(self):
         """
         Tests divide_into_groups for group size of 0.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             parserutils.divide_into_groups(['a', 'b', 'c', 'd', 'e'], 0)
 
     def test_empty_list(self):

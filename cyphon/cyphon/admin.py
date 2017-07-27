@@ -300,8 +300,7 @@ class JSONDataAdmin(admin.ModelAdmin):
     """
     readonly_fields = ('data_prettified',)
 
-    @staticmethod
-    def data_prettified(instance):
+    def data_prettified(self, instance):
         """
         Displays sorted, pretty-printed JSON.
         """

@@ -401,7 +401,7 @@ class FilterTestCaseMixin(object):
                 value=json.dumps(features)
             )
         ]
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             query = EngineQuery(fieldsets, 'AND')
             self.engine.find(query)
 

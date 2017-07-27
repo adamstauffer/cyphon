@@ -386,7 +386,7 @@ class FieldOperator(object):
         (FieldTypes.FILE, None),
         (FieldTypes.FLOAT, NUMBER_OPERATORS),
         (FieldTypes.INT, NUMBER_OPERATORS),
-        (FieldTypes.IP, TEXT_OPERATORS),
+        (FieldTypes.IP_ADDR, TEXT_OPERATORS),
         (FieldTypes.LIST, None),
         (FieldTypes.POINT, None),
         (FieldTypes.TEXT, TEXT_OPERATORS),
@@ -728,7 +728,8 @@ class FieldSearchParameter(SearchParameter):
             If the FieldSearchParameter is not valid.
 
         """
-        assert self.is_valid(), FieldSearchParameter.CANNOT_CREATE_FIELDSET
+        if not self.is_valid():
+            raise ValueError(FieldSearchParameter.CANNOT_CREATE_FIELDSET)
 
         return QueryFieldset(
             self.data_field.field_name,
