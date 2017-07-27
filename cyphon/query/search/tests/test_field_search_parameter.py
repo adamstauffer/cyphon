@@ -185,7 +185,7 @@ class FieldValueTestCase(TestCase):
             4.5,
         )
         self.assertEqual(
-            FieldValue('10.43.23.43', FieldTypes.IP).parsed_value,
+            FieldValue('10.43.23.43', FieldTypes.IP_ADDR).parsed_value,
             '10.43.23.43',
         )
 
@@ -339,7 +339,7 @@ class FieldSearchParameterTestCase(TestCase):
         Tests that .create_fieldset() returns an AssertionError with
         a CANNOT_CREATE_FIELDSET message if the parameter is not valid.
         """
-        with self.assertRaises(AssertionError) as error:
+        with self.assertRaises(ValueError) as error:
             FieldSearchParameter(3, 'ip_address<4').create_fieldset()
 
         self.assertEqual(
