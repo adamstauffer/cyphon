@@ -157,4 +157,3 @@ class Faucet(Transport):
         else:
             LOGGER.error('There are no results to process. '
                          'Call the start() method to get data from the API.')
-

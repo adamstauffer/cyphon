@@ -107,11 +107,12 @@ class AlertViewSet(CustomModelViewSet):
         Overrides the default method for returning the ViewSet's
         serializer.
         """
-        assert self.serializer_class is not None, (
-            "'%s' should either include a `serializer_class` attribute, "
-            "or override the `get_serializer_class()` method."
-            % type(self).__name__
-        )
+        if self.serializer_class is None:  # pragma: no cover
+            msg = ("'%s' should either include a `serializer_class` attribute,"
+                   " or override the `get_serializer_class()` method."
+                   % type(self).__name__)
+            raise RuntimeError(msg)
+
         use_redaction = self.request.user.use_redaction
 
         if self.action is 'list':

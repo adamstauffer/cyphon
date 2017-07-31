@@ -103,7 +103,8 @@ class CustomStreamListener(StreamListener):
         except TypeError as error:
             LOGGER.error('The message could not be loaded: %s', error)
 
-    def keep_alive(self):
+    @staticmethod
+    def keep_alive():
         """Called when a keep-alive arrived"""
         return True
 
@@ -118,7 +119,8 @@ class CustomStreamListener(StreamListener):
         LOGGER.error(msg)
         return False
 
-    def on_delete(self, status_id, user_id):
+    @staticmethod
+    def on_delete(status_id, user_id):
         """Called when a delete notice arrives for a status"""
 
         #TODO(LH): handle deleted tweets
@@ -133,14 +135,16 @@ class CustomStreamListener(StreamListener):
         """Called when a new direct message arrives"""
         return self._process_response(status)
 
-    def on_friends(self, friends):
+    @staticmethod
+    def on_friends(friends):
         """Called when a friends list arrives.
 
         friends is a list that contains user_id
         """
         return True
 
-    def on_limit(self, track):
+    @staticmethod
+    def on_limit(track):
         """Called when a limitation notice arrives"""
         LOGGER.warning('Twitter limitation notice: %s', track)
         return True
@@ -171,7 +175,8 @@ class CustomStreamListener(StreamListener):
         LOGGER.error(msg)
         return False
 
-    def on_warning(self, notice):
+    @staticmethod
+    def on_warning(notice):
         """Called when a disconnection warning message arrives"""
         LOGGER.warning('Twitter disconnection warning: %s', notice)
         return True

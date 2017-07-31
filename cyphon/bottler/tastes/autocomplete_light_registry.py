@@ -74,7 +74,8 @@ class FilterFieldsByContainer(FilterFieldsAutocompleteBase):
         """
         Filters field options based on a selected Container.
         """
-        assert self.choices is not None, 'autocomplete.choices is not set'
+        if self.choices is None:  # pragma: no cover
+            raise RuntimeError('autocomplete.choices is not set')
 
         request_choices = []
 
@@ -130,7 +131,8 @@ class FilterFieldsByBottleAndLabel(FilterFieldsAutocompleteBase):
         Filters field options based on a selected Bottle and
         (optionally) Label.
         """
-        assert self.choices is not None, 'autocomplete.choices is not set'
+        if self.choices is None:
+            raise RuntimeError('autocomplete.choices is not set')
 
         request_choices = []
 

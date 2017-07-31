@@ -105,4 +105,3 @@ class StreamController(object):
             return True
         else:
             return False
-

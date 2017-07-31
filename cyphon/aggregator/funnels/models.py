@@ -77,7 +77,7 @@ class FunnelManager(models.Manager):
         ----------
 
         bottle_id : str
-            The primary key of the |Bottle| associated with the |Funnel|. 
+            The primary key of the |Bottle| associated with the |Funnel|.
 
         pipe_natural_key : list of str
 

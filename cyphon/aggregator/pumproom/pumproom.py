@@ -105,4 +105,3 @@ class PumpRoom(object):
             thread.join()
 
         return self.records
-

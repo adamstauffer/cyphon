@@ -728,7 +728,8 @@ class FieldSearchParameter(SearchParameter):
             If the FieldSearchParameter is not valid.
 
         """
-        assert self.is_valid(), FieldSearchParameter.CANNOT_CREATE_FIELDSET
+        if not self.is_valid():
+            raise ValueError(FieldSearchParameter.CANNOT_CREATE_FIELDSET)
 
         return QueryFieldset(
             self.data_field.field_name,

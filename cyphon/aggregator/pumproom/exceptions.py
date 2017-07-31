@@ -21,7 +21,7 @@
 
 class PlumberDoesNotExist(Exception):
     """
-    
+
     """
     pass
 
@@ -38,4 +38,3 @@ class SpecsheetDoesNotExist(Exception):
 
     """
     pass
-
