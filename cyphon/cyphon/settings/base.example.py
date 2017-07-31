@@ -85,7 +85,7 @@ TEMPLATES = [
 TEST = 'test' in sys.argv
 
 #: Application definition
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'cyphon',  # must come before django.contrib.admin to override templates
     'autocomplete_light',  # must come before django.contrib.admin
     # 'django.contrib.admindocs',
@@ -169,7 +169,7 @@ INSTALLED_APPS = (
     'utils.validators',
     'warehouses',
     'watchdogs',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -248,9 +248,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-STATIC_URL = '/static/'
 
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(HOME_DIR, 'static')
+STATICFILES_DIRS = []
 
 STATICFILES_DIRS = []
 
@@ -260,7 +261,6 @@ if CYCLOPS['LOCAL_ASSETS_ENABLED']:
     ]
 
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 
 API_URL = '/api/v1/'

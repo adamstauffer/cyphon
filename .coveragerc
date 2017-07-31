@@ -2,17 +2,20 @@
 omit =
   */tests/*
   */migrations/*
+  */settings/*
 source =
   .
 
 [report]
 exclude_lines =
-    def __repr__
-    raise NotImplementedError
-    pass
+  def __repr__
+  pass
+  pragma: no cover
+  raise NotImplementedError
 omit =
   */tests/*
   */migrations/*
+  */settings/*
 
 [paths]
 source =

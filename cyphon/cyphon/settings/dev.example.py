@@ -40,7 +40,7 @@ LOGGER = logging.getLogger(__name__)
 DEBUG = True
 
 #: URL for constructing link with MEDIA_URL
-BASE_URL = 'http://localhost:8000'
+BASE_URL = os.getenv('BASE_URL_DEV', 'http://localhost:8000')
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
