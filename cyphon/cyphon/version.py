@@ -19,53 +19,48 @@
 from subprocess import check_output
 import re
 
-VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
-"""RegExp
-
-Regular express used to pull the version number of Cyphon from the most
-recent git commit tag.
-"""
-
-VERSION_HEADER = 'Cyphon-Version'
-"""str
-
-Name of the header that contains the cyphon version number.
-"""
-
-def get_version():
-    """Returns the current version of Cyclops according to it's tag on git.
-
-    Returns
-    -------
-    string or None
-    """
-    raw_version = check_output(['git', 'describe', '--tags'])
-
-    if not raw_version:
-        return None
-
-    version = VERSION_REGEX.match(raw_version)
-
-    if not version:
-        return None
-
-    return version.group(0)
-
-
-CURRENT_VERSION = get_version() or ''
-"""str
-
-Cached current version number of Cyphon created at initial runtime.
-"""
-
 
 class VersionMiddleware(object):
     """
-    Middleware that adds version information to responses.
+    Middleware that adds version information to response headers.
     """
 
-    def __init__(self, get_response):
+    VERSION_HEADER = 'Cyphon-Version'
+    """str
+
+    Name of the header that contains the cyphon version number.
+    """
+
+    VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
+    """RegExp
+
+    Regular express used to pull the version number of Cyphon from the most
+    recent git commit tag.
+    """
+
+    def get_version(self):
+        """Returns the current version of Cyclops according to it's tag on git.
+
+        Returns
+        -------
+        string or None
+        """
+
+        raw_version = check_output(['git', 'describe', '--tags'])
+
+        if not raw_version:
+            return None
+
+        version = self.VERSION_REGEX.match(raw_version)
+
+        if not version:
+            return None
+
+        return version.group(0).decode('utf-8')
+
+    def __init__(self, get_response=None):
         self.get_response = get_response
+        self.current_version = self.get_version() or ''
 
     def __call__(self, request):
         """Adds the Cyphon version number into a header on every response.
@@ -79,4 +74,11 @@ class VersionMiddleware(object):
         :class: `~django.http.HttpResponse`
         """
         response = self.get_response(request)
-        response[VERSION_HEADER] = CURRENT_VERSION
+        response[self.VERSION_HEADER] = self.current_version
+
+        return response
+
+    def process_response(self, request, response):
+        response[self.VERSION_HEADER] = self.current_version
+
+        return response
