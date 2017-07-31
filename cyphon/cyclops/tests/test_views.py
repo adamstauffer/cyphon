@@ -125,7 +125,7 @@ class ApplicationTest(CyclopsViewsTestCase):
         Tests that the correct cyphon version is passed to the template.
         """
         patch_mock = patch(
-            'cyphon.version.check_output', return_value=b'1.2.0-97-gbd968c1')
+            'cyphon.version.check_output', return_value=b'1.2.0')
 
         with patch_mock:
             self.authenticate()
