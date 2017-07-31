@@ -518,4 +518,3 @@ class Engineer(object):
         Returns the list of SearchTerms associated with the query.
         """
         return self._query.searchterms
-

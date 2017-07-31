@@ -19,6 +19,7 @@ Tests Alert views.
 """
 
 # standard library
+from smtplib import SMTPAuthenticationError
 try:
     from unittest.mock import Mock, patch
 except ImportError:
@@ -26,6 +27,7 @@ except ImportError:
 
 # third party
 from django.test import TestCase
+from testfixtures import LogCapture
 
 # local
 from appusers.models import AppUser
@@ -85,3 +87,25 @@ class CommentReceiverTestCase(TestCase):
                 comment.pk = None
                 comment.save()
                 mock_compose.assert_not_called()
+
+    def test_email_error(self):
+        """
+        Tests that an error message is logged when an
+        SMTPAuthenticationErro is encountered.
+        """
+        mock_email = Mock()
+        mock_email.send = Mock(
+            side_effect=SMTPAuthenticationError(535, 'foobar'))
+        with patch('alerts.signals.emails_enabled', return_value=True):
+            with patch('alerts.signals.compose_comment_email',
+                       return_value=mock_email):
+                with LogCapture() as log_capture:
+                    comment = Comment.objects.get(pk=1)
+                    comment.pk = None
+                    comment.save()
+                    log_capture.check(
+                        ('alerts.signals',
+                         'ERROR',
+                         'An error occurred when sending an email '
+                         'notification: (535, \'foobar\')'),
+                    )

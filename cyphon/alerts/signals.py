@@ -18,6 +18,10 @@
 
 """
 
+# standard library
+import logging
+import smtplib
+
 # third party
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -27,6 +31,8 @@ from utils.emailutils.emailutils import emails_enabled
 from .models import Comment
 from .services import compose_comment_email
 
+_LOGGER = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=Comment)
 def handle_comment_post_save_signal(sender, instance, created, **kwargs):
@@ -35,4 +41,8 @@ def handle_comment_post_save_signal(sender, instance, created, **kwargs):
     if created and emails_enabled():
         for user in instance.get_other_contributors():
             email_message = compose_comment_email(instance, user)
-            email_message.send()
+            try:
+                email_message.send()
+            except smtplib.SMTPAuthenticationError as error:
+                _LOGGER.error('An error occurred when sending an '
+                              'email notification: %s', error)

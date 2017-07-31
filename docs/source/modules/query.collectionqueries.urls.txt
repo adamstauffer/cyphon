@@ -1,7 +1,0 @@
-query.collectionqueries.urls
-============================
-
-.. automodule:: query.collectionqueries.urls
-    :members:
-    :undoc-members:
-    :show-inheritance:

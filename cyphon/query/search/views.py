@@ -19,7 +19,6 @@
 """
 
 # third party
-from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.response import Response

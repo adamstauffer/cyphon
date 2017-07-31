@@ -32,7 +32,7 @@ class Inspection(models.Model):
 
     Attributes:
         name: a string representing the name of the Inspection
-        steps: one or more InspectionSteps associated with the Inspection 
+        steps: one or more InspectionSteps associated with the Inspection
     """
     name = models.CharField(max_length=255, unique=True)
 
@@ -46,7 +46,7 @@ class Inspection(models.Model):
 
         Notes
         -----
-        This method should have the same name as the corresponding 
+        This method should have the same name as the corresponding
         method in a LabProcedure.
 
         """
@@ -97,7 +97,9 @@ class InspectionStep(models.Model):
 
     objects = GetByNameManager()
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         ordering = ['rank']
         unique_together = [('inspection', 'sieve'), ('inspection', 'rank')]
 
@@ -106,4 +108,3 @@ class InspectionStep(models.Model):
 
     def is_match(self, data):
         return self.sieve.is_match(data)
-

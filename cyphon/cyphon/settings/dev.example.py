@@ -30,7 +30,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 # standard library
-import os
 import logging
 
 # local

@@ -174,7 +174,6 @@ ELASTICSEARCH = {
 
 EMAIL = {
     'DEFAULT_FROM': 'webmaster@localhost',
-    'NAME': 'Cyphon',
     'HOST': get_param('email_host', 'smtp.gmail.com'),
     'HOST_USER': get_param('email_user', 'user') + '@',
     'HOST_PASSWORD': get_param('email_password', ''),

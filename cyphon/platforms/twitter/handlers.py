@@ -23,7 +23,6 @@ import datetime
 import logging
 
 # third party
-from django.conf import settings
 import tweepy
 
 # local
@@ -183,7 +182,8 @@ class SearchAPI(TwitterHandler):
         """
         coords = location.geom.tuple
 
-        assert len(coords) == 2, 'Location must be a point'
+        if len(coords) != 2:  # pragma: no cover
+            raise ValueError('Location must be a point')
 
         return '%s,%s,%skm' % (location.geom.tuple[1],
                                location.geom.tuple[0],
@@ -215,14 +215,21 @@ class SearchAPI(TwitterHandler):
         api = tweepy.API(auth)
         return tweepy.Cursor(api.search, **formatted_query)
 
-    def process_request(self, query):
-        """
-        Takes a ReservoirQuery, formats and submits it to the API, and
-        returns a Cargo object.
+    def process_request(self, obj):
+        """Convert a ReservoirQuery into an API request and get the response.
+
+        Parameters
+        ----------
+        obj : |ReservoirQuery|
+
+        Returns
+        -------
+        |Cargo|
+
         """
         try:
             # TODO(LH): handle rate limit
-            cursor = self._get_statuses(query)
+            cursor = self._get_statuses(obj)
             data = [status._json for status in cursor.items()]
             status_code = 200
         except tweepy.TweepError as error:
@@ -303,7 +310,7 @@ class PublicStreamsAPI(TwitterHandler):
 
         return kwargs
 
-    def process_request(self, query):
+    def process_request(self, obj):
         """
         Method for processing a query with the Twitter Public Streams
         API.
@@ -311,10 +318,11 @@ class PublicStreamsAPI(TwitterHandler):
         auth = self.authenticate()
         listener = CustomStreamListener(faucet=self)
         stream = tweepy.Stream(auth, listener)
-        kwargs = self._format_query(query)
+        kwargs = self._format_query(obj)
         stream.filter(**kwargs)
 
         _LOGGER.info('Received %s objects from Twitter and saved %s of them',
-                     stream.listener.data_count, stream.listener.saved_data_count)
+                     stream.listener.data_count,
+                     stream.listener.saved_data_count)
 
         return Cargo(status_code=listener.status_code, notes=listener.notes)

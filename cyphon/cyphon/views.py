@@ -21,7 +21,6 @@
 import importlib
 
 # third party
-from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
 

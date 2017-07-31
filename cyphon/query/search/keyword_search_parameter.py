@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 
 # local
 from .search_parameter import SearchParameter, SearchParameterType
@@ -26,6 +29,7 @@ class KeywordSearchParameter(SearchParameter):
     ----------
     keyword : str
         Parsed keyword value.
+
     """
 
     EMPTY_VALUE = 'Keyword value is empty.'
@@ -37,8 +41,10 @@ class KeywordSearchParameter(SearchParameter):
         ----------
         index : int
             Index of the search parameter in the search query.
+
         parameter : str
             Search query parameter string.
+
         """
         super(KeywordSearchParameter, self).__init__(
             index,
@@ -56,6 +62,7 @@ class KeywordSearchParameter(SearchParameter):
         Returns
         -------
         dict
+
         """
         info = super(KeywordSearchParameter, self).as_dict()
 

@@ -21,7 +21,6 @@ Defines views for Contexts.
 # third party
 from django.conf import settings
 import django_filters
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response

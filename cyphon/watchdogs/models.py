@@ -20,13 +20,11 @@ Defines Watchdog, Trigger, and Muzzle classes for generating Alerts.
 
 # standard library
 import contextlib
-import datetime
 import logging
 
 # third party
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, models, transaction
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 # local
@@ -34,10 +32,7 @@ from alarms.models import Alarm, AlarmManager
 from alerts.models import Alert
 from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
-from cyphon.transaction import require_lock
-from utils.dateutils.dateutils import convert_time_to_whole_minutes
 from utils.dbutils.dbutils import json_encodeable
-from utils.parserutils.parserutils import get_dict_value
 from sifter.datasifter.datasieves.models import DataSieve
 
 _LOGGER = logging.getLogger(__name__)

@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
 
 # local
 from .distillery_search_results import DistillerySearchResultsList
@@ -21,22 +24,28 @@ from .alert_search_results import AlertSearchResults
 from .search_results import DEFAULT_PAGE_SIZE
 
 
-class AllSearchResults:
+class AllSearchResults(object):
     """
+
     Attributes
     ----------
     count : int
+
     alert_results : AlertSearchResults
+
     distillery_results : DistillerySearchResultsList
+
     """
 
     def __init__(self, user, query, page=1, page_size=DEFAULT_PAGE_SIZE):
-        """
+        """Initialize an AllSearchResults object.
 
         Parameters
         ----------
         user : appusers.models.AppUser
+
         query : query.search.search_query.SearchQuery
+
         """
         self.distillery_results = DistillerySearchResultsList(
             query, page=page, page_size=page_size,
@@ -47,7 +56,7 @@ class AllSearchResults:
         self.count = self.distillery_results.count + self.alert_results.count
 
     def as_dict(self, request):
-        """Returns a JSON serializable representation of this object.
+        """Return a JSON serializable representation of this object.
 
         Parameters
         ----------
@@ -56,6 +65,7 @@ class AllSearchResults:
         Returns
         -------
         dict
+
         """
         return {
             'count': self.count,

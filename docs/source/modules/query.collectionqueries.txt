@@ -19,13 +19,4 @@ Submodules
    query.collectionqueries.forms
    query.collectionqueries.models
    query.collectionqueries.serializers
-   query.collectionqueries.urls
    query.collectionqueries.views
-
-Module contents
----------------
-
-.. automodule:: query.collectionqueries
-    :members:
-    :undoc-members:
-    :show-inheritance:

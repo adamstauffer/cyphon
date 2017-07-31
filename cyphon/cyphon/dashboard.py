@@ -271,7 +271,7 @@ class CyphonIndexDashboard(Dashboard):
                     ),
                 ),
                 modules.ModelList(
-                    _('Push Notifications'),
+                    _('Notifications'),
                     css_classes=('grp-collapse grp-open',),
                     models=(
                         'constance.*',

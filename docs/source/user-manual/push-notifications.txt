@@ -67,7 +67,7 @@ Set ``'PUSH_NOTIFICATION_KEY'`` to your created server key.
 
 After that, go back to the Firebase "CLOUD MESSANGING" tab and look at the "Sender ID" credential. Set ``'GCM_SENDER_ID'`` to this value.
 
-After you've set these two credentials, start up your Cyphon instance. Visit the admin page, and open the "App Configurations" panel. Under "Push Notifications," click "Config."  You should see a configuration for ``PUSH_NOTIFICATIONS_ENABLED``.
+After you've set these two credentials, start up your Cyphon instance. Visit the admin page, and open the "App Configurations" panel. Under "Notifications," click "Config."  You should see a configuration for ``PUSH_NOTIFICATIONS_ENABLED``.
 
 .. image:: ../_static/images/notifications/notifications-tutorial-6.png
     :align: center

@@ -29,26 +29,61 @@ The default page size of results to return.
 """
 
 
-class SearchResults:
+class SearchResults(object):
     """Base class for search results returned from a SearchQuery.
 
     Attributes
     ----------
     count : int
         Number of total results.
+
     page : int
         Current page number of results.
+
     page_size : int
         Total number of results per page.
+
     query : SearchQuery
         Query used to get these search results.
+
     view_name : str
         Named URL pattern of the view associated with this results list.
+
     """
 
+    def __init__(self, view_name, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+        """Initialize a SearchResults object.
+
+        Parameters
+        ----------
+        view_name : str
+            URL pattern name for the view related to this result object.
+        page : int
+            Page number of results to retrieve.
+        page_size : int
+            Number of results to return per page.
+
+        """
+        self.count = 0
+        self.query = query
+        self.page = page
+        self.page_size = page_size
+        self.view_name = view_name
+
+    @property
+    def max_page(self):
+        """Return the maximum page this result object can have.
+
+        Returns
+        -------
+        int
+
+        """
+        return math.ceil(self.count / self.page_size)
+
     @staticmethod
-    def _create_absolute_uri_with_params(path, request, query_params):
-        """Creates an absolute URI with the given query parameters.
+    def _create_abs_uri_with_params(path, request, query_params):
+        """Create an absolute URI with the given query parameters.
 
         Parameters
         ----------
@@ -70,53 +105,8 @@ class SearchResults:
             protocol, host, path, query_params.urlencode(),
         )
 
-    def __init__(self, view_name, query, page=1, page_size=DEFAULT_PAGE_SIZE):
-        """
-
-        Parameters
-        ----------
-        view_name : str
-            URL pattern name for the view related to this result object.
-        page : int
-            Page number of results to retrieve.
-        page_size : int
-            Number of results to return per page.
-        """
-        self.count = 0
-        self.query = query
-        self.page = page
-        self.page_size = page_size
-        self.view_name = view_name
-
-    @property
-    def max_page(self):
-        """Returns the maximum page this result object can have.
-
-        Returns
-        -------
-        int
-        """
-        return math.ceil(self.count / self.page_size)
-
-    def as_dict(self, request):
-        """Returns a JSON serializable representation of this object.
-
-        Parameters
-        ----------
-        request : django.http.HttpRequest
-
-        Returns
-        -------
-        dict
-        """
-        return {
-            'count': self.count,
-            'next': self._get_next_uri(request),
-            'previous': self._get_previous_uri(request),
-        }
-
     def _get_path(self):
-        """Returns the URL path for this result objects view.
+        """Return the URL path for this result objects view.
 
         Returns
         -------
@@ -125,7 +115,7 @@ class SearchResults:
         return reverse(self.view_name)
 
     def _get_next_uri(self, request):
-        """Returns the absolute URI of the next page of results.
+        """Return the absolute URI of the next page of results.
 
         Parameters
         ----------
@@ -143,12 +133,12 @@ class SearchResults:
         query_params = request.GET.copy()
         query_params['page'] = self.page + 1
 
-        return self._create_absolute_uri_with_params(
+        return self._create_abs_uri_with_params(
             results_path, request, query_params,
         )
 
     def _get_previous_uri(self, request):
-        """Returns the absolute URI of the previous page of results.
+        """Return the absolute URI of the previous page of results.
 
         Parameters
         ----------
@@ -165,6 +155,23 @@ class SearchResults:
         query_params = request.GET.copy()
         query_params['page'] = self.page - 1
 
-        return self._create_absolute_uri_with_params(
+        return self._create_abs_uri_with_params(
             path, request, query_params,
         )
+
+    def as_dict(self, request):
+        """Return a JSON serializable representation of this object.
+
+        Parameters
+        ----------
+        request : django.http.HttpRequest
+
+        Returns
+        -------
+        dict
+        """
+        return {
+            'count': self.count,
+            'next': self._get_next_uri(request),
+            'previous': self._get_previous_uri(request),
+        }

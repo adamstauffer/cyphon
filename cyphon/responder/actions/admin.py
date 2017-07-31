@@ -21,7 +21,6 @@ the `Django admin site`_.
 
 # third party
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
 # local
 from .models import Action
