@@ -37,6 +37,7 @@ class VersionMiddlewareTest(TestCase):
     def setUp(self):
         self.version_number = '1.3.0-97-gbd968c1'
         self.get_response = MagicMock(return_value={})
+        self.factory = RequestFactory()
 
     def create_middleware(self):
         return VersionMiddleware(self.get_response)
@@ -46,9 +47,10 @@ class VersionMiddlewareTest(TestCase):
 
     @staticmethod
     def check_output_is_called(check_output):
-        check_output.assert_called_once_with(['git', 'describe', '--tags'])
+        check_output.assert_called_once_with(
+            ['git', 'describe', '--tags', '--abbrev=0'])
 
-    @patch('cyphon.version.check_output', return_value=b'1.2.0-97-gbd968c1')
+    @patch('cyphon.version.check_output', return_value=b'1.2.0')
     def test_correct_version_added(self, check_output):
         """
         Tests that the correct version number is returned when a call to
@@ -56,7 +58,7 @@ class VersionMiddlewareTest(TestCase):
         middleware = self.create_middleware()
         self.check_output_is_called(check_output)
 
-        request = {}
+        request = self.factory.get('/login/')
         response = middleware(request)
 
         self.check_get_response_is_called(request)
@@ -72,13 +74,13 @@ class VersionMiddlewareTest(TestCase):
         middleware = self.create_middleware()
         self.check_output_is_called(check_output)
 
-        request = {}
+        request = self.factory.get('/login/')
         response = middleware(request)
 
         self.check_get_response_is_called(request)
         self.assertEqual(response[VersionMiddleware.VERSION_HEADER], '')
 
-    @patch('cyphon.version.check_output', return_value=b'1.2.0-97-gbd968c1')
+    @patch('cyphon.version.check_output', return_value=b'1.2.0')
     def test_mock_view(self, check_output):
         """
         Tests that the version header is added to any requests.

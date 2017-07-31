@@ -19,12 +19,12 @@
 from subprocess import check_output
 import re
 
-VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
-"""RegExp
+# third party
+from django.utils.deprecation import MiddlewareMixin
 
-Regular express used to pull the version number of Cyphon from the most
-recent git commit tag.
-"""
+GIT_TAG_COMMANDS = ['git', 'describe', '--tags', '--abbrev=0']
+
+SEMANTIC_VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
 
 
 def get_version():
@@ -35,20 +35,15 @@ def get_version():
     string or None
     """
 
-    raw_version = check_output(['git', 'describe', '--tags'])
+    version = check_output(GIT_TAG_COMMANDS)
 
-    if not raw_version:
+    if not version or not SEMANTIC_VERSION_REGEX.match(version):
         return None
 
-    version = VERSION_REGEX.match(raw_version)
-
-    if not version:
-        return None
-
-    return version.group(0).decode('utf-8')
+    return version.decode('utf-8')
 
 
-class VersionMiddleware(object):
+class VersionMiddleware(MiddlewareMixin):
     """
     Middleware that adds version information to response headers.
     """
@@ -59,33 +54,9 @@ class VersionMiddleware(object):
     Name of the header that contains the cyphon version number.
     """
 
-    VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
-    """RegExp
-
-    Regular express used to pull the version number of Cyphon from the most
-    recent git commit tag.
-    """
-
     def __init__(self, get_response=None):
-        self.get_response = get_response
         self.current_version = get_version() or ''
-
-    def __call__(self, request):
-        """Adds the Cyphon version number into a header on every response.
-
-        Parameters
-        ----------
-        request : :class: `~django.http.HttpRequest`
-
-        Returns
-        -------
-        :class: `~django.http.HttpResponse`
-        """
-        response = self.get_response(request)
-        response[self.VERSION_HEADER] = self.current_version
-        request.cyphon_version = self.current_version
-
-        return response
+        super(VersionMiddleware, self).__init__(get_response)
 
     def process_response(self, request, response):
         response[self.VERSION_HEADER] = self.current_version
@@ -94,4 +65,4 @@ class VersionMiddleware(object):
 
     def process_request(self, request):
         request.cyphon_version = self.current_version
-        return None
+
