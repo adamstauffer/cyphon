@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **cyphon.choices**: range choices ([1c414aa](https://github.com/dunbarcyber/cyphon/commit/1c414aa))
 - **cyphon.settings**: default configuration and pull secrets from SSM [PR #134](https://github.com/dunbarcyber/cyphon/pull/134) ([62751ee](https://github.com/dunbarcyber/cyphon/commit/62751ee))
 - **docs**: search query docs ([bfe06fd](https://github.com/dunbarcyber/cyphon/commit/bfe06fd))
+- **docs**: Alert bulk admin docs ([3d963b1](https://github.com/dunbarcyber/cyphon/commit/3d963b1))
 - **query.search**: search query classes ([76dac5d](https://github.com/dunbarcyber/cyphon/commit/76dac5d))
 - **query.search**: search endpoint [PR #136](https://github.com/dunbarcyber/cyphon/pull/136) ([56bd2ce](https://github.com/dunbarcyber/cyphon/commit/56bd2ce))
 - **requirements.txt**: boto3, django-s3-storage, and ec2-metadata packages [PR #134](https://github.com/dunbarcyber/cyphon/pull/134) ([62751ee](https://github.com/dunbarcyber/cyphon/commit/62751ee))
