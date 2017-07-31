@@ -40,7 +40,7 @@ def get_version():
     if not version or not SEMANTIC_VERSION_REGEX.match(version):
         return None
 
-    return version.decode('utf-8')
+    return version.decode('utf-8').strip('\n')
 
 
 class VersionMiddleware(MiddlewareMixin):
