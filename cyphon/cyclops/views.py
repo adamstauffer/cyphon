@@ -68,6 +68,7 @@ def application(request):
         'js_file': js_file,
         'css_url': css_url,
         'js_url': js_url,
+        'cyphon_version': request.cyphon_version,
     })
 
 
