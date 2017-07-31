@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Added
+
+- **alerts**: Alert.muzzle_hash field [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
+- **alerts**: email notifications for Alert comments [PR #139](https://github.com/dunbarcyber/cyphon/pull/139) ([bd968c1](https://github.com/dunbarcyber/cyphon/commit/bd968c1))
+- **cyphon.choices**: range choices ([1c414aa](https://github.com/dunbarcyber/cyphon/commit/1c414aa))
+- **docs**: search query docs ([bfe06fd](https://github.com/dunbarcyber/cyphon/commit/bfe06fd))
+- **query.search**: search query classes ([76dac5d](https://github.com/dunbarcyber/cyphon/commit/76dac5d))
+- **query.search**: search endpoint [PR #136](https://github.com/dunbarcyber/cyphon/pull/136) ([56bd2ce](https://github.com/dunbarcyber/cyphon/commit/56bd2ce))
+- **sifter.sieves**: numeric rules [PR #129](https://github.com/dunbarcyber/cyphon/pull/129) ([0fba6f4](https://github.com/dunbarcyber/cyphon/commit/0fba6f4))
+- **utils.parserutils**: added ``merge_dict()`` and ``abridge_dict()`` functions ([44e9fcd](https://github.com/dunbarcyber/cyphon/commit/44e9fcd))
+
+### Changed
+
+- **alerts**: only fields defined in Container are shown in Alert data [PR #127](https://github.com/dunbarcyber/cyphon/pull/127) ([cdd0c68](https://github.com/dunbarcyber/cyphon/commit/cdd0c68))
+- **alerts**: doc_id field included in serialized Alert detail [PR #145](https://github.com/dunbarcyber/cyphon/pull/145) ([c62dca4](https://github.com/dunbarcyber/cyphon/commit/c62dca4))
+- **watchdogs**: removed Alert table locking [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
+
+### Removed
+
+- **docs**: removed Docker instructions ([87012e2](https://github.com/dunbarcyber/cyphon/commit/87012e2))
+
 
 <a name="1.3.0"></a>
 ## [1.3.0](https://github.com/dunbarcyber/cyphon/compare/1.2.0...1.3.0) (2017-06-28)
