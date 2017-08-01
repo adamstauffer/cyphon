@@ -16,53 +16,76 @@
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 
 # standard library
-from subprocess import check_output
 import re
+from subprocess import check_output
 
 # third party
 from django.utils.deprecation import MiddlewareMixin
 
-GIT_TAG_COMMANDS = ['git', 'describe', '--tags', '--abbrev=0']
+_GIT_TAG_COMMANDS = ['git', 'describe', '--tags', '--abbrev=0']
 
-SEMANTIC_VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
+_SEMANTIC_VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
 
 
 def get_version():
-    """Returns the current version of Cyphon according to it's tag on git.
+    """Return the current version of Cyphon according to its tag on git.
 
     Returns
     -------
-    string or None
+    |str| or |None|
+
     """
+    version = check_output(_GIT_TAG_COMMANDS)
 
-    version = check_output(GIT_TAG_COMMANDS)
-
-    if not version or not SEMANTIC_VERSION_REGEX.match(version):
+    if not version or not _SEMANTIC_VERSION_REGEX.match(version):
         return None
 
     return version.decode('utf-8').strip('\n')
 
 
 class VersionMiddleware(MiddlewareMixin):
-    """
-    Middleware that adds version information to response headers.
-    """
+    """Middleware that adds version information to response headers."""
 
     VERSION_HEADER = 'Cyphon-Version'
-    """str
+    """|str|
 
-    Name of the header that contains the cyphon version number.
+    Name of the header that contains the Cyphon version number.
     """
 
     def __init__(self, get_response=None):
+        """Initialize a VersionMiddleware instance."""
         self.current_version = get_version() or ''
         super(VersionMiddleware, self).__init__(get_response)
 
     def process_response(self, request, response):
+        """Add the current Cyphon version to an HTTP response header.
+
+        Parameters
+        ----------
+        request : :class:`~django.core.handlers.wsgi.WSGIRequest`
+
+        response : :class:`~django.template.response.TemplateResponse`
+
+        Returns
+        -------
+        response : :class:`~django.template.response.TemplateResponse`
+            The reponse containing the Cyphon version header.
+
+        """
         response[self.VERSION_HEADER] = self.current_version
 
         return response
 
     def process_request(self, request):
-        request.cyphon_version = self.current_version
+        """Set the Cyphon version in a WSGIRequest.
 
+        Parameters
+        ----------
+        request : :class:`~django.core.handlers.wsgi.WSGIRequest`
+
+        Returns
+        -------
+        None
+
+        """
+        request.cyphon_version = self.current_version

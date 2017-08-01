@@ -34,19 +34,32 @@ from cyphon.version import VersionMiddleware
 
 
 class VersionMiddlewareTest(TestCase):
+    """
+    Tests the VersionMiddleware class.
+    """
+
     def setUp(self):
         self.version_number = '1.3.0-97-gbd968c1'
         self.get_response = MagicMock(return_value={})
         self.factory = RequestFactory()
 
     def create_middleware(self):
+        """
+        Creates a VersionMiddleware instance.
+        """
         return VersionMiddleware(self.get_response)
 
     def check_get_response_is_called(self, request):
+        """
+
+        """
         self.get_response.assert_called_once_with(request)
 
     @staticmethod
     def check_output_is_called(check_output):
+        """
+
+        """
         check_output.assert_called_once_with(
             ['git', 'describe', '--tags', '--abbrev=0'])
 
