@@ -46,22 +46,51 @@ if os.path.exists('/sys/hypervisor/uuid'):
 
 
 def get_ssm_param(name, decrypt=True):
-    """Fetches a configuration parameter from EC2 Systems Manager (SSM)."""
+    """Fetch a configuration parameter from EC2 Systems Manager (SSM).
+
+    Parameters
+    ----------
+    name : str
+        The name of the parameter.
+
+    decrypt : bool
+        Whether to return a decrypted value for a secure string parameter.
+
+    """
     client = boto3.client('ssm')
     try:
         response = client.get_parameter(Name=name, WithDecryption=decrypt)
         return response['Parameter']['Value']
     except KeyError:
         return None
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'ParameterNotFound':
+    except botocore.exceptions.ClientError as error:
+        if error.response['Error']['Code'] == 'ParameterNotFound':
             return None
         raise
 
 
 def get_param(name, default=None, envvar=None, decrypt_ssm=True,
               prefix='cyphon.'):
-    """Fetches a configuration parameter from SSM or the environment."""
+    """Fetch a configuration parameter from SSM or the environment.
+
+    Parameters
+    ----------
+    name : str
+        The name of the parameter.
+
+    default : str
+        The value to return if the environment variable is undefined.
+
+    envvar : str
+        The environment variable associated with the parameter.
+
+    prefix : str
+        The prefix used for Cyphon parameters in SSM. Default is "cyphon.".
+
+    decrypt_ssm : bool
+        Whether to return a decrypted value for a secure string parameter.
+
+    """
     if ON_EC2:
         if prefix:
             name = prefix + name
