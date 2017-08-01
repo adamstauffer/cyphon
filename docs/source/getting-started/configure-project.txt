@@ -43,14 +43,12 @@ Cyclops
 Cyclops is an optional frontend that helps to manage alerts and data from
 Cyphon in real time. This product is under a different license than Cyphon,
 found `here <https://raw.githubusercontent.com/dunbarcyber/cyclops/master/LICENSE.txt>`__.
-Make sure to take a quick look over it before using Cyclops in your use case.
+Take a quick look over it to make sure your use case doesn't violate the license.
 
 Cyclops is configured with the ``conf.py`` file in the Cyphon settings::
 
     CYCLOPS = {
         'ENABLED': True,
-        'VERSION': '0.4.0',
-        'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
         'MAPBOX_ACCESS_TOKEN': '',
         'LOCAL_ASSETS_ENABLED': False,
         'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/build')),
@@ -59,10 +57,16 @@ Cyclops is configured with the ``conf.py`` file in the Cyphon settings::
         'LOCAL_JS_FILENAME': 'cyclops.js',
     }
 
-The only thing to change in these settings is ``MAPBOX_ACCESS_TOKEN``.
-This is required to show maps with locations and to get geolocation data.
-You can sign up for an access token
-`here <https://www.mapbox.com/studio/signup/>`__.
+In order to show maps with locations and get geolocation data, you can
+sign up for a mapbox access token `here <https://www.mapbox.com/studio/signup/>`__
+and place it as ``MAPBOX_ACCESS_TOKEN``.
+
+If you're using a local version of cyclops, then change ``LOCAL_ASSETS_ENABLED``
+to ``True`` and modify the ``LOCAL_ASSETS_PATH`` to the directory where the
+Cyclops build files are located. ``LOCAL_CSS_FILENAME`` and
+``LOCAL_JS_FILENAME`` should only be changed if the Cyclops build file has
+been altered, and ``LOCAL_FOLDER_NAME`` only affects how the static files are
+surfaced through the Django URL's.
 
 The next optional step would be to set up push notifications for Cyclops,
 which is explained in :ref:`push-notifications`.
