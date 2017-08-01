@@ -28,5 +28,6 @@ Submodules
    cyphon.tasks
    cyphon.transaction
    cyphon.urls
+   cyphon.version
    cyphon.views
    cyphon.wsgi
