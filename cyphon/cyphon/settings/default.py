@@ -86,8 +86,6 @@ CODEBOOKS = {
 
 CYCLOPS = {
     'ENABLED': True,
-    'VERSION': '0.4.1',
-    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
     'MAPBOX_ACCESS_TOKEN': '',
     'LOCAL_ASSETS_ENABLED': False,
     'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),

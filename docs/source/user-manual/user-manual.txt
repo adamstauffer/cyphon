@@ -13,6 +13,7 @@ User Manual
    configuring-alarms
    investigating-alerts
    acting-on-alerts
+   managing-alerts
    provisioning-users
    default-mail-handler
    push-notifications

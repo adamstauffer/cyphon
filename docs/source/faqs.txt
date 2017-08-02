@@ -83,4 +83,4 @@ Then delete the user::
 How do I get logs from a remote machine into Cyphon?
 ****************************************************
 
-We recommend you use `Filebeat`_ and `Logstash`_. Check out our :ref:`Logstash tutorial <logstash-tutorial>` for guidance. 
+We recommend you use `Filebeat`_ and `Logstash`_. Check out our :ref:`Logstash tutorial <logstash-tutorial>` for guidance. If you're using a `Cyphondock`_-based deployment (such as our `Cyphon Virtual Machine <https://www.cyphon.io/cyphon-vm/>`__), see our `Cyphondock documentation <http://cyphondock.readthedocs.io/en/latest/configure-project.html#logstash-config>`__ for more details.

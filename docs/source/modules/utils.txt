@@ -20,4 +20,5 @@ Subpackages
     utils.emailutils
     utils.geometry
     utils.parserutils
+    utils.settings
     utils.validators
