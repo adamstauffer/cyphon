@@ -28,6 +28,7 @@ except ImportError:
 
 # local
 from appusers.models import AppUser
+from cyphon.version import VERSION
 
 
 class CyclopsViewsTestCase(TestCase):
@@ -124,14 +125,10 @@ class ApplicationTest(CyclopsViewsTestCase):
         """
         Tests that the correct cyphon version is passed to the template.
         """
-        patch_mock = patch(
-            'cyphon.version.check_output', return_value=b'1.2.0')
+        self.authenticate()
+        response = self.get_application()
 
-        with patch_mock:
-            self.authenticate()
-            response = self.get_application()
-
-            self.assertEqual(response.context['cyphon_version'], '1.2.0')
+        self.assertEqual(response.context['cyphon_version'], VERSION)
 
 
 class ManifestTest(CyclopsViewsTestCase):

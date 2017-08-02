@@ -15,32 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 
-# standard library
-import re
-from subprocess import check_output
-
 # third party
 from django.utils.deprecation import MiddlewareMixin
 
-_GIT_TAG_COMMANDS = ['git', 'describe', '--tags', '--abbrev=0']
+VERSION = '1.4.0'
+"""str
 
-_SEMANTIC_VERSION_REGEX = re.compile(b'\d+\.\d+\.\d+')
-
-
-def get_version():
-    """Return the current version of Cyphon according to its tag on git.
-
-    Returns
-    -------
-    |str| or |None|
-
-    """
-    version = check_output(_GIT_TAG_COMMANDS)
-
-    if not version or not _SEMANTIC_VERSION_REGEX.match(version):
-        return None
-
-    return version.decode('utf-8').strip('\n')
+Current Cyphon version.
+"""
 
 
 class VersionMiddleware(MiddlewareMixin):
@@ -51,11 +33,6 @@ class VersionMiddleware(MiddlewareMixin):
 
     Name of the header that contains the Cyphon version number.
     """
-
-    def __init__(self, get_response=None):
-        """Initialize a VersionMiddleware instance."""
-        self.current_version = get_version() or ''
-        super(VersionMiddleware, self).__init__(get_response)
 
     def process_response(self, request, response):
         """Add the current Cyphon version to an HTTP response header.
@@ -72,7 +49,7 @@ class VersionMiddleware(MiddlewareMixin):
             The reponse containing the Cyphon version header.
 
         """
-        response[self.VERSION_HEADER] = self.current_version
+        response[self.VERSION_HEADER] = VERSION
 
         return response
 
@@ -88,4 +65,4 @@ class VersionMiddleware(MiddlewareMixin):
         None
 
         """
-        request.cyphon_version = self.current_version
+        request.cyphon_version = VERSION

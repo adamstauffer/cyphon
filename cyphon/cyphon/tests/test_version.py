@@ -21,16 +21,16 @@ Test version middleware and helper functions.
 
 # standard library
 try:
-    from unittest.mock import MagicMock, patch
+    from unittest.mock import MagicMock
 except ImportError:
-    from mock import MagicMock, patch
+    from mock import MagicMock
 
 # third party
 from django.test import TestCase
 from django.test.client import RequestFactory
 
 # local
-from cyphon.version import VersionMiddleware
+from cyphon.version import VersionMiddleware, VERSION
 
 
 class VersionMiddlewareTest(TestCase):
@@ -39,7 +39,6 @@ class VersionMiddlewareTest(TestCase):
     """
 
     def setUp(self):
-        self.version_number = '1.3.0-97-gbd968c1'
         self.get_response = MagicMock(return_value={})
         self.factory = RequestFactory()
 
@@ -55,52 +54,27 @@ class VersionMiddlewareTest(TestCase):
         """
         self.get_response.assert_called_once_with(request)
 
-    @staticmethod
-    def check_output_is_called(check_output):
-        """
-
-        """
-        check_output.assert_called_once_with(
-            ['git', 'describe', '--tags', '--abbrev=0'])
-
-    @patch('cyphon.version.check_output', return_value=b'1.2.0')
-    def test_correct_version_added(self, check_output):
+    def test_correct_version_added(self):
         """
         Tests that the correct version number is returned when a call to
         """
         middleware = self.create_middleware()
-        self.check_output_is_called(check_output)
 
         request = self.factory.get('/login/')
         response = middleware(request)
 
         self.check_get_response_is_called(request)
-        self.assertEqual(response[VersionMiddleware.VERSION_HEADER], '1.2.0')
+        self.assertEqual(
+            response[VersionMiddleware.VERSION_HEADER], VERSION)
 
-    @patch('cyphon.version.check_output', return_value=b'incorrect')
-    def test_incorrect_git_response(self, check_output):
-        """
-        Tests that the version number is blank if git returns a tag that
-        doesn't contain the version number.
-        """
-
-        middleware = self.create_middleware()
-        self.check_output_is_called(check_output)
-
-        request = self.factory.get('/login/')
-        response = middleware(request)
-
-        self.check_get_response_is_called(request)
-        self.assertEqual(response[VersionMiddleware.VERSION_HEADER], '')
-
-    @patch('cyphon.version.check_output', return_value=b'1.2.0')
-    def test_mock_view(self, check_output):
+    def test_mock_view(self):
         """
         Tests that the version header is added to any requests.
         """
         response = self.client.get('/login/')
-        self.check_output_is_called(check_output)
-        self.assertEqual(response[VersionMiddleware.VERSION_HEADER], '1.2.0')
+        self.assertEqual(
+            response[VersionMiddleware.VERSION_HEADER], VERSION)
 
         response = self.client.get('/api/v1/')
-        self.assertEqual(response[VersionMiddleware.VERSION_HEADER], '1.2.0')
+        self.assertEqual(
+            response[VersionMiddleware.VERSION_HEADER], VERSION)
