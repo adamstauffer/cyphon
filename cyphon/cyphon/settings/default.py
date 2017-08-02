@@ -400,6 +400,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'cyphon.version.VersionMiddleware',
 )
 
 ROOT_URLCONF = 'cyphon.urls'

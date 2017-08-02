@@ -61,6 +61,7 @@ def application(request):
         'cyclops_version': CYCLOPS_VERSION,
         'css_file': css_file,
         'js_file': js_file,
+        'cyphon_version': request.cyphon_version,
         'css_url': CYCLOPS_CSS_URL,
         'js_url': CYCLOPS_JS_URL,
     })

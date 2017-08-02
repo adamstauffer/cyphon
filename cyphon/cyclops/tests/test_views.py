@@ -21,6 +21,10 @@ from copy import deepcopy
 from django.conf import settings
 from django.test import TestCase
 from django.utils.encoding import force_text
+try:
+    from unittest.mock import MagicMock, patch
+except ImportError:
+    from mock import MagicMock, patch
 
 # local
 from appusers.models import AppUser
@@ -115,6 +119,19 @@ class ApplicationTest(CyclopsViewsTestCase):
             response = self.get_application()
 
             self.assertEqual(response.context['mapbox_access_token'], 'blah')
+
+    def test_cyphon_version(self):
+        """
+        Tests that the correct cyphon version is passed to the template.
+        """
+        patch_mock = patch(
+            'cyphon.version.check_output', return_value=b'1.2.0')
+
+        with patch_mock:
+            self.authenticate()
+            response = self.get_application()
+
+            self.assertEqual(response.context['cyphon_version'], '1.2.0')
 
 
 class ManifestTest(CyclopsViewsTestCase):
