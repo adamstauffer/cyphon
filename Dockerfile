@@ -38,7 +38,6 @@ COPY requirements.txt $CYPHON_HOME/requirements.txt
 RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       binutils \
       gdal \
-      git \
       postgis \
       proj4-dev \
       py-gdal \
