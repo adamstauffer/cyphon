@@ -39,10 +39,10 @@ def get_ssm_param(name, decrypt=True):
 
     Parameters
     ----------
-    name : str
+    name : |str|
         The name of the parameter.
 
-    decrypt : bool
+    decrypt : |bool|
         Whether to return a decrypted value for a secure string parameter.
 
     """
@@ -64,30 +64,26 @@ def get_param(name, default=None, envvar=None, decrypt_ssm=True,
 
     Parameters
     ----------
-    name : str
+    name : |str|
         The name of the parameter.
 
-    default : str
+    default : |str|
         The value to return if the environment variable is undefined.
 
-    envvar : str
+    envvar : |str|
         The environment variable associated with the parameter.
 
-    prefix : str
+    prefix : |str| or |None|
         The prefix used for Cyphon parameters in SSM. Default is "cyphon.".
 
-    decrypt_ssm : bool
+    decrypt_ssm : |bool|
         Whether to return a decrypted value for a secure string parameter.
 
     """
     if ON_EC2:
-        if prefix:
-            name = prefix + name
-        value = get_ssm_param(name, decrypt_ssm)
+        prefix = prefix or ''
+        value = get_ssm_param(prefix + name, decrypt_ssm)
         if value is not None:
             return value
-    if envvar is None:
-        envvar = name.upper()
-        if ON_EC2:
-            envvar = envvar[len(prefix):]
-    return os.getenv(envvar, default)
+
+    return os.getenv(envvar or name.upper(), default)
