@@ -23,13 +23,14 @@
 """
 
 # standard library
-import io
 import os
 import sys
 
+# third party
 from django.core.management.utils import get_random_secret_key
 
-from utils.settings import get_param, get_ssm_param
+# local
+from utils.settings import get_param, ON_EC2
 
 
 SECRET_KEY = get_param('secret_key', get_random_secret_key())
