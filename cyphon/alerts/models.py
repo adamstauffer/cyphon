@@ -54,10 +54,12 @@ from utils.parserutils.parserutils import (
     get_dict_value
 )
 
-_ALERT_SETTINGS = settings.ALERTS
+_ALERT_URL = '/app/alerts/'
+
 _PRIVATE_FIELD_SETTINGS = settings.PRIVATE_FIELDS
 
 _LOGGER = logging.getLogger(__name__)
+
 
 # allow parsing of ISO8601 datetime strings
 fields.DateTimeField.strptime = lambda o, v, f: \
@@ -346,8 +348,7 @@ class Alert(models.Model):
 
         """
         base_url = settings.BASE_URL
-        alert_url = _ALERT_SETTINGS['ALERT_URL']
-        return urllib.parse.urljoin(base_url, alert_url + str(self.id))
+        return urllib.parse.urljoin(base_url, _ALERT_URL + str(self.id))
 
     @property
     def coordinates(self):
