@@ -17,7 +17,7 @@ django-mailbox==4.5.4
 django-picklefield==1.0.0
 djangorestframework==3.6.3
 djangorestframework-jwt==1.11.0
-docutils==0.13.1
+docutils==0.14
 drfdocs==0.0.11
 elasticsearch==5.4.0
 feedparser==5.2.1
