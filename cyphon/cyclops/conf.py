@@ -18,7 +18,7 @@
 Settings for the Cyclops package.
 """
 
-CYCLOPS_VERSION = '0.4.2'
+CYCLOPS_VERSION = '0.4.3'
 """str
 
 Version number of Cyclops to use.
