@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **alerts**: ``Alert.muzzle_hash`` field [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
 - **alerts**: email notifications for Alert comments [PR #139](https://github.com/dunbarcyber/cyphon/pull/139) ([bd968c1](https://github.com/dunbarcyber/cyphon/commit/bd968c1))
 - **cyphon.choices**: range choices ([1c414aa](https://github.com/dunbarcyber/cyphon/commit/1c414aa))
+- **cyphon.version**: added Cyphon version to headers ([40c123f](https://github.com/dunbarcyber/cyphon/commit/40c123f), [08ff612](https://github.com/dunbarcyber/cyphon/commit/08ff612))
 - **docs**: search query docs ([bfe06fd](https://github.com/dunbarcyber/cyphon/commit/bfe06fd))
 - **docs**: Alert bulk admin docs ([3d963b1](https://github.com/dunbarcyber/cyphon/commit/3d963b1))
 - **query.search**: search query classes ([76dac5d](https://github.com/dunbarcyber/cyphon/commit/76dac5d))
