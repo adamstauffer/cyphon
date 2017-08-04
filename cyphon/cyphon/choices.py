@@ -121,6 +121,13 @@ OPERATOR_CHOICES = (
     ('within', 'within')
 )
 
+RANGE_CHOICES = (
+    ('FloatField:>', 'greater than'),
+    ('FloatField:>=', 'greater than or equal to'),
+    ('FloatField:<', 'less than'),
+    ('FloatField:<=', 'less than or equal to'),
+)
+
 REGEX_CHOICES = (
     ('CharField:x', 'contains'),
     ('CharField:^x', 'begins with'),

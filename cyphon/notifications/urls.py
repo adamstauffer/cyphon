@@ -26,9 +26,7 @@ from . import views
 
 
 urlpatterns = [
-	url(r'^subscribe/$', views.SubscribeView.as_view(), 
-		name='notifications_subscribe'),
-	url(r'test/$', views.TestNotifications.as_view(), name='notifications_test'),
-	url(r'^$', views.NotificationView.as_view(), name='notifications_get')
+    url(r'^subscribe/$', views.SubscribeView.as_view(),
+        name='notifications_subscribe'),
+    url(r'^$', views.NotificationView.as_view(), name='notifications_get')
 ]
-

@@ -85,7 +85,7 @@ TEMPLATES = [
 TEST = 'test' in sys.argv
 
 #: Application definition
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'cyphon',  # must come before django.contrib.admin to override templates
     'autocomplete_light',  # must come before django.contrib.admin
     # 'django.contrib.admindocs',
@@ -169,7 +169,7 @@ INSTALLED_APPS = (
     'utils.validators',
     'warehouses',
     'watchdogs',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -181,6 +181,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'cyphon.version.VersionMiddleware',
 )
 
 ROOT_URLCONF = 'cyphon.urls'
@@ -230,12 +231,13 @@ PASSWORD_MIN_LENGTH = 6
 PASSWORD_MAX_LENGTH = 30
 
 # This section is for sending email to users. This example is a gmail account.
-EMAIL_NAME = EMAIL['NAME']
-EMAIL_HOST = EMAIL['HOST']
-EMAIL_HOST_USER = EMAIL['HOST_USER']
-EMAIL_HOST_PASSWORD = EMAIL['HOST_PASSWORD']
-EMAIL_PORT = EMAIL['PORT']
-EMAIL_USE_TLS = EMAIL['USE_TLS']
+EMAIL_HOST = EMAIL.get('HOST', 'localhost')
+EMAIL_HOST_USER = EMAIL.get('HOST_USER', '')
+EMAIL_HOST_PASSWORD = EMAIL.get('HOST_PASSWORD', '')
+EMAIL_PORT = EMAIL.get('PORT', 25)
+EMAIL_SUBJECT_PREFIX = EMAIL.get('SUBJECT_PREFIX', '[Cyphon] ')
+EMAIL_USE_TLS = EMAIL.get('USE_TLS', True)
+DEFAULT_FROM_EMAIL = EMAIL.get('DEFAULT_FROM', 'webmaster@localhost')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -247,9 +249,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-STATIC_URL = '/static/'
 
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(HOME_DIR, 'static')
+STATICFILES_DIRS = []
 
 STATICFILES_DIRS = []
 
@@ -259,7 +262,6 @@ if CYCLOPS['LOCAL_ASSETS_ENABLED']:
     ]
 
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 
 API_URL = '/api/v1/'
@@ -330,6 +332,7 @@ CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = OrderedDict([
     ('PUSH_NOTIFICATIONS_ENABLED', (False, 'Turn on push notifications')),
+    ('EMAIL_NOTIFICATIONS_ENABLED', (True, 'Turn on email notifications')),
 ])
 
 DJANGO_MAILBOX_ATTACHMENT_UPLOAD_TO = os.path.join(MEDIA_ROOT,

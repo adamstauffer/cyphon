@@ -14,3 +14,4 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+default_app_config = 'alerts.apps.AlertsConfig'

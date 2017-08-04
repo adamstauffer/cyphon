@@ -30,22 +30,54 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 # standard library
+import email.utils
 import logging
 import os
 
 # local
 from .base import *
 
-LOGGER = logging.getLogger(__name__)
 
+if ON_EC2 or os.getenv('AWS_ACCESS_KEY'):
+    INSTALLED_APPS.insert(1, 'django_s3_storage')
+
+LOGGER = logging.getLogger(__name__)
 DEBUG = False
 
-ADMINS = [
-    # ('Jane Smith', 'jane@example.com'),
-]
+ADMINS = []
+if 'DJANGO_ADMIN' in os.environ:
+    ADMINS.append(email.utils.parseaddr(os.getenv('DJANGO_ADMIN')))
+
+# Store media and static content in S3
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
+AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
+AWS_S3_BUCKET_NAME_STATIC = AWS_S3_BUCKET_NAME
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_S3_BUCKET_NAME
+AWS_S3_ENDPOINT_URL_STATIC = 'https://s3.amazonaws.com'
+if ON_EC2:
+    AWS_REGION = ec2_metadata.region
+else:
+    AWS_REGION = os.getenv('AWS_REGION_NAME', 'us-east-1')
+
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
+
+AWS_S3_KEY_PREFIX_STATIC = 'static/'
+
+if AWS_S3_BUCKET_NAME:
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+
+AWS_S3_BUCKET_AUTH = False
+
+MEDIAFILES_LOCATION = 'media'
+if AWS_S3_BUCKET_NAME:
+    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+    MEDIA_ROOT = 'media'
 
 #: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
-BASE_URL = 'http://localhost:8000'
+BASE_URL = os.getenv('BASE_URL_PROD', 'http://localhost:8000')
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True

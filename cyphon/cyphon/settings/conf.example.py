@@ -26,13 +26,25 @@
 import os
 import sys
 
+# third party
+from django.core.management.utils import get_random_secret_key
+from ec2_metadata import ec2_metadata
 
-SECRET_KEY = 'this-should-be-a-string-of-random-characters'
+# local
+from utils.settings import get_param, ON_EC2
+
+
+SECRET_KEY = get_param('secret_key', get_random_secret_key())
 
 HOST_SETTINGS = {
-    'ALLOWED_HOSTS': ['localhost'],
-    'CORS_ORIGIN_WHITELIST': ['localhost:8000'],
+    'ALLOWED_HOSTS': [addr.strip() for addr in os.getenv(
+        'ALLOWED_HOSTS', 'localhost').split(',')],
+    'CORS_ORIGIN_WHITELIST': [addr.strip() for addr in os.getenv(
+        'CORS_ORIGIN_WHITELIST', 'localhost:8000').split(',')],
 }
+
+if ON_EC2:
+    HOST_SETTINGS['ALLOWED_HOSTS'].append(ec2_metadata.private_ipv4)
 
 TEST = 'test' in sys.argv
 
@@ -52,10 +64,6 @@ PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 HOME_DIR = os.path.dirname(PROJ_DIR)
 KEYS_DIR = os.path.join(HOME_DIR, 'keys')
 
-ALERTS = {
-    'ALERT_URL': '/#/alerts?alertDetail=',
-}
-
 APPUSERS = {
     'CUSTOM_FILTER_BACKENDS': []
 }
@@ -67,8 +75,6 @@ CODEBOOKS = {
 
 CYCLOPS = {
     'ENABLED': True,
-    'VERSION': '0.4.0',
-    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
     'MAPBOX_ACCESS_TOKEN': '',
     'LOCAL_ASSETS_ENABLED': False,
     'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
@@ -96,7 +102,7 @@ DISTILLERIES = {
     'RAW_DATA_KEY': '_raw_data',
 
     # dictionary key for adding a label to a document
-    'LABEL_KEY':  '_metadata',
+    'LABEL_KEY': '_metadata',
 
     # dictionary key for saving the name of the backend where the raw data is stored
     'BACKEND_KEY': 'backend',
@@ -116,18 +122,19 @@ DISTILLERIES = {
 }
 
 ELASTICSEARCH = {
-    'HOSTS': ['{0}:{1}'.format(os.getenv('ELASTICSEARCH_HOST', 'elasticsearch'),
-                               os.getenv('ELASTICSEARCH_PORT', '9200'))],
+    'HOSTS': ['{0}:{1}'.format(get_param('elasticsearch_host', 'elasticsearch'),
+                               get_param('elasticsearch_port', '9200'))],
     'TIMEOUT': 30,
 }
 
 EMAIL = {
-    'NAME': 'Cyphon',
-    'HOST': 'smtp.gmail.com',
-    'HOST_USER': 'user@',
-    'HOST_PASSWORD': 'you',
-    'PORT': 587,
-    'USE_TLS': True,
+    'DEFAULT_FROM': 'webmaster@localhost',
+    'HOST': get_param('email_host', 'smtp.gmail.com'),
+    'HOST_USER': get_param('email_user', 'user') + '@',
+    'HOST_PASSWORD': get_param('email_password', ''),
+    'PORT': int(get_param('email_port', '587')),
+    'SUBJECT_PREFIX': '[Cyphon] ',
+    'USE_TLS': get_param('email_use_tls', 'true').lower() in ('true', '1'),
 }
 
 GEOIP = {
@@ -136,10 +143,10 @@ GEOIP = {
 }
 
 JIRA = {
-    'SERVER': '',                       # JIRA url
-    'PROJECT_KEY': '',                  # project key
-    'ISSUE_TYPE': '',                   # issue type
-    'CUSTOM_FIELDS': {},                # custom fields
+    'SERVER': get_param('jira_host'),
+    'PROJECT_KEY': get_param('jira_project_key'),
+    'ISSUE_TYPE': get_param('jira_issue_type'),
+    'CUSTOM_FIELDS': {},                           # custom fields
     'PRIORITIES': {
         'CRITICAL': 'Critical',
         'HIGH': 'High',
@@ -179,8 +186,9 @@ MAILSIFTER = {
 }
 
 MONGODB = {
-    'HOST': '{0}:{1}'.format(os.getenv('MONGODB_HOST', 'mongo'),  # e.g., 'localhost'
-                             os.getenv('MONGODB_PORT', '27017')),
+    'HOST': '{0}:{1}'.format(
+        get_param('mongodb_host', 'mongo'),  # e.g., 'localhost'
+        get_param('mongodb_port', '27017')),
     'TIMEOUT': 20,
 }
 
@@ -191,11 +199,11 @@ NOTIFICATIONS = {
 }
 
 POSTGRES = {
-    'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-    'USER': os.getenv('POSTGRES_USER', 'postgres'),
-    'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
-    'HOST': os.getenv('POSTGRES_HOST', 'postgres'),  # e.g., 'localhost'
-    'PORT': os.getenv('POSTGRES_PORT', '5432'),
+    'NAME': get_param('postgres_db', 'postgres'),
+    'USER': get_param('postgres_username', 'postgres'),
+    'PASSWORD': get_param('postgres_password', 'postgres'),
+    'HOST': get_param('postgres_host', 'postgres'),  # e.g., 'localhost'
+    'PORT': get_param('postgres_port', '5432'),
 }
 
 PRIVATE_FIELDS = [
@@ -205,18 +213,18 @@ PRIVATE_FIELDS = [
 ]
 
 RABBITMQ = {
-    'HOST': os.getenv('RABBITMQ_DEFAULT_HOST', 'rabbit'),
-    'VHOST': os.getenv('RABBITMQ_DEFAULT_VHOST', 'cyphon'),
-    'USERNAME': os.getenv('RABBITMQ_DEFAULT_USER', 'guest'),
-    'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
-    'EXCHANGE': 'cyphon',
-    'EXCHANGE_TYPE': 'direct',
+    'HOST': get_param('rabbitmq_default_host', 'rabbit'),
+    'VHOST': get_param('rabbitmq_default_vhost', 'cyphon'),
+    'USERNAME': get_param('rabbitmq_default_user', 'guest'),
+    'PASSWORD': get_param('rabbitmq_default_pass', 'guest'),
+    'EXCHANGE': get_param('rabbitmq_exchange', 'cyphon'),
+    'EXCHANGE_TYPE': get_param('rabbitmq_exchange_type', 'direct'),
     'DURABLE': True,
 }
 
 SAUCELABS = {
-    'USERNAME': os.getenv('SAUCE_USERNAME', ''),
-    'ACCESS_KEY': os.getenv('SAUCE_ACCESS_KEY', ''),
+    'USERNAME': get_param('sauce_username'),
+    'ACCESS_KEY': get_param('sauce_access_key'),
 }
 
 TEASERS = {
@@ -225,10 +233,10 @@ TEASERS = {
 
 #: Twitter authentication credentials for use in tests
 TWITTER = {
-    'KEY': '',                          # consumer key
-    'SECRET': '',                       # consumer secret
-    'ACCESS_TOKEN': '',                 # access token
-    'ACCESS_TOKEN_SECRET': '',          # access token secret
+    'KEY': get_param('twitter_key'),
+    'SECRET': get_param('twitter_secret'),
+    'ACCESS_TOKEN': get_param('twitter_access_token'),
+    'ACCESS_TOKEN_SECRET': get_param('twitter_access_token_secret'),
 }
 
 WAREHOUSES = {

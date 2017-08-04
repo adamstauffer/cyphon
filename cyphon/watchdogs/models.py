@@ -19,14 +19,12 @@ Defines Watchdog, Trigger, and Muzzle classes for generating Alerts.
 """
 
 # standard library
-import datetime
+import contextlib
 import logging
 
 # third party
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.db import transaction
-from django.utils import timezone
+from django.db import IntegrityError, models, transaction
 from django.utils.translation import ugettext_lazy as _
 
 # local
@@ -34,10 +32,7 @@ from alarms.models import Alarm, AlarmManager
 from alerts.models import Alert
 from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
-from cyphon.transaction import require_lock
-from utils.dateutils.dateutils import convert_time_to_whole_minutes
 from utils.dbutils.dbutils import json_encodeable
-from utils.parserutils.parserutils import get_dict_value
 from sifter.datasifter.datasieves.models import DataSieve
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,16 +116,6 @@ class Watchdog(Alarm):
     def __str__(self):
         return self.name
 
-    def _is_muzzled(self, alert):
-        """
-        Takes an Alert and returns True if it should be suppressed.
-        Otherwise, returns False.
-        """
-        if hasattr(self, 'muzzle') and self.muzzle.enabled:
-            return self.muzzle.is_match(alert)
-        else:
-            return False
-
     def _create_alert(self, level, doc_obj):
         """
         Takes an alert level, a distillery, and a document id. Returns
@@ -146,15 +131,32 @@ class Watchdog(Alarm):
             data=data
         )
 
-    @transaction.atomic
-    @require_lock(Alert, 'ACCESS EXCLUSIVE')
-    def _process_alert(self, alert):
+    def _is_muzzled(self):
         """
+        Returns a boolean indicates if the Watchdog has an enabled Muzzle.
+        """
+        return hasattr(self, 'muzzle') and self.muzzle.enabled
 
+    def _save_alert(self, alert):
         """
-        if not self._is_muzzled(alert):
+        Saves a new Alert to the database and returns the saved Alert.
+        """
+        with contextlib.ExitStack() as stack:
+            if self._is_muzzled():
+                stack.enter_context(transaction.atomic())
             alert.save()
-            return alert
+        return alert
+
+    @staticmethod
+    @transaction.atomic
+    def _increment_incidents(alert):
+        """
+        Takes an Alert and increments a previous Alert that it
+        duplicates. Returns the previous Alert.
+        """
+        old_alert = Alert.objects.filter(muzzle_hash=alert.muzzle_hash).first()
+        old_alert.add_incident()
+        return old_alert
 
     def inspect(self, data):
         """Return an Alert level for a document.
@@ -198,7 +200,13 @@ class Watchdog(Alarm):
             alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
                 alert = self._create_alert(alert_level, doc_obj)
-                return self._process_alert(alert)
+
+                # save the alert or increment incidents on a previous
+                # alert it duplicates
+                try:
+                    return self._save_alert(alert)
+                except IntegrityError:
+                    return self._increment_incidents(alert)
 
 
 class TriggerManager(models.Manager):
@@ -376,50 +384,3 @@ class Muzzle(models.Model):
                 cleaned_fields.append(cleaned_field)
 
         return cleaned_fields
-
-    def _get_start_time(self):
-        """
-        Returns a DateTime object equal to the current time minus the
-        Muzzle's time_interval.
-        """
-        minutes = convert_time_to_whole_minutes(self.time_interval,
-                                                self.time_unit)
-        return timezone.now() - datetime.timedelta(minutes=minutes)
-
-    def _get_filtered_alerts(self, alert):
-        """
-        Takes an Alert and returns a queryset of Alerts with the same
-        level and distillery that were generated within the Muzzle's
-        time frame.
-        """
-        time = self._get_start_time()
-        return Alert.objects.filter(
-            created_date__gte=time,
-            level=alert.level,
-            distillery=alert.distillery,
-            alarm_type=alert.alarm_type,
-            alarm_id=alert.alarm_id
-        ).order_by('created_date')
-
-    def is_match(self, alert):
-        """
-        Takes an Alert and returns a Boolean indicating whether the
-        Alert duplicates a previous Alert within the Muzzle's time frame.
-        """
-        fields = self._get_fields()
-        alerts = self._get_filtered_alerts(alert)
-        new_data = alert.data
-        for old_alert in alerts:
-            match = True
-            old_data = old_alert.data
-            for field in fields:
-                new_data_val = get_dict_value(field, new_data)
-                old_data_val = get_dict_value(field, old_data)
-                if new_data_val != old_data_val:
-                    match = False
-                    break
-            if match:
-                old_alert.add_incident()
-                return True
-
-        return False

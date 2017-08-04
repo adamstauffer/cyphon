@@ -14,18 +14,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
-"""
 
-"""
-
-# third party
 from django.conf.urls import url
 
-# local
 from . import views
 
-# urlpatterns = [
-#     url(r'^$', views.collectionselect),
-#     url(r'^(?P<backend>\w+)/(?P<database>\w+)/(?P<collection>\w+)/query$',
-#         views.collectionquery),
-# ]
+urlpatterns = [
+    url(r'^$', views.search, name=views.SEARCH_VIEW_NAME),
+    url(r'^alerts/$', views.search_alerts, name=views.ALERT_SEARCH_VIEW_NAME),
+    url(r'^distilleries/$', views.search_distilleries,
+        name=views.DISTILLERIES_SEARCH_VIEW_NAME),
+    url(r'^distilleries/(?P<pk>[0-9]+)/$', views.search_distillery,
+        name=views.DISTILLERY_SEARCH_VIEW_NAME),
+]

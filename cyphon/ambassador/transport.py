@@ -343,9 +343,10 @@ class Transport(BaseClass):
         methods must be called prior to calling :meth:`~Transport.stop`.
 
         """
-        msg = ('The prepare() and start() methods must be called first')
-        assert self.record is not None, msg
-        assert self.cargo is not None, msg
+        if self.record is None or self.cargo is None:  # pragma: no cover
+            msg = ('The prepare() and start() methods must be called first')
+            raise RuntimeError(msg)
+
         self.record.finalize(self.cargo)
         return self
 

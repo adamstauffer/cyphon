@@ -17,6 +17,8 @@ Subpackages
     utils.choices
     utils.dateutils
     utils.dbutils
+    utils.emailutils
     utils.geometry
     utils.parserutils
+    utils.settings
     utils.validators

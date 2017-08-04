@@ -186,22 +186,22 @@ class Parser(models.Model):
             func = methods[self.method]
             return func(str(value))
 
-    def _format(self, result):
+    def _format(self, results):
         """
 
         """
         template = self.formatter
-        return template.format(result)
+        return template.format(results)
 
-    def _apply_template(self, result):
+    def _apply_template(self, results):
         """
-        Takes a result string and returns a string that formats the result
+        Takes a results string and returns a string that formats the result
         with the Parser's formatter.
         """
-        if isinstance(result, list):
-            return [self._format(item) for item in result]
+        if isinstance(results, list):
+            return [self._format(item) for item in results]
         else:
-            return self._format(result)
+            return self._format(results)
 
     def process(self, value):
         """
@@ -334,30 +334,30 @@ class FieldParser(Parser):
         else:
             return ''
 
-    def _apply_template(self, aggregated_results):
+    def _apply_template(self, results):
         """
         Takes a list of results and returns a string that formats the results
         with the Parser's formatter.
         """
         template = self.formatter
-        return template.format(*aggregated_results)
+        return template.format(*results)
 
-    def _format(self, aggregated_results):
+    def _format(self, results):
         """
-        Takes a list of aggregated_results and formats them with the
+        Takes a list of aggregated results and formats them with the
         formatter if one is provided. Otherwise, formats them according to
         how many results are returned.
         """
         if self.formatter:
-            return self._apply_template(aggregated_results)
+            return self._apply_template(results)
         else:
-            return self._extract_result(aggregated_results)
+            return self._extract_result(results)
 
-    def process(self, doc):
+    def process(self, value):
         """
         Takes a dictionary and returns a parsed result from the dictionary.
         """
-        values = self._get_values(doc)
+        values = self._get_values(value)
         parsed_results = self._parse_all(values)
         aggregated_results = self._aggregate(parsed_results)
         return self._format(aggregated_results)

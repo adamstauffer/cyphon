@@ -25,6 +25,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
+# local
+from .conf import CYCLOPS_JS_URL, CYCLOPS_CSS_URL, CYCLOPS_VERSION
+
 
 @login_required(login_url='/login/')
 def application(request):
@@ -42,14 +45,6 @@ def application(request):
     :class:`~django.http.HttpResponse`
 
     """
-    css_url = settings.CYCLOPS['CDN_FORMAT'].format(
-        settings.CYCLOPS['VERSION'],
-        'css',
-    )
-    js_url = settings.CYCLOPS['CDN_FORMAT'].format(
-        settings.CYCLOPS['VERSION'],
-        'js',
-    )
     css_file = '{0}/{1}'.format(
         settings.CYCLOPS['LOCAL_FOLDER_NAME'],
         settings.CYCLOPS['LOCAL_CSS_FILENAME'],
@@ -63,11 +58,12 @@ def application(request):
         'notifications_enabled': config.PUSH_NOTIFICATIONS_ENABLED,
         'mapbox_access_token': settings.CYCLOPS['MAPBOX_ACCESS_TOKEN'],
         'local_assets_enabled': settings.CYCLOPS['LOCAL_ASSETS_ENABLED'],
-        'cyclops_version': settings.CYCLOPS['VERSION'],
+        'cyclops_version': CYCLOPS_VERSION,
         'css_file': css_file,
         'js_file': js_file,
-        'css_url': css_url,
-        'js_url': js_url,
+        'cyphon_version': request.cyphon_version,
+        'css_url': CYCLOPS_CSS_URL,
+        'js_url': CYCLOPS_JS_URL,
     })
 
 

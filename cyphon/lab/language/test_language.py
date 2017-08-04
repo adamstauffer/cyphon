@@ -85,4 +85,3 @@ class LanguageTestCase(TestCase):
         Tests the get_language() function for English text.
         """
         self.assertEqual(get_language('this is english'), 'en')
-        self.assertEqual(get_language('habla Espanol?'), 'es')

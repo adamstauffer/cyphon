@@ -25,7 +25,6 @@ import json
 import logging
 
 # third party
-import autocomplete_light
 from django.conf.urls import url
 from django.contrib import admin
 from django.core.exceptions import ValidationError
@@ -297,7 +296,7 @@ class ConfigToolAdmin(admin.ModelAdmin):
 class JSONDataAdmin(admin.ModelAdmin):
     """
     Provides a |ModelAdmin| for a model with a |JSONField| named `data`.
-    Creates a prettified version of the field for display. 
+    Creates a prettified version of the field for display.
     """
     readonly_fields = ('data_prettified',)
 
@@ -311,4 +310,3 @@ class JSONDataAdmin(admin.ModelAdmin):
             LOGGER.error('Object has no data attribute.')
 
     data_prettified.short_description = 'data'
-
