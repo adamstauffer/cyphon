@@ -5,7 +5,7 @@ beautifulsoup4==4.6.0
 billiard==3.5.0.3
 bleach==2.0.0
 celery==4.1.0
-cryptography==2.0.2
+cryptography==2.0.3
 Django==1.11.4
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
 django-constance==2.0.0
