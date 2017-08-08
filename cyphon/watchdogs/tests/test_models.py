@@ -385,7 +385,7 @@ class MuzzleTestCase(TestCase):
         """
         Tests the _get_fields method when no spaces separate the fields.
         """
-        actual = self.muzzle._get_fields()
+        actual = self.muzzle.get_fields()
         expected = ['content.subject', 'to']
         self.assertEqual(actual, expected)
 
@@ -394,7 +394,7 @@ class MuzzleTestCase(TestCase):
         Tests the _get_fields method when spaces separate the fields.
         """
         self.muzzle.matching_fields = ' message, source_ip '
-        actual = self.muzzle._get_fields()
+        actual = self.muzzle.get_fields()
         expected = ['message', 'source_ip']
         self.assertEqual(actual, expected)
 
@@ -403,7 +403,7 @@ class MuzzleTestCase(TestCase):
         Tests the _get_fields method for a single field.
         """
         self.muzzle.matching_fields = ' message, '
-        actual = self.muzzle._get_fields()
+        actual = self.muzzle.get_fields()
         expected = ['message']
         self.assertEqual(actual, expected)
 

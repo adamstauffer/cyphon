@@ -4,7 +4,7 @@ backoff==1.4.3
 beautifulsoup4==4.6.0
 billiard==3.5.0.3
 bleach==2.0.0
-boto3==1.4.4
+boto3==1.4.5
 celery==4.1.0
 cryptography==2.0.3
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
@@ -21,7 +21,7 @@ djangorestframework-jwt==1.11.0
 djangorestframework==3.6.3
 docutils==0.14
 drfdocs==0.0.11
-ec2-metadata==1.0.0
+ec2-metadata==1.1.0
 elasticsearch==5.4.0
 feedparser==5.2.1
 geoip2==2.5.0
