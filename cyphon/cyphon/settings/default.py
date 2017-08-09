@@ -132,7 +132,7 @@ ELASTICSEARCH = {
     'HOSTS': [
         {
             'host': os.getenv('ELASTICSEARCH_HOST', 'localhost'),
-            'port': int(os.getenv('ELASTICSEARCH_HOST', '9200')),
+            'port': int(os.getenv('ELASTICSEARCH_PORT', '9200')),
             'http_auth': os.getenv('ELASTICSEARCH_HTTP_AUTH'),
             'use_ssl': bool(int(os.getenv('ELASTICSEARCH_USE_SSL', False))),
         },
