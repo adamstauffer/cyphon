@@ -123,9 +123,21 @@ DISTILLERIES = {
 }
 
 ELASTICSEARCH = {
-    'HOSTS': ['{0}:{1}'.format(get_param('elasticsearch_host', 'elasticsearch'),
-                               get_param('elasticsearch_port', '9200'))],
-    'TIMEOUT': 30,
+    'HOSTS': [
+        {
+            'host': get_param('elasticsearch_host', 'elasticsearch'),
+            'port': int(get_param('elasticsearch_port', '9200')),
+            'http_auth': get_param('elasticsearch_http_auth'),
+            'use_ssl': bool(int(get_param('elasticsearch_use_ssl', False))),
+        },
+    ],
+    # Note: the keyword arguments provided below are passed to the
+    # *Elasticsearch* constructor, and should not contain host-specific
+    # keyword arguments for individual connections, which are instead
+    # configured in the 'HOSTS' list above.
+    'KWARGS': {
+        'timeout': 30,
+    },
 }
 
 EMAIL = {

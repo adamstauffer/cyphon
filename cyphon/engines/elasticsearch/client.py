@@ -31,17 +31,12 @@ Constant                 Description
 from django.conf import settings
 import elasticsearch
 
+
 _ES_SETTINGS = settings.ELASTICSEARCH
-
-TIMEOUT = _ES_SETTINGS['TIMEOUT']
-"""|int|
-
-Request timeout in seconds.
-"""
 
 
 ELASTICSEARCH = elasticsearch.Elasticsearch(_ES_SETTINGS['HOSTS'],
-                                            timeout=TIMEOUT)
+                                            **_ES_SETTINGS['KWARGS'])
 """:class:`~elasticsearch.Elasticsearch`
 
 Low-level Elasticsearch client. Provides a straightforward mapping from
