@@ -71,10 +71,6 @@ PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 HOME_DIR = os.path.dirname(PROJ_DIR)
 KEYS_DIR = os.path.join(HOME_DIR, 'keys')
 
-ALERTS = {
-    'ALERT_URL': '/#/alerts?alertDetail=',
-}
-
 APPUSERS = {
     'CUSTOM_FILTER_BACKENDS': []
 }
@@ -86,8 +82,6 @@ CODEBOOKS = {
 
 CYCLOPS = {
     'ENABLED': True,
-    'VERSION': '0.4.1',
-    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
     'MAPBOX_ACCESS_TOKEN': '',
     'LOCAL_ASSETS_ENABLED': False,
     'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
@@ -402,6 +396,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'cyphon.version.VersionMiddleware',
 )
 
 ROOT_URLCONF = 'cyphon.urls'

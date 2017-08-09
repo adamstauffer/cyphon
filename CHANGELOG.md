@@ -10,14 +10,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Added
 
-- **alerts**: Alert.muzzle_hash field [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
+- **alerts**: ``Alert.muzzle_hash`` field [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
 - **alerts**: email notifications for Alert comments [PR #139](https://github.com/dunbarcyber/cyphon/pull/139) ([bd968c1](https://github.com/dunbarcyber/cyphon/commit/bd968c1))
 - **cyphon.choices**: range choices ([1c414aa](https://github.com/dunbarcyber/cyphon/commit/1c414aa))
+- **cyphon.version**: added Cyphon version to headers ([40c123f](https://github.com/dunbarcyber/cyphon/commit/40c123f), [08ff612](https://github.com/dunbarcyber/cyphon/commit/08ff612))
 - **docs**: search query docs ([bfe06fd](https://github.com/dunbarcyber/cyphon/commit/bfe06fd))
+- **docs**: Alert bulk admin docs ([3d963b1](https://github.com/dunbarcyber/cyphon/commit/3d963b1))
 - **query.search**: search query classes ([76dac5d](https://github.com/dunbarcyber/cyphon/commit/76dac5d))
 - **query.search**: search endpoint [PR #136](https://github.com/dunbarcyber/cyphon/pull/136) ([56bd2ce](https://github.com/dunbarcyber/cyphon/commit/56bd2ce))
+- **requirements.txt**: boto3, django-s3-storage, and ec2-metadata packages [PR #134](https://github.com/dunbarcyber/cyphon/pull/134) ([62751ee](https://github.com/dunbarcyber/cyphon/commit/62751ee))
 - **sifter.sieves**: numeric rules [PR #129](https://github.com/dunbarcyber/cyphon/pull/129) ([0fba6f4](https://github.com/dunbarcyber/cyphon/commit/0fba6f4))
-- **utils.parserutils**: added ``merge_dict()`` and ``abridge_dict()`` functions ([44e9fcd](https://github.com/dunbarcyber/cyphon/commit/44e9fcd))
+- **utils.parserutils**: ``merge_dict()`` and ``abridge_dict()`` functions ([44e9fcd](https://github.com/dunbarcyber/cyphon/commit/44e9fcd))
+- **utils.settings**: default configuration and pull secrets from SSM ([7796fc9](https://github.com/dunbarcyber/cyphon/commit/7796fc9))
 
 ### Changed
 

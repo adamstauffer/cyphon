@@ -31,7 +31,7 @@ ALERT_DETAIL = {
     'doc_id': '1',
     'incidents': 1,
     'status': 'NEW',
-    'link': 'http://localhost:8000/#/alerts?alertDetail=4',
+    'link': 'http://localhost:8000/app/alerts/4',
     'dispatches': [],
     'level': 'LOW',
     'title': 'Acme Supply Co',

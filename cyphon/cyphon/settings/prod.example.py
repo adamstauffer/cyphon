@@ -108,7 +108,7 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'django.log'),
             'when': 'midnight',
             'interval': 1,
-            'backupCount': '7',
+            'backupCount': 7,
             'formatter': 'verbose',
         },
         'receiver_file': {
@@ -117,7 +117,7 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'receiver.log'),
             'when': 'midnight',
             'interval': 1,
-            'backupCount': '7',
+            'backupCount': 7,
             'formatter': 'verbose',
         },
         'mail_admins': {

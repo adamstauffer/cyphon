@@ -27,50 +27,12 @@ import io
 import os
 import sys
 
-import boto3
-import botocore.exceptions
+# third party
 from django.core.management.utils import get_random_secret_key
 from ec2_metadata import ec2_metadata
-import requests
 
-
-# Determine if the application is running in an AWS EC2 instance.
-ON_EC2 = False
-if os.path.exists('/sys/hypervisor/uuid'):
-    with io.open('/sys/hypervisor/uuid', 'r') as f:
-        if f.read().startswith('ec2'):
-            try:
-                ON_EC2 = bool(ec2_metadata.instance_id)
-            except requests.Timeout:
-                pass
-
-
-def get_ssm_param(name, decrypt=True):
-    """Fetches a configuration parameter from EC2 Systems Manager (SSM)."""
-    client = boto3.client('ssm')
-    try:
-        response = client.get_parameter(Name=name, WithDecryption=decrypt)
-        return response['Parameter']['Value']
-    except KeyError:
-        return None
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'ParameterNotFound':
-            return None
-        raise
-
-
-def get_param(name, default=None, envvar=None, decrypt_ssm=True,
-              prefix='cyphon.'):
-    """Fetches a configuration parameter from SSM or the environment."""
-    if ON_EC2:
-        if prefix:
-            name = prefix + name
-        value = get_ssm_param(name, decrypt_ssm)
-        if value is not None:
-            return value
-    if envvar is None:
-        envvar = name.upper()[len(prefix):]
-    return os.getenv(envvar, default)
+# local
+from utils.settings import get_param, ON_EC2
 
 
 SECRET_KEY = get_param('secret_key', get_random_secret_key())
@@ -103,10 +65,6 @@ PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 HOME_DIR = os.path.dirname(PROJ_DIR)
 KEYS_DIR = os.path.join(HOME_DIR, 'keys')
 
-ALERTS = {
-    'ALERT_URL': '/#/alerts?alertDetail=',
-}
-
 APPUSERS = {
     'CUSTOM_FILTER_BACKENDS': []
 }
@@ -118,8 +76,6 @@ CODEBOOKS = {
 
 CYCLOPS = {
     'ENABLED': True,
-    'VERSION': '0.4.1',
-    'CDN_FORMAT': 'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.{1}',
     'MAPBOX_ACCESS_TOKEN': '',
     'LOCAL_ASSETS_ENABLED': False,
     'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
@@ -147,7 +103,7 @@ DISTILLERIES = {
     'RAW_DATA_KEY': '_raw_data',
 
     # dictionary key for adding a label to a document
-    'LABEL_KEY':  '_metadata',
+    'LABEL_KEY': '_metadata',
 
     # dictionary key for saving the name of the backend where the raw data is stored
     'BACKEND_KEY': 'backend',
@@ -175,7 +131,7 @@ ELASTICSEARCH = {
 EMAIL = {
     'DEFAULT_FROM': 'webmaster@localhost',
     'HOST': get_param('email_host', 'smtp.gmail.com'),
-    'HOST_USER': get_param('email_user', 'user') + '@',
+    'HOST_USER': get_param('email_user', ''),
     'HOST_PASSWORD': get_param('email_password', ''),
     'PORT': int(get_param('email_port', '587')),
     'SUBJECT_PREFIX': '[Cyphon] ',

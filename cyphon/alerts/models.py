@@ -37,6 +37,7 @@ from django.db import models
 from django.forms import fields
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 # local
 from cyphon.choices import (
@@ -54,10 +55,12 @@ from utils.parserutils.parserutils import (
     get_dict_value
 )
 
-_ALERT_SETTINGS = settings.ALERTS
+_ALERT_URL = '/app/alerts/'
+
 _PRIVATE_FIELD_SETTINGS = settings.PRIVATE_FIELDS
 
 _LOGGER = logging.getLogger(__name__)
+
 
 # allow parsing of ISO8601 datetime strings
 fields.DateTimeField.strptime = lambda o, v, f: \
@@ -215,7 +218,7 @@ class Alert(models.Model):
 
     _DEFAULT_TITLE = 'No title available'
     _HASH_FORMAT = ('{level}|{distillery}|{alarm_type}'
-                    '|{alarm_id}|{fields}|{bucket:.0f}')
+                    '|{alarm_id}|{field_values}|{bucket:.0f}')
 
     level = models.CharField(
         max_length=20,
@@ -235,7 +238,7 @@ class Alert(models.Model):
         blank=True,
         db_index=True
     )
-    created_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_date = models.DateTimeField(default=timezone.now, db_index=True)
     content_date = models.DateTimeField(blank=True, null=True, db_index=True)
     last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     assigned_user = models.ForeignKey(
@@ -315,28 +318,11 @@ class Alert(models.Model):
         if not self.title or self.title == self._DEFAULT_TITLE:
             self.title = self._format_title()
 
-        if (self.alarm and
-                hasattr(self.alarm, 'muzzle') and
-                self.alarm.muzzle.enabled):
-            fields = [
-                ':'.join((field, get_dict_value(field, self.data) or ''))
-                for field in sorted(self.alarm.muzzle._get_fields())
-            ]
-            interval_seconds = convert_time_to_seconds(
-                self.alarm.muzzle.time_interval,
-                self.alarm.muzzle.time_unit
-            )
-            self.muzzle_hash = hashlib.sha256(
-                self._HASH_FORMAT.format(
-                    level=self.level,
-                    distillery=self.distillery,
-                    alarm_type=self.alarm_type,
-                    alarm_id=self.alarm_id,
-                    fields=','.join(fields),
-                    bucket=time.time() // interval_seconds
-                ).encode()).hexdigest()
-        else:
-            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+        # set the created_date now so it can be used to create the muzzle_hash
+        if not self.created_date:
+            self.created_date = timezone.now()
+
+        self._update_muzzle_hash()
 
         super(Alert, self).save(*args, **kwargs)
 
@@ -346,8 +332,7 @@ class Alert(models.Model):
 
         """
         base_url = settings.BASE_URL
-        alert_url = _ALERT_SETTINGS['ALERT_URL']
-        return urllib.parse.urljoin(base_url, alert_url + str(self.id))
+        return urllib.parse.urljoin(base_url, _ALERT_URL + str(self.id))
 
     @property
     def coordinates(self):
@@ -375,9 +360,59 @@ class Alert(models.Model):
         """
         self.location = self.teaser.get('location')
 
+    def _get_muzzle(self):
+        """
+        Get the Muzzle associated with an Alert, if one exists.
+        """
+        if (self.alarm and hasattr(self.alarm, 'muzzle') and
+                self.alarm.muzzle.enabled):
+            return self.alarm.muzzle
+
+    def _get_bucket(self, muzzle):
+        """
+        Get the time bucket associated with an Alert and a given Muzzle.
+        """
+        total_seconds = time.mktime(self.created_date.timetuple())
+        interval_seconds = convert_time_to_seconds(
+            muzzle.time_interval,
+            muzzle.time_unit
+        )
+        return total_seconds // interval_seconds
+
+    def _get_field_values(self, muzzle):
+        """
+        Get a string of field names and field values associated with the
+        Muzzle of the Watchdog that created the Alert.
+        """
+        field_values = [
+            ':'.join((field, get_dict_value(field, self.data) or ''))
+            for field in sorted(muzzle.get_fields())
+        ]
+        return ','.join(field_values)
+
+    def _update_muzzle_hash(self):
+        """
+        Assigns a muzzle_hash to the Alert.
+        """
+        muzzle = self._get_muzzle()
+        if muzzle:
+            time_bucket = self._get_bucket(muzzle)
+            field_values = self._get_field_values(muzzle)
+            self.muzzle_hash = hashlib.sha256(
+                self._HASH_FORMAT.format(
+                    level=self.level,
+                    distillery=self.distillery,
+                    alarm_type=self.alarm_type,
+                    alarm_id=self.alarm_id,
+                    field_values=field_values,
+                    bucket=time_bucket
+                ).encode()).hexdigest()
+        else:
+            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+
     def _get_codebook(self):
         """
-        returns the Codebook for the Distillery associated with the Alert.
+        Returns the Codebook for the Distillery associated with the Alert.
         """
         if self.distillery:
             return self.distillery.codebook

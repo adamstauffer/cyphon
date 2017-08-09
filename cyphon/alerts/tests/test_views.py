@@ -198,6 +198,7 @@ class AlertBasicAPITests(AlertBaseAPITests):
             'level': 'MEDIUM',
             'status': 'BUSY',
         })
+        old_muzzle_hash = Alert.objects.get(pk=4).muzzle_hash
         updated_alert = ALERT_DETAIL.copy()
         updated_alert['data'] = {
             'content': {
@@ -211,6 +212,12 @@ class AlertBasicAPITests(AlertBaseAPITests):
         self.assertEqual(response.json(), updated_alert)
         self.assertEqual(response.data.get('level'), 'MEDIUM')
         self.assertEqual(response.data.get('status'), 'BUSY')
+        response = self.patch_to_api('4/', {
+            'level': 'MEDIUM',
+        })
+        new_muzzle_hash = Alert.objects.get(pk=4).muzzle_hash
+        self.assertEqual(response.data.get('level'), 'MEDIUM')
+        self.assertEqual(old_muzzle_hash, new_muzzle_hash)
 
 
 class AlertCollectionAPITests(AlertBaseAPITests):

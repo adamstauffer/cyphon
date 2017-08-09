@@ -370,7 +370,7 @@ class Muzzle(models.Model):
     def __str__(self):
         return str(self.watchdog)
 
-    def _get_fields(self):
+    def get_fields(self):
         """
         Returns a list of field names created from the Muzzle's
         matching_fields.

@@ -45,7 +45,8 @@
         API_TIMEOUT: 30000,
         NOTIFICATIONS_SERVICE_WORKER_URL: '/sw.js',
         NOTIFICATIONS_ENABLED: {{ notifications_enabled | lower }},
-        MAPBOX_ACCESS_TOKEN: '{{ mapbox_access_token }}'
+        MAPBOX_ACCESS_TOKEN: '{{ mapbox_access_token }}',
+        CYPHON_VERSION: '{{ cyphon_version }}'
       };
     </script>
     {% if local_assets_enabled %}
