@@ -33,10 +33,11 @@ import elasticsearch
 
 
 _ES_SETTINGS = settings.ELASTICSEARCH
+_ES_HOSTS = _ES_SETTINGS.get('HOSTS', ['localhost:9200'])
+_ES_KWARGS = _ES_SETTINGS.get('KWARGS', {'timeout': 30})
 
+ELASTICSEARCH = elasticsearch.Elasticsearch(_ES_HOSTS, **_ES_KWARGS)
 
-ELASTICSEARCH = elasticsearch.Elasticsearch(_ES_SETTINGS['HOSTS'],
-                                            **_ES_SETTINGS['KWARGS'])
 """:class:`~elasticsearch.Elasticsearch`
 
 Low-level Elasticsearch client. Provides a straightforward mapping from
