@@ -27,7 +27,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 - **alerts**: only fields defined in Container are shown in Alert data [PR #127](https://github.com/dunbarcyber/cyphon/pull/127) ([cdd0c68](https://github.com/dunbarcyber/cyphon/commit/cdd0c68))
 - **alerts**: doc_id field included in serialized Alert detail [PR #145](https://github.com/dunbarcyber/cyphon/pull/145) ([c62dca4](https://github.com/dunbarcyber/cyphon/commit/c62dca4))
+- **cyphon.settings, engines.elasticsearch**: support more Elasticsearch configuration options [PR #170](https://github.com/dunbarcyber/cyphon/pull/170) ([91312dc](https://github.com/dunbarcyber/cyphon/commit/91312dc))
 - **watchdogs**: removed Alert table locking [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
+
+### Fixed
+
+- **cyphon.settings**: corrected ``backupCount`` setting for logging handlers ([e150db1](https://github.com/dunbarcyber/cyphon/commit/e150db1))
 
 ### Removed
 
