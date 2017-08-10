@@ -10,7 +10,7 @@ Project Configuration
 Django
 ******
 
-Cyphon's backend is based on the `Django`_ web framework. Settings for the 
+Cyphon's backend is based on the `Django`_ web framework. Settings for the
 Cyphon Django project are found in the ``cyphon/settings`` directory.
 
 The ``conf.py`` file contains settings specific to your Cyphon instance, including credentials for connecting to PostgreSQL, RabbitMQ, Elasticsearch, and MongoDB.
@@ -22,17 +22,63 @@ Edit the ``conf.py`` file with the IP address and/or domain name for your host m
        'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
     }
 
-You should also change the Django ``SECRET_KEY`` to something unique. 
+You should also change the Django ``SECRET_KEY`` to something unique.
 You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
 
 Configure settings for PostgreSQL, RabbitMQ, Elasticsearch and/or MongoDB. (If you're deploying with `Cyphondock`_, you can use the default settings.)
 
-The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general 
-settings for Django and other third-party apps used by Cyphon. At a 
-minimum, you should configure the ``BASE_URL`` setting in the ``dev.py`` 
-and ``prod.py`` files. You can read more about Django's settings in  
+The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general
+settings for Django and other third-party apps used by Cyphon. At a
+minimum, you should configure the ``BASE_URL`` setting in the ``dev.py``
+and ``prod.py`` files. You can read more about Django's settings in
 `Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
 
+.. _secrets_management:
+
+Managing Secrets
+----------------
+
+In a development environment, hardcoding secrets such as the ``SECRET_KEY`` and
+database credentials in the configuration files is typical and usually poses no
+security risk, but in a production environment, it is generally a best practice
+to use a secrets management tool, such as `Vault <https://www.vaultproject.io/>`__,
+or at the very least, encrypt and store secrets separately and inject them into
+the server at runtime.
+
+If you are rolling your own secrets management, a reasonable way to configure
+Cyphon would be to use ``os.getenv`` for sensitive settings, and pass them into
+the Docker container as environment variables.
+
+If you are deploying Cyphon on Amazon Web Services (AWS), you can leverage
+the Simple Systems Manager (SSM)
+`Parameter Store <https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html>`__
+for secrets management, and use :func:`utils.settings.get_param`::
+
+    ELASTICSEARCH = {
+        'HOSTS': [
+            {
+                'host': get_param('elasticsearch_host', 'elasticsearch'),
+                'port': int(get_param('elasticsearch_port', '9200')),
+                'http_auth': get_param('elasticsearch_http_auth'),
+                'use_ssl': bool(int(get_param('elasticsearch_use_ssl', False))),
+            },
+        ],
+    }
+
+
+The :func:`utils.settings.get_param` function will first check SSM for
+existing parameters, and fall back to environment variables. Defaults can also
+be provided, and will be used if no SSM parameters or environment variables
+exist. Note that parameters in SSM are expected to be prefixed by namespace,
+which is usually a good idea as you can restrict resource access in your
+security groups to only specific parameter namespaces. For instance, the
+parameters above would be stored in SSM as ``cyphon.elasticsearch_*``.
+Of course, the prefix can be changed or disabled if desired.
+
+To store secrets as parameters in SSM, please see the AWS documentation on the
+parameter store. Typically, you would use the AWS console or CLI, and ensure
+that the parameter type is always set to ``SecureString``, which results in
+your secrets being encrypted with your KMS master key.
 
 .. _cyclops-config:
 
