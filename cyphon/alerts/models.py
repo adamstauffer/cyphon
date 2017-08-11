@@ -46,7 +46,7 @@ from cyphon.choices import (
     ALERT_OUTCOME_CHOICES,
 )
 from distilleries.models import Distillery
-from tags.models import Tag
+from tags.models import TagRelation
 from utils.dateutils.dateutils import convert_time_to_seconds
 from utils.dbutils.dbutils import json_encodeable
 from utils.parserutils.parserutils import (
@@ -88,7 +88,7 @@ class AlertManager(models.Manager):
         """
         default_queryset = self.api_queryset()
         return default_queryset.select_related('distillery__company__codebook')\
-                .prefetch_related('distillery__company__codebook__codenames')
+               .prefetch_related('distillery__company__codebook__codenames')
 
     @staticmethod
     def _filter_by_group(user, queryset):
@@ -276,7 +276,6 @@ class Alert(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     incidents = models.PositiveIntegerField(default=1)
     notes = models.TextField(blank=True, null=True)
-    tags = models.ManyToManyField(Tag, blank=True)
     muzzle_hash = models.CharField(
         max_length=64,
         blank=True,

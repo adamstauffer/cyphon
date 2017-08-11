@@ -22,20 +22,43 @@ Tests the Company class.
 from django.test import TestCase
 
 # local
-from categories.models import Category
+from alerts.models import Alert
+from tags.models import Tag, TagRelation
 from tests.fixture_manager import get_fixtures
 
 
-class CategoryTestCase(TestCase):
+class TagTestCase(TestCase):
     """
-    Base class for testing the CodeBook class and related classes.
+    Base class for testing the Tag class.
     """
-    fixtures = get_fixtures(['categories'])
+    fixtures = get_fixtures(['tags'])
 
     def test_str(self):
         """
         Tests the __str__ method.
         """
-        category = Category.objects.get(pk=1)
-        self.assertEqual(str(category), 'reports')
+        tag = Tag.objects.get(pk=1)
+        self.assertEqual(str(tag), 'cat')
 
+    def test_assign_tag(self):
+        """
+        Tests the assign_tag method.
+        """
+        tag = Tag.objects.get(pk=2)
+        alert = Alert.objects.get(pk=1)
+        tag_relation = tag.assign_tag(alert)
+        self.assertEqual(tag_relation.tagged_object, alert)
+
+
+class TagRelationTestCase(TestCase):
+    """
+    Base class for testing the TagRelation class.
+    """
+    fixtures = get_fixtures(['tags'])
+
+    def test_str(self):
+        """
+        Tests the __str__ method.
+        """
+        tag_relation = TagRelation.objects.get(pk=1)
+        self.assertEqual(str(tag_relation), 'cat <Alert: PK 1: Acme Supply Co>')

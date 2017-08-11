@@ -1,0 +1,25 @@
+[  
+  {
+    "model": "tags.tag",
+    "fields": {
+      "id": 1,
+      "name": "cat"
+    }
+  },
+  {
+    "model": "tags.tag",
+    "fields": {
+      "id": 2,
+      "name": "dog"
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 1,
+      "content_type": ["alerts", "alert"],
+      "object_id": 1,
+      "tag": ["cat"]
+    }
+  }
+]

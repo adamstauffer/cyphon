@@ -79,6 +79,7 @@ FIXTURE_DEPENDENCIES = {
     'searchterms': [],
     'stamps': ['passports', 'pipes', 'actions', 'users'],
     'streams': ['invoices'],
+    'tags': ['alerts', 'comments'],
     'tastes': ['containers'],
     'timeframes': [],
     'warehouses': [],

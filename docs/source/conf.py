@@ -631,6 +631,8 @@ rst_epilog = """
 .. |TARGET_TYPE_CHOICES| replace:: :const:`~cyphon.choices.TARGET_TYPE_CHOICES`
 .. |Tag| replace:: :class:`~tags.models.Tag`
 .. |Tags| replace:: :class:`Tags<tags.models.Tag>`
+.. |TagRelation| replace:: :class:`~tags.models.TagRelation`
+.. |TagRelations| replace:: :class:`Tags<tags.models.TagRelation>`
 .. |Taste| replace:: :class:`~bottler.tastes.models.Taste`
 .. |Tastes| replace:: :class:`Tastes<bottler.tastes.models.Taste>`
 .. |Teaser| replace:: :class:`~teasers.models.Teaser>`
