@@ -52,7 +52,22 @@ the Docker container as environment variables.
 If you are deploying Cyphon on Amazon Web Services (AWS), you can leverage
 the Simple Systems Manager (SSM)
 `Parameter Store <https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html>`__
-for secrets management, and use :func:`utils.settings.get_param`::
+for secrets management, and use :func:`utils.settings.get_param`.
+
+First, import the following additional packages in your ``cyphon/settings/conf.py`` file::
+
+    # third party
+    from ec2_metadata import ec2_metadata
+
+    # local
+    from utils.settings import get_param, ON_EC2
+
+Then, below ``HOST_SETTINGS``, add the following code::
+
+    if ON_EC2:
+        HOST_SETTINGS['ALLOWED_HOSTS'].append(ec2_metadata.private_ipv4)
+
+Finally, use :func:`~utils.settings.get_param` to import individual settings::
 
     ELASTICSEARCH = {
         'HOSTS': [
@@ -65,8 +80,7 @@ for secrets management, and use :func:`utils.settings.get_param`::
         ],
     }
 
-
-The :func:`utils.settings.get_param` function will first check SSM for
+The :func:`~utils.settings.get_param` function will first check SSM for
 existing parameters, and fall back to environment variables. Defaults can also
 be provided, and will be used if no SSM parameters or environment variables
 exist. Note that parameters in SSM are expected to be prefixed by namespace,
