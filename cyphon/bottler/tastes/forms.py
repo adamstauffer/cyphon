@@ -103,4 +103,3 @@ class TasteInlineForm(auto_forms.ModelForm, AutoCompleteModelFormMixin):
         self._restore_value('location', 'FilterLocationFieldsByBottleAndLabel')
         self._restore_value('datetime', 'FilterDateTimeFieldsByBottleAndLabel')
         self._restore_value('date_string', 'FilterCharFieldsByBottleAndLabel')
-
