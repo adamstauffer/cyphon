@@ -301,6 +301,8 @@ class Monitor(Alarm):
         if self._is_overdue():
             self.status = self._UNHEALTHY
             self._alert(old_status)
+        else:
+            self.status = self._HEALTHY
         self.save()  # update record even if healthy
         return self.status
 
