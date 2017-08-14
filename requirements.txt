@@ -39,14 +39,14 @@ oauthlib==2.0.2
 pika==0.10.0
 psycopg2==2.7.3
 PyJWT==1.5.2
-pymongo==3.4.0
+pymongo==3.5.0
 python-dateutil==2.6.1
 pytz==2017.2
 requests-oauthlib==0.8.0
 requests-toolbelt==0.8.0
 requests==2.18.3
 sauceclient==1.0.0
-selenium==3.4.3
+selenium==3.5.0
 six==1.10.0
 testfixtures==5.1.1
 textblob==0.12.0
