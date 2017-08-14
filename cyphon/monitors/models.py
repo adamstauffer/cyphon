@@ -303,7 +303,7 @@ class Monitor(Alarm):
             self._alert(old_status)
         else:
             self.status = self._HEALTHY
-        self.save()  # update record even if healthy
+        self.save()
         return self.status
 
     def last_doc(self):
