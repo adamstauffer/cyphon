@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ## [Unreleased]
 
 
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/dunbarcyber/cyphon/compare/1.4.0...1.4.1) (2017-08-14)
+
+### Fixed
+
+- **monitors**: fixed bug that prevented red monitors from changing back to green [PR #184](https://github.com/dunbarcyber/cyphon/pull/184) ([28f1f64](https://github.com/dunbarcyber/cyphon/commit/28f1f64))
+
+
 <a name="1.4.0"></a>
 ## [1.4.0](https://github.com/dunbarcyber/cyphon/compare/1.3.0...1.4.0) (2017-08-14)
 

@@ -179,6 +179,28 @@ class MonitorTestCase(TestCase):
     @patch_find_by_id()
     @patch('alerts.models.Alert.teaser')
     @patch('monitors.models.timezone.now', return_value=EARLY)
+    def test_not_overdue_red(self, mock_now, mock_teaser):
+        """
+        Tests the update_status method of the Monitor class when the
+        health check is not overdue, the current status is not 'RED',
+        and alerts are enabled.
+        """
+        monitor = self.monitor_red
+        assert monitor.status == 'RED'
+        assert Alert.objects.count() == 0
+
+        result = monitor.update_status()
+
+        # get a fresh instance from the database
+        updated_monitor = Monitor.objects.get(pk=monitor.pk)
+        self.assertEqual(updated_monitor.last_updated, EARLY)
+        self.assertEqual(updated_monitor.status, 'GREEN')
+        self.assertEqual(Alert.objects.count(), 0)
+        self.assertEqual(result, 'GREEN')
+
+    @patch_find_by_id()
+    @patch('alerts.models.Alert.teaser')
+    @patch('monitors.models.timezone.now', return_value=EARLY)
     def test_not_overdue_not_red(self, mock_now, mock_teaser):
         """
         Tests the update_status method of the Monitor class when the

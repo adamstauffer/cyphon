@@ -301,7 +301,9 @@ class Monitor(Alarm):
         if self._is_overdue():
             self.status = self._UNHEALTHY
             self._alert(old_status)
-        self.save()  # update record even if healthy
+        else:
+            self.status = self._HEALTHY
+        self.save()
         return self.status
 
     def last_doc(self):
