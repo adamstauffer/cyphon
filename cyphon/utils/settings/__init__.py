@@ -14,9 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+"""
+
+# standard library
 import io
 import os
 
+# third party
 import boto3
 import botocore.exceptions
 from ec2_metadata import ec2_metadata
