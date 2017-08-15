@@ -427,6 +427,52 @@ class Alert(models.Model):
             return title[:max_length]
         return title
 
+    def _get_schema(self):
+        """
+        Returns a list of DataFields in the Container associated with
+        the Alert's data.
+        """
+        if self.distillery:
+            return self.distillery.schema
+
+    def _summarize(self, include_empty=False):
+        """
+
+        """
+        source_data = self.get_public_data_str()
+
+        field_data = [
+            ('Alert ID', self.id),
+            ('Title', self.title),
+            ('Level', self.level),
+            ('Incidents', self.incidents),
+            ('Created date', self.created_date),
+            ('\nCollection', self.distillery),
+            ('Document ID', self.doc_id),
+            ('Source Data', '\n' + source_data),
+            ('\nNotes', '\n' + str(self.notes)),
+        ]
+
+        return format_fields(field_data, include_empty=include_empty)
+
+    def _summarize_with_comments(self, include_empty=False):
+        """
+
+        """
+        summary = self._summarize(include_empty=include_empty)
+
+        separator = '\n\n'
+        division = '-----'
+
+        if self.comments.count() > 0:
+            summary += separator
+            summary += division
+            for comment in self.comments.all():
+                summary += separator
+                summary += comment.summary()
+
+        return summary
+
     def display_title(self):
         """
         Return the Alert's title or a default title.
@@ -468,14 +514,6 @@ class Alert(models.Model):
                 _LOGGER.warning('The document associated with id %s cannot be ' \
                                 + 'found in %s.', self.doc_id, self.distillery)
         return {}
-
-    def _get_schema(self):
-        """
-        Returns a list of DataFields in the Container associated with
-        the Alert's data.
-        """
-        if self.distillery:
-            return self.distillery.schema
 
     @property
     def tidy_data(self):
@@ -528,44 +566,6 @@ class Alert(models.Model):
         # and avoids race conditions
         self.incidents = models.F('incidents') + 1
         self.save()
-
-    def _summarize(self, include_empty=False):
-        """
-
-        """
-        source_data = self.get_public_data_str()
-
-        field_data = [
-            ('Alert ID', self.id),
-            ('Title', self.title),
-            ('Level', self.level),
-            ('Incidents', self.incidents),
-            ('Created date', self.created_date),
-            ('\nCollection', self.distillery),
-            ('Document ID', self.doc_id),
-            ('Source Data', '\n' + source_data),
-            ('\nNotes', '\n' + str(self.notes)),
-        ]
-
-        return format_fields(field_data, include_empty=include_empty)
-
-    def _summarize_with_comments(self, include_empty=False):
-        """
-
-        """
-        summary = self._summarize(include_empty=include_empty)
-
-        separator = '\n\n'
-        division = '-----'
-
-        if self.comments.count() > 0:
-            summary += separator
-            summary += division
-            for comment in self.comments.all():
-                summary += separator
-                summary += comment.summary()
-
-        return summary
 
     def summary(self, include_empty=False, include_comments=False):
         """
