@@ -296,7 +296,7 @@ class Alert(models.Model):
         if self.title:
             return 'PK %s: %s' % (self.pk, self.title)
         elif self.pk:
-            return 'PK %s'  % self.pk
+            return 'PK %s' % self.pk
         else:
             return super(Alert, self).__str__()
 
