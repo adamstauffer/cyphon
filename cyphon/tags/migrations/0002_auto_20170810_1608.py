@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('object_id', models.PositiveIntegerField(blank=True, null=True)),
                 ('tag_date', models.DateTimeField(auto_now_add=True, null=True)),
                 ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='contenttypes.ContentType')),
-                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tags.Tag')),
+                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, , related_name='tag_relations', related_query_name='tag_relations', to='tags.Tag')),
                 ('tagged_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
             ],
         ),

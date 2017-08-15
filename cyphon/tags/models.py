@@ -119,7 +119,11 @@ class TagRelation(models.Model):
     )
     object_id = models.PositiveIntegerField(blank=True, null=True)
     tagged_object = GenericForeignKey('content_type', 'object_id')
-    tag = models.ForeignKey(Tag)
+    tag = models.ForeignKey(
+        Tag,
+        related_name='tag_relations',
+        related_query_name='tag_relations'
+    )
     tag_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     tagged_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
