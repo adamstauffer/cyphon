@@ -261,7 +261,7 @@ class Alert(models.Model):
         blank=True,
         null=True,
         related_name='alerts',
-        related_query_name='alert',
+        related_query_name='alerts',
         db_index=True,
         on_delete=models.PROTECT
     )
