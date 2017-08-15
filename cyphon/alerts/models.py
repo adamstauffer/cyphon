@@ -46,7 +46,7 @@ from cyphon.choices import (
     ALERT_OUTCOME_CHOICES,
 )
 from distilleries.models import Distillery
-from tags.models import TagRelation
+from tags.models import Tag, TagRelation
 from utils.dateutils.dateutils import convert_time_to_seconds
 from utils.dbutils.dbutils import json_encodeable
 from utils.parserutils.parserutils import (
@@ -557,6 +557,24 @@ class Alert(models.Model):
             return self.distillery.get_sample(self.data)
         else:
             return {}
+
+    @property
+    def associated_tags(self):
+        """
+        Returns a QuerySet of Tags associated with the Alert or its comments.
+        """
+        comment_ids = self.comments.all().values_list('id', flat=True)
+        alert_relations = models.Q(
+            content_type=ContentType.objects.get_for_model(Alert),
+            object_id=self.id
+        )
+        comment_relations = models.Q(
+            content_type=ContentType.objects.get_for_model(Comment),
+            object_id__in=comment_ids
+        )
+        query = alert_relations | comment_relations
+        tag_relations = TagRelation.objects.filter(query)
+        return Tag.objects.filter(tag_relations__in=tag_relations).distinct()
 
     def add_incident(self):
         """
