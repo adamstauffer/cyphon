@@ -260,8 +260,8 @@ class Alert(models.Model):
         Distillery,
         blank=True,
         null=True,
-        related_name='alert',
-        related_query_name='alerts',
+        related_name='alerts',
+        related_query_name='alert',
         db_index=True,
         on_delete=models.PROTECT
     )
