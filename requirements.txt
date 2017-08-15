@@ -44,7 +44,7 @@ python-dateutil==2.6.1
 pytz==2017.2
 requests-oauthlib==0.8.0
 requests-toolbelt==0.8.0
-requests==2.18.3
+requests==2.18.4
 sauceclient==1.0.0
 selenium==3.5.0
 six==1.10.0
