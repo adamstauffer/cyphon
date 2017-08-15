@@ -3,13 +3,20 @@
     "model": "tags.tag",
     "fields": {
       "id": 1,
-      "name": "cat"
+      "name": "bird"
     }
   },
   {
     "model": "tags.tag",
     "fields": {
       "id": 2,
+      "name": "cat"
+    }
+  },
+  {
+    "model": "tags.tag",
+    "fields": {
+      "id": 3,
       "name": "dog"
     }
   },
@@ -19,6 +26,51 @@
       "id": 1,
       "content_type": ["alerts", "alert"],
       "object_id": 1,
+      "tag": ["cat"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 2,
+      "content_type": ["alerts", "alert"],
+      "object_id": 3,
+      "tag": ["bird"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 3,
+      "content_type": ["alerts", "alert"],
+      "object_id": 3,
+      "tag": ["cat"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 4,
+      "content_type": ["alerts", "alert"],
+      "object_id": 4,
+      "tag": ["cat"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 5,
+      "content_type": ["alerts", "comment"],
+      "object_id": 1,
+      "tag": ["dog"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 6,
+      "content_type": ["alerts", "comment"],
+      "object_id": 2,
       "tag": ["cat"]
     }
   }

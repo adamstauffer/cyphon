@@ -37,14 +37,14 @@ class TagTestCase(TestCase):
         """
         Tests the __str__ method.
         """
-        tag = Tag.objects.get(pk=1)
+        tag = Tag.objects.get_by_natural_key('cat')
         self.assertEqual(str(tag), 'cat')
 
     def test_assign_tag(self):
         """
         Tests the assign_tag method.
         """
-        tag = Tag.objects.get(pk=2)
+        tag = Tag.objects.get(pk=3)
         alert = Alert.objects.get(pk=1)
         tag_relation = tag.assign_tag(alert)
         self.assertEqual(tag_relation.tagged_object, alert)
