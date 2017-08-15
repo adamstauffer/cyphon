@@ -31,8 +31,8 @@ from rest_framework import serializers
 
 # local
 from bottler.containers.serializers import ContainerSerializer
-from .models import Distillery
 from contexts.serializers import ContextSerializer
+from .models import Distillery
 
 
 class DistilleryDetailSerializer(serializers.ModelSerializer):
