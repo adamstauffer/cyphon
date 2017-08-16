@@ -13,7 +13,6 @@ def transfer_tags(apps, schema_editor):
     while Alert.objects.filter(tags__isnull=False).exists():
         with transaction.atomic():
             for alert in Alert.objects.filter(tags__isnull=False)[:1000]:
-                print(alert)
                 for tag in alert.tags.all():
                     model_type = ContentType.objects.get_for_model(alert)
                     TagRelation.objects.create(
