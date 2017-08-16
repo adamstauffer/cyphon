@@ -25,7 +25,17 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 # local
 from tags.models import TagRelation
 from taxonomies.admin import TaxonomyAdmin
+from .forms import TagForm
 from .models import Tag
+
+
+@admin.register(Tag)
+class TagAdmin(TaxonomyAdmin):
+    """
+    Customizes inline admin forms for |Tags|.
+    """
+
+    form = TagForm
 
 
 class TagRelationInlineAdmin(GenericTabularInline):
@@ -56,6 +66,3 @@ class TagRelationAdmin(admin.ModelAdmin):
         'generic': [['content_type', 'object_id'], ],
     }
     readonly_fields = ['tagged_by', 'tag_date']
-
-
-admin.site.register(Tag, TaxonomyAdmin)
