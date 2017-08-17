@@ -31,8 +31,13 @@
       "doc_id": 2,
       "location": "POINT (-78.2 36.4)",
       "data": {
+        "content": {
+          "text": "This is some text about wild cats."
+        },
         "user": {
-          "email": "user@example.com"
+          "email": "user@example.com",
+          "name": "Pied Piper",
+          "screenname": "piedpiper"
         }
       }
     }
