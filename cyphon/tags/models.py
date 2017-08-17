@@ -36,6 +36,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
+from django.db.utils import IntegrityError
 from django.utils.translation import ugettext_lazy as _
 import nltk
 
@@ -45,10 +46,11 @@ from cyphon.models import GetByNameManager
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import lowercase_validator
 
+_LEMMATIZER = nltk.stem.WordNetLemmatizer()
 _LOGGER = logging.getLogger(__name__)
 
 nltk.download('punkt')
-
+nltk.download('wordnet')
 
 class Tag(models.Model):
     """A term for describing objects.
@@ -227,9 +229,14 @@ class DataTagger(models.Model):
 
         """
         super(DataTagger, self).clean()
+
+        if self.field_name not in self.container.get_field_list():
+            raise ValidationError(_('The given field name does not '
+                                    'appear in the selected Container.'))
+
         if self.create_tags and not self.exact_match:
             raise ValidationError(_('The "create tags" feature is only '
-                                    'avialable for exact matches.'))
+                                    'available for exact matches.'))
 
     def _get_value(self, alert):
         """Return a lowercase string from an Alert's data field."""
@@ -242,9 +249,9 @@ class DataTagger(models.Model):
         """Create a new Tag from a tag_name."""
         try:
             return Tag.objects.create(name=tag_name)
-        except ValidationError as error:
+        except (IntegrityError, ValidationError) as error:
             _LOGGER.error('An error occurred while creating '
-                          'a new tag : %s', error)
+                          'a new tag "%s": %s', tag_name, error)
 
     def _get_tag(self, tag_name):
         """Return a Tag with the given tag name.
@@ -258,25 +265,31 @@ class DataTagger(models.Model):
             if self.create_tags:
                 return self._create_tag(tag_name)
 
+    @staticmethod
+    def _get_tokens(value):
+        """Convert a string into a set of raw and stemmed tokens."""
+        tokens = nltk.word_tokenize(value)
+        tokens += [_LEMMATIZER.lemmatize(token) for token in tokens]
+        return set(tokens)
+
     def _tag_exact_match(self, alert, value):
         """Assign a Tag to an Alert based on an exact match."""
         tag = self._get_tag(value)
         if tag:
             tag.assign_tag(alert)
 
-    @staticmethod
-    def _tag_partial_match(alert, value):
+    def _tag_partial_match(self, alert, value):
         """Assign a Tag to an Alert based on a partial match.
 
         If a Tag contains more than one token, looks for the
         """
-        tokens = nltk.word_tokenize(value)
+        tokens = self._get_tokens(value)
         for tag in Tag.objects.all():
-            tag_tokens = nltk.word_tokenize(tag)
+            tag_tokens = nltk.word_tokenize(tag.name)
             if (len(tag_tokens) > 1):
-                contains_tag = tag in value
+                contains_tag = tag.name in value
             else:
-                contains_tag = tag in tokens
+                contains_tag = tag.name in tokens
             if contains_tag:
                 tag.assign_tag(alert)
 
