@@ -23,14 +23,12 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 # local
-from tags.models import TagRelation
-from taxonomies.admin import TaxonomyAdmin
 from .forms import TagForm
-from .models import Tag
+from .models import DataTagger, Tag, TagRelation
 
 
 @admin.register(Tag)
-class TagAdmin(TaxonomyAdmin):
+class TagAdmin(admin.ModelAdmin):
     """
     Customizes inline admin forms for |Tags|.
     """
@@ -66,3 +64,11 @@ class TagRelationAdmin(admin.ModelAdmin):
         'generic': [['content_type', 'object_id'], ],
     }
     readonly_fields = ['tagged_by', 'tag_date']
+
+
+@admin.register(DataTagger)
+class DataTaggerAdmin(admin.ModelAdmin):
+    """
+    Customizes inline admin forms for |DataTaggers|.
+    """
+    pass
