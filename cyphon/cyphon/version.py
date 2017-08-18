@@ -18,7 +18,7 @@
 # third party
 from django.utils.deprecation import MiddlewareMixin
 
-VERSION = '1.4.0'
+VERSION = '1.4.1'
 """str
 
 Current Cyphon version.
