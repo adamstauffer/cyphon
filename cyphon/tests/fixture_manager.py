@@ -46,7 +46,7 @@ FIXTURE_DEPENDENCIES = {
     'datacondensers': ['bottles'],
     'datamungers': ['datacondensers', 'distilleries'],
     'datasieves': [],
-    'datataggers': ['containers'],
+    'datataggers': ['containers', 'tags'],
     'destinations': [],
     'dispatches': ['alerts', 'stamps'],
     'distilleries': ['categories', 'containers', 'companies',

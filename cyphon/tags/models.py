@@ -43,6 +43,7 @@ import nltk
 # local
 from bottler.containers.models import Container
 from cyphon.models import GetByNameManager
+from taxonomies.models import Taxonomy, TaxonomyManager
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import lowercase_validator
 
@@ -51,6 +52,27 @@ _LOGGER = logging.getLogger(__name__)
 
 nltk.download('punkt')
 nltk.download('wordnet')
+
+
+class Topic(Taxonomy):
+    """A category used to classify |Tags|.
+
+    Attributes
+    ----------
+    name : str
+        The name of the Topic.
+
+    """
+
+    name = models.CharField(max_length=255, unique=True)
+
+    objects = TaxonomyManager()
+
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['name']
+
 
 class Tag(models.Model):
     """A term for describing objects.
@@ -61,12 +83,13 @@ class Tag(models.Model):
         The name of the Tag.
 
     """
+
     name = models.CharField(
         max_length=255,
-        unique=True,
         validators=[lowercase_validator],
         help_text=_('Tags must be lowercase.')
     )
+    topic = models.ForeignKey(Topic, blank=True, null=True)
 
     objects = GetByNameManager()
 
@@ -74,6 +97,7 @@ class Tag(models.Model):
         """Metadata options."""
 
         ordering = ['name']
+        unique_together = ['name', 'topic']
 
     def __str__(self):
         """Return a string representation of the Tag."""
@@ -177,23 +201,35 @@ class DataTagger(models.Model):
     field_name : str
         The name of the field to be inspected.
 
+    topics : `QuerySet` of `Topics`
+        |Topics| for |Tags| that should be used to analyze the field.
+
     exact_match : bool
         Whether the value of the field must exactly match a |Tag|.
 
-    create_tag : bool
+    create_tags : bool
         Whether a |Tag| should be created from the value of a field.
+        If |True|, create news |Tags| under the |Topic| defined by
+        :attr:`DataTagger.default_topic`.
 
     """
     container = models.ForeignKey(Container)
     field_name = models.CharField(max_length=255)
+    topics = models.ManyToManyField(
+        Topic,
+        help_text=_('Restrict tagging to these topics. '
+                    'If none are selected, all topics will be included '
+                    'in the analysis.')
+    )
     exact_match = models.BooleanField(
         default=False,
-        help_text=_('Add new tags from this field '
-                    '(only available when using exact match).')
+        help_text=_('Match the entire content of the field. If checked, '
+                    'please select one and only one tag topic for '
+                    'analyzing this field.')
     )
     create_tags = models.BooleanField(
         default=False,
-        help_text=_('Add new tags from this field '
+        help_text=_('Create new tags from this field '
                     '(only available when using exact match).')
     )
 
@@ -210,9 +246,6 @@ class DataTagger(models.Model):
     def clean(self):
         """Validate the model as a whole.
 
-        Provides custom model validation. If `create_tag` is |True|,
-        checks that the `exact_match` is |True| as well.
-
         Returns
         -------
         None
@@ -220,7 +253,10 @@ class DataTagger(models.Model):
         Raises
         ------
         ValidationError
-            If `create_tags` is |True| but the `exact_match` is not.
+            If the `field_name` does not represent a field in the
+            `container`, or if `exact_match` is |True| and zero or
+            multiple `topics` are selected, or if `create_tags` is
+            |True| but `exact_match` is |False|.
 
         See also
         --------
@@ -234,6 +270,10 @@ class DataTagger(models.Model):
             raise ValidationError(_('The given field name does not '
                                     'appear in the selected Container.'))
 
+        if self.exact_match and self.topics.count() != 1:
+            raise ValidationError(_('Select exactly one tag topic when using '
+                                    'exact matches.'))
+
         if self.create_tags and not self.exact_match:
             raise ValidationError(_('The "create tags" feature is only '
                                     'available for exact matches.'))
@@ -244,14 +284,27 @@ class DataTagger(models.Model):
         if isinstance(value, str):
             return value.lower()
 
-    @staticmethod
-    def _create_tag(tag_name):
+    def _create_tag(self, tag_name):
         """Create a new Tag from a tag_name."""
         try:
-            return Tag.objects.create(name=tag_name)
+            topic = self.topics.all()[0]
+            return Tag.objects.create(name=tag_name, topic=topic)
         except (IntegrityError, ValidationError) as error:
             _LOGGER.error('An error occurred while creating '
                           'a new tag "%s": %s', tag_name, error)
+
+    def _get_relevant_tags(self):
+        """Return a QuerySet of Tags to include in the analysis.
+
+        If the DataTagger is associated with particular Topics, only
+        returns Tags belonging to those Topics. Otherwise, returns
+        all Tags.
+        """
+        topics = self.topics.all()
+        if topics:
+            return Tag.objects.filter(topic__in=topics)
+        else:
+            return Tag.objects.all()
 
     def _get_tag(self, tag_name):
         """Return a Tag with the given tag name.
@@ -260,14 +313,15 @@ class DataTagger(models.Model):
         self.create_tags is True.
         """
         try:
-            return Tag.objects.get(name=tag_name)
+            tags = self._get_relevant_tags()
+            return tags.get(name=tag_name)
         except ObjectDoesNotExist:
             if self.create_tags:
                 return self._create_tag(tag_name)
 
     @staticmethod
     def _get_tokens(value):
-        """Convert a string into a set of raw and stemmed tokens."""
+        """Convert a string into a set of raw and lemmatized tokens."""
         tokens = nltk.word_tokenize(value)
         tokens += [_LEMMATIZER.lemmatize(token) for token in tokens]
         return set(tokens)
@@ -281,10 +335,12 @@ class DataTagger(models.Model):
     def _tag_partial_match(self, alert, value):
         """Assign a Tag to an Alert based on a partial match.
 
-        If a Tag contains more than one token, looks for the
+        If a Tag contains more than one token, matches the Tag against
+        the raw field value. Otherwise, matches the Tag against a list
+        of tokens created from the field value.
         """
         tokens = self._get_tokens(value)
-        for tag in Tag.objects.all():
+        for tag in self._get_relevant_tags():
             tag_tokens = nltk.word_tokenize(tag.name)
             if (len(tag_tokens) > 1):
                 contains_tag = tag.name in value

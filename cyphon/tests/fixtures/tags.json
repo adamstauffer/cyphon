@@ -1,23 +1,40 @@
 [  
   {
+    "model": "tags.topic",
+    "fields": {
+      "id": 1,
+      "name": "Animals"
+    }
+  },
+  {
+    "model": "tags.topic",
+    "fields": {
+      "id": 2,
+      "name": "Names"
+    }
+  },  
+  {
     "model": "tags.tag",
     "fields": {
       "id": 1,
-      "name": "bird"
+      "name": "bird",
+      "topic": ["Animals"]
     }
   },
   {
     "model": "tags.tag",
     "fields": {
       "id": 2,
-      "name": "cat"
+      "name": "cat",
+      "topic": ["Animals"]
     }
   },
   {
     "model": "tags.tag",
     "fields": {
       "id": 3,
-      "name": "dog"
+      "name": "dog",
+      "topic": ["Animals"]
     }
   },
   {
