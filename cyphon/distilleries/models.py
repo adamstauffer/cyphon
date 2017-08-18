@@ -126,8 +126,8 @@ class Distillery(models.Model):
     company : Company
         The |Company| associated with the data.
 
-    categories : `list` of `Categories`
-        A |list| of |Categories| that characterize the data.
+    categories : `QuerySet` of `Categories`
+        A |QuerySet| of |Categories| that characterize the data.
 
     is_shell : bool
         Whether the Distillery is only used to model and retrieve data,
