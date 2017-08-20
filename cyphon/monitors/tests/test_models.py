@@ -86,6 +86,26 @@ class MonitorTestCase(TestCase):
         """
         self.assertEqual(str(self.monitor_grn), 'health_alerts')
 
+    def test_save_overdue(self):
+        """
+        Tests the save method for a green Monitor when the interval
+        is lengthened.
+        """
+        self.monitor_grn.time_unit = 's'
+        self.monitor_grn.save()
+        monitor_grn = Monitor.objects.get(pk=1)
+        self.assertEqual(monitor_grn.status, 'RED')
+
+    def test_save_not_overdue(self):
+        """
+        Tests the save method for a red Monitor when the interval
+        is shortened.
+        """
+        self.monitor_red.time_unit = 'd'
+        self.monitor_red.save()
+        monitor_red = Monitor.objects.get(pk=3)
+        self.assertEqual(monitor_red.status, 'GREEN')
+
     def test_get_interval_in_seconds(self):
         """
         Tests the _get_interval_in_seconds method of the Monitor class
