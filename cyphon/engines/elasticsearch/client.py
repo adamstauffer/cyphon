@@ -33,10 +33,10 @@ import elasticsearch
 
 
 _ES_SETTINGS = settings.ELASTICSEARCH
-_ES_HOSTS = _ES_SETTINGS.get('HOSTS', ['localhost:9200'])
-_ES_KWARGS = _ES_SETTINGS.get('KWARGS', {'timeout': 30})
+ES_HOSTS = _ES_SETTINGS.get('HOSTS', ['localhost:9200'])
+ES_KWARGS = _ES_SETTINGS.get('KWARGS', {'timeout': 30})
 
-ELASTICSEARCH = elasticsearch.Elasticsearch(_ES_HOSTS, **_ES_KWARGS)
+ELASTICSEARCH = elasticsearch.Elasticsearch(ES_HOSTS, **ES_KWARGS)
 
 """:class:`~elasticsearch.Elasticsearch`
 
