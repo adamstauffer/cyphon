@@ -35,7 +35,6 @@ class TagAPITests(CyphonAPITestCase):
     model_url = 'tags/'
     obj_url = '1/'
 
-
     def test_get_tag(self):
         """
         Tests the GET /api/v1/tags/1 REST API endpoint.
