@@ -23,7 +23,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 # local
-from .forms import TagForm
+from .forms import DataTaggerForm, TagForm
 from .models import DataTagger, Tag, TagRelation
 
 
@@ -71,4 +71,5 @@ class DataTaggerAdmin(admin.ModelAdmin):
     """
     Customizes inline admin forms for |DataTaggers|.
     """
-    pass
+    
+    form = DataTaggerForm
