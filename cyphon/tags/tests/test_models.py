@@ -15,19 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Tests the Company class.
+Tests the Tag class and related classes.
 """
 
 # third party
-from django.core.exceptions import ValidationError
 from django.test import TestCase
-import six
 from testfixtures import LogCapture
 
 # local
 from alerts.models import Alert
 from bottler.containers.models import Container
-from tags.models import DataTagger, Tag, TagRelation
+from tags.models import DataTagger, Tag, TagRelation, Topic
 from tests.fixture_manager import get_fixtures
 
 
@@ -41,7 +39,7 @@ class TagTestCase(TestCase):
         """
         Tests the __str__ method.
         """
-        tag = Tag.objects.get_by_natural_key('cat')
+        tag = Tag.objects.get_by_natural_key('Animals', 'cat')
         self.assertEqual(str(tag), 'cat')
 
     def test_assign_tag(self):
@@ -72,50 +70,12 @@ class DataTaggerTestCase(TestCase):
     """
     Base class for testing the DataTagger class.
     """
-    fixtures = get_fixtures(['datataggers', 'tags'])
+    fixtures = get_fixtures(['datataggers'])
 
     def setUp(self):
         self.alert = Alert.objects.get(pk=2)
         self.container = Container.objects.get_by_natural_key('post')
         self.datatagger = DataTagger.objects.get(pk=1)
-
-
-class CleanDataTaggerTestCase(DataTaggerTestCase):
-    """
-    Test cases for the clean method the DataTagger class.
-    """
-
-    def test_invalid_field_name(self):
-        """
-        Tests that a validation error is thrown for an invalid
-        field_name value.
-        """
-        datatagger = DataTagger(
-            container=self.container,
-            field_name='foobar',
-            exact_match=False,
-            create_tags=False
-        )
-        msg = ('The given field name does not '
-               'appear in the selected Container.')
-        with six.assertRaisesRegex(self, ValidationError, msg):
-            datatagger.clean()
-
-    def test_invalid_create_tags(self):
-        """
-        Tests that a validation error is thrown for an invalid
-        create_tags value.
-        """
-        datatagger = DataTagger(
-            container=self.container,
-            field_name='user.name',
-            exact_match=False,
-            create_tags=True
-        )
-        msg = ('The "create tags" feature is only '
-               'available for exact matches.')
-        with six.assertRaisesRegex(self, ValidationError, msg):
-            datatagger.clean()
 
 
 class GetValueTestCase(DataTaggerTestCase):
@@ -132,7 +92,7 @@ class GetValueTestCase(DataTaggerTestCase):
             field_name='content.text'
         )
         actual = datatagger._get_value(self.alert)
-        expected = 'this is some text about cats.'
+        expected = 'this is some text about wild cats.'
         self.assertEqual(actual, expected)
 
     def test_non_string(self):
@@ -158,16 +118,17 @@ class CreateTagTestCase(DataTaggerTestCase):
         """
         Test case for when the Tag already exists.
         """
-        Tag.objects.create(name='piedpiper')
+        topic = Topic.objects.get_by_natural_key('Names')
+        Tag.objects.create(name='pied piper', topic=topic)
         with LogCapture() as log_capture:
-            self.datatagger._create_tag('piedpiper')
+            self.datatagger._create_tag('pied piper')
             log_capture.check(
                 ('tags.models',
                  'ERROR',
-                 'An error occurred while creating a new tag "piedpiper": '
+                 'An error occurred while creating a new tag "pied piper": '
                  'duplicate key value violates unique constraint '
-                 '"tags_tag_name_key"\n'
-                 'DETAIL:  Key (name)=(piedpiper) already exists.\n')
+                 '"tags_tag_name_topic_id_568d698e_uniq"\n'
+                 'DETAIL:  Key (name, topic_id)=(pied piper, 2) already exists.\n')
             )
 
     def test_new_tag(self):
@@ -188,8 +149,10 @@ class GetTagTestCase(DataTaggerTestCase):
         """
         Test case for when the Tag already exists.
         """
-        actual = self.datatagger._get_tag('cat')
-        expected = Tag.objects.get_by_natural_key('cat')
+        datatagger = DataTagger.objects.get(pk=3)
+        actual = datatagger._get_tag('cat')
+        expected = Tag.objects.get_by_natural_key(topic_name='Animals',
+                                                  tag_name='cat')
         self.assertEqual(actual, expected)
 
     def test_no_tag_create_tag_true(self):
@@ -199,7 +162,8 @@ class GetTagTestCase(DataTaggerTestCase):
         """
         self.assertFalse(Tag.objects.filter(name='newtag').exists())
         actual = self.datatagger._get_tag('newtag')
-        expected = Tag.objects.get_by_natural_key('newtag')
+        expected = Tag.objects.get_by_natural_key(topic_name='Names',
+                                                  tag_name='newtag')
         self.assertEqual(actual, expected)
 
     def test_no_tag_create_tag_false(self):
@@ -265,8 +229,8 @@ class TagPartialMatchTestCase(DataTaggerTestCase):
         Test case for Tags containing a single token.
         """
         datatagger = DataTagger.objects.get(pk=3)
-        self.datatagger._tag_partial_match(self.alert,
-                                           'this is some text about wild cats.')
+        datatagger._tag_partial_match(self.alert,
+                                      'this is some text about wild cats.')
         actual = self.alert.associated_tags[0]
         expected = Tag.objects.get(name='cat')
         self.assertEqual(actual, expected)
@@ -275,28 +239,46 @@ class TagPartialMatchTestCase(DataTaggerTestCase):
         """
         Test case for Tags containing omultiple tokens.
         """
-        pass
+        datatagger = DataTagger.objects.get(pk=3)
+        topic = Topic.objects.get_by_natural_key('Animals')
+        Tag.objects.create(name='wild cats', topic=topic)
+        datatagger._tag_partial_match(self.alert,
+                                      'this is some text about wild cats.')
+        tags = self.alert.associated_tags
+        cat_tag = Tag.objects.get(name='cat')
+        wild_cat_tags = Tag.objects.get(name='wild cats')
+        self.assertTrue(cat_tag in tags)
+        self.assertTrue(wild_cat_tags in tags)
 
     def test_no_tags(self):
         """
-        Test case when teh string matches no Tags.
+        Test case when the string matches no Tags.
         """
-        pass
+        datatagger = DataTagger.objects.get(pk=2)
+        datatagger._tag_partial_match(self.alert, 'pied piper')
+        self.assertEqual(len(self.alert.associated_tags), 0)
 
 
 class ProcessTestCase(DataTaggerTestCase):
     """
-    Test cases for the process method the DataTagger class.
+    Test cases for the process method of the DataTagger class.
     """
 
     def test_exact_match_true(self):
         """
         Test case for when exact_match is True.
         """
-        pass
+        self.datatagger.process(self.alert)
+        actual = self.alert.associated_tags[0]
+        expected = Tag.objects.get(name='piedpiper')
+        self.assertEqual(actual, expected)
 
     def test_exact_match_false(self):
         """
         Test case for when exact_match is False.
         """
-        pass
+        datatagger = DataTagger.objects.get(pk=3)
+        datatagger.process(self.alert)
+        actual = self.alert.associated_tags[0]
+        expected = Tag.objects.get(name='cat')
+        self.assertEqual(actual, expected)

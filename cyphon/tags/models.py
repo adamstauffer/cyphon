@@ -42,7 +42,6 @@ import nltk
 
 # local
 from bottler.containers.models import Container
-from cyphon.models import GetByNameManager
 from taxonomies.models import Taxonomy, TaxonomyManager
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import lowercase_validator
@@ -74,6 +73,39 @@ class Topic(Taxonomy):
         ordering = ['name']
 
 
+class TagManager(models.Manager):
+    """Manage |Tag| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    def get_by_natural_key(self, topic_name, tag_name):
+        """Get a |Tag| by its natural key.
+
+        Allows retrieval of a |Tag| by its natural key instead of
+        its primary key.
+
+        Parameters
+        ----------
+        name : str
+            The name of the |Tag| associated with the |Tag|.
+
+        topic : str
+            The name of the |Topic| associated with the |Tag|.
+
+        Returns
+        -------
+        |Tag|
+            The |Tag| associated with the natural key.
+
+        """
+        topic = Topic.objects.get_by_natural_key(name=topic_name)
+        if topic:
+            return self.get(name=tag_name, topic=topic.pk)
+        else:
+            _LOGGER.error('The Tag %s:%s does not exist', tag_name, topic_name)
+
+
 class Tag(models.Model):
     """A term for describing objects.
 
@@ -91,7 +123,7 @@ class Tag(models.Model):
     )
     topic = models.ForeignKey(Topic, blank=True, null=True)
 
-    objects = GetByNameManager()
+    objects = TagManager()
 
     class Meta(object):
         """Metadata options."""
@@ -243,41 +275,6 @@ class DataTagger(models.Model):
         """Return a string representation of the DataTagger."""
         return '%s: %s' % (self.container, self.field_name)
 
-    def clean(self):
-        """Validate the model as a whole.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValidationError
-            If the `field_name` does not represent a field in the
-            `container`, or if `exact_match` is |True| and zero or
-            multiple `topics` are selected, or if `create_tags` is
-            |True| but `exact_match` is |False|.
-
-        See also
-        --------
-        See Django's documentation for the
-        :meth:`~django.db.models.Model.clean` method.
-
-        """
-        super(DataTagger, self).clean()
-
-        if self.field_name not in self.container.get_field_list():
-            raise ValidationError(_('The given field name does not '
-                                    'appear in the selected Container.'))
-
-        if self.exact_match and self.topics.count() != 1:
-            raise ValidationError(_('Select exactly one tag topic when using '
-                                    'exact matches.'))
-
-        if self.create_tags and not self.exact_match:
-            raise ValidationError(_('The "create tags" feature is only '
-                                    'available for exact matches.'))
-
     def _get_value(self, alert):
         """Return a lowercase string from an Alert's data field."""
         value = get_dict_value(self.field_name, alert.data)
@@ -313,8 +310,8 @@ class DataTagger(models.Model):
         self.create_tags is True.
         """
         try:
-            tags = self._get_relevant_tags()
-            return tags.get(name=tag_name)
+            topic = self.topics.all()[0]
+            return Tag.objects.get(name=tag_name, topic=topic)
         except ObjectDoesNotExist:
             if self.create_tags:
                 return self._create_tag(tag_name)

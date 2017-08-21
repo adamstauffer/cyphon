@@ -43,7 +43,7 @@
       "id": 1,
       "content_type": ["alerts", "alert"],
       "object_id": 1,
-      "tag": ["cat"]
+      "tag": ["Animals", "cat"]
     }
   },
   {
@@ -52,7 +52,7 @@
       "id": 2,
       "content_type": ["alerts", "alert"],
       "object_id": 3,
-      "tag": ["bird"]
+      "tag": ["Animals", "bird"]
     }
   },
   {
@@ -61,7 +61,7 @@
       "id": 3,
       "content_type": ["alerts", "alert"],
       "object_id": 3,
-      "tag": ["cat"]
+      "tag": ["Animals", "cat"]
     }
   },
   {
@@ -70,7 +70,7 @@
       "id": 4,
       "content_type": ["alerts", "alert"],
       "object_id": 4,
-      "tag": ["cat"]
+      "tag": ["Animals", "cat"]
     }
   },
   {
@@ -79,7 +79,7 @@
       "id": 5,
       "content_type": ["alerts", "comment"],
       "object_id": 1,
-      "tag": ["dog"]
+      "tag": ["Animals", "dog"]
     }
   },
   {
@@ -88,7 +88,7 @@
       "id": 6,
       "content_type": ["alerts", "comment"],
       "object_id": 2,
-      "tag": ["cat"]
+      "tag": ["Animals", "cat"]
     }
   }
 ]

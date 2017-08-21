@@ -28,7 +28,8 @@
       "container": ["post"],
       "field_name": "content.text",
       "exact_match": false,
-      "create_tags": false
+      "create_tags": false,
+      "topics": [["Animals"]]
     }
   }
 ]
