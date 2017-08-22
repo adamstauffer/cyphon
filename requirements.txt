@@ -15,7 +15,7 @@ django-filter==1.0.4
 django-grappelli==2.10.1
 django-mailbox==4.5.4
 django-picklefield==1.0.0
-django-s3-storage==0.11.3
+django-s3-storage==0.12.0
 Django==1.11.4
 djangorestframework-jwt==1.11.0
 djangorestframework==3.6.3
