@@ -18,7 +18,7 @@ django-picklefield==1.0.0
 django-s3-storage==0.11.3
 Django==1.11.4
 djangorestframework-jwt==1.11.0
-djangorestframework==3.6.3
+djangorestframework==3.6.4
 docutils==0.14
 drfdocs==0.0.11
 ec2-metadata==1.1.0
