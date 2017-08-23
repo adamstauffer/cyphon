@@ -31,5 +31,17 @@
       "create_tags": false,
       "topics": [["Animals"]]
     }
+  },
+  {
+    "model": "tags.datatagger",
+    "fields": {
+      "id": 4,
+      "container": ["post"],
+      "field_name": "content.title",
+      "exact_match": false,
+      "create_tags": false,
+      "topics": [["Animals"], ["Names"]],
+      "enabled": false
+    }
   }
 ]

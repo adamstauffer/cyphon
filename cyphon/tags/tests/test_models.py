@@ -18,8 +18,15 @@
 Tests the Tag class and related classes.
 """
 
+# standard library
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
 # third party
-from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.test import TestCase, TransactionTestCase
 from testfixtures import LogCapture
 
 # local
@@ -27,6 +34,46 @@ from alerts.models import Alert
 from bottler.containers.models import Container
 from tags.models import DataTagger, Tag, TagRelation, Topic
 from tests.fixture_manager import get_fixtures
+
+
+class TagManagerTestCase(TransactionTestCase):
+    """
+    Test cases for the TagManager class.
+    """
+    fixtures = get_fixtures(['tags'])
+
+    text = 'This is some text about pied piper and cats and dogs.'
+
+    def setUp(self):
+        self.alert = Alert.objects.get(pk=2)
+
+    def test_get_tokens(self):
+        """
+        Tests that strings with plural words generate tokens that
+        include the singular form.
+        """
+        text = 'this is some text about wild cats.'
+        tokens = Tag.objects._get_tokens(text)
+        self.assertTrue('cat' in tokens)
+        self.assertTrue('cats' in tokens)
+
+    def test_process_default_qs(self):
+        """
+        Tests the process method with the default queryset.
+        """
+        self.assertEquals(len(self.alert.associated_tags), 0)
+        Tag.objects.process(value=self.text, obj=self.alert)
+        self.assertEquals(len(self.alert.associated_tags), 2)
+
+    def test_process_filtered_qs(self):
+        """
+        Tests the process method with the a filtered queryset.
+        """
+        topic = Topic.objects.get(name='Names')
+        queryset = Tag.objects.filter(topic=topic)
+        self.assertEquals(len(self.alert.associated_tags), 0)
+        Tag.objects.process(value=self.text, obj=self.alert, queryset=queryset)
+        self.assertEquals(len(self.alert.associated_tags), 0)
 
 
 class TagTestCase(TestCase):
@@ -66,6 +113,32 @@ class TagRelationTestCase(TestCase):
         self.assertEqual(str(tag_relation), 'cat <Alert: PK 1: Acme Supply Co>')
 
 
+class DataTaggerManagerTestCase(TransactionTestCase):
+    """
+    Test cases for the DataTaggerManager class.
+    """
+
+    fixtures = get_fixtures(['datataggers'])
+
+    def setUp(self):
+        self.alert = Alert.objects.get(pk=2)
+
+    def test_process(self):
+        """
+        Tests the process method.
+        """
+        enabled_count = DataTagger.objects.find_enabled().count()
+        assert enabled_count < DataTagger.objects.count()
+
+        with patch('tags.models.DataTagger.process') as mock_process:
+            DataTagger.objects.process(self.alert)
+            self.assertEqual(mock_process.call_count, enabled_count)
+
+        self.assertEquals(len(self.alert.associated_tags), 0)
+        DataTagger.objects.process(self.alert)
+        self.assertEquals(len(self.alert.associated_tags), 2)
+
+
 class DataTaggerTestCase(TestCase):
     """
     Base class for testing the DataTagger class.
@@ -78,9 +151,22 @@ class DataTaggerTestCase(TestCase):
         self.datatagger = DataTagger.objects.get(pk=1)
 
 
+class DataTaggerTransactionTestCase(TransactionTestCase):
+    """
+    Base class for testing the DataTagger class.
+    """
+    fixtures = get_fixtures(['datataggers'])
+
+    def setUp(self):
+        self.alert = Alert.objects.get(pk=2)
+        self.container = Container.objects.get_by_natural_key('post')
+        self.datatagger = DataTagger.objects.get(pk=1)
+
+
+
 class GetValueTestCase(DataTaggerTestCase):
     """
-    Test cases for the _get_value method the DataTagger class.
+    Test cases for the _get_value method of the DataTagger class.
     """
 
     def test_string(self):
@@ -114,22 +200,29 @@ class CreateTagTestCase(DataTaggerTestCase):
     Test cases for the _create_tag method the DataTagger class.
     """
 
-    def test_duplicate(self):
+    @patch('django.db.models.Manager.get_or_create',
+           side_effect=ValidationError('error msg'))
+    def test_validation_error(self, mock_create):
         """
-        Test case for when the Tag already exists.
+        Test case for when a VlaidatioNError is raised.
         """
-        topic = Topic.objects.get_by_natural_key('Names')
-        Tag.objects.create(name='pied piper', topic=topic)
         with LogCapture() as log_capture:
             self.datatagger._create_tag('pied piper')
             log_capture.check(
                 ('tags.models',
                  'ERROR',
                  'An error occurred while creating a new tag "pied piper": '
-                 'duplicate key value violates unique constraint '
-                 '"tags_tag_name_topic_id_568d698e_uniq"\n'
-                 'DETAIL:  Key (name, topic_id)=(pied piper, 2) already exists.\n')
+                 '[\'error msg\']'),
             )
+
+    def test_duplicate(self):
+        """
+        Test case for when the Tag already exists.
+        """
+        topic = Topic.objects.get_by_natural_key('Names')
+        new_tag = Tag.objects.create(name='pied piper', topic=topic)
+        result = self.datatagger._create_tag('pied piper')
+        self.assertEqual(result.pk, new_tag.pk)
 
     def test_new_tag(self):
         """
@@ -178,22 +271,6 @@ class GetTagTestCase(DataTaggerTestCase):
         self.assertFalse(Tag.objects.filter(name='newtag').exists())
 
 
-class GetTokensTestCase(DataTaggerTestCase):
-    """
-    Test cases for the _get_tokens method the DataTagger class.
-    """
-
-    def test_get_tokens(self):
-        """
-        Tests that strings with plural words generate tokens that
-        include the singular form.
-        """
-        text = 'this is some text about wild cats.'
-        tokens = self.datatagger._get_tokens(text)
-        self.assertTrue('cat' in tokens)
-        self.assertTrue('cats' in tokens)
-
-
 class TagExactMatchTestCase(DataTaggerTestCase):
     """
     Test cases for the _tag_exact_match method the DataTagger class.
@@ -219,7 +296,7 @@ class TagExactMatchTestCase(DataTaggerTestCase):
         self.assertFalse(Tag.objects.filter(name='pied piper').exists())
 
 
-class TagPartialMatchTestCase(DataTaggerTestCase):
+class TagPartialMatchTestCase(DataTaggerTransactionTestCase):
     """
     Test cases for the _tag_partial_match method the DataTagger class.
     """
@@ -259,7 +336,7 @@ class TagPartialMatchTestCase(DataTaggerTestCase):
         self.assertEqual(len(self.alert.associated_tags), 0)
 
 
-class ProcessTestCase(DataTaggerTestCase):
+class ProcessTestCase(DataTaggerTransactionTestCase):
     """
     Test cases for the process method of the DataTagger class.
     """

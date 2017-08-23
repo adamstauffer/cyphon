@@ -20,10 +20,10 @@ Tests the Tag class and related classes.
 
 # local
 from tags.forms import DataTaggerForm
-from .test_models import DataTaggerTestCase
+from .test_models import DataTaggerManagerTestCase
 
 
-class DataTaggerFormTestCase(DataTaggerTestCase):
+class DataTaggerFormTestCase(DataTaggerManagerTestCase):
     """
     Test cases for the clean method the DataTaggerForm class.
     """

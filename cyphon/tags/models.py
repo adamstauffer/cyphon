@@ -36,12 +36,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
-from django.db.utils import IntegrityError
 from django.utils.translation import ugettext_lazy as _
 import nltk
 
 # local
 from bottler.containers.models import Container
+from cyphon.models import FindEnabledMixin
+from cyphon.transaction import close_old_connections
 from taxonomies.models import Taxonomy, TaxonomyManager
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import lowercase_validator
@@ -79,6 +80,13 @@ class TagManager(models.Manager):
     Adds methods to the default Django model manager.
     """
 
+    @staticmethod
+    def _get_tokens(value):
+        """Convert a string into a set of raw and lemmatized tokens."""
+        tokens = nltk.word_tokenize(value)
+        tokens += [_LEMMATIZER.lemmatize(token) for token in tokens]
+        return set(tokens)
+
     def get_by_natural_key(self, topic_name, tag_name):
         """Get a |Tag| by its natural key.
 
@@ -87,10 +95,10 @@ class TagManager(models.Manager):
 
         Parameters
         ----------
-        name : str
+        name : |str|
             The name of the |Tag| associated with the |Tag|.
 
-        topic : str
+        topic : |str|
             The name of the |Topic| associated with the |Tag|.
 
         Returns
@@ -104,6 +112,45 @@ class TagManager(models.Manager):
             return self.get(name=tag_name, topic=topic.pk)
         else:
             _LOGGER.error('The Tag %s:%s does not exist', tag_name, topic_name)
+
+    @close_old_connections
+    def process(self, value, obj, queryset=None, user=None):
+        """Tag an object.
+
+        Parameters
+        ----------
+
+        value : |str|
+            A string to be matched against the `queryset`.
+
+        obj : |Alert| or |Comment|
+            The object to to be tagged.
+
+        queryset : |QuerySet| of |Tags|
+            The |Tags| that should be included in the analysis. If set
+            to |None|, all |Tags| will be used.
+
+        user : |AppUser|
+            The user tagging the object. Default is |None|.
+
+        Returns
+        -------
+        |TagRelation|
+
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        tokens = self._get_tokens(value)
+
+        for tag in queryset:
+            tag_tokens = nltk.word_tokenize(tag.name)
+            if (len(tag_tokens) > 1):
+                contains_tag = tag.name in value
+            else:
+                contains_tag = tag.name in tokens
+            if contains_tag:
+                tag.assign_tag(obj)
 
 
 class Tag(models.Model):
@@ -152,12 +199,13 @@ class Tag(models.Model):
 
         """
         model_type = ContentType.objects.get_for_model(obj)
-        return TagRelation.objects.create(
+        (tag_relation, created) = TagRelation.objects.get_or_create(
             content_type=model_type,
             object_id=obj.id,
             tag=self,
             tagged_by=user
         )
+        return tag_relation
 
 
 class TagRelation(models.Model):
@@ -222,6 +270,30 @@ class TagRelation(models.Model):
                                 self.tagged_object)
 
 
+class DataTaggerManager(models.Manager, FindEnabledMixin):
+    """Manage |DataTagger| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    @close_old_connections
+    def process(self, alert):
+        """Tag an |Alert|.
+
+        Parameters
+        ----------
+        alert : |Alert|
+            The |Alert| to be tagged.
+
+        Returns
+        -------
+        None
+
+        """
+        for datatagger in self.find_enabled():
+            datatagger.process(alert)
+
+
 class DataTagger(models.Model):
     """Tags an |Alert| based on the value of a Container field.
 
@@ -244,6 +316,9 @@ class DataTagger(models.Model):
         If |True|, create news |Tags| under the |Topic| defined by
         :attr:`DataTagger.default_topic`.
 
+    enabled : bool
+        Whether the DataTagger is enabled.
+
     """
     container = models.ForeignKey(Container)
     field_name = models.CharField(max_length=255)
@@ -264,6 +339,9 @@ class DataTagger(models.Model):
         help_text=_('Create new tags from this field '
                     '(only available when using exact match).')
     )
+    enabled = models.BooleanField(default=True)
+
+    objects = DataTaggerManager()
 
     class Meta(object):
         """Metadata options."""
@@ -285,8 +363,10 @@ class DataTagger(models.Model):
         """Create a new Tag from a tag_name."""
         try:
             topic = self.topics.all()[0]
-            return Tag.objects.create(name=tag_name, topic=topic)
-        except (IntegrityError, ValidationError) as error:
+            (tag, created) = Tag.objects.get_or_create(name=tag_name,
+                                                       topic=topic)
+            return tag
+        except ValidationError as error:
             _LOGGER.error('An error occurred while creating '
                           'a new tag "%s": %s', tag_name, error)
 
@@ -316,13 +396,6 @@ class DataTagger(models.Model):
             if self.create_tags:
                 return self._create_tag(tag_name)
 
-    @staticmethod
-    def _get_tokens(value):
-        """Convert a string into a set of raw and lemmatized tokens."""
-        tokens = nltk.word_tokenize(value)
-        tokens += [_LEMMATIZER.lemmatize(token) for token in tokens]
-        return set(tokens)
-
     def _tag_exact_match(self, alert, value):
         """Assign a Tag to an Alert based on an exact match."""
         tag = self._get_tag(value)
@@ -336,15 +409,8 @@ class DataTagger(models.Model):
         the raw field value. Otherwise, matches the Tag against a list
         of tokens created from the field value.
         """
-        tokens = self._get_tokens(value)
-        for tag in self._get_relevant_tags():
-            tag_tokens = nltk.word_tokenize(tag.name)
-            if (len(tag_tokens) > 1):
-                contains_tag = tag.name in value
-            else:
-                contains_tag = tag.name in tokens
-            if contains_tag:
-                tag.assign_tag(alert)
+        tags = self._get_relevant_tags()
+        Tag.objects.process(value, alert, tags)
 
     def process(self, alert):
         """Assign |Tags| to an |Alert| based on a |Container| field.

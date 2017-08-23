@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
                 ('exact_match', models.BooleanField(default=False, help_text='Match the entire content of the field. If checked, please select one and only one tag topic for analyzing this field.')),
                 ('create_tags', models.BooleanField(default=False, help_text='Create new tags from this field (only available when using exact match).')),
                 ('container', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='containers.Container')),
+                ('enabled', models.BooleanField(default=True)),
             ],
             options={
                 'ordering': ['container', 'field_name'],

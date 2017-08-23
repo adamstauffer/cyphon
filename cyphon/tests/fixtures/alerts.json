@@ -32,6 +32,7 @@
       "location": "POINT (-78.2 36.4)",
       "data": {
         "content": {
+          "title": "This is some text about wild dogs.",
           "text": "This is some text about wild cats."
         },
         "user": {
