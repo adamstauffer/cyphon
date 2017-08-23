@@ -26,18 +26,22 @@ except ImportError:
     from mock import Mock, patch
 
 # third party
-from django.test import TestCase
+from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import post_save
+from django.test import TestCase, TransactionTestCase
 from testfixtures import LogCapture
 
 # local
 from appusers.models import AppUser
-from alerts.models import Comment
+from alerts.models import Alert, Comment
+from alerts.signals import tag_alert, tag_comment
+from tags.models import TagRelation
 from tests.fixture_manager import get_fixtures
 
 
-class CommentReceiverTestCase(TestCase):
+class SendCommentNotificationTestCase(TestCase):
     """
-    Tests the handle_comment_post_save_signal receiver.
+    Tests the send_comment_notification receiver.
     """
     fixtures = get_fixtures(['comments'])
 
@@ -46,7 +50,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_old_alert(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when an existing alert is updated.
         """
         with patch('alerts.signals.emails_enabled', return_value=True):
@@ -57,7 +61,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_new_alert_emails_enabled(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when a new alert is updated and email notifcations
         are enabled.
         """
@@ -75,7 +79,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_new_alert_emails_disabled(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when a new alert is updated and email notifcations
         are disabled.
         """
@@ -109,3 +113,68 @@ class CommentReceiverTestCase(TestCase):
                          'An error occurred when sending an email '
                          'notification: (535, \'foobar\')'),
                     )
+
+
+class TagAlertTestCase(TransactionTestCase):
+    """
+    Tests the tag_alert receiver.
+    """
+    fixtures = get_fixtures(['alerts', 'datataggers'])
+
+    def setUp(self):
+        super(TagAlertTestCase, self).setUp()
+        post_save.connect(tag_alert, sender=Alert)
+        self.alert = Alert.objects.get(pk=2)
+
+    def tearDown(self):
+        super(TagAlertTestCase, self).tearDown()
+        post_save.disconnect(tag_alert, sender=Alert)
+
+    def test_old_alert(self):
+        """
+        Tests that an old Alert is not tagged.
+        """
+        post_save.connect(tag_alert, sender=Alert)
+        self.alert.save()
+        self.assertEquals(len(self.alert.associated_tags), 0)
+
+    def test_new_alert(self):
+        """
+        Tests that a new Alert is tagged.
+        """
+        alert = self.alert
+        alert.pk = None
+        alert.save()
+        self.assertEquals(len(alert.associated_tags), 2)
+
+
+class TagCommentTestCase(TransactionTestCase):
+    """
+    Tests the tag_comment receiver.
+    """
+    fixtures = get_fixtures(['comments', 'tags'])
+
+    def setUp(self):
+        super(TagCommentTestCase, self).setUp()
+        post_save.connect(tag_comment, sender=Comment)
+
+    def tearDown(self):
+        super(TagCommentTestCase, self).tearDown()
+        post_save.disconnect(tag_comment, sender=Comment)
+
+    def test_tag_comment(self):
+        """
+        Tests that a Comment is tagged when saved.
+        """
+        post_save.connect(tag_comment, sender=Comment)
+        comment = Comment.objects.get(pk=3)
+        comment_type = ContentType.objects.get_for_model(Comment)
+        tag_relations = TagRelation.objects.filter(content_type=comment_type,
+                                                   object_id=comment.pk)
+        self.assertEquals(tag_relations.count(), 0)
+
+        comment.text = 'I like cats and dogs.'
+        comment.save()
+        tag_relations = TagRelation.objects.filter(content_type=comment_type,
+                                                   object_id=comment.pk)
+        self.assertEquals(tag_relations.count(), 2)

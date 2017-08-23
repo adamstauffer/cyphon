@@ -23,21 +23,24 @@ import logging
 import smtplib
 
 # third party
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # local
+from tags.models import DataTagger, Tag
 from utils.emailutils.emailutils import emails_enabled
-from .models import Comment
+from .models import Alert, Comment
 from .services import compose_comment_email
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Comment)
-def handle_comment_post_save_signal(sender, instance, created, **kwargs):
-    """Notify relevant users when a Comment on a Alert is saved."""
+def send_comment_notification(sender, instance, created, **kwargs):
+    """Email relevant users when a new |Comment| is saved."""
 
+    # email relevant users if a comment is created
     if created and emails_enabled():
         for user in instance.get_other_contributors():
             email_message = compose_comment_email(instance, user)
@@ -46,3 +49,19 @@ def handle_comment_post_save_signal(sender, instance, created, **kwargs):
             except smtplib.SMTPAuthenticationError as error:
                 _LOGGER.error('An error occurred when sending an '
                               'email notification: %s', error)
+
+
+def tag_alert(sender, instance, created, **kwargs):
+    """Tag a new |Alert|."""
+    if created:
+        DataTagger.objects.process(instance)
+
+
+def tag_comment(sender, instance, created, **kwargs):
+    """Tag a |Comment|."""
+    Tag.objects.process(value=instance.text, obj=instance)
+
+
+if not settings.TEST:
+    post_save.connect(tag_alert, sender=Alert)
+    post_save.connect(tag_comment, sender=Comment)
