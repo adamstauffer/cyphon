@@ -71,5 +71,5 @@ class DataTaggerAdmin(admin.ModelAdmin):
     """
     Customizes inline admin forms for |DataTaggers|.
     """
-    
+
     form = DataTaggerForm
