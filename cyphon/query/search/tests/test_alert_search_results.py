@@ -30,6 +30,9 @@ from tests.fixture_manager import get_fixtures
 
 
 class AlertSearchResultsTestCase(TestCase):
+    """
+
+    """
     fixtures = get_fixtures(['alerts', 'comments'])
 
     def _get_request(self):

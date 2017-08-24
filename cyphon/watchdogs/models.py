@@ -67,7 +67,7 @@ class WatchdogManager(AlarmManager):
             A |Queryset| of |Watchdogs| for inspecting a document.
 
         """
-        enabled_watchdogs = super(WatchdogManager, self).find_enabled()
+        enabled_watchdogs = self.find_enabled()
         categories = self._get_categories(distillery)
         queryset = enabled_watchdogs.annotate(
             categories_cnt=models.Count('categories')

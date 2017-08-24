@@ -87,6 +87,7 @@ class Action(Endpoint):
     objects = EndpointManager()
 
     class Meta:
+        ordering = ['title']
         unique_together = ('platform', 'api_class')
 
     def save(self, *args, **kwargs):

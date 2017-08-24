@@ -650,6 +650,25 @@ class DisplayTitleTestCase(AlertModelTestCase):
         self.assertEqual(actual, expected)
 
 
+class AssociatedTagsTestCase(TestCase):
+    """
+    Tests the associated_tags property of an Alert.
+    """
+
+    fixtures = get_fixtures(['alerts', 'comments', 'tags'])
+
+    def test_alert_w_comments(self):
+        """
+
+        """
+        alert = Alert.objects.get(pk=3)
+        tags = alert.associated_tags
+        self.assertEqual(tags.count(), 3)
+        self.assertTrue(tags.filter(name='bird').exists())
+        self.assertTrue(tags.filter(name='cat').exists())
+        self.assertTrue(tags.filter(name='dog').exists())
+
+
 class AlertSummaryWithCommentsTestCase(AlertModelTestCase):
     """
     Tests the summary_with_comments method.

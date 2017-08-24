@@ -34,6 +34,7 @@ ALERT_DETAIL = {
     'link': 'http://localhost:8000/app/alerts/4',
     'dispatches': [],
     'level': 'LOW',
+    'tags': [{'name': 'cat'}],
     'title': 'Acme Supply Co',
     'url': 'http://testserver/api/v1/alerts/4/',
     'content_date': None,

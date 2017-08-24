@@ -40,7 +40,8 @@ from .expected_values import ALERT_DETAIL, ALERT_LIST
 
 API_URL = settings.API_URL
 
-ALERT_FIXTURES = get_fixtures(['alerts', 'comments', 'contexts', 'dispatches'])
+ALERT_FIXTURES = get_fixtures(['alerts', 'comments', 'contexts',
+                               'dispatches', 'tags'])
 
 
 class AlertBaseAPITests(CyphonAPITestCase):

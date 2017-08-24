@@ -20,8 +20,7 @@ Defines serializers for |Distilleries|.
 ====================================  ========================================
 Class                                 Description
 ====================================  ========================================
-:class:`~DistilleryDetailSerializer`  Serializer for |Distillery| detail view.
-:class:`~DistilleryListSerializer`    Serializer for |Distillery| list view.
+:class:`~TagSerializer`               Serializer for |Tag| views.
 ====================================  ========================================
 
 """
@@ -30,47 +29,17 @@ Class                                 Description
 from rest_framework import serializers
 
 # local
-from bottler.containers.serializers import ContainerSerializer
-from contexts.serializers import ContextSerializer
-from .models import Distillery
+from .models import Tag
 
 
-class DistilleryDetailSerializer(serializers.ModelSerializer):
-    """Serializer for a |Distillery| object."""
-
-    id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
-    container = ContainerSerializer()
-    name = serializers.CharField(source='__str__')
-    contexts = ContextSerializer(many=True)
+class TagSerializer(serializers.ModelSerializer):
+    """Serializer for a |Tag| objects."""
 
     class Meta(object):
         """Metadata options."""
 
-        model = Distillery
-        depth = 2
-        fields = (
-            'collection',
-            'container',
-            'contexts',
-            'id',
-            'name',
-            'url',
-        )
-
-
-class DistilleryListSerializer(serializers.ModelSerializer):
-    """Serializer for a |Distillery| list."""
-
-    id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
-    name = serializers.CharField(source='__str__')
-
-    class Meta(object):
-        """Metadata options."""
-
-        model = Distillery
+        model = Tag
         depth = 1
         fields = (
-            'id',
             'name',
-            'url',
         )

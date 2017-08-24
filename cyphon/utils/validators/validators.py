@@ -129,6 +129,14 @@ def key_file_validator(field_file):
                                 'a .pem or .pub file.'))
 
 
+def lowercase_validator(value):
+    """
+    Validates that a string is lowercase.
+    """
+    if value != value.lower():
+        raise ValidationError(_('Value must be lowercase string.'))
+
+
 def regex_validator(value):
     """
     Validates a regex.

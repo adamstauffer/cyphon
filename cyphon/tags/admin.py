@@ -20,10 +20,56 @@
 
 # third party
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 # local
-from taxonomies.admin import TaxonomyAdmin
-from .models import Tag
+from .forms import DataTaggerForm, TagForm
+from .models import DataTagger, Tag, TagRelation
 
 
-admin.site.register(Tag, TaxonomyAdmin)
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    """
+    Customizes inline admin forms for |Tags|.
+    """
+
+    form = TagForm
+
+
+class TagRelationInlineAdmin(GenericTabularInline):
+    """
+    Customizes inline admin forms for |TagRelations|.
+    """
+
+    model = TagRelation
+    fields = (
+        'tag',
+    )
+    extra = 1
+
+
+@admin.register(TagRelation)
+class TagRelationAdmin(admin.ModelAdmin):
+    """Customizes admin pages for |TagRelations|."""
+
+    list_display = [
+        'tagged_object',
+        'content_type',
+        'tag',
+        'tagged_by',
+        'tag_date',
+    ]
+    list_display_links = ['tagged_object', ]
+    related_lookup_fields = {
+        'generic': [['content_type', 'object_id'], ],
+    }
+    readonly_fields = ['tagged_by', 'tag_date']
+
+
+@admin.register(DataTagger)
+class DataTaggerAdmin(admin.ModelAdmin):
+    """
+    Customizes inline admin forms for |DataTaggers|.
+    """
+
+    form = DataTaggerForm
