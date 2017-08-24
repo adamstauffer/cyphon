@@ -97,6 +97,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     # 'debug_toolbar',
+    'ckeditor',
+    'ckeditor_uploader',
     'constance',
     'constance.backends.database',
     'grappelli.dashboard',  # must come after contenttypes and before grappelli
@@ -315,6 +317,9 @@ CELERYBEAT_SCHEDULE = {
 }
 
 CELERYD_POOL_RESTARTS = True
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 GRAPPELLI_ADMIN_TITLE = 'Cyphon'
 GRAPPELLI_INDEX_DASHBOARD = 'cyphon.dashboard.CyphonIndexDashboard'

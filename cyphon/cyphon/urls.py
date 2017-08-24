@@ -56,6 +56,7 @@ urlpatterns = [
     # url(r'^$', 'dashboard.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
