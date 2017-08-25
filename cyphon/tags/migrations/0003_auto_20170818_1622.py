@@ -10,6 +10,7 @@ import utils.validators.validators
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('articles', '0001_initial'),
         ('containers', '0002_auto_20170320_1223'),
         ('tags', '0002_auto_20170810_1608'),
     ]
@@ -51,8 +52,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='tag',
+            name='article',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tags', related_query_name='tag', to='articles.Article'),
+        ),
+        migrations.AddField(
+            model_name='tag',
             name='topic',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='tags.Topic'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tags', related_query_name='tag', to='tags.Topic'),
         ),
         migrations.AlterUniqueTogether(
             name='tag',

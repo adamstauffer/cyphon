@@ -443,6 +443,8 @@ rst_epilog = """
 .. |Alert| replace:: :class:`~alerts.models.Alert`
 .. |Alerts| replace:: :class:`Alerts<alerts.models.Alert>`
 .. |ALERT_LEVEL_CHOICES| replace:: :const:`~cyphon.choices.ALERT_LEVEL_CHOICES`
+.. |Article| replace:: :class:`~articles.models.Article`
+.. |Articles| replace:: :class:`Articles<articles.models.Article>`
 .. |BACKEND_CHOICES| replace:: :attr:`~engines.registry.BACKEND_CHOICES`
 .. |Bottle| replace:: :class:`~bottler.bottles.models.Bottle`
 .. |Bottles| replace:: :class:`Bottles<bottler.bottles.models.Bottle>`

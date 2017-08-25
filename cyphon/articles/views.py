@@ -20,8 +20,8 @@ Defines views for |Distilleries| using the Django REST framework.
 ==============================  ===========================================
 Class                           Description
 ==============================  ===========================================
-:class:`~TagPagination`            Pagination for |Tag| views.
-:class:`~TagViewSet`            `ReadOnlyModelViewSet`_ for |Tags|.
+:class:`~ArticlePagination`     Pagination for |Article| views.
+:class:`~ArticleViewSet`        `ReadOnlyModelViewSet`_ for |Article|.
 ==============================  ===========================================
 
 """
@@ -31,23 +31,23 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 # local
-from .models import Tag
-from .serializers import TagSerializer
+from .models import Article
+from .serializers import ArticleSerializer
 
 
-class TagPagination(PageNumberPagination):
-    """Pagination for |Tag| views.
+class ArticlePagination(PageNumberPagination):
+    """Pagination for |Article| views.
 
-    Paginates |Tags| using Django REST framework's
+    Paginates |Articles| using Django REST framework's
     `PageNumberPagination`_.
     """
 
     page_size = 50
 
 
-class TagViewSet(viewsets.ModelViewSet):
-    """REST API views for Tags."""
+class ArticleViewSet(viewsets.ModelViewSet):
+    """REST API views for Articles."""
 
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    pagination_class = TagPagination
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    pagination_class = ArticlePagination

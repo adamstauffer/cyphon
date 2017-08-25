@@ -352,6 +352,7 @@ INSTALLED_APPS = (
     'ambassador.stamps',
     'ambassador.visas',
     'appusers',
+    'articles',
     'bottler.containers',
     'bottler.bottles',
     'bottler.labels',

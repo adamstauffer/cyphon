@@ -20,8 +20,7 @@ Defines serializers for |Distilleries|.
 ====================================  ========================================
 Class                                 Description
 ====================================  ========================================
-:class:`~TagSerializer`               Serializer for |Tag| views.
-:class:`~TopicSerializer`             Serializer for |Topic| views.
+:class:`~ArticleSerializer`           Serializer for |Article| views.
 ====================================  ========================================
 
 """
@@ -30,28 +29,25 @@ Class                                 Description
 from rest_framework import serializers
 
 # local
-from .models import Tag, Topic
+from tags.serializers import TagSerializer, TopicSerializer
+from .models import Article
 
 
-class TagSerializer(serializers.ModelSerializer):
-    """Serializer for a |Tag| objects."""
+class ArticleSerializer(serializers.ModelSerializer):
+    """Serializer for a |Article| objects."""
 
-    class Meta(object):
-        """Metadata options."""
-
-        model = Tag
-        fields = (
-            'name',
-        )
-
-
-class TopicSerializer(serializers.ModelSerializer):
-    """Serializer for a |Topic| objects."""
+    topics = TopicSerializer(many=True)
+    tags = TagSerializer(many=True)
 
     class Meta(object):
         """Metadata options."""
 
-        model = Topic
+        model = Article
+        depth = 2
         fields = (
-            'name',
+            'id',
+            'title',
+            'content',
+            'topics',
+            'tags',
         )
