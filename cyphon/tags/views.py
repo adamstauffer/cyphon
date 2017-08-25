@@ -31,8 +31,12 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 # local
-from .models import Tag
-from .serializers import TagSerializer
+from .models import Tag, Topic
+from .serializers import (
+    TagDetailSerializer,
+    TagListSerializer,
+    TopicSerializer
+)
 
 
 class TagPagination(PageNumberPagination):
@@ -49,5 +53,29 @@ class TagViewSet(viewsets.ModelViewSet):
     """REST API views for Tags."""
 
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = TagDetailSerializer
+    pagination_class = TagPagination
+
+    def get_serializer_class(self):
+        """
+        Overrides the default method for returning the ViewSet's
+        serializer.
+        """
+        if self.serializer_class is None:  # pragma: no cover
+            msg = ("'%s' should either include a `serializer_class` attribute,"
+                   " or override the `get_serializer_class()` method."
+                   % type(self).__name__)
+            raise RuntimeError(msg)
+
+        if self.action is 'list':
+            return TagListSerializer
+        else:
+            return self.serializer_class
+
+
+class TopicViewSet(viewsets.ModelViewSet):
+    """REST API views for Tags."""
+
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
     pagination_class = TagPagination

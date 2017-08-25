@@ -44,26 +44,45 @@ class ArticlesAPITestCase(CyphonAPITestCase):
         Tests the Articles list REST API endpoint.
         """
         response = self.get_api_response()
+        data = response.json()
+        actual = data['results'][0]
+        expected = {
+            'id': 1,
+            'title': 'Birds',
+            'url': 'http://testserver/api/v1/articles/1/'
+        }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 3)
+        self.assertEqual(actual, expected)
 
     def test_get_article(self):
         """
-        Tests the Article detail REST API endpoint.
+        Tests the Article detail REST API endpoint. 
         """
         article = Article.objects.get(pk=1)
         topic = Topic.objects.get(name='Animals')
-        Tag.objects.create(name='falcon', topic=topic, article=article)
+        Tag.objects.create(id=4, name='falcon', topic=topic, article=article)
         response = self.get_api_response('1/')
-        actual = response.data
+        actual = response.json()
         expected = {
             'id': 1,
             'title': 'Birds',
             'content': 'All about birds.',
-            'topics': [OrderedDict([('name', 'Animals')])],
+            'topics': [
+                {
+                    'id': 1,
+                    'name': 'Animals',
+                    'url': 'http://testserver/api/v1/topics/1/'
+                }
+            ],
             'tags': [
-                OrderedDict([('name', 'bird')]),
-                OrderedDict([('name', 'falcon')])
+                {
+                    'id': 1,
+                    'name': 'bird'
+                }, {
+                    'id': 4,
+                    'name': 'falcon'
+                }
             ],
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)

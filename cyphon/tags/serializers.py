@@ -30,28 +30,64 @@ Class                                 Description
 from rest_framework import serializers
 
 # local
+from articles.models import Article
 from .models import Tag, Topic
 
 
-class TagSerializer(serializers.ModelSerializer):
-    """Serializer for a |Tag| objects."""
+class ArticleSerializer(serializers.ModelSerializer):
+    """Serializer for a |Article| objects."""
 
     class Meta(object):
         """Metadata options."""
 
-        model = Tag
+        model = Article
         fields = (
-            'name',
+            'id',
+            'title',
+            'url',
         )
 
 
 class TopicSerializer(serializers.ModelSerializer):
-    """Serializer for a |Topic| objects."""
+    """Serializer for |Topic| objects."""
 
     class Meta(object):
         """Metadata options."""
 
         model = Topic
         fields = (
+            'id',
+            'name',
+            'url'
+        )
+
+
+class TagDetailSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for a |Tag| object."""
+
+    topic = TopicSerializer()
+    article = ArticleSerializer()
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = Tag
+        fields = (
+            'id',
+            'name',
+            'topic',
+            'article',
+        )
+
+
+class TagListSerializer(serializers.ModelSerializer):
+    """Serializer for a list of |Tag| objects."""
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = Tag
+        fields = (
+            'id',
             'name',
         )

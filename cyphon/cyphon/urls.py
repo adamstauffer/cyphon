@@ -49,7 +49,7 @@ from query.collectionqueries.views import (
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
-from tags.views import TagViewSet
+from tags.views import TagViewSet, TopicViewSet
 from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 
@@ -112,6 +112,7 @@ router.register(r'labelfields', LabelFieldViewSet)
 router.register(r'monitors', MonitorViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'tastes', TasteViewSet)
+router.register(r'topics', TopicViewSet)
 router.register(r'users', AppUserViewSet)
 router.register(r'warehouses', WarehouseViewSet)
 

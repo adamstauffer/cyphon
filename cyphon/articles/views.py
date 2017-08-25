@@ -32,7 +32,7 @@ from rest_framework.pagination import PageNumberPagination
 
 # local
 from .models import Article
-from .serializers import ArticleSerializer
+from .serializers import ArticleDetailSerializer, ArticleListSerializer
 
 
 class ArticlePagination(PageNumberPagination):
@@ -49,5 +49,21 @@ class ArticleViewSet(viewsets.ModelViewSet):
     """REST API views for Articles."""
 
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
+    serializer_class = ArticleDetailSerializer
     pagination_class = ArticlePagination
+
+    def get_serializer_class(self):
+        """
+        Overrides the default method for returning the ViewSet's
+        serializer.
+        """
+        if self.serializer_class is None:  # pragma: no cover
+            msg = ("'%s' should either include a `serializer_class` attribute,"
+                   " or override the `get_serializer_class()` method."
+                   % type(self).__name__)
+            raise RuntimeError(msg)
+
+        if self.action is 'list':
+            return ArticleListSerializer
+        else:
+            return self.serializer_class

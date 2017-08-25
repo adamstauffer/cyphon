@@ -40,6 +40,21 @@ class TagAPITests(CyphonAPITestCase):
         Tests the GET /api/v1/tags/1 REST API endpoint.
         """
         response = self.get_api_response(self.obj_url)
+        expected = {
+            'id': 1,
+            'name': 'bird',
+            'topic': {
+                'id': 1,
+                'name': 'Animals',
+                'url': 'http://testserver/api/v1/topics/1/'
+            },
+            'article': {
+                'id': 1,
+                'title': 'Birds',
+                'url': 'http://testserver/api/v1/articles/1/'
+            },
+        }
+        self.assertEqual(response.json(), expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_tags(self):
@@ -47,5 +62,11 @@ class TagAPITests(CyphonAPITestCase):
         Tests the GET /api/v1/tag/ REST API endpoint.
         """
         response = self.get_api_response()
+        actual = response.data['results']
+        expected = [
+            {'id': 1, 'name': 'bird'},
+            {'id': 2, 'name': 'cat'},
+            {'id': 3, 'name': 'dog'}
+        ]
+        self.assertEqual(actual, expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 3)
