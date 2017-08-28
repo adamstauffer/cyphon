@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Added
+
+- **alerts.serializers**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
+- **alerts.models**: added ``Alert.associated_tags`` property ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
+- **alerts.signals**: added post-save signals for tagging Alerts and Comments ([f319bec](https://github.com/dunbarcyber/cyphon/commit/f319bec))
+- **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
+- **cyphon.urls**: added REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **tags**: added TagRelation, Topic, and DataTagger models [PR #178](https://github.com/dunbarcyber/cyphon/pull/178) ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **utils.validators**: added ``lowercase validator`` ([5b0ce6f](https://github.com/dunbarcyber/cyphon/commit/5b0ce6f))
+
+### Changed
+
+- **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
+
+### Removed
+
+- **alerts.models**: removed``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+
 
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/dunbarcyber/cyphon/compare/1.4.1...1.4.2) (2017-08-21)
