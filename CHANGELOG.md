@@ -9,6 +9,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ## [Unreleased]
 
 
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/dunbarcyber/cyphon/compare/1.4.1...1.4.2) (2017-08-21)
+
+### Changed
+
+- **monitors**: status of Monitors is updated on save [PR #186](https://github.com/dunbarcyber/cyphon/pull/186) ([18a4ab8](https://github.com/dunbarcyber/cyphon/commit/18a4ab8))
+
+### Fixed
+
+- **engines.elasticsearch**: fixed default value for Elasticsearch timeout ([22cd0b5](https://github.com/dunbarcyber/cyphon/commit/22cd0b5))
+
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/dunbarcyber/cyphon/compare/1.4.0...1.4.1) (2017-08-14)
 
