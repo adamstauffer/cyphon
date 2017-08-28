@@ -20,8 +20,8 @@ Defines views for |Distilleries| using the Django REST framework.
 ==============================  ===========================================
 Class                           Description
 ==============================  ===========================================
-:class:`~TagPagination`            Pagination for |Tag| views.
-:class:`~TagViewSet`            `ReadOnlyModelViewSet`_ for |Tags|.
+:class:`~ArticlePagination`     Pagination for |Article| views.
+:class:`~ArticleViewSet`        `ReadOnlyModelViewSet`_ for |Article|.
 ==============================  ===========================================
 
 """
@@ -31,30 +31,26 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 # local
-from .models import Tag, Topic
-from .serializers import (
-    TagDetailSerializer,
-    TagListSerializer,
-    TopicSerializer
-)
+from .models import Article
+from .serializers import ArticleDetailSerializer, ArticleListSerializer
 
 
-class TagPagination(PageNumberPagination):
-    """Pagination for |Tag| views.
+class ArticlePagination(PageNumberPagination):
+    """Pagination for |Article| views.
 
-    Paginates |Tags| using Django REST framework's
+    Paginates |Articles| using Django REST framework's
     `PageNumberPagination`_.
     """
 
     page_size = 50
 
 
-class TagViewSet(viewsets.ModelViewSet):
-    """REST API views for Tags."""
+class ArticleViewSet(viewsets.ModelViewSet):
+    """REST API views for Articles."""
 
-    queryset = Tag.objects.all()
-    serializer_class = TagDetailSerializer
-    pagination_class = TagPagination
+    queryset = Article.objects.all()
+    serializer_class = ArticleDetailSerializer
+    pagination_class = ArticlePagination
 
     def get_serializer_class(self):
         """
@@ -68,14 +64,6 @@ class TagViewSet(viewsets.ModelViewSet):
             raise RuntimeError(msg)
 
         if self.action is 'list':
-            return TagListSerializer
+            return ArticleListSerializer
         else:
             return self.serializer_class
-
-
-class TopicViewSet(viewsets.ModelViewSet):
-    """REST API views for Tags."""
-
-    queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
-    pagination_class = TagPagination

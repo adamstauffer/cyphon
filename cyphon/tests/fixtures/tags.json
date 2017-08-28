@@ -18,7 +18,8 @@
     "fields": {
       "id": 1,
       "name": "bird",
-      "topic": ["Animals"]
+      "topic": ["Animals"],
+      "article": 1
     }
   },
   {
@@ -26,7 +27,8 @@
     "fields": {
       "id": 2,
       "name": "cat",
-      "topic": ["Animals"]
+      "topic": ["Animals"],
+      "article": 2
     }
   },
   {
@@ -34,7 +36,8 @@
     "fields": {
       "id": 3,
       "name": "dog",
-      "topic": ["Animals"]
+      "topic": ["Animals"],
+      "article": 3
     }
   },
   {

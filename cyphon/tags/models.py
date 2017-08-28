@@ -40,6 +40,7 @@ from django.utils.translation import ugettext_lazy as _
 import nltk
 
 # local
+from articles.models import Article
 from bottler.containers.models import Container
 from cyphon.models import FindEnabledMixin
 from cyphon.transaction import close_old_connections
@@ -161,6 +162,12 @@ class Tag(models.Model):
     name : str
         The name of the Tag.
 
+    topic : Topic
+        The |topic| to which the Tag relates.
+
+    article : Article
+        The |Article| about the Tag.
+
     """
 
     name = models.CharField(
@@ -168,7 +175,20 @@ class Tag(models.Model):
         validators=[lowercase_validator],
         help_text=_('Tags must be lowercase.')
     )
-    topic = models.ForeignKey(Topic, blank=True, null=True)
+    topic = models.ForeignKey(
+        Topic,
+        blank=True,
+        null=True,
+        related_name='tags',
+        related_query_name='tag'
+    )
+    article = models.ForeignKey(
+        Article,
+        blank=True,
+        null=True,
+        related_name='tags',
+        related_query_name='tag'
+    )
 
     objects = TagManager()
 

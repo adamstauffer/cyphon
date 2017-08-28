@@ -20,8 +20,7 @@ Defines serializers for |Distilleries|.
 ====================================  ========================================
 Class                                 Description
 ====================================  ========================================
-:class:`~TagSerializer`               Serializer for |Tag| views.
-:class:`~TopicSerializer`             Serializer for |Topic| views.
+:class:`~ArticleSerializer`           Serializer for |Article| views.
 ====================================  ========================================
 
 """
@@ -30,11 +29,31 @@ Class                                 Description
 from rest_framework import serializers
 
 # local
-from articles.models import Article
-from .models import Tag, Topic
+from tags.serializers import TagListSerializer, TopicSerializer
+from .models import Article
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleDetailSerializer(serializers.ModelSerializer):
+    """Serializer for a |Article| objects."""
+
+    topics = TopicSerializer(many=True)
+    tags = TagListSerializer(many=True)
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = Article
+        depth = 2
+        fields = (
+            'id',
+            'title',
+            'content',
+            'topics',
+            'tags',
+        )
+
+
+class ArticleListSerializer(serializers.ModelSerializer):
     """Serializer for a |Article| objects."""
 
     class Meta(object):
@@ -45,49 +64,4 @@ class ArticleSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'url',
-        )
-
-
-class TopicSerializer(serializers.ModelSerializer):
-    """Serializer for |Topic| objects."""
-
-    class Meta(object):
-        """Metadata options."""
-
-        model = Topic
-        fields = (
-            'id',
-            'name',
-            'url'
-        )
-
-
-class TagDetailSerializer(serializers.HyperlinkedModelSerializer):
-    """Serializer for a |Tag| object."""
-
-    topic = TopicSerializer()
-    article = ArticleSerializer()
-
-    class Meta(object):
-        """Metadata options."""
-
-        model = Tag
-        fields = (
-            'id',
-            'name',
-            'topic',
-            'article',
-        )
-
-
-class TagListSerializer(serializers.ModelSerializer):
-    """Serializer for a list of |Tag| objects."""
-
-    class Meta(object):
-        """Metadata options."""
-
-        model = Tag
-        fields = (
-            'id',
-            'name',
         )

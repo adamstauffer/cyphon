@@ -28,7 +28,7 @@ from distilleries.serializers import (
     DistilleryDetailSerializer,
     DistilleryListSerializer,
 )
-from tags.serializers import TagSerializer
+from tags.serializers import TagDetailSerializer
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Alert, Comment
 
@@ -125,7 +125,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
     dispatches = DispatchSerializer(many=True)
     distillery = DistilleryDetailSerializer()
     location = serializers.JSONField(source='coordinates')
-    tags = TagSerializer(source='associated_tags', many=True)
+    tags = TagDetailSerializer(source='associated_tags', many=True)
     title = serializers.CharField(source='display_title')
 
     class Meta(object):
