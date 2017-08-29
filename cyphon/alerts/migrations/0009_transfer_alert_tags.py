@@ -25,6 +25,7 @@ def transfer_tags(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    # replaces = [('alerts', '0009_auto_20170810_1332'), ]
     atomic = False
     dependencies = [
         ('tags', '0002_auto_20170810_1608'),

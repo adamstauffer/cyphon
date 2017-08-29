@@ -46,6 +46,7 @@ class TagRelationInlineAdmin(GenericTabularInline):
         'tag',
     )
     extra = 1
+    verbose_name_plural = 'tags'
 
 
 @admin.register(TagRelation)
