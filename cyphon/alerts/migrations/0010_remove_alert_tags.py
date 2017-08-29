@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alerts', '0009_auto_20170810_1332'),
+        ('alerts', '0009_transfer_alert_tags'),
     ]
 
     operations = [
