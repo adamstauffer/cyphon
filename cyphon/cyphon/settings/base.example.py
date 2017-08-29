@@ -254,13 +254,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(HOME_DIR, 'static')
 STATICFILES_DIRS = []
 
-STATICFILES_DIRS = []
-
-if CYCLOPS['LOCAL_ASSETS_ENABLED']:
-    STATICFILES_DIRS += [
-        (CYCLOPS['LOCAL_FOLDER_NAME'], CYCLOPS['LOCAL_ASSETS_PATH']),
-    ]
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 

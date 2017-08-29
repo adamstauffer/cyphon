@@ -76,11 +76,8 @@ CODEBOOKS = {
 CYCLOPS = {
     'ENABLED': True,
     'MAPBOX_ACCESS_TOKEN': '',
-    'LOCAL_ASSETS_ENABLED': False,
-    'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/dist')),
-    'LOCAL_FOLDER_NAME': 'cyclops',
-    'LOCAL_CSS_FILENAME': 'cyclops.css',
-    'LOCAL_JS_FILENAME': 'cyclops.js',
+    'DEVELOPMENT_ENABLED': False,
+    'DEVELOPMENT_URL': 'http://localhost:8080/',
 }
 
 DATASIFTER = {
