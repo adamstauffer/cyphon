@@ -34,6 +34,7 @@ LOGGER = logging.getLogger(__name__)
 FIXTURE_DEPENDENCIES = {
     'actions': ['destinations'],
     'alerts': ['distilleries', 'watchdogs', 'users'],
+    'articles': [],
     'bottles': [],
     'categories': [],
     'codebooks': ['companies'],
@@ -46,6 +47,7 @@ FIXTURE_DEPENDENCIES = {
     'datacondensers': ['bottles'],
     'datamungers': ['datacondensers', 'distilleries'],
     'datasieves': [],
+    'datataggers': ['containers', 'tags'],
     'destinations': [],
     'dispatches': ['alerts', 'stamps'],
     'distilleries': ['categories', 'containers', 'companies',
@@ -79,6 +81,7 @@ FIXTURE_DEPENDENCIES = {
     'searchterms': [],
     'stamps': ['passports', 'pipes', 'actions', 'users'],
     'streams': ['invoices'],
+    'tags': ['alerts', 'comments', 'articles'],
     'tastes': ['containers'],
     'timeframes': [],
     'warehouses': [],

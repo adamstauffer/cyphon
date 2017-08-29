@@ -37,6 +37,7 @@ from django.db import models
 from django.forms import fields
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 # local
 from cyphon.choices import (
@@ -45,7 +46,7 @@ from cyphon.choices import (
     ALERT_OUTCOME_CHOICES,
 )
 from distilleries.models import Distillery
-from tags.models import Tag
+from tags.models import Tag, TagRelation
 from utils.dateutils.dateutils import convert_time_to_seconds
 from utils.dbutils.dbutils import json_encodeable
 from utils.parserutils.parserutils import (
@@ -87,7 +88,7 @@ class AlertManager(models.Manager):
         """
         default_queryset = self.api_queryset()
         return default_queryset.select_related('distillery__company__codebook')\
-                .prefetch_related('distillery__company__codebook__codenames')
+               .prefetch_related('distillery__company__codebook__codenames')
 
     @staticmethod
     def _filter_by_group(user, queryset):
@@ -217,7 +218,7 @@ class Alert(models.Model):
 
     _DEFAULT_TITLE = 'No title available'
     _HASH_FORMAT = ('{level}|{distillery}|{alarm_type}'
-                    '|{alarm_id}|{fields}|{bucket:.0f}')
+                    '|{alarm_id}|{field_values}|{bucket:.0f}')
 
     level = models.CharField(
         max_length=20,
@@ -237,7 +238,7 @@ class Alert(models.Model):
         blank=True,
         db_index=True
     )
-    created_date = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_date = models.DateTimeField(default=timezone.now, db_index=True)
     content_date = models.DateTimeField(blank=True, null=True, db_index=True)
     last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     assigned_user = models.ForeignKey(
@@ -259,7 +260,7 @@ class Alert(models.Model):
         Distillery,
         blank=True,
         null=True,
-        related_name='alert',
+        related_name='alerts',
         related_query_name='alerts',
         db_index=True,
         on_delete=models.PROTECT
@@ -275,7 +276,6 @@ class Alert(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     incidents = models.PositiveIntegerField(default=1)
     notes = models.TextField(blank=True, null=True)
-    tags = models.ManyToManyField(Tag, blank=True)
     muzzle_hash = models.CharField(
         max_length=64,
         blank=True,
@@ -296,7 +296,7 @@ class Alert(models.Model):
         if self.title:
             return 'PK %s: %s' % (self.pk, self.title)
         elif self.pk:
-            return 'PK %s'  % self.pk
+            return 'PK %s' % self.pk
         else:
             return super(Alert, self).__str__()
 
@@ -317,28 +317,11 @@ class Alert(models.Model):
         if not self.title or self.title == self._DEFAULT_TITLE:
             self.title = self._format_title()
 
-        if (self.alarm and
-                hasattr(self.alarm, 'muzzle') and
-                self.alarm.muzzle.enabled):
-            fields = [
-                ':'.join((field, get_dict_value(field, self.data) or ''))
-                for field in sorted(self.alarm.muzzle._get_fields())
-            ]
-            interval_seconds = convert_time_to_seconds(
-                self.alarm.muzzle.time_interval,
-                self.alarm.muzzle.time_unit
-            )
-            self.muzzle_hash = hashlib.sha256(
-                self._HASH_FORMAT.format(
-                    level=self.level,
-                    distillery=self.distillery,
-                    alarm_type=self.alarm_type,
-                    alarm_id=self.alarm_id,
-                    fields=','.join(fields),
-                    bucket=time.time() // interval_seconds
-                ).encode()).hexdigest()
-        else:
-            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+        # set the created_date now so it can be used to create the muzzle_hash
+        if not self.created_date:
+            self.created_date = timezone.now()
+
+        self._update_muzzle_hash()
 
         super(Alert, self).save(*args, **kwargs)
 
@@ -376,9 +359,59 @@ class Alert(models.Model):
         """
         self.location = self.teaser.get('location')
 
+    def _get_muzzle(self):
+        """
+        Get the Muzzle associated with an Alert, if one exists.
+        """
+        if (self.alarm and hasattr(self.alarm, 'muzzle') and
+                self.alarm.muzzle.enabled):
+            return self.alarm.muzzle
+
+    def _get_bucket(self, muzzle):
+        """
+        Get the time bucket associated with an Alert and a given Muzzle.
+        """
+        total_seconds = time.mktime(self.created_date.timetuple())
+        interval_seconds = convert_time_to_seconds(
+            muzzle.time_interval,
+            muzzle.time_unit
+        )
+        return total_seconds // interval_seconds
+
+    def _get_field_values(self, muzzle):
+        """
+        Get a string of field names and field values associated with the
+        Muzzle of the Watchdog that created the Alert.
+        """
+        field_values = [
+            ':'.join((field, get_dict_value(field, self.data) or ''))
+            for field in sorted(muzzle.get_fields())
+        ]
+        return ','.join(field_values)
+
+    def _update_muzzle_hash(self):
+        """
+        Assigns a muzzle_hash to the Alert.
+        """
+        muzzle = self._get_muzzle()
+        if muzzle:
+            time_bucket = self._get_bucket(muzzle)
+            field_values = self._get_field_values(muzzle)
+            self.muzzle_hash = hashlib.sha256(
+                self._HASH_FORMAT.format(
+                    level=self.level,
+                    distillery=self.distillery,
+                    alarm_type=self.alarm_type,
+                    alarm_id=self.alarm_id,
+                    field_values=field_values,
+                    bucket=time_bucket
+                ).encode()).hexdigest()
+        else:
+            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+
     def _get_codebook(self):
         """
-        returns the Codebook for the Distillery associated with the Alert.
+        Returns the Codebook for the Distillery associated with the Alert.
         """
         if self.distillery:
             return self.distillery.codebook
@@ -393,6 +426,52 @@ class Alert(models.Model):
         if title and len(title) > max_length:
             return title[:max_length]
         return title
+
+    def _get_schema(self):
+        """
+        Returns a list of DataFields in the Container associated with
+        the Alert's data.
+        """
+        if self.distillery:
+            return self.distillery.schema
+
+    def _summarize(self, include_empty=False):
+        """
+
+        """
+        source_data = self.get_public_data_str()
+
+        field_data = [
+            ('Alert ID', self.id),
+            ('Title', self.title),
+            ('Level', self.level),
+            ('Incidents', self.incidents),
+            ('Created date', self.created_date),
+            ('\nCollection', self.distillery),
+            ('Document ID', self.doc_id),
+            ('Source Data', '\n' + source_data),
+            ('\nNotes', '\n' + str(self.notes)),
+        ]
+
+        return format_fields(field_data, include_empty=include_empty)
+
+    def _summarize_with_comments(self, include_empty=False):
+        """
+
+        """
+        summary = self._summarize(include_empty=include_empty)
+
+        separator = '\n\n'
+        division = '-----'
+
+        if self.comments.count() > 0:
+            summary += separator
+            summary += division
+            for comment in self.comments.all():
+                summary += separator
+                summary += comment.summary()
+
+        return summary
 
     def display_title(self):
         """
@@ -435,14 +514,6 @@ class Alert(models.Model):
                 _LOGGER.warning('The document associated with id %s cannot be ' \
                                 + 'found in %s.', self.doc_id, self.distillery)
         return {}
-
-    def _get_schema(self):
-        """
-        Returns a list of DataFields in the Container associated with
-        the Alert's data.
-        """
-        if self.distillery:
-            return self.distillery.schema
 
     @property
     def tidy_data(self):
@@ -487,6 +558,24 @@ class Alert(models.Model):
         else:
             return {}
 
+    @property
+    def associated_tags(self):
+        """
+        Returns a QuerySet of Tags associated with the Alert or its comments.
+        """
+        comment_ids = self.comments.all().values_list('id', flat=True)
+        alert_relations = models.Q(
+            content_type=ContentType.objects.get_for_model(Alert),
+            object_id=self.id
+        )
+        comment_relations = models.Q(
+            content_type=ContentType.objects.get_for_model(Comment),
+            object_id__in=comment_ids
+        )
+        query = alert_relations | comment_relations
+        tag_relations = TagRelation.objects.filter(query)
+        return Tag.objects.filter(tag_relations__in=tag_relations).distinct()
+
     def add_incident(self):
         """
         Increments the number of incidents associated with the Alert.
@@ -495,44 +584,6 @@ class Alert(models.Model):
         # and avoids race conditions
         self.incidents = models.F('incidents') + 1
         self.save()
-
-    def _summarize(self, include_empty=False):
-        """
-
-        """
-        source_data = self.get_public_data_str()
-
-        field_data = [
-            ('Alert ID', self.id),
-            ('Title', self.title),
-            ('Level', self.level),
-            ('Incidents', self.incidents),
-            ('Created date', self.created_date),
-            ('\nCollection', self.distillery),
-            ('Document ID', self.doc_id),
-            ('Source Data', '\n' + source_data),
-            ('\nNotes', '\n' + str(self.notes)),
-        ]
-
-        return format_fields(field_data, include_empty=include_empty)
-
-    def _summarize_with_comments(self, include_empty=False):
-        """
-
-        """
-        summary = self._summarize(include_empty=include_empty)
-
-        separator = '\n\n'
-        division = '-----'
-
-        if self.comments.count() > 0:
-            summary += separator
-            summary += division
-            for comment in self.comments.all():
-                summary += separator
-                summary += comment.summary()
-
-        return summary
 
     def summary(self, include_empty=False, include_comments=False):
         """

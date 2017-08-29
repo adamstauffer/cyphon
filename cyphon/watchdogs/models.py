@@ -67,7 +67,7 @@ class WatchdogManager(AlarmManager):
             A |Queryset| of |Watchdogs| for inspecting a document.
 
         """
-        enabled_watchdogs = super(WatchdogManager, self).find_enabled()
+        enabled_watchdogs = self.find_enabled()
         categories = self._get_categories(distillery)
         queryset = enabled_watchdogs.annotate(
             categories_cnt=models.Count('categories')
@@ -370,7 +370,7 @@ class Muzzle(models.Model):
     def __str__(self):
         return str(self.watchdog)
 
-    def _get_fields(self):
+    def get_fields(self):
         """
         Returns a list of field names created from the Muzzle's
         matching_fields.

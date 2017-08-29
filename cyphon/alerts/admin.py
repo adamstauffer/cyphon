@@ -23,6 +23,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 # local
+from tags.admin import TagRelationInlineAdmin
 from .models import Alert, Comment
 
 
@@ -65,7 +66,6 @@ class AlertAdmin(admin.ModelAdmin):
                 'status',
                 'assigned_user',
                 'notes',
-                'tags',
             ),
         }),
         (_('Source'), {
@@ -131,6 +131,7 @@ class AlertAdmin(admin.ModelAdmin):
         'set_outcome_to_true',
         'set_outcome_to_false',
     ]
+    inlines = [TagRelationInlineAdmin, ]
 
     @staticmethod
     def _format_msg(rows_updated):
@@ -229,4 +230,3 @@ class AlertAdmin(admin.ModelAdmin):
 
 admin.site.register(Alert, AlertAdmin)
 admin.site.register(Comment)
-

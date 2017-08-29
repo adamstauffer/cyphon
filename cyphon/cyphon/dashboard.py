@@ -179,6 +179,18 @@ class CyphonIndexDashboard(Dashboard):
         ))
 
         self.children.append(modules.ModelList(
+            _('Tagging Data'),
+            column=1,
+            css_classes=('grp-collapse grp-closed',),
+            models=(
+                'tags.models.Topic',
+                'tags.models.Tag',
+                'tags.models.DataTagger',
+                'articles.models.Article',
+            ),
+        ))
+
+        self.children.append(modules.ModelList(
             _('Configuring Alerts'),
             column=1,
             css_classes=('grp-collapse grp-closed',),

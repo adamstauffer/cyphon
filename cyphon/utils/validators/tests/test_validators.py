@@ -38,6 +38,7 @@ from utils.validators.validators import (
     db_name_validator,
     field_name_validator,
     key_file_validator,
+    lowercase_validator,
     validate_str_substitution,
     validate_timeframe,
 )
@@ -338,3 +339,25 @@ class KeyFieldValidatorTestCase(TestCase):
         mock_fieldfile.name = 'bad_file_name.pem.jar'
         with self.assertRaises(ValidationError):
             key_file_validator(mock_fieldfile)
+
+
+class LowercaseValidatorTestCase(TestCase):
+    """
+    Tests the lowercase_validator function.
+    """
+
+    def test_valid_str(self):
+        """
+        Test case for an all lowercase string.
+        """
+        try:
+            lowercase_validator('hg213i75%^&$efg')
+        except ValidationError:
+            self.fail('String raised ValidationError unexpectedly')
+
+    def test_invalid_str(self):
+        """
+        Test case for a string containing an uppercase character.
+        """
+        with self.assertRaises(ValidationError):
+            lowercase_validator('hg213i75%^&$Efg')

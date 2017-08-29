@@ -86,6 +86,26 @@ class MonitorTestCase(TestCase):
         """
         self.assertEqual(str(self.monitor_grn), 'health_alerts')
 
+    def test_save_overdue(self):
+        """
+        Tests the save method for a green Monitor when the interval
+        is lengthened.
+        """
+        self.monitor_grn.time_unit = 's'
+        self.monitor_grn.save()
+        monitor_grn = Monitor.objects.get(pk=1)
+        self.assertEqual(monitor_grn.status, 'RED')
+
+    def test_save_not_overdue(self):
+        """
+        Tests the save method for a red Monitor when the interval
+        is shortened.
+        """
+        self.monitor_red.time_unit = 'd'
+        self.monitor_red.save()
+        monitor_red = Monitor.objects.get(pk=3)
+        self.assertEqual(monitor_red.status, 'GREEN')
+
     def test_get_interval_in_seconds(self):
         """
         Tests the _get_interval_in_seconds method of the Monitor class
@@ -175,6 +195,28 @@ class MonitorTestCase(TestCase):
         self.assertEqual(updated_monitor.last_active_distillery.pk, distillery.pk)
         self.assertEqual(updated_monitor.last_saved_doc, doc_id)
         self.assertEqual(updated_monitor.status, 'GREEN')
+
+    @patch_find_by_id()
+    @patch('alerts.models.Alert.teaser')
+    @patch('monitors.models.timezone.now', return_value=EARLY)
+    def test_not_overdue_red(self, mock_now, mock_teaser):
+        """
+        Tests the update_status method of the Monitor class when the
+        health check is not overdue, the current status is not 'RED',
+        and alerts are enabled.
+        """
+        monitor = self.monitor_red
+        assert monitor.status == 'RED'
+        assert Alert.objects.count() == 0
+
+        result = monitor.update_status()
+
+        # get a fresh instance from the database
+        updated_monitor = Monitor.objects.get(pk=monitor.pk)
+        self.assertEqual(updated_monitor.last_updated, EARLY)
+        self.assertEqual(updated_monitor.status, 'GREEN')
+        self.assertEqual(Alert.objects.count(), 0)
+        self.assertEqual(result, 'GREEN')
 
     @patch_find_by_id()
     @patch('alerts.models.Alert.teaser')

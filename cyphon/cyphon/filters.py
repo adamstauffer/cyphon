@@ -263,7 +263,7 @@ class GroupFilterBackend(ObjectFilterBackend):
         Parameters
         ----------
         request : Request
-             A `Request`_ for a resource.
+            A `Request`_ for a resource.
 
         queryset : QuerySet
             A |QuerySet| to be filtered.

@@ -126,9 +126,21 @@ DISTILLERIES = {
 }
 
 ELASTICSEARCH = {
-    'HOSTS': ['{0}:{1}'.format(os.getenv('ELASTICSEARCH_HOST', 'localhost'),
-                               os.getenv('ELASTICSEARCH_PORT', '9200'))],
-    'TIMEOUT': 30,
+    'HOSTS': [
+        {
+            'host': os.getenv('ELASTICSEARCH_HOST', 'localhost'),
+            'port': int(os.getenv('ELASTICSEARCH_PORT', '9200')),
+            'http_auth': os.getenv('ELASTICSEARCH_HTTP_AUTH'),
+            'use_ssl': bool(int(os.getenv('ELASTICSEARCH_USE_SSL', False))),
+        },
+    ],
+    # Note: the keyword arguments provided below are passed to the
+    # *Elasticsearch* constructor, and should not contain host-specific
+    # keyword arguments for individual connections, which are instead
+    # configured in the 'HOSTS' list above.
+    'KWARGS': {
+        'timeout': 30,
+    },
 }
 
 EMAIL = {
@@ -309,6 +321,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     # 'debug_toolbar',
+    'ckeditor',
+    'ckeditor_uploader',
     'constance',
     'constance.backends.database',
     'grappelli.dashboard',  # must come after contenttypes and before grappelli
@@ -335,6 +349,7 @@ INSTALLED_APPS = (
     'ambassador.stamps',
     'ambassador.visas',
     'appusers',
+    'articles',
     'bottler.containers',
     'bottler.bottles',
     'bottler.labels',
@@ -522,6 +537,9 @@ CELERYBEAT_SCHEDULE = {
 }
 
 CELERYD_POOL_RESTARTS = True
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 GRAPPELLI_ADMIN_TITLE = 'Cyphon'
 GRAPPELLI_INDEX_DASHBOARD = 'cyphon.dashboard.CyphonIndexDashboard'

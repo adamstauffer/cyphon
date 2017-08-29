@@ -166,6 +166,13 @@ class Monitor(Alarm):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save() method to update the status of the Monitor.
+        """
+        self._set_current_status()
+        super(Monitor, self).save(*args, **kwargs)
+
     def _get_interval_in_seconds(self):
         """
         Returns the number of minutes in the Monitor's time interval.
@@ -208,6 +215,17 @@ class Monitor(Alarm):
         Monitor's interval.
         """
         return self._get_inactive_seconds() > self._get_interval_in_seconds()
+
+    def _set_current_status(self):
+        """
+        Updates and returns the Monitor's current status.
+        """
+        is_overdue = self._is_overdue()
+        if is_overdue:
+            self.status = self._UNHEALTHY
+        else:
+            self.status = self._HEALTHY
+        return self.status
 
     def _get_title(self):
         """
@@ -293,15 +311,14 @@ class Monitor(Alarm):
 
     def update_status(self):
         """
-        Determines whether the Monitor's status should be changed to
-        unhealthy. If so, updates the status and creates an Alert if
-        appropriate. Returns the Monitor's updated status.
+        Updates the Monitor's status and creates an Alert if
+        appropriate. Returns the Monitor's current status.
         """
         old_status = self.status
-        if self._is_overdue():
-            self.status = self._UNHEALTHY
+        new_status = self._set_current_status()
+        self.save()
+        if new_status == self._UNHEALTHY:
             self._alert(old_status)
-        self.save()  # update record even if healthy
         return self.status
 
     def last_doc(self):

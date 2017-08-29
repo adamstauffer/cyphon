@@ -10,11 +10,55 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Added
 
+- **alerts.serializers**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
+- **alerts.models**: added ``Alert.associated_tags`` property ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
+- **alerts.signals**: added post-save signals for tagging Alerts and Comments ([f319bec](https://github.com/dunbarcyber/cyphon/commit/f319bec))
+- **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
+- **cyphon.urls**: added REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **tags**: added TagRelation, Topic, and DataTagger models [PR #178](https://github.com/dunbarcyber/cyphon/pull/178) ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **utils.validators**: added ``lowercase validator`` ([5b0ce6f](https://github.com/dunbarcyber/cyphon/commit/5b0ce6f))
+
+### Changed
+
+- **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
+
+### Removed
+
+- **alerts.models**: removed``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+
+
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/dunbarcyber/cyphon/compare/1.4.1...1.4.2) (2017-08-21)
+
+### Changed
+
+- **monitors**: status of Monitors is updated on save [PR #186](https://github.com/dunbarcyber/cyphon/pull/186) ([18a4ab8](https://github.com/dunbarcyber/cyphon/commit/18a4ab8))
+
+### Fixed
+
+- **engines.elasticsearch**: fixed default value for Elasticsearch timeout ([22cd0b5](https://github.com/dunbarcyber/cyphon/commit/22cd0b5))
+
+
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/dunbarcyber/cyphon/compare/1.4.0...1.4.1) (2017-08-14)
+
+### Fixed
+
+- **monitors**: fixed bug that prevented red monitors from changing back to green [PR #184](https://github.com/dunbarcyber/cyphon/pull/184) ([28f1f64](https://github.com/dunbarcyber/cyphon/commit/28f1f64))
+
+
+<a name="1.4.0"></a>
+## [1.4.0](https://github.com/dunbarcyber/cyphon/compare/1.3.0...1.4.0) (2017-08-14)
+
+### Added
+
 - **alerts**: ``Alert.muzzle_hash`` field [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
 - **alerts**: email notifications for Alert comments [PR #139](https://github.com/dunbarcyber/cyphon/pull/139) ([bd968c1](https://github.com/dunbarcyber/cyphon/commit/bd968c1))
 - **cyphon.choices**: range choices ([1c414aa](https://github.com/dunbarcyber/cyphon/commit/1c414aa))
+- **cyphon.version**: added Cyphon version to headers ([40c123f](https://github.com/dunbarcyber/cyphon/commit/40c123f), [08ff612](https://github.com/dunbarcyber/cyphon/commit/08ff612))
 - **docs**: search query docs ([bfe06fd](https://github.com/dunbarcyber/cyphon/commit/bfe06fd))
 - **docs**: Alert bulk admin docs ([3d963b1](https://github.com/dunbarcyber/cyphon/commit/3d963b1))
+- **docs**: secrets management ([7cdddc2](https://github.com/dunbarcyber/cyphon/commit/7cdddc2), [4a110fc](https://github.com/dunbarcyber/cyphon/commit/4a110fc))
 - **query.search**: search query classes ([76dac5d](https://github.com/dunbarcyber/cyphon/commit/76dac5d))
 - **query.search**: search endpoint [PR #136](https://github.com/dunbarcyber/cyphon/pull/136) ([56bd2ce](https://github.com/dunbarcyber/cyphon/commit/56bd2ce))
 - **requirements.txt**: boto3, django-s3-storage, and ec2-metadata packages [PR #134](https://github.com/dunbarcyber/cyphon/pull/134) ([62751ee](https://github.com/dunbarcyber/cyphon/commit/62751ee))
@@ -26,7 +70,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 - **alerts**: only fields defined in Container are shown in Alert data [PR #127](https://github.com/dunbarcyber/cyphon/pull/127) ([cdd0c68](https://github.com/dunbarcyber/cyphon/commit/cdd0c68))
 - **alerts**: doc_id field included in serialized Alert detail [PR #145](https://github.com/dunbarcyber/cyphon/pull/145) ([c62dca4](https://github.com/dunbarcyber/cyphon/commit/c62dca4))
+- **cyphon.settings, engines.elasticsearch**: support more Elasticsearch configuration options [PR #170](https://github.com/dunbarcyber/cyphon/pull/170) ([91312dc](https://github.com/dunbarcyber/cyphon/commit/91312dc), [51a2a68](https://github.com/dunbarcyber/cyphon/commit/51a2a68))
 - **watchdogs**: removed Alert table locking [PR #130](https://github.com/dunbarcyber/cyphon/pull/130) ([efaa627](https://github.com/dunbarcyber/cyphon/commit/efaa627))
+
+### Fixed
+
+- **cyphon.settings**: corrected ``backupCount`` setting for logging handlers ([e150db1](https://github.com/dunbarcyber/cyphon/commit/e150db1))
 
 ### Removed
 

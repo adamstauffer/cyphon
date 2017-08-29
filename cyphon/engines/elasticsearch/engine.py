@@ -54,11 +54,12 @@ from engines.elasticsearch import queries as es_queries
 from engines.elasticsearch import results as es_results
 from engines.elasticsearch import sorter as es_sorter
 from engines.engine import Engine, MAX_RESULTS, PAGE_SIZE
-from .client import ELASTICSEARCH, TIMEOUT
+from .client import ES_KWARGS, ELASTICSEARCH
 from .mapper import create_mapping
 
 _LOGGER = logging.getLogger(__name__)
 
+TIMEOUT = ES_KWARGS.get('timeout', 30)
 
 ENGINE_CLASS = 'ElasticsearchEngine'
 """|str|
