@@ -33,7 +33,7 @@ from rest_framework import status
 
 # local
 from appusers.models import AppUser
-from alerts.models import Alert
+from alerts.models import Alert, Analysis
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 from .expected_values import ALERT_DETAIL, ALERT_LIST
@@ -189,6 +189,12 @@ class AlertBasicAPITests(AlertBaseAPITests):
         response = self.get_api_response(self.obj_url, is_staff=False)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+class UpdateAlertAPITests(AlertBaseAPITests):
+    """
+    Tests REST API endpoint for updating an Alert.
+    """
+
     def test_patch_alert(self):
         """
         Tests the partial_update view of the Alerts endpoint.
@@ -213,12 +219,35 @@ class AlertBasicAPITests(AlertBaseAPITests):
         self.assertEqual(response.json(), updated_alert)
         self.assertEqual(response.data.get('level'), 'MEDIUM')
         self.assertEqual(response.data.get('status'), 'BUSY')
+
+        # make sure muzzle_hash doesn't change on update
         response = self.patch_to_api('4/', {
             'level': 'MEDIUM',
         })
         new_muzzle_hash = Alert.objects.get(pk=4).muzzle_hash
         self.assertEqual(response.data.get('level'), 'MEDIUM')
         self.assertEqual(old_muzzle_hash, new_muzzle_hash)
+
+    def test_create_analysis(self):
+        """
+        Tests the partial_update view of the Alerts endpoint when an
+        Analysis is created.
+        """
+        self.assertFalse(Analysis.objects.filter(pk=4).exists())
+        notes = 'Here are some notes.'
+        self.patch_to_api('4/', {'notes': notes})
+        analysis = Analysis.objects.get(pk=4)
+        self.assertEqual(analysis.notes, notes)
+
+    def test_update_analysis(self):
+        """
+        Tests the partial_update view of the Alerts endpoint when an
+        Analysis is updated.
+        """
+        notes = 'Here are some updated notes.'
+        self.patch_to_api('3/', {'notes': notes})
+        analysis = Analysis.objects.get(pk=3)
+        self.assertEqual(analysis.notes, notes)
 
 
 class AlertCollectionAPITests(AlertBaseAPITests):
@@ -549,6 +578,42 @@ class AlertDistilleryAPITests(AlertBaseAPITests):
             },
         ]
         self.assertEqual(response.json()['results'], expected)
+
+
+class AnalysisAPITests(CyphonAPITestCase):
+    """
+    Tests the API endpoint for alert analyses.
+    """
+    fixtures = get_fixtures(['alerts'])
+
+    model_url = 'analyses/'
+
+    def test_get_analyses(self):
+        """
+        Tests the REST API endpoint for Analyses.
+        """
+        response = self.get_api_response()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+        self.assertEqual(response.data['results'][0].get('notes'),
+                         'Some example notes.')
+
+    def test_get_analysis(self):
+        """
+        Tests getting a single Analysis.
+        """
+        response = self.get_api_response('1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('notes'), 'Some example notes.')
+
+    def test_only_analysts_can_patch(self):
+        """
+        Tests that only the user who created the Analysis can alter it.
+        """
+        url = self.url + '1/'
+        self.authenticate()
+        response = self.client.patch(url, {'notes': 'new'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class CommentAPITests(CyphonAPITestCase):
