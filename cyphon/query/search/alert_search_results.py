@@ -185,7 +185,7 @@ class AlertSearchResults(SearchResults):
         -------
         list of Q
         """
-        return [Q(notes__icontains=keyword) for keyword in keywords]
+        return [Q(analysis__notes__icontains=keyword) for keyword in keywords]
 
     @staticmethod
     def _get_alert_comments_query(keywords):
