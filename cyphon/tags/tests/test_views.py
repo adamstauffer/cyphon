@@ -66,7 +66,8 @@ class TagAPITests(CyphonAPITestCase):
         expected = [
             {'id': 1, 'name': 'bird'},
             {'id': 2, 'name': 'cat'},
-            {'id': 3, 'name': 'dog'}
+            {'id': 3, 'name': 'dog'},
+            {'id': 4, 'name': 'turtle'}
         ]
         self.assertEqual(actual, expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

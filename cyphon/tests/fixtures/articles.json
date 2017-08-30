@@ -22,5 +22,13 @@
       "title": "Dogs",
       "content": "All about dogs."
     }
+  },
+  {
+    "model": "articles.article",
+    "fields": {
+      "id": 4,
+      "title": "Turtles",
+      "content": "All about turtles."
+    }
   }
 ]

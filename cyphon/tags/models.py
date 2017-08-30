@@ -221,7 +221,7 @@ class Tag(models.Model):
         model_type = ContentType.objects.get_for_model(obj)
         (tag_relation, created) = TagRelation.objects.get_or_create(
             content_type=model_type,
-            object_id=obj.id,
+            object_id=obj.pk,
             tag=self,
             tagged_by=user
         )
@@ -240,7 +240,8 @@ class TagRelation(models.Model):
         The id of the :attr:`~TagRelation.tagged_object`.
 
     tagged_object : `Alert` or `Comment`
-        The object that was tagged, which can be an |Alert| or |Comment|.
+        The object that was tagged, which can be an |Alert|, |Analysis|,
+        or |Comment|.
 
     tag : Tag
         The |Tag| associated with the :attr:`~TagRelation.tagged_object`.
@@ -254,8 +255,9 @@ class TagRelation(models.Model):
     """
 
     _ALERT = models.Q(app_label='alerts', model='alert')
+    _ANALYSIS = models.Q(app_label='alerts', model='analysis')
     _COMMENT = models.Q(app_label='alerts', model='comment')
-    _TAGGED = _ALERT | _COMMENT
+    _TAGGED = _ALERT | _ANALYSIS | _COMMENT
 
     content_type = models.ForeignKey(
         ContentType,

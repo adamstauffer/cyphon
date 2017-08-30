@@ -82,6 +82,7 @@ class AlertManager(models.Manager):
         return default_queryset.select_related('distillery__collection',
                                                'distillery__container__bottle',
                                                'distillery__container__label')
+
     def with_codebooks(self):
         """
         Overrides the default get_queryset method to select the related
@@ -572,11 +573,15 @@ class Alert(models.Model):
             content_type=ContentType.objects.get_for_model(Alert),
             object_id=self.id
         )
+        analysis_relations = models.Q(
+            content_type=ContentType.objects.get_for_model(Analysis),
+            object_id=self.id
+        )
         comment_relations = models.Q(
             content_type=ContentType.objects.get_for_model(Comment),
             object_id__in=comment_ids
         )
-        query = alert_relations | comment_relations
+        query = alert_relations | analysis_relations | comment_relations
         tag_relations = TagRelation.objects.filter(query)
         return Tag.objects.filter(tag_relations__in=tag_relations).distinct()
 

@@ -30,7 +30,7 @@ from django.dispatch import receiver
 # local
 from tags.models import DataTagger, Tag
 from utils.emailutils.emailutils import emails_enabled
-from .models import Alert, Comment
+from .models import Alert, Analysis, Comment
 from .services import compose_comment_email
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,11 +57,17 @@ def tag_alert(sender, instance, created, **kwargs):
         DataTagger.objects.process(instance)
 
 
+def tag_analysis(sender, instance, created, **kwargs):
+    """Tag an |Analysis|."""
+    Tag.objects.process(value=instance.notes, obj=instance)
+
+
 def tag_comment(sender, instance, created, **kwargs):
     """Tag a |Comment|."""
-    Tag.objects.process(value=instance.text, obj=instance)
+    Tag.objects.process(value=instance.content, obj=instance)
 
 
 if not settings.TEST:
     post_save.connect(tag_alert, sender=Alert)
+    post_save.connect(tag_analysis, sender=Analysis)
     post_save.connect(tag_comment, sender=Comment)

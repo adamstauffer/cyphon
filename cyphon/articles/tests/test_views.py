@@ -52,16 +52,16 @@ class ArticlesAPITestCase(CyphonAPITestCase):
             'url': 'http://testserver/api/v1/articles/1/'
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 3)
+        self.assertEqual(response.data['count'], 4)
         self.assertEqual(actual, expected)
 
     def test_get_article(self):
         """
-        Tests the Article detail REST API endpoint. 
+        Tests the Article detail REST API endpoint.
         """
         article = Article.objects.get(pk=1)
         topic = Topic.objects.get(name='Animals')
-        Tag.objects.create(id=4, name='falcon', topic=topic, article=article)
+        Tag.objects.create(id=5, name='falcon', topic=topic, article=article)
         response = self.get_api_response('1/')
         actual = response.json()
         expected = {
@@ -80,7 +80,7 @@ class ArticlesAPITestCase(CyphonAPITestCase):
                     'id': 1,
                     'name': 'bird'
                 }, {
-                    'id': 4,
+                    'id': 5,
                     'name': 'falcon'
                 }
             ],
