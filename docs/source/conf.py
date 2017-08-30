@@ -503,6 +503,8 @@ rst_epilog = """
 .. |DataSieves| replace:: :class:`DataSieves<sifter.datasifter.datasieves.models.DataSieve>`
 .. |DataSieveNode| replace:: :class:`~sifter.datasifter.datasieves.models.DataSieveNode`
 .. |DataSieveNodes| replace:: :class:`DataSieveNodes<sifter.datasifter.datasieves.models.DataSieveNode>`
+.. |DataTagger| replace:: :class:`~tags.models.DataTagger`
+.. |DataTaggers| replace:: :class:`DataTaggers<tags.models.DataTagger>`
 .. |Destination| replace:: :class:`~responder.destinations.models.Destination`
 .. |Destinations| replace:: :class:`Destinations<responder.destinations.models.Destination>`
 .. |Dispatch| replace:: :class:`~responder.dispatches.models.Dispatch`
