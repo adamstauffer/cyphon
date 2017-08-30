@@ -18,9 +18,6 @@
 Tests views for Articles.
 """
 
-# standard library
-from collections import OrderedDict
-
 # third party
 from rest_framework import status
 
