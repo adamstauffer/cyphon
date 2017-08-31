@@ -53,8 +53,7 @@ def send_comment_notification(sender, instance, created, **kwargs):
 
 def tag_alert(sender, instance, created, **kwargs):
     """Tag a new |Alert|."""
-    if created:
-        DataTagger.objects.process(instance)
+    DataTagger.objects.process(instance)
 
 
 def tag_analysis(sender, instance, created, **kwargs):

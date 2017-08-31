@@ -132,10 +132,10 @@ class TagAlertTestCase(TransactionTestCase):
 
     def test_old_alert(self):
         """
-        Tests that an old Alert is not tagged.
+        Tests that an old Alert is tagged.
         """
         self.alert.save()
-        self.assertEquals(len(self.alert.associated_tags), 0)
+        self.assertEquals(len(self.alert.associated_tags), 2)
 
     def test_new_alert(self):
         """
