@@ -54,6 +54,8 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       postgis \
       postgresql-dev \
       python3-dev \
+      jpeg-dev \
+      zlib-dev \
  && pip install -r $CYPHON_HOME/requirements.txt \
  && apk del build-deps
 
