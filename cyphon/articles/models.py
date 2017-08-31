@@ -49,6 +49,10 @@ class Article(models.Model):
 
         ordering = ['title']
 
+    def __str__(self):
+        """Return a string representation of the Article."""
+        return self.title
+
     @property
     def topics(self):
         """Get |Topics| associated with the Article.

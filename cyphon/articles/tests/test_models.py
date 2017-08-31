@@ -34,6 +34,13 @@ class ArticleManagerTestCase(TestCase):
     """
     fixtures = get_fixtures(['tags'])
 
+    def test_str(self):
+        """
+        Tests the __str__ method.
+        """
+        article = Article.objects.get(pk=1)
+        self.assertEqual(str(article), 'Birds')
+
     def test_topics(self):
         """
         Tests the topics property.
