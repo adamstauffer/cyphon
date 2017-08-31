@@ -56,6 +56,7 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       python3-dev \
       jpeg-dev \
       zlib-dev \
+      tiff-dev \
  && pip install -r $CYPHON_HOME/requirements.txt \
  && apk del build-deps
 
