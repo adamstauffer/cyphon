@@ -24,7 +24,18 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 
 # local
 from .forms import DataTaggerForm, TagForm
-from .models import DataTagger, Tag, TagRelation
+from .models import DataTagger, Tag, TagRelation, Topic
+
+
+@admin.register(Topic)
+class TopicAdmin(admin.ModelAdmin):
+    """
+    Customizes admin pages for |Topics|.
+    """
+
+    list_display = ['name', ]
+    link_display = ['name', ]
+    fields = ['name', ]
 
 
 @admin.register(Tag)
