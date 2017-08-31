@@ -30,7 +30,7 @@ import rest_framework_jwt.views as rest_views
 # from rest_framework_docs.views import DRFDocsView
 
 # local
-from alerts.views import AlertViewSet, CommentViewSet
+from alerts.views import AlertViewSet, AnalysisViewSet, CommentViewSet
 from appusers.views import AppUserViewSet
 from articles.views import ArticleViewSet
 from categories.views import CategoryViewSet
@@ -93,6 +93,7 @@ router = DefaultRouter()
 
 router.register(r'actions', ActionViewSet)
 router.register(r'alerts', AlertViewSet)
+router.register(r'analyses', AnalysisViewSet)
 router.register(r'articles', ArticleViewSet)
 router.register(r'categories', CategoryViewSet)
 router.register(r'comments', CommentViewSet)

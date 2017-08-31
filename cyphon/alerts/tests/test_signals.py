@@ -33,8 +33,8 @@ from testfixtures import LogCapture
 
 # local
 from appusers.models import AppUser
-from alerts.models import Alert, Comment
-from alerts.signals import tag_alert, tag_comment
+from alerts.models import Alert, Analysis, Comment
+from alerts.signals import tag_alert, tag_analysis, tag_comment
 from tags.models import TagRelation
 from tests.fixture_manager import get_fixtures
 
@@ -132,11 +132,10 @@ class TagAlertTestCase(TransactionTestCase):
 
     def test_old_alert(self):
         """
-        Tests that an old Alert is not tagged.
+        Tests that an old Alert is tagged.
         """
-        post_save.connect(tag_alert, sender=Alert)
         self.alert.save()
-        self.assertEquals(len(self.alert.associated_tags), 0)
+        self.assertEquals(len(self.alert.associated_tags), 2)
 
     def test_new_alert(self):
         """
@@ -146,6 +145,36 @@ class TagAlertTestCase(TransactionTestCase):
         alert.pk = None
         alert.save()
         self.assertEquals(len(alert.associated_tags), 2)
+
+
+class TagAnalysisTestCase(TransactionTestCase):
+    """
+    Tests the tag_comment receiver.
+    """
+    fixtures = get_fixtures(['alerts', 'tags'])
+
+    def setUp(self):
+        super(TagAnalysisTestCase, self).setUp()
+        post_save.connect(tag_analysis, sender=Analysis)
+
+    def tearDown(self):
+        super(TagAnalysisTestCase, self).tearDown()
+        post_save.disconnect(tag_analysis, sender=Analysis)
+
+    def test_tag_analysis(self):
+        """
+        Tests that a Comment is tagged when saved.
+        """
+        analysis = Analysis.objects.get(pk=3)
+        analysis_type = ContentType.objects.get_for_model(Analysis)
+        tag_relations = TagRelation.objects.filter(content_type=analysis_type,
+                                                   object_id=analysis.pk)
+        self.assertEquals(tag_relations.count(), 1)
+        analysis.notes = 'I like cats and dogs.'
+        analysis.save()
+        tag_relations = TagRelation.objects.filter(content_type=analysis_type,
+                                                   object_id=analysis.pk)
+        self.assertEquals(tag_relations.count(), 3)
 
 
 class TagCommentTestCase(TransactionTestCase):
@@ -166,14 +195,13 @@ class TagCommentTestCase(TransactionTestCase):
         """
         Tests that a Comment is tagged when saved.
         """
-        post_save.connect(tag_comment, sender=Comment)
         comment = Comment.objects.get(pk=3)
         comment_type = ContentType.objects.get_for_model(Comment)
         tag_relations = TagRelation.objects.filter(content_type=comment_type,
                                                    object_id=comment.pk)
         self.assertEquals(tag_relations.count(), 0)
 
-        comment.text = 'I like cats and dogs.'
+        comment.content = 'I like cats and dogs.'
         comment.save()
         tag_relations = TagRelation.objects.filter(content_type=comment_type,
                                                    object_id=comment.pk)

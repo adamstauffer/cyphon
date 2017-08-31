@@ -42,11 +42,12 @@ from distilleries.models import Distillery
 from distilleries.serializers import DistilleryListSerializer
 from utils.dbutils.dbutils import count_by_group
 from .filters import AlertFilter
-from .models import Alert, Comment
+from .models import Alert, Analysis, Comment
 from .serializers import (
     AlertDetailSerializer,
     AlertListSerializer,
     AlertUpdateSerializer,
+    AnalysisSerializer,
     RedactedAlertDetailSerializer,
     RedactedAlertListSerializer,
     CommentSerializer,
@@ -91,16 +92,23 @@ class AlertViewSet(CustomModelViewSet):
         Performs a patch request to update an alert.
         """
         alert = self.get_object()
-        serializer = AlertUpdateSerializer(alert, data=request.data)
+        alert_serializer = AlertUpdateSerializer(alert, data=request.data,
+                                                 partial=True)
+        if alert_serializer.is_valid():
+            updated_alert = alert_serializer.save()
 
-        if serializer.is_valid():
-            updated_alert = serializer.save()
+            notes = request.data.get('notes')
+            if notes:
+                Analysis.objects.save_notes(alert=updated_alert, notes=notes)
+
             detail_serializer = AlertDetailSerializer(
                 updated_alert,
                 context={'request': request},
             )
             return Response(detail_serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(alert_serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
     def get_serializer_class(self):
         """
@@ -356,6 +364,32 @@ class AlertViewSet(CustomModelViewSet):
         return Response(serializer.data)
 
 
+class AnalysisViewSet(CustomModelViewSet):
+    """
+    Viewset for viewing and editing Alert Analyses.
+    """
+    queryset = Analysis.objects.all()
+    pagination_class = AlertPagination
+    serializer_class = AnalysisSerializer
+    filter_fields = ['alert', 'alert__assigned_user']
+
+    def get_object(self):
+        """
+        Gets an object for single object views.
+        """
+        queryset = self.get_queryset()
+        primary_key = self.kwargs[self.lookup_field]
+        obj = get_object_or_404(queryset, pk=primary_key)
+        self.check_object_permissions(self.request, obj)
+
+        if self._is_write_request() and \
+                (obj.alert.assigned_user is None or
+                 self.request.user.id != obj.alert.assigned_user.id):
+            raise PermissionDenied()
+
+        return obj
+
+
 class CommentPagination(PageNumberPagination):
     """
     Pagination for comments view.
@@ -372,14 +406,10 @@ class CommentViewSet(CustomModelViewSet):
     serializer_class = CommentSerializer
     filter_fields = ['alert', 'user']
 
-    def _is_user_protected_request(self):
-        """
-        Checks to see if the request is protected per user.
-        """
-        user_protected_requests = ['PATCH', 'PUT', 'DELETE']
-        return self.request.method in user_protected_requests
-
     def get_serializer_class(self):
+        """
+
+        """
         base_serializer_actions = ['create', 'update', 'partial_update']
 
         if self.action in base_serializer_actions:
@@ -397,7 +427,7 @@ class CommentViewSet(CustomModelViewSet):
         self.check_object_permissions(self.request, obj)
         is_comment_user = self.request.user.id is obj.user.id
 
-        if self._is_user_protected_request() and not is_comment_user:
+        if self._is_write_request() and not is_comment_user:
             raise PermissionDenied()
 
         return obj

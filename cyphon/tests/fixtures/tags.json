@@ -40,6 +40,15 @@
       "article": 3
     }
   },
+   {
+    "model": "tags.tag",
+    "fields": {
+      "id": 4,
+      "name": "turtle",
+      "topic": ["Animals"],
+      "article": 4
+    }
+  },
   {
     "model": "tags.tagrelation",
     "fields": {
@@ -92,6 +101,15 @@
       "content_type": ["alerts", "comment"],
       "object_id": 2,
       "tag": ["Animals", "cat"]
+    }
+  },
+  {
+    "model": "tags.tagrelation",
+    "fields": {
+      "id": 7,
+      "content_type": ["alerts", "analysis"],
+      "object_id": 3,
+      "tag": ["Animals", "turtle"]
     }
   }
 ]

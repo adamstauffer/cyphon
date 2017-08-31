@@ -443,6 +443,8 @@ rst_epilog = """
 .. |Alert| replace:: :class:`~alerts.models.Alert`
 .. |Alerts| replace:: :class:`Alerts<alerts.models.Alert>`
 .. |ALERT_LEVEL_CHOICES| replace:: :const:`~cyphon.choices.ALERT_LEVEL_CHOICES`
+.. |Analysis| replace:: :class:`~alerts.models.Analysis`
+.. |Analyses| replace:: :class:`Analyses<alerts.models.Analysis>`
 .. |Article| replace:: :class:`~articles.models.Article`
 .. |Articles| replace:: :class:`Articles<articles.models.Article>`
 .. |BACKEND_CHOICES| replace:: :attr:`~engines.registry.BACKEND_CHOICES`
@@ -501,6 +503,8 @@ rst_epilog = """
 .. |DataSieves| replace:: :class:`DataSieves<sifter.datasifter.datasieves.models.DataSieve>`
 .. |DataSieveNode| replace:: :class:`~sifter.datasifter.datasieves.models.DataSieveNode`
 .. |DataSieveNodes| replace:: :class:`DataSieveNodes<sifter.datasifter.datasieves.models.DataSieveNode>`
+.. |DataTagger| replace:: :class:`~tags.models.DataTagger`
+.. |DataTaggers| replace:: :class:`DataTaggers<tags.models.DataTagger>`
 .. |Destination| replace:: :class:`~responder.destinations.models.Destination`
 .. |Destinations| replace:: :class:`Destinations<responder.destinations.models.Destination>`
 .. |Dispatch| replace:: :class:`~responder.dispatches.models.Dispatch`

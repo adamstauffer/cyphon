@@ -663,10 +663,11 @@ class AssociatedTagsTestCase(TestCase):
         """
         alert = Alert.objects.get(pk=3)
         tags = alert.associated_tags
-        self.assertEqual(tags.count(), 3)
+        self.assertEqual(tags.count(), 4)
         self.assertTrue(tags.filter(name='bird').exists())
         self.assertTrue(tags.filter(name='cat').exists())
         self.assertTrue(tags.filter(name='dog').exists())
+        self.assertTrue(tags.filter(name='turtle').exists())
 
 
 class AlertSummaryWithCommentsTestCase(AlertModelTestCase):

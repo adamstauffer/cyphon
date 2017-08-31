@@ -40,6 +40,10 @@ MOCK_FIND = patch(
 
 
 class SearchViewBaseTestCase(CyphonAPITestCase):
+    """
+
+    """
+
     fixtures = get_fixtures(
         ['alerts', 'distilleries', 'bottles', 'comments', 'users'],
     )
@@ -173,6 +177,10 @@ class SearchViewTestCase(SearchViewBaseTestCase):
 
 
 class AlertSearchViewTestCase(SearchViewBaseTestCase):
+    """
+
+    """
+
     fixtures = get_fixtures(
         ['alerts', 'distilleries', 'bottles', 'comments', 'users'],
     )
@@ -211,6 +219,10 @@ class AlertSearchViewTestCase(SearchViewBaseTestCase):
 
 
 class SearchDistilleriesViewTestCase(SearchViewBaseTestCase):
+    """
+
+    """
+
     model_url = 'search/distilleries/'
 
     def test_results(self):
@@ -248,6 +260,10 @@ class SearchDistilleriesViewTestCase(SearchViewBaseTestCase):
 
 
 class SearchDistilleryViewTestCase(SearchViewBaseTestCase):
+    """
+
+    """
+
     model_url = 'search/distilleries/'
 
     def test_results(self):
