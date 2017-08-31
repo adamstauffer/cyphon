@@ -657,6 +657,9 @@ class Analysis(models.Model):
         )
         verbose_name_plural = 'analyses'
 
+    def __str__(self):
+        return str(self.alert)
+
     @property
     def analyst(self):
         """The user assigned to the related Alert."""
