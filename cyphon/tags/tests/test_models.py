@@ -36,6 +36,20 @@ from tags.models import DataTagger, Tag, TagRelation, Topic
 from tests.fixture_manager import get_fixtures
 
 
+class TopicTestCase(TestCase):
+    """
+    Base class for testing the Topic class.
+    """
+    fixtures = get_fixtures(['tags'])
+
+    def test_str(self):
+        """
+        Tests the __str__ method.
+        """
+        topic = Topic.objects.get(pk=1)
+        self.assertEqual(str(topic), 'Animals')
+
+
 class TagManagerTestCase(TransactionTestCase):
     """
     Test cases for the TagManager class.
