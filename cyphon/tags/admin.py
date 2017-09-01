@@ -85,3 +85,4 @@ class DataTaggerAdmin(admin.ModelAdmin):
     """
 
     form = DataTaggerForm
+    save_as = True
