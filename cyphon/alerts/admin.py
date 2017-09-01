@@ -39,7 +39,6 @@ class AnalysisAdmin(admin.ModelAdmin):
     readonly_fields = ['alert', 'created_date', 'last_updated']
 
 
-
 class AnalysisInLineAdmin(admin.TabularInline):
     """
     Customizes inline admin forms for |Analyses|.
