@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('alert', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='alerts.Alert')),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True, null=True)),
-                ('notes', ckeditor_uploader.fields.RichTextUploadingField()),
+                ('notes', ckeditor_uploader.fields.RichTextUploadingField(blank=True)),
             ],
             options={
                 'ordering': ['alert'],
