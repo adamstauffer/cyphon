@@ -28,8 +28,9 @@ from django.shortcuts import render
 # local
 from .conf import CYCLOPS_JS_URL, CYCLOPS_CSS_URL, CYCLOPS_VERSION
 
-DEVELOPMENT_ENABLED = settings.CYCLOPS['DEVELOPMENT_ENABLED']
-DEVELOPMENT_URL = settings.CYCLOPS['DEVELOPMENT_URL']
+DEVELOPMENT_ENABLED = settings.CYCLOPS.get('DEVELOPMENT_ENABLED', False)
+DEVELOPMENT_URL = settings.CYCLOPS.get('DEVELOPMENT_URL',
+                                       'http://localhost:8080/')
 CSS_URL = (
     '{}cyclops.css'.format(DEVELOPMENT_URL)
     if DEVELOPMENT_ENABLED
@@ -40,6 +41,7 @@ JS_URL = (
     if DEVELOPMENT_ENABLED
     else CYCLOPS_JS_URL
 )
+
 
 @login_required(login_url='/login/')
 def application(request):
