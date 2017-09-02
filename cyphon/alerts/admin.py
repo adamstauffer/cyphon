@@ -33,11 +33,15 @@ class AnalysisAdmin(admin.ModelAdmin):
     Customizes admin pages for |Articles|.
     """
 
-    list_display = ['alert', 'analyst']
-    link_display = ['alert', ]
     fields = ['alert', 'notes', 'created_date', 'last_updated']
     readonly_fields = ['alert', 'created_date', 'last_updated']
+    list_display = ['alert', 'analyst']
+    link_display = ['alert', ]
+    list_filter = ['alert__assigned_user', ]
 
+    def has_add_permission(self, request):
+        """Prevent users from adding an Analysis."""
+        return False
 
 
 class AnalysisInLineAdmin(admin.TabularInline):

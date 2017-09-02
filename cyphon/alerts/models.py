@@ -645,7 +645,7 @@ class Analysis(models.Model):
     alert = models.OneToOneField(Alert, primary_key=True)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
-    notes = RichTextUploadingField()
+    notes = RichTextUploadingField(blank=True)
 
     objects = AnalysisManager()
 

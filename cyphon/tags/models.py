@@ -43,7 +43,6 @@ import nltk
 from articles.models import Article
 from bottler.containers.models import Container
 from cyphon.models import FindEnabledMixin
-from cyphon.transaction import close_old_connections
 from taxonomies.models import Taxonomy, TaxonomyManager
 from utils.parserutils.parserutils import get_dict_value
 from utils.validators.validators import lowercase_validator
@@ -114,7 +113,6 @@ class TagManager(models.Manager):
         else:
             _LOGGER.error('The Tag %s:%s does not exist', tag_name, topic_name)
 
-    @close_old_connections
     def process(self, value, obj, queryset=None, user=None):
         """Tag an object.
 
@@ -298,7 +296,6 @@ class DataTaggerManager(models.Manager, FindEnabledMixin):
     Adds methods to the default Django model manager.
     """
 
-    @close_old_connections
     def process(self, alert):
         """Tag an |Alert|.
 
