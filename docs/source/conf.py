@@ -600,6 +600,8 @@ rst_epilog = """
 .. |Plumbers| replace:: :class:`Plumbers<aggregator.plumbers.models.Plumber>`
 .. |Procedure| replace:: :class:`~lab.procedures.models.Procedure`
 .. |Procedures| replace:: :class:`Procedures<lab.procedures.models.Procedure>`
+.. |Protocol| replace:: :class:`~lab.procedures.models.Protocol`
+.. |Protocols| replace:: :class:`Protocols<lab.procedures.models.Protocol>`
 .. |Pump| replace:: :class:`~aggregator.pumproom.pump.Pump`
 .. |Pumps| replace:: :class:`Pumps<aggregator.pumproom.pump.Pump>`
 .. |PumpRoom| replace:: :class:`~aggregator.pumproom.pumproom.PumpRoom`
