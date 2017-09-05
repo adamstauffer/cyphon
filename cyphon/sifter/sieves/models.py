@@ -129,6 +129,7 @@ class Rule(models.Model):
 
     def clean(self):
         """
+        Validates the model as a whole.
 
         See also
         --------
@@ -554,6 +555,31 @@ class SieveNode(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (self.node_object, self.node_type)
+
+    def _node_obj_is_valid(self, sieve=None):
+        """
+        Determines whether the SieveNode contains a recursion.
+        """
+        sieve = sieve or self.sieve
+        if isinstance(self.node_object, Sieve):
+            if sieve == self.node_object:
+                return False
+            else:
+                for node in self.node_object.nodes.all():
+                    if not node._node_obj_is_valid(sieve):
+                        return False
+        return True
+
+    def clean(self):
+        """
+        Validates the model as a whole.
+        """
+        super(SieveNode, self).clean()
+
+        if not self._node_obj_is_valid():
+            raise ValidationError(_('To prevent recursion, a SieveNode cannot '
+                                    'point to a Sieve that is its parent '
+                                    'Sieve or contains its parent Sieve.'))
 
     @property
     def node_type(self):

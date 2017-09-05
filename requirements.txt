@@ -17,7 +17,7 @@ django-grappelli==2.10.1
 django-mailbox==4.5.4
 django-picklefield==1.0.0
 django-s3-storage==0.12.0
-Django==1.11.4
+Django==1.11.5
 djangorestframework-jwt==1.11.0
 djangorestframework==3.6.4
 docutils==0.14
@@ -41,7 +41,7 @@ oauthlib==2.0.2
 pika==0.11.0
 Pillow==4.2.1
 psycopg2==2.7.3.1
-PyJWT==1.5.2
+PyJWT==1.5.3
 pymongo==3.5.1
 python-dateutil==2.6.1
 pytz==2017.2
@@ -51,7 +51,7 @@ requests==2.18.4
 sauceclient==1.0.0
 selenium==3.5.0
 six==1.10.0
-testfixtures==5.1.1
+testfixtures==5.2.0
 textblob==0.13.0
 tlslite==0.4.9
 tweepy==3.5.0
