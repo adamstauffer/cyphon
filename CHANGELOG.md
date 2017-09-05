@@ -10,20 +10,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Added
 
+- **alerts**: refactored ``Alert.notes`` into new Analysis model [PR #202](https://github.com/dunbarcyber/cyphon/pull/202) ([fa3077b](https://github.com/dunbarcyber/cyphon/commit/fa3077b))
+- **alerts.models**: added ``Alert.associated_tags`` property ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
 - **alerts.serializers**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
 - **alerts.models**: added ``Alert.associated_tags`` property ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
-- **alerts.signals**: added post-save signals for tagging Alerts and Comments ([f319bec](https://github.com/dunbarcyber/cyphon/commit/f319bec))
 - **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
 - **cyphon.urls**: added REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
 - **tags**: added TagRelation, Topic, and DataTagger models [PR #178](https://github.com/dunbarcyber/cyphon/pull/178) ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **tags**: added post-save signals for tagging Alerts and Comments ([41e7f87](https://github.com/dunbarcyber/cyphon/commit/41e7f87))
 - **utils.validators**: added ``lowercase validator`` ([5b0ce6f](https://github.com/dunbarcyber/cyphon/commit/5b0ce6f))
 
 ### Changed
 
-- **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 - **cyphon.settings**: removed local static assets options from CYCLOPS settings ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **cyclops.views**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
-- **docs.source.getting-started.configure-project**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **docs**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 
 ### Removed
 
