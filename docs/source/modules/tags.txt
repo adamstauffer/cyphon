@@ -17,4 +17,8 @@ Submodules
 .. toctree::
 
    tags.admin
+   tags.forms
    tags.models
+   tags.serializers
+   tags.signals
+   tags.views
