@@ -41,6 +41,7 @@ Function                              Description
 
 # standard library
 import json
+import re
 
 # local
 from engines.queries import EngineQuery, EngineQueryFieldset
@@ -74,7 +75,8 @@ def regex_query(field_name, value):
         An Elasticsearch regexp query.
 
     """
-    return {'regexp': {field_name: '.*"%s".*' % value}}
+    value = re.escape(value)
+    return {'regexp': {field_name: '.*%s.*' % value}}
 
 
 def bool_query(must=None, should=None, must_not=None, filter_expr=None):
