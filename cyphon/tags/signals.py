@@ -18,9 +18,6 @@
 
 """
 
-# standard library
-import logging
-
 # third party
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -28,8 +25,6 @@ from django.db.models.signals import post_save
 # local
 from alerts.models import Alert, Analysis, Comment
 from .models import DataTagger, Tag
-
-_LOGGER = logging.getLogger(__name__)
 
 
 def tag_alert(sender, instance, created, **kwargs):
