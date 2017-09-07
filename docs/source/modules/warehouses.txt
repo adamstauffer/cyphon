@@ -17,6 +17,8 @@ Submodules
 .. toctree::
 
    warehouses.admin
+   warehouses.apps
    warehouses.models
    warehouses.serializers
+   warehouses.signals
    warehouses.views

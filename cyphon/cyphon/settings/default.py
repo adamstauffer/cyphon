@@ -141,6 +141,10 @@ ELASTICSEARCH = {
     'KWARGS': {
         'timeout': 30,
     },
+    'INDEX': {
+        'index.mapping.ignore_malformed': True,
+        'number_of_shards': 1,
+    },
 }
 
 EMAIL = {

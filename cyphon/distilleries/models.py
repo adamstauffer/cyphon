@@ -321,6 +321,18 @@ class Distillery(models.Model):
         return self.collection.name
 
     @cached_property
+    def engine(self):
+        """The |Engine| associated with the Distillery.
+
+        Returns
+        -------
+        |Engine|
+            The |Engine| that services the Distillery's |Collection|.
+
+        """
+        return self.collection.engine
+
+    @cached_property
     def warehouse(self):
         """The |Warehouse| used by the Distillery.
 

@@ -54,7 +54,7 @@ from engines.elasticsearch import queries as es_queries
 from engines.elasticsearch import results as es_results
 from engines.elasticsearch import sorter as es_sorter
 from engines.engine import Engine, MAX_RESULTS, PAGE_SIZE
-from .client import ES_KWARGS, ELASTICSEARCH
+from .client import ELASTICSEARCH, ES_KWARGS
 from .mapper import create_mapping
 
 _LOGGER = logging.getLogger(__name__)
@@ -246,6 +246,14 @@ class ElasticsearchEngine(Engine):
             return self._index_name
 
     @property
+    def _index_for_template(self):
+        """Get the index name or pattern for creating a template."""
+        if self._in_time_series:
+            return self._index_name + '-*-*-*'
+        else:
+            return self._index_name
+
+    @property
     def _params_for_search(self):
         """Create basic parameters for searching docs.
 
@@ -263,6 +271,14 @@ class ElasticsearchEngine(Engine):
         """
         return ELASTICSEARCH.indices.exists(self._index_for_insert)
 
+    def _create_mapping(self):
+        """Create a mapping for the index.
+
+        Returns a dict of properties for mapping the data fields in
+        Elasticsearch.
+        """
+        return create_mapping(self._doc_type, self.schema)
+
     def _create_index(self):
         """Create an index for inserting docs.
 
@@ -274,13 +290,17 @@ class ElasticsearchEngine(Engine):
         params = {'index': index, 'ignore': 400, 'body': mappings}
         ELASTICSEARCH.indices.create(**params)
 
-    def _create_mapping(self):
-        """Create a mapping for the index.
+    def create_template(self):
+        """Create a template for the index.
 
-        Returns a dict of properties for mapping the data fields in
-        Elasticsearch.
+        Returns a dict of properties for an Elasticsearch index template.
         """
-        return create_mapping(self._doc_type, self.schema)
+        name = str(self)
+        body = self._create_mapping()
+        body.update({'template': self._index_for_template})
+        if ELASTICSEARCH.indices.exists_template(name):
+            ELASTICSEARCH.indices.delete_template(name)
+        ELASTICSEARCH.indices.put_template(name=name, body=body)
 
     def _filter_by_id(self, doc_ids):
         """Get docs matching one or more ids from multiple indexes.
