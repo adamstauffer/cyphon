@@ -48,7 +48,7 @@ class PutTemplateTestCase(TransactionTestCase):
         distillery = Distillery.objects.get_by_natural_key(
             'elasticsearch', 'test_index', 'test_docs')
         distillery.save()
-        mock_template.assert_called_once()
+        self.assertEqual(mock_template.call_count, 1)
 
     @patch('engines.elasticsearch.engine.ElasticsearchEngine.create_template')
     def test_collection_saved(self, mock_template):
@@ -58,7 +58,7 @@ class PutTemplateTestCase(TransactionTestCase):
         collection = Collection.objects.get_by_natural_key(
             'elasticsearch', 'test_index', 'test_docs')
         collection.save()
-        mock_template.assert_called_once()
+        self.assertEqual(mock_template.call_count, 1)
 
     def test_no_template(self):
         """
