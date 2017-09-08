@@ -18,6 +18,10 @@
     :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://badges.gitter.im/gitterHQ/gitter.png
+    :target: https://gitter.im/cyphonproject/Lobby
+    :alt: Gitter Chat
+
 .. container:: clearfix
 
     .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/cyphon-logo.png
