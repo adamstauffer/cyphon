@@ -237,7 +237,6 @@ RABBITMQ = {
     'USERNAME': os.getenv('RABBITMQ_DEFAULT_USER', 'guest'),
     'PASSWORD': os.getenv('RABBITMQ_DEFAULT_PASS', 'guest'),
     'EXCHANGE': 'cyphon',
-    'EXCHANGE_TYPE': 'direct',
     'DURABLE': True,
 }
 
