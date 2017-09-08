@@ -137,11 +137,13 @@ class AlertViewSet(CustomModelViewSet):
     @staticmethod
     def _get_date(days_ago):
         """
-
+        Takes an integer representing a number of days in the past, and
+        returns a datetime for midnight localtime of that day.
         """
         try:
             days = int(days_ago)
-            date_time = timezone.now() - datetime.timedelta(days=days)
+            localtime = timezone.localtime(timezone.now())
+            date_time = localtime - datetime.timedelta(days=days)
             return date_time.replace(hour=0, minute=0,
                                      second=0, microsecond=0)
         except (ValueError, TypeError):

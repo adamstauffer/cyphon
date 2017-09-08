@@ -489,7 +489,7 @@ class AlertTimeseriesAPITests(AlertBaseAPITests):
         self.maxDiff = None
         test_url = '?days=7'
         date1 = self.date + timedelta(days=7)
-        with patch('alerts.views.timezone.now', return_value=date1):
+        with patch('alerts.views.timezone.localtime', return_value=date1):
             response = self.get_api_response(test_url, is_staff=False)
             expected = {
                 'CRITICAL': [0, 0, 0, 0, 0, 0, 0],
@@ -509,7 +509,7 @@ class AlertTimeseriesAPITests(AlertBaseAPITests):
             self.assertEqual(response.json(), expected)
 
         date2 = self.date + timedelta(days=3)
-        with patch('alerts.views.timezone.now', return_value=date2):
+        with patch('alerts.views.timezone.localtime', return_value=date2):
             response = self.get_api_response(test_url, is_staff=False)
             expected = {
                 'CRITICAL': [0, 0, 0, 0, 0, 0, 0],
