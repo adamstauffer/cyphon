@@ -147,14 +147,11 @@ def consume_queue(routing_key='watchdogs'):
 
         channel = conn.channel()
         exchange = BROKER['EXCHANGE']
-        exchange_type = BROKER['EXCHANGE_TYPE']
         durable = BROKER['DURABLE']
 
         queue_name = routing_key
 
-        channel.exchange_declare(exchange=exchange,
-                                 type=exchange_type,
-                                 durable=durable)
+        channel.exchange_declare(exchange=exchange, durable=durable)
 
         channel.queue_declare(queue=queue_name)
 
