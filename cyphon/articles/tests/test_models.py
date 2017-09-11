@@ -21,6 +21,7 @@
 
 # third party
 from django.test import TestCase
+from testfixtures import LogCapture
 
 # local
 from articles.models import Article
@@ -30,7 +31,33 @@ from tests.fixture_manager import get_fixtures
 
 class ArticleManagerTestCase(TestCase):
     """
-    Test cases for the TagManager class.
+    Test cases for the ArticleManager class.
+    """
+    fixtures = get_fixtures(['tags'])
+
+    def test_get_by_natural_key(self):
+        """
+        Tests the get_by_natural_key method.
+        """
+        article = Article.objects.get_by_natural_key('Birds')
+        self.assertEqual(article.pk, 1)
+
+    def test_natural_key_exception(self):
+        """
+        Tests the get_by_natural_key method when the Article does not exist.
+        """
+        with LogCapture() as log_capture:
+            Article.objects.get_by_natural_key('Foobar')
+            log_capture.check(
+                ('articles.models',
+                 'ERROR',
+                 'Article "Foobar" does not exist'),
+            )
+
+
+class ArticleTestCase(TestCase):
+    """
+    Test cases for the Article class.
     """
     fixtures = get_fixtures(['tags'])
 

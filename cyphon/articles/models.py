@@ -19,10 +19,40 @@
 
 """
 
+# standard library
+import logging
+
 # third party
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class ArticleManager(models.Manager):
+    """Adds methods to the default model manager."""
+
+    def get_by_natural_key(self, title):
+        """Get an |Article| by its `title`.
+
+        Parameters
+        ----------
+        title : str
+            The Article's `title`.
+
+        Returns
+        -------
+        |Article|
+            The |Article| with the specified `title`.
+
+        """
+        try:
+            return self.get(title=title)
+        except ObjectDoesNotExist:
+            logging.getLogger(self.__module__).error('%s "%s" does not exist',
+                                                     self.model.__name__, title)
 
 
 class Article(models.Model):
@@ -43,6 +73,8 @@ class Article(models.Model):
         max_length=255,
     )
     content = RichTextUploadingField()
+
+    objects = ArticleManager()
 
     class Meta(object):
         """Metadata options."""
