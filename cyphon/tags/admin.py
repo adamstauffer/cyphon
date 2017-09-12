@@ -29,9 +29,7 @@ from .models import DataTagger, Tag, TagRelation, Topic
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for |Topics|.
-    """
+    """Customizes admin pages for |Topics|."""
 
     list_display = ['name', ]
     link_display = ['name', ]
@@ -40,17 +38,14 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """
-    Customizes inline admin forms for |Tags|.
-    """
+    """Customizes admin forms for |Tags|."""
 
+    list_display = ['name', 'topic', ]
     form = TagForm
 
 
 class TagRelationInlineAdmin(GenericTabularInline):
-    """
-    Customizes inline admin forms for |TagRelations|.
-    """
+    """Customizes inline admin forms for |TagRelations|."""
 
     model = TagRelation
     fields = (
@@ -80,9 +75,7 @@ class TagRelationAdmin(admin.ModelAdmin):
 
 @admin.register(DataTagger)
 class DataTaggerAdmin(admin.ModelAdmin):
-    """
-    Customizes inline admin forms for |DataTaggers|.
-    """
+    """Customizes inline admin forms for |DataTaggers|."""
 
     form = DataTaggerForm
     save_as = True
