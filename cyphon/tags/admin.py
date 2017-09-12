@@ -40,7 +40,7 @@ class TopicAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     """Customizes admin forms for |Tags|."""
 
-    list_display = ['name', 'topic', ]
+    list_display = ['name', 'topic', 'article', ]
     form = TagForm
 
 
