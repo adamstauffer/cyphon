@@ -385,7 +385,7 @@ class DataTagger(models.Model):
             (tag, created) = Tag.objects.get_or_create(name=tag_name,
                                                        topic=topic)
             return tag
-        except ValidationError as error:
+        except (IndexError, ValidationError) as error:
             _LOGGER.error('An error occurred while creating '
                           'a new tag "%s": %s', tag_name, error)
 
@@ -411,7 +411,7 @@ class DataTagger(models.Model):
         try:
             topic = self.topics.all()[0]
             return Tag.objects.get(name=tag_name, topic=topic)
-        except ObjectDoesNotExist:
+        except (IndexError, ObjectDoesNotExist):
             if self.create_tags:
                 return self._create_tag(tag_name)
 
