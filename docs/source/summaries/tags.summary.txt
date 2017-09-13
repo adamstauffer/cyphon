@@ -1,1 +1,1 @@
-|Tags| are used to classify and filter :ref:`Alerts<alerts>`.
+|Tags| are used to classify and filter :ref:`Alerts<alerts>`. They fall under :ref:`Topics<topics>` and can be linked to :ref:`Articles<articles>. |Tags| are associated other objects via |TagRelations|. They can be automatically associated with Alerts using |DataTaggers|.

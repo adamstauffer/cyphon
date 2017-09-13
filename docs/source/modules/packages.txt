@@ -11,6 +11,7 @@ Packages
    alerts
    ambassador
    appusers
+   articles
    bottler
    categories
    codebooks
