@@ -183,10 +183,10 @@ class CyphonIndexDashboard(Dashboard):
             column=1,
             css_classes=('grp-collapse grp-closed',),
             models=(
-                'tags.models.Topic',
-                'tags.models.Tag',
                 'tags.models.DataTagger',
                 'articles.models.Article',
+                'tags.models.Topic',
+                'tags.models.Tag',
             ),
         ))
 
