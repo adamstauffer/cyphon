@@ -205,7 +205,7 @@ class AlertSearchResults(SearchResults):
         list of Q
 
         """
-        return [Q(comment__content__icontains=keyword) for keyword in keywords]
+        return [Q(comments__content__icontains=keyword) for keyword in keywords]
 
     @staticmethod
     def _get_alert_search_query(user, keywords):

@@ -25,6 +25,7 @@ from django.test import TestCase
 # local
 from alerts.models import Alert
 from alerts.views import AlertFilter
+from tags.models import Tag
 from tests.fixture_manager import get_fixtures
 
 
@@ -32,7 +33,7 @@ class AlertFilterTestCase(TestCase):
     """
 
     """
-    fixtures = get_fixtures(['alerts', 'comments'])
+    fixtures = get_fixtures(['alerts', 'comments', 'tags'])
 
     @classmethod
     def setUpClass(cls):
@@ -52,7 +53,7 @@ class AlertFilterTestCase(TestCase):
 
     def test_filter_by_content_data(self):
         """
-        Tests the filter_by_content function when for a typical QuerySet and
+        Tests the filter_by_content function for a typical QuerySet and
         value.
         """
         val = 'user@example.com'
@@ -62,9 +63,46 @@ class AlertFilterTestCase(TestCase):
 
     def test_filter_by_content_title(self):
         """
-        Tests the filter_by_content function when for a typical QuerySet and
-        value.
+        Tests the filter_by_content function for a value appearing in an
+        Alert title.
         """
         val = 'acme'
         filtered_alerts = self.alert_filter.filter_by_content(self.alerts, '', val)
         self.assertEqual(filtered_alerts.count(), 3)
+
+    def test_filter_no_tags(self):
+        """
+        Tests the filter_by_content function for a value appearing in
+        Alert content.
+        """
+        val = ''
+        actual = self.alert_filter.filter_by_content(self.alerts, '', val)
+        expected = self.alerts
+        self.assertEqual(actual, expected)
+
+    def test_filter_by_alert_tags(self):
+        """
+        Tests the filter_by_tags function associated with an Alert.
+        """
+        val = Tag.objects.filter(name='bird')
+        filtered_alerts = self.alert_filter.filter_by_tags(self.alerts, '', val)
+        self.assertEqual(filtered_alerts.count(), 1)
+        self.assertEqual(filtered_alerts[0].pk, 3)
+
+    def test_filter_by_comment_tags(self):
+        """
+        Tests the filter_by_tags function associated with a Comment.
+        """
+        val = Tag.objects.filter(name='dog')
+        filtered_alerts = self.alert_filter.filter_by_tags(self.alerts, '', val)
+        self.assertEqual(filtered_alerts.count(), 1)
+        self.assertEqual(filtered_alerts[0].pk, 3)
+
+    def test_filter_by_analysis_tags(self):
+        """
+        Tests the filter_by_tags function associated with an Analysis.
+        """
+        val = Tag.objects.filter(name='turtle')
+        filtered_alerts = self.alert_filter.filter_by_tags(self.alerts, '', val)
+        self.assertEqual(filtered_alerts.count(), 1)
+        self.assertEqual(filtered_alerts[0].pk, 3)
