@@ -163,7 +163,8 @@ class AlertFilter(FilterSet):
             LOGGER.error('An error occurred while filtering Alerts')
             return queryset
 
-    def filter_by_tags(self, queryset, name, value):
+    @staticmethod
+    def filter_by_tags(queryset, name, value):
         """Filter |Alerts| by their associated |Tags|.
 
         Parameters
