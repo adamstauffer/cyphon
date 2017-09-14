@@ -38,6 +38,7 @@ class AnalysisAdmin(admin.ModelAdmin):
     list_display = ['alert', 'analyst']
     link_display = ['alert', ]
     list_filter = ['alert__assigned_user', ]
+    inlines = [TagRelationInlineAdmin, ]
 
     def has_add_permission(self, request):
         """Prevent users from adding an Analysis."""
