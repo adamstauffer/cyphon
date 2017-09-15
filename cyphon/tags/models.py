@@ -340,7 +340,12 @@ class DataTagger(models.Model):
 
     """
     container = models.ForeignKey(Container)
-    field_name = models.CharField(max_length=255)
+    field_name = models.CharField(
+        max_length=255,
+        help_text=_('The name of the Container field that should be analyzed '
+                    'for tagging. Use dot notation to indicate nested fields '
+                    '(e.g., "user.name").')
+    )
     topics = models.ManyToManyField(
         Topic,
         help_text=_('Restrict tagging to these topics. '
