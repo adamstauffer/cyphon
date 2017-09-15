@@ -13,15 +13,22 @@ Tags can be assigned to Alerts, Comments, or Analyses. Tags can be linked to Art
 
 Tags are assigned to Alerts by DataTaggers, which examine specific fields and assign Tags based on their content. Tags are assigned to Comments and Analyses automatically when they are saved. 
 
-Cyphon can automatically tag Alerts based on the data which generated 
+Administrators can edit or delete Alerts through the "Tagging Alerts" panel on the main admin page.
+
+.. figure:: ../_static/images/admin/tagging-data.png
+    :align: center
+    :alt: Tagging Alerts
 
 
-.. _datataggers-overview:
+.. _topics-overview:
 
-***********
-DataTaggers
-***********
+******
+Topics
+******
 
+Topics are used to categorize Tags. This improves the efficiency of assigning Tags based on the content of Container fields, since a particular field may pertain to only one or a few Topics.
+
+Topics are also used to resolve ambiguity between Tags that have the same name but different meanings. For example, a Tag named "200" could refer to either a port or a status code. This Tag could be associated with either the Topic "Ports" or the Topic "Status Codes" to make its meaning clear.
 
 
 .. _articles-overview:
@@ -30,58 +37,20 @@ DataTaggers
 Articles
 ********
 
-
-.. _tags-overview:
-
-****
-Tags
-****
+Each Tag can also be associated with an Article. An Article can contain detailed information relating to the Tag. Articles be linked to multiple Tags, but a Tag can only link to one Article.
 
 
+.. _datataggers-overview:
 
-Topics
-======
+***********
+DataTaggers
+***********
 
-Administrators can edit or delete Alerts through the "Tagging Alerts" panel on the main admin page.
+DataTaggers can be configured by specifying a field within a particular Container that should be analyzed for tagging. You can restrict the kinds of Tags that can be used in the analysis by specifying one or more Topics to which the Container field relates.
 
-.. figure:: ../_static/images/admin/tagging-alerts.png
-    :align: center
-    :alt: Tagging Alerts
+.. _autotagging:
 
+Autotagging
+===========
 
-####################
-Investigating Alerts
-####################
-
-In many cases, you may want to investigate the context of an Alert, by examining data related to the event. Cyphon simplifies this process by letting you create `Contexts` for your data. 
-
-
-.. _contexts-overview:
-
-********
-Contexts
-********
-
-.. image:: ../_static/images/icons/context.png
-    :width: 100px
-    :align: left
-    :alt: Contexts
-
-A Context allows you to quickly find data that may pertain to an Alert. A Context uses the data from an Alert to find related documents in a specific Collection, based on a timeframe and/or one or more `ContextFilters`. A ContextFilter locates relevant documents by matching a field value from the original data and a field value in the related data.
-
-You can configure Contexts by clicking on the "Investigating Alerts" panel on Cyphon's main admin page. Then click on the plus sign to go to the page for adding a new Context.
-
-.. image:: ../_static/images/admin/investigating-data-admin.png
-    :alt: Investigating Data
-
-To create a new Context, specify the "primary" Distillery and the "related" Distillery. The primary Distillery is the Distillery that saved the data that triggered an Alert. The related Distillery indicates the Collection that you wish to search with reference to that event.
-
-If you wish to restrict the search to data saved within a specific time frame relative to an Alert, you can enter intervals for the amount of time to search before and after the event. 
-
-You can also add one or more ContextFilters to narrow the search results to specific matches. "Filter logic" indicates how the ContextFilters will be combined: "AND" means that the related data must match all ContextFilters, while "OR" means that the data should match at least one ContextFilter.
-
-.. figure:: ../_static/images/admin/context-admin.png
-    :align: center
-    :alt: Context admin page
-
-    **The admin page for creating a Context.**
+If the Container field selected for tagging only stores one kind of information (for example, a port number), you can restrict tagging to that single Topic (e.g., "Ports"). This will then give you the option to create new Tags from that field automatically. On the DataTagger admin page, simply select "exact match" and "create tags." This will match the entire content of the Container field against existing Tags belonging to the selected Topic, and it will create a new Tag if a match is not found.
