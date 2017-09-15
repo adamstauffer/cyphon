@@ -189,7 +189,7 @@ class AlertFilter(FilterSet):
             comment_q = Q(comments__tag_relations__tag__in=value)
             return queryset.filter(alert_q | analysis_q | comment_q).distinct()
 
-        except ValueError:
+        except (TypeError, ValueError):
             LOGGER.error('An error occurred while filtering Alerts')
             return queryset
 
