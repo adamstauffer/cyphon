@@ -91,8 +91,10 @@ class AlertFilter(FilterSet):
         queryset=Category.objects.all()
     )
     tags = django_filters.ModelMultipleChoiceFilter(
-        name='tags',
-        queryset=Tag.objects.all()
+        name='tag_relations__tags',
+        label='tags',
+        queryset=Tag.objects.all(),
+        method='filter_by_tags'
     )
 
     class Meta:
@@ -158,6 +160,36 @@ class AlertFilter(FilterSet):
             return self._filter_by_value(queryset, value)
 
         except ValueError:
+            LOGGER.error('An error occurred while filtering Alerts')
+            return queryset
+
+    @staticmethod
+    def filter_by_tags(queryset, name, value):
+        """Filter |Alerts| by their associated |Tags|.
+
+        Parameters
+        ----------
+        queryset : |QuerySet| of |Alerts|
+
+        name : str
+
+        value : |QuerySet| of |Tags|
+
+        Returns
+        -------
+        |QuerySet| of |Alerts|
+
+        """
+        if not value:
+            return queryset
+
+        try:
+            alert_q = Q(tag_relations__tag__in=value)
+            analysis_q = Q(analysis__tag_relations__tag__in=value)
+            comment_q = Q(comments__tag_relations__tag__in=value)
+            return queryset.filter(alert_q | analysis_q | comment_q).distinct()
+
+        except (TypeError, ValueError):
             LOGGER.error('An error occurred while filtering Alerts')
             return queryset
 
