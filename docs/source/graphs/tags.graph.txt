@@ -16,10 +16,12 @@ Overview
 
 To graph these models::
 
-    $ python manage.py graph_models tags alerts -g -o tags-graph.png
+    $ python manage.py graph_models tags appusers articles containers -X AbstractBaseUser,PermissionsMixin,Taxonomy --no-inheritance -g -o tags-graph.png
 
 Related Graphs
 --------------
 
-* :ref:`alerts-graph`
+* :ref:`appusers-graph`
+* :ref:`articles-graph`
+* :ref:`containers-graph`
 * :ref:`taxonomies-graph`

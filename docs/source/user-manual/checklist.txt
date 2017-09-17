@@ -28,6 +28,7 @@ Configuration Checklist
     - Mungers
     - Chutes
 
+
 - :ref:`data-enhancement`
 
     - Inspections
@@ -38,6 +39,14 @@ Configuration Checklist
 
     - Watchdogs
     - Monitors
+
+
+- :ref:`tagging-alerts`
+
+    - DataTaggers
+    - Articles
+    - Topics
+    - Tags
 
 
 - :ref:`investigating-alerts`

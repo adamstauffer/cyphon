@@ -11,6 +11,7 @@ User Manual
    data-processing
    data-enhancement
    configuring-alarms
+   tagging-alerts
    investigating-alerts
    acting-on-alerts
    managing-alerts
