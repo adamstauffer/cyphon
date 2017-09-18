@@ -15,7 +15,7 @@ Tags are assigned to Alerts by DataTaggers, which examine specific fields and as
 
 Administrators can edit or delete Alerts through the "Tagging Alerts" panel on the main admin page.
 
-.. figure:: ../_static/images/admin/tagging-data.png
+.. image:: ../_static/images/admin/tagging-data.png
     :align: center
     :alt: Tagging Alerts
 
@@ -54,3 +54,9 @@ Autotagging
 ===========
 
 If the Container field selected for tagging only stores one kind of information (for example, a port number), you can restrict tagging to that single Topic (e.g., "Ports"). This will then give you the option to create new Tags from that field automatically. On the DataTagger admin page, simply select "exact match" and "create tags." This will match the entire content of the Container field against existing Tags belonging to the selected Topic, and it will create a new Tag if a match is not found.
+
+.. figure:: ../_static/images/admin/data-tagger.png
+    :align: center
+    :alt: DataTagger
+
+    **The admin page for creating a DataTagger.**
