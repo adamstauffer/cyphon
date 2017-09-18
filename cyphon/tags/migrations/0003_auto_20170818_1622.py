@@ -60,6 +60,10 @@ class Migration(migrations.Migration):
             name='topic',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tags', related_query_name='tag', to='tags.Topic'),
         ),
+        migrations.AlterModelOptions(
+            name='tag',
+            options={'ordering': ['topic', 'name']},
+        ),
         migrations.AlterUniqueTogether(
             name='tag',
             unique_together=set([('name', 'topic')]),

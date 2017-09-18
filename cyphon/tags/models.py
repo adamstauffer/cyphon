@@ -193,7 +193,7 @@ class Tag(models.Model):
     class Meta(object):
         """Metadata options."""
 
-        ordering = ['name']
+        ordering = ['topic', 'name']
         unique_together = ['name', 'topic']
 
     def __str__(self):
