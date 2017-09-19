@@ -10,9 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Added
 
-- **alerts.models**: added ``associated_tags`` property to Alerts ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
-- **alerts.models**: added ``tag_relations`` property to Alerts and Comments ([ae10cf1](https://github.com/dunbarcyber/cyphon/commit/ae10cf1))
-- **alerts.serializers**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
+- **alerts**: added ``associated_tags`` property to Alerts ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
+- **alerts**: added ``tag_relations`` property to Alerts and Comments ([ae10cf1](https://github.com/dunbarcyber/cyphon/commit/ae10cf1))
+- **alerts**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
 - **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
 - **cyphon.urls**: REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
 - **docs**: docs for Articles, Tags, Topics, and DataTaggers [PR #225](https://github.com/dunbarcyber/cyphon/pull/225) ([879af9d](https://github.com/dunbarcyber/cyphon/commit/879af9d))
@@ -24,16 +24,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ### Changed
 
 - **alerts**: refactored ``Alert.notes`` into new Analysis model [PR #202](https://github.com/dunbarcyber/cyphon/pull/202) ([fa3077b](https://github.com/dunbarcyber/cyphon/commit/fa3077b))
-- **alerts.models**: used ``RichTextUploadingField`` for ``Comment.notes`` ([86c1635](https://github.com/dunbarcyber/cyphon/commit/86c1635))
+- **alerts**: used ``RichTextUploadingField`` for ``Comment.notes`` ([86c1635](https://github.com/dunbarcyber/cyphon/commit/86c1635))
 - **cyphon.settings**: removed local static assets options from CYCLOPS settings ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
-- **cyclops.views**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **cyclops**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **docs**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 
 ### Fixed
 
-- **alerts.omdels:** prevented duplicate ``muzzle_hash`` when ``Alert.level`` is changed [Issue #223](https://github.com/dunbarcyber/cyphon/issues/223) ([68a1acc](https://github.com/dunbarcyber/cyphon/commit/68a1acc))
-- **engines.elasticsearch.queries**: prevented error from unmatched quote in query string [PR #209](https://github.com/dunbarcyber/cyphon/pull/209) ([ed94ac0](https://github.com/dunbarcyber/cyphon/commit/ed94ac0))
+- **alerts:** prevented duplicate ``muzzle_hash`` when ``Alert.level`` is changed [Issue #223](https://github.com/dunbarcyber/cyphon/issues/223) ([68a1acc](https://github.com/dunbarcyber/cyphon/commit/68a1acc))
+- **contexts:** prevented server error if Context query can't be completed [PR #224](https://github.com/dunbarcyber/cyphon/issues/224) ([9209dd6](https://github.com/dunbarcyber/cyphon/commit/9209dd6))
+- **engines.elasticsearch**: prevented error from unmatched quote in query string [PR #209](https://github.com/dunbarcyber/cyphon/pull/209) ([ed94ac0](https://github.com/dunbarcyber/cyphon/commit/ed94ac0))
 - **sifter.sieves**: prevented endless recursion in Sieves [PR #208](https://github.com/dunbarcyber/cyphon/pull/208) ([5f3fec0](https://github.com/dunbarcyber/cyphon/commit/5f3fec0))
 
 ### Removed
