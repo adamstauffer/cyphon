@@ -322,9 +322,9 @@ class Alert(models.Model):
         if not self.created_date:
             self.created_date = timezone.now()
 
-        self._update_muzzle_hash()
+        self.muzzle_hash = self._get_muzzle_hash()
 
-        super(Alert, self).save(*args, **kwargs)
+        return super(Alert, self).save(*args, **kwargs)
 
     @property
     def link(self):
@@ -385,6 +385,7 @@ class Alert(models.Model):
             muzzle.time_interval,
             muzzle.time_unit
         )
+
         return total_seconds // interval_seconds
 
     def _get_field_values(self, muzzle):
@@ -398,15 +399,15 @@ class Alert(models.Model):
         ]
         return ','.join(field_values)
 
-    def _update_muzzle_hash(self):
+    def _get_muzzle_hash(self):
         """
-        Assigns a muzzle_hash to the Alert.
+        Return a muzzle_hash for the Alert.
         """
         muzzle = self._get_muzzle()
         if muzzle:
             time_bucket = self._get_bucket(muzzle)
             field_values = self._get_field_values(muzzle)
-            self.muzzle_hash = hashlib.sha256(
+            updated_hash = hashlib.sha256(
                 self._HASH_FORMAT.format(
                     level=self.level,
                     distillery=self.distillery,
@@ -415,8 +416,15 @@ class Alert(models.Model):
                     field_values=field_values,
                     bucket=time_bucket
                 ).encode()).hexdigest()
-        else:
-            self.muzzle_hash = hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+
+            # if the alert is being updated, only use the updated hash
+            # if it doesn't match that of another alert
+            if not (self.pk and
+                    updated_hash != self.muzzle_hash and
+                    Alert.objects.filter(muzzle_hash=updated_hash).exists()):
+                return updated_hash
+
+        return hashlib.sha256(uuid.uuid4().bytes).hexdigest()
 
     def _get_codebook(self):
         """

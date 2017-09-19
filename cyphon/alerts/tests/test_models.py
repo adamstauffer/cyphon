@@ -28,6 +28,7 @@ except ImportError:
 
 # third party
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -161,6 +162,30 @@ class AlertCompanyTestCase(AlertModelTestCase):
         """
         alert = Alert.objects.get(pk=7)
         self.assertEqual(alert.company, None)
+
+
+class AlertMuzzleHashTestCase(AlertModelTestCase):
+    """
+    Tests the save method with respect to an Alert's muzzle_hash.
+    """
+
+    def test_duplicate_alert(self):
+        """
+        Checks that duplicate muzzle hashes are not generated when Alert
+        levels are changed.
+        """
+        new_alert = Alert.objects.get(pk=1)
+        new_alert.pk = None
+        new_alert.level = 'MEDIUM'
+        new_alert.save()
+
+        # create a potential duplicate alert
+        old_alert = Alert.objects.get(pk=1)
+        old_alert.level = 'MEDIUM'
+        try:
+            old_alert.save()
+        except IntegrityError:
+            self.fail('Alert raised IntergrityError unexpectedly')
 
 
 class AlertContentDateTestCase(AlertModelTestCase):
