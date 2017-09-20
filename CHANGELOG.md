@@ -14,11 +14,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **alerts**: added ``tag_relations`` property to Alerts and Comments ([ae10cf1](https://github.com/dunbarcyber/cyphon/commit/ae10cf1))
 - **alerts**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
 - **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
+- **cyphon.settings**: added Elasticsearch index settings ([66f9bbb](https://github.com/dunbarcyber/cyphon/commit/66f9bbb))
 - **cyphon.urls**: REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **distilleries**: added ``engine`` property to Distilleries ([6e110e4](https://github.com/dunbarcyber/cyphon/commit/6e110e4))
 - **docs**: docs for Articles, Tags, Topics, and DataTaggers [PR #225](https://github.com/dunbarcyber/cyphon/pull/225) ([879af9d](https://github.com/dunbarcyber/cyphon/commit/879af9d))
+- **engines.elasticsearch**: added ``ElasticsearchEngine.create_template()`` method ([66f9bbb](https://github.com/dunbarcyber/cyphon/commit/66f9bbb))
 - **requirements.txt**: django-ckeditor package ([de94ecf](https://github.com/dunbarcyber/cyphon/commit/de94ecf))
 - **tags**: TagRelation, Topic, and DataTagger models [PR #178](https://github.com/dunbarcyber/cyphon/pull/178) ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
 - **tags**: post-save signals for tagging Alerts and Comments ([41e7f87](https://github.com/dunbarcyber/cyphon/commit/41e7f87))
+- **warehouses**: post_save signal receiver to create Elasticsearch index templates ([35627bc](https://github.com/dunbarcyber/cyphon/commit/35627bc))
 - **utils.validators**: ``lowercase_validator()`` function ([5b0ce6f](https://github.com/dunbarcyber/cyphon/commit/5b0ce6f))
 
 ### Changed
@@ -35,6 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **alerts:** prevented duplicate ``muzzle_hash`` when ``Alert.level`` is changed [Issue #223](https://github.com/dunbarcyber/cyphon/issues/223) ([68a1acc](https://github.com/dunbarcyber/cyphon/commit/68a1acc))
 - **contexts:** prevented server error if Context query can't be completed [PR #224](https://github.com/dunbarcyber/cyphon/issues/224) ([9209dd6](https://github.com/dunbarcyber/cyphon/commit/9209dd6))
 - **engines.elasticsearch**: prevented error from unmatched quote in query string [PR #209](https://github.com/dunbarcyber/cyphon/pull/209) ([ed94ac0](https://github.com/dunbarcyber/cyphon/commit/ed94ac0))
+- **engines.elasticsearch**: avoided mapping conflicts in Kibana by creating index templates [PR #213](https://github.com/dunbarcyber/cyphon/pull/213) ([61b111c](https://github.com/dunbarcyber/cyphon/commit/61b111c))
 - **sifter.sieves**: prevented endless recursion in Sieves [PR #208](https://github.com/dunbarcyber/cyphon/pull/208) ([5f3fec0](https://github.com/dunbarcyber/cyphon/commit/5f3fec0))
 
 ### Removed
