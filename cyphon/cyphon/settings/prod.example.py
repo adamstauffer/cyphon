@@ -79,9 +79,6 @@ if AWS_S3_BUCKET_NAME:
 #: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
 BASE_URL = os.getenv('BASE_URL_PROD', 'http://localhost:8000')
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIALS = True
-
 LOG_DIR = BASE_DIR
 
 LOGGING = {

@@ -38,8 +38,6 @@ SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': [addr.strip() for addr in os.getenv(
         'ALLOWED_HOSTS', 'localhost').split(',')],
-    'CORS_ORIGIN_WHITELIST': [addr.strip() for addr in os.getenv(
-        'CORS_ORIGIN_WHITELIST', 'localhost:8000').split(',')],
 }
 
 if ON_EC2:

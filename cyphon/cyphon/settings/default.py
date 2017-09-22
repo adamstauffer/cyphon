@@ -50,7 +50,6 @@ SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': ['localhost'],
-    'CORS_ORIGIN_WHITELIST': ['localhost:8000'],
 }
 
 TEST = 'test' in sys.argv
@@ -343,7 +342,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'django_mailbox',
-    # 'corsheaders',  # Cross Origin Resource Sharing (local dev)
     'rest_framework',
     'rest_framework_docs',
     'rest_framework_jwt',  # Auth tokens
@@ -420,7 +418,6 @@ MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -686,9 +683,6 @@ DEBUG = True
 
 #: URL for constructing link with MEDIA_URL
 BASE_URL = 'http://localhost:8000'
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
 
 LOGGING = {
     'version': 1,
