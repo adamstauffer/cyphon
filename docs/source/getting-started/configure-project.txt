@@ -19,7 +19,6 @@ Edit the ``conf.py`` file with the IP address and/or domain name for your host m
 
     HOST_SETTINGS = {
        'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
-       'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
     }
 
 You should also change the Django ``SECRET_KEY`` to something unique.
