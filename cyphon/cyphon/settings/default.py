@@ -20,10 +20,10 @@
 Default Django settings for Cyphon when running tests.
 
 For more information on this Django file, see:
-https://docs.djangoproject.com/en/1.10/topics/settings/
+https://docs.djangoproject.com/en/1.11/topics/settings/
 
 For the full list of Django settings and their values, see:
-https://docs.djangoproject.com/en/1.10/ref/settings/
+https://docs.djangoproject.com/en/1.11/ref/settings/
 
 .. _source: ../_modules/cyphon/settings/default.html
 
@@ -679,11 +679,13 @@ JWT_AUTH = {
 # Settings from dev.py  #
 #########################
 
+#: URL for constructing link with MEDIA_URL.
+BASE_URL = os.getenv('BASE_URL_DEV', 'http://localhost:8000')
+
+#: Whether to enable debug mode.
 DEBUG = True
 
-#: URL for constructing link with MEDIA_URL
-BASE_URL = 'http://localhost:8000'
-
+#: A logging configuration dictionary.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
