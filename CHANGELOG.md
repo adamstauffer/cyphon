@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **cyphon.settings**: removed local static assets options from CYCLOPS settings ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **cyclops**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **docs**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **docs**: moved fixture docs to user manual ([c9122c0](https://github.com/dunbarcyber/cyphon/commit/c9122c0))
 - **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 
 ### Fixed
