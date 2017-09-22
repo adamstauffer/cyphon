@@ -43,33 +43,18 @@ from .conf import *
 # ISLAND OF MISFIT SETTINGS
 ###############################################################################
 
+#: URL for REST API.
 API_URL = '/api/v1/'
 
+#: URL for REST API.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-CORS_ORIGIN_WHITELIST = HOST_SETTINGS['CORS_ORIGIN_WHITELIST']
-
-JASMINE_TEST_DIRECTORY = 'tests'
-
-#: Password strength variables
-PASSWORD_MIN_LENGTH = 6
-PASSWORD_MAX_LENGTH = 30
-
-#: Path for password reset
-PASSWORD_RESET_PATH = '#/user/reset-password'
-
-#: Path for user registration
-REGISTRATION_PATH = '#/user/registration'
-
-# change this to the directory where Cyphon's dependencies are installed
+#: Directory where Cyphon's dependencies are installed.
 REQUIREMENTS = os.path.join(os.path.dirname(BASE_DIR),
                             'virtualenv/lib/python3.4/site-packages')
 
 #: Whether the instance is running in test mode.
 TEST = 'test' in sys.argv
-
-#: Link Creation for Emails sent from the server
-TRANSFER_PROTOCOL = 'http'
 
 
 ###############################################################################
@@ -135,7 +120,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'django_mailbox',
-    # 'corsheaders',  # Cross Origin Resource Sharing (local dev)
     'rest_framework',
     'rest_framework_docs',
     'rest_framework_jwt',  # Auth tokens
@@ -321,9 +305,6 @@ STATIC_ROOT = os.path.join(HOME_DIR, 'static')
 
 #: URL to use when referring to static files located in STATIC_ROOT.
 STATIC_URL = '/static/'
-
-#: Additional locations the staticfiles app will traverse.
-STATICFILES_DIRS = []
 
 
 ###############################################################################
