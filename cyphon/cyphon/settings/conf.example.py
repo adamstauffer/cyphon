@@ -24,7 +24,6 @@
 
 # standard library
 import os
-import sys
 
 # third party
 from ec2_metadata import ec2_metadata
@@ -42,8 +41,6 @@ HOST_SETTINGS = {
 
 if ON_EC2:
     HOST_SETTINGS['ALLOWED_HOSTS'].append(ec2_metadata.private_ipv4)
-
-TEST = 'test' in sys.argv
 
 FUNCTIONAL_TESTS = {
     'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
