@@ -50,8 +50,16 @@ from utils.validators.validators import lowercase_validator
 _LEMMATIZER = nltk.stem.WordNetLemmatizer()
 _LOGGER = logging.getLogger(__name__)
 
-nltk.download('punkt')
-nltk.download('wordnet')
+
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
+try:
+    nltk.data.find('corpora/wordnet')
+except LookupError:
+    nltk.download('wordnet')
 
 
 class Topic(Taxonomy):
