@@ -55,7 +55,9 @@ LOG_DIR = BASE_DIR
 DEBUG = False
 
 #: A list of all the people who get code error notifications.
-ADMINS = []
+ADMINS = [
+    # ('Jane Smith', 'jane@example.com'),
+]
 
 if 'DJANGO_ADMIN' in os.environ:
     ADMINS.append(email.utils.parseaddr(os.getenv('DJANGO_ADMIN')))
