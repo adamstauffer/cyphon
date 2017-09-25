@@ -76,6 +76,14 @@ DATABASES = {
     }
 }
 
+#: The maximum size in bytes that a request body may be before a
+#: SuspiciousOperation (RequestDataTooBig) is raised.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440  # i.e., 2.5 MB
+
+#: The maximum number of parameters that may be received via GET or POST
+#: before a SuspiciousOperation (TooManyFields) is raised.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
+
 #: Default email address to use for various automated correspondence.
 DEFAULT_FROM_EMAIL = EMAIL.get('DEFAULT_FROM', 'webmaster@localhost')
 
