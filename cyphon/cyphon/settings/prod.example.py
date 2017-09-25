@@ -33,14 +33,17 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import email.utils
 import os
 
+# third party
+from ec2_metadata import ec2_metadata
+
 # local
 from .base import *
-
 
 
 #: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
 BASE_URL = os.getenv('BASE_URL_PROD', 'http://localhost:8000')
 
+#: Path to directory will logs will be saved.
 LOG_DIR = BASE_DIR
 
 
@@ -151,7 +154,7 @@ if ON_EC2:
 else:
     AWS_REGION = os.getenv('AWS_REGION_NAME', 'us-east-1')
 
-# The AWS secret access key to use.
+#: The AWS secret access key to use.
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
 
 #: Whether to enable authentication for stored files.
@@ -168,12 +171,10 @@ AWS_S3_ENDPOINT_URL_STATIC = 'https://s3.amazonaws.com'
 AWS_S3_KEY_PREFIX_STATIC = 'static/'
 
 MEDIAFILES_LOCATION = 'media'
+STATICFILES_LOCATION = 'static'
 
+# override Django settings
 if AWS_S3_BUCKET_NAME:
     MEDIA_ROOT = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-
-STATICFILES_LOCATION = 'static'
-
-if AWS_S3_BUCKET_NAME:
     STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
