@@ -35,11 +35,6 @@ from utils.settings import ON_EC2
 #: A unique, unpredictable value used to provide cryptographic signing.
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
-LOCALIZATION = {
-    'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
-    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-}
-
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': [addr.strip() for addr in os.getenv(
         'ALLOWED_HOSTS', 'localhost').split(',')],
@@ -47,6 +42,11 @@ HOST_SETTINGS = {
 
 if ON_EC2:
     HOST_SETTINGS['ALLOWED_HOSTS'].append(ec2_metadata.private_ipv4)
+
+LOCALIZATION = {
+    'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
+    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+}
 
 PAGE_SIZE = 10
 
