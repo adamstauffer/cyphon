@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **alerts**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
 - **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
 - **cyphon.settings**: added Elasticsearch index settings ([66f9bbb](https://github.com/dunbarcyber/cyphon/commit/66f9bbb))
+- **cyphon.settings**: added settings for data uploads ([9523dfb](https://github.com/dunbarcyber/cyphon/commit/9523dfb))
+- **cyphon.settings**: added localization settings ([a7adde9](https://github.com/dunbarcyber/cyphon/commit/a7adde9))
 - **cyphon.urls**: REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
 - **distilleries**: added ``engine`` property to Distilleries ([6e110e4](https://github.com/dunbarcyber/cyphon/commit/6e110e4))
 - **docs**: docs for Articles, Tags, Topics, and DataTaggers [PR #225](https://github.com/dunbarcyber/cyphon/pull/225) ([879af9d](https://github.com/dunbarcyber/cyphon/commit/879af9d))
@@ -33,6 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **cyclops**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **docs**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **docs**: moved fixture docs to user manual ([c9122c0](https://github.com/dunbarcyber/cyphon/commit/c9122c0))
+- **docs**: updated instructions for project configuration ([d87111f](https://github.com/dunbarcyber/cyphon/commit/d87111f))
 - **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 
 ### Fixed
@@ -45,8 +48,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 ### Removed
 
-- **alerts.models**: removed``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
-
+- **alerts.models**: removed ``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **cyphon.settings**: removed CORS settings ([3dea449](https://github.com/dunbarcyber/cyphon/commit/3dea449))
+- **requirements.txt**: removed django-cors-headers ([3dea449](https://github.com/dunbarcyber/cyphon/commit/3dea449))
 
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/dunbarcyber/cyphon/compare/1.4.1...1.4.2) (2017-08-21)
