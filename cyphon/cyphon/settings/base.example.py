@@ -193,7 +193,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 
 #: A list of middleware to use.
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
