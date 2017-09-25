@@ -33,26 +33,24 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 from collections import OrderedDict
 from datetime import timedelta
 import os
-import logging
 import sys
-
-LOGGER = logging.getLogger(__name__)
 
 
 #########################
 # Settings from conf.py #
 #########################
 
+#: A unique, unpredictable value used to provide cryptographic signing.
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
-
-# HOSTNAME is used to send out an email to new users once an
-# administrator adds them.
 
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': ['localhost'],
 }
 
-TEST = 'test' in sys.argv
+LOCALIZATION = {
+    'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
+    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+}
 
 FUNCTIONAL_TESTS = {
     'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
@@ -470,10 +468,10 @@ WSGI_APPLICATION = 'cyphon.wsgi.application'
 # ----------------------------------------------------------------------
 
 #: Language ID code for the default language for this installation.
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = LOCALIZATION.get('DEFAULT_LANGUAGE', 'en-us')
 
 #: The time zone for this installation.
-TIME_ZONE = 'US/Eastern'
+TIME_ZONE = LOCALIZATION.get('TIME_ZONE', 'US/Eastern')
 
 #: Whether Django’s translation system should be enabled.
 USE_I18N = True
