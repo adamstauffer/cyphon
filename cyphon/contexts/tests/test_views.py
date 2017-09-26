@@ -83,6 +83,7 @@ class ContextAPITest(CyphonAPITestCase):
         response = self.client.get(url, query)
         actual = response.json()
         expected = {'error': 'A document id must be provided.'}
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(actual, expected)
 
 
