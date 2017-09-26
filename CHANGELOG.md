@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+
+<a name="1.5.0"></a>
+## [1.5.0](https://github.com/dunbarcyber/cyphon/compare/1.4.2...1.5.0) (2017-09-26)
+
 ### Added
 
 - **alerts**: added ``associated_tags`` property to Alerts ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
