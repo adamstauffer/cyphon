@@ -23,6 +23,7 @@ Overrides default Cyphon settings when compiling docs.
 
 """
 
+# local imports
 from .default import *
 from .default import DATABASES as DB_SETTINGS
 

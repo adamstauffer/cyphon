@@ -31,7 +31,8 @@
           id: {{ request.user.id }},
           first_name: '{{ request.user.first_name }}',
           last_name: '{{ request.user.last_name }}',
-          is_staff: {{ request.user.is_staff | lower }}
+          is_staff: {{ request.user.is_staff | lower }},
+          email: '{{ request.user.email }}'
         },
         API_URL: '/api/v1',
         ADMIN_URL: '/admin/',
