@@ -90,20 +90,16 @@ def send_push_notifications(alert):
 
 
 @receiver(post_save, sender=Alert)
-def handle_alert_post_save_signal(**kwargs):
+def handle_alert_post_save_signal(sender, instance, created, **kwargs):
     """
     Handles the Alert models post_save signal.
     """
-    if config.PUSH_NOTIFICATIONS_ENABLED:
+    if created and config.PUSH_NOTIFICATIONS_ENABLED:
 
         if not _NOTIFICATION_SETTINGS['PUSH_NOTIFICATION_KEY']:
             _LOGGER.error('Could not send push notifications. '
                           'No PUSH_NOTIFICATION_KEY was provided')
         else:
-            is_new_alert = kwargs.get('created', False)
-            alert = kwargs.get('instance')
             ignored_levels = _NOTIFICATION_SETTINGS['IGNORED_ALERT_LEVELS']
-            should_notify = alert.level not in ignored_levels
-
-            if is_new_alert and should_notify:
-                send_push_notifications(alert)
+            if instance.level not in ignored_levels:
+                send_push_notifications(instance)

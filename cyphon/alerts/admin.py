@@ -23,9 +23,43 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 # local
-from .models import Alert, Comment
+from tags.admin import TagRelationInlineAdmin
+from .models import Alert, Analysis, Comment
 
 
+@admin.register(Analysis)
+class AnalysisAdmin(admin.ModelAdmin):
+    """
+    Customizes admin pages for |Articles|.
+    """
+
+    fields = ['alert', 'notes', 'created_date', 'last_updated']
+    readonly_fields = ['alert', 'created_date', 'last_updated']
+    list_display = ['alert', 'analyst']
+    link_display = ['alert', ]
+    list_filter = ['alert__assigned_user', ]
+    inlines = [TagRelationInlineAdmin, ]
+
+    def has_add_permission(self, request):
+        """Prevent users from adding an Analysis."""
+        return False
+
+
+class AnalysisInLineAdmin(admin.TabularInline):
+    """
+    Customizes inline admin forms for |Analyses|.
+    """
+
+    model = Analysis
+    classes = ('grp-open', )
+    inline_classes = ('grp-open', )
+    max_num = 1
+    min_num = 1
+    verbose_name_plural = 'analysis'
+    can_delete = False
+
+
+@admin.register(Alert)
 class AlertAdmin(admin.ModelAdmin):
     """
     Customizes admin pages for Alerts.
@@ -37,6 +71,7 @@ class AlertAdmin(admin.ModelAdmin):
     CodeNames in Alert titles even if CodeNames are enabled.
 
     """
+
     readonly_fields = (
         'incidents',
         'display_title',
@@ -64,8 +99,6 @@ class AlertAdmin(admin.ModelAdmin):
                 'level',
                 'status',
                 'assigned_user',
-                'notes',
-                'tags',
             ),
         }),
         (_('Source'), {
@@ -131,6 +164,7 @@ class AlertAdmin(admin.ModelAdmin):
         'set_outcome_to_true',
         'set_outcome_to_false',
     ]
+    inlines = [AnalysisInLineAdmin, TagRelationInlineAdmin, ]
 
     @staticmethod
     def _format_msg(rows_updated):
@@ -227,6 +261,4 @@ class AlertAdmin(admin.ModelAdmin):
     set_level_to_low.short_description = 'Mark as Low'
 
 
-admin.site.register(Alert, AlertAdmin)
 admin.site.register(Comment)
-

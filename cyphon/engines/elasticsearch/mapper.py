@@ -35,7 +35,7 @@ from django.conf import settings
 
 # local
 from bottler.datafields.models import DataField
-from .client import VERSION
+from .client import ES_INDEX_SETTINGS, VERSION
 
 _DATE_KEY = settings.DISTILLERIES['DATE_KEY']
 
@@ -212,9 +212,7 @@ def create_mapping(doc_type, fields):
         properties.update(prop)
 
     mappings = {
-        'settings': {
-            'index.mapping.ignore_malformed': True
-        },
+        'settings': ES_INDEX_SETTINGS,
         'mappings': {
             doc_type: properties
         }

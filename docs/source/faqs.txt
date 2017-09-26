@@ -8,7 +8,7 @@ FAQs
 * :ref:`login-faq`
 * :ref:`delete-superuser-faq`
 * :ref:`logs-faq`
-
+* :ref:`backup-faq`
 
 .. _server-faq:
 
@@ -16,19 +16,13 @@ FAQs
 How can I access Cyphon through a domain name or IP address?
 ************************************************************
 
-To access your Cyphon instance using the external IP address or domain name of your server, add the IP address or domain name to ``'ALLOWED_HOSTS'`` and ``'CORS_ORIGIN_WHITELIST'`` under ``HOST_SETTINGS`` in your ``conf.py`` settings file::
+To access your Cyphon instance using the external IP address or domain name of your server, add the IP address or domain name to ``'ALLOWED_HOSTS'`` under ``HOST_SETTINGS`` in your ``conf.py`` settings file::
 
     HOST_SETTINGS = {
         'ALLOWED_HOSTS': [
             'example.com',
             'localhost',
             'cyphon',
-        ],
-        'CORS_ORIGIN_WHITELIST': [
-            'example.com',
-            'localhost:8000',
-            'cyphon:8000',
-            'nginx:80',
         ],
     }
 
@@ -84,3 +78,12 @@ How do I get logs from a remote machine into Cyphon?
 ****************************************************
 
 We recommend you use `Filebeat`_ and `Logstash`_. Check out our :ref:`Logstash tutorial <logstash-tutorial>` for guidance. If you're using a `Cyphondock`_-based deployment (such as our `Cyphon Virtual Machine <https://www.cyphon.io/cyphon-vm/>`__), see our `Cyphondock documentation <http://cyphondock.readthedocs.io/en/latest/configure-project.html#logstash-config>`__ for more details.
+
+
+.. _backup-faq:
+
+****************************************
+How do I backup my admin configurations?
+****************************************
+
+You can backup your configurations by exporting them as fixtures. See the section on :ref:`dumping-data` for details. Alernatively, you can backup your PostgreSQL database. Consult `PostgreSQL's documentation <https://www.postgresql.org/docs/9.6/static/backup.html>`__ for instructions.

@@ -28,6 +28,7 @@ Constant                  Description
 # third party
 from django.dispatch import Signal
 
+
 # pylint: disable=C0103
 document_saved = Signal(providing_args=['doc_obj'])
 """|Signal|

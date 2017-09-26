@@ -96,6 +96,17 @@ Cyphon can generate alerts based on either the characteristics of the data itsel
 :ref:`Read More<generating-alerts>`
 
 
+**************
+Tagging Alerts
+**************
+
+.. image:: ../_static/images/icons/tag.png
+    :width: 100px
+    :align: left
+
+The :ref:`Tags<tags>` package is used to automagically tag |Alerts|, |Comments|, and |Analyses|. |Tags| can link to |Articles|, which can provide detailed information to help diagnose and remediate |Alerts|. |DataTaggers| can create new |Tags| from specific data fields from |Alerts|.
+
+
 ********************
 Investigating Alerts
 ********************

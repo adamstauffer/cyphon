@@ -35,6 +35,10 @@ import elasticsearch
 _ES_SETTINGS = settings.ELASTICSEARCH
 ES_HOSTS = _ES_SETTINGS.get('HOSTS', ['localhost:9200'])
 ES_KWARGS = _ES_SETTINGS.get('KWARGS', {'timeout': 30})
+ES_INDEX_SETTINGS = _ES_SETTINGS.get('INDEX', {
+    'index.mapping.ignore_malformed': True,
+    'number_of_shards': 1,
+})
 
 ELASTICSEARCH = elasticsearch.Elasticsearch(ES_HOSTS, **ES_KWARGS)
 

@@ -126,8 +126,8 @@ class Distillery(models.Model):
     company : Company
         The |Company| associated with the data.
 
-    categories : `list` of `Categories`
-        A |list| of |Categories| that characterize the data.
+    categories : `QuerySet` of `Categories`
+        A |QuerySet| of |Categories| that characterize the data.
 
     is_shell : bool
         Whether the Distillery is only used to model and retrieve data,
@@ -319,6 +319,18 @@ class Distillery(models.Model):
 
         """
         return self.collection.name
+
+    @cached_property
+    def engine(self):
+        """The |Engine| associated with the Distillery.
+
+        Returns
+        -------
+        |Engine|
+            The |Engine| that services the Distillery's |Collection|.
+
+        """
+        return self.collection.engine
 
     @cached_property
     def warehouse(self):

@@ -383,7 +383,13 @@ class Context(models.Model):
         sorter = self._get_sorter()
 
         if query:
-            return self.related_distillery.find(query, sorter, page, page_size)
+            results = self.related_distillery.find(query, sorter, page, page_size)
+            if isinstance(results, dict):
+                return results
+            else:
+                return {'error': 'The query could not be completed. '
+                                 'Please increase the timeout setting '
+                                 'or try again later.'}
         else:
             return {'error': 'No query parameters available for searching '
                              'related data. Please define a time interval, '

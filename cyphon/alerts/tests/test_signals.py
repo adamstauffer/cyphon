@@ -35,9 +35,9 @@ from alerts.models import Comment
 from tests.fixture_manager import get_fixtures
 
 
-class CommentReceiverTestCase(TestCase):
+class SendCommentNotificationTestCase(TestCase):
     """
-    Tests the handle_comment_post_save_signal receiver.
+    Tests the send_comment_notification receiver.
     """
     fixtures = get_fixtures(['comments'])
 
@@ -46,7 +46,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_old_alert(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when an existing alert is updated.
         """
         with patch('alerts.signals.emails_enabled', return_value=True):
@@ -57,7 +57,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_new_alert_emails_enabled(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when a new alert is updated and email notifcations
         are enabled.
         """
@@ -75,7 +75,7 @@ class CommentReceiverTestCase(TestCase):
 
     def test_new_alert_emails_disabled(self):
         """
-        Tests that the handle_comment_post_save_signal receiver doesn't
+        Tests that the send_comment_notification receiver doesn't
         send an email when a new alert is updated and email notifcations
         are disabled.
         """

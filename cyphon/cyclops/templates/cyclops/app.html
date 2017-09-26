@@ -1,6 +1,4 @@
-{% if local_assets_enabled %}
-  {% load static %}
-{% endif %}
+{% load static %}
 
 <!DOCTYPE html>
 <html>
@@ -15,11 +13,7 @@
       href='https://api.mapbox.com/mapbox-gl-js/v0.36.0/mapbox-gl.css'
       rel='stylesheet'
     />
-    {% if local_assets_enabled %}
-      <link rel="stylesheet" href="{% static css_file %}">
-    {% else %}
-      <link rel="stylesheet" href="{{ css_url }}">
-    {% endif %}
+    <link rel="stylesheet" href="{{ css_url }}">
 
     {% if notifications_enabled %}
       <link rel="manifest" href="/manifest.json">
@@ -37,7 +31,8 @@
           id: {{ request.user.id }},
           first_name: '{{ request.user.first_name }}',
           last_name: '{{ request.user.last_name }}',
-          is_staff: {{ request.user.is_staff | lower }}
+          is_staff: {{ request.user.is_staff | lower }},
+          email: '{{ request.user.email }}'
         },
         API_URL: '/api/v1',
         ADMIN_URL: '/admin/',
@@ -49,11 +44,8 @@
         CYPHON_VERSION: '{{ cyphon_version }}'
       };
     </script>
-    {% if local_assets_enabled %}
-      <script src="{% static js_file %}"></script>
-    {% else %}
-      <script src="{{ js_url }}"></script>
-    {% endif %}
+
+    <script src="{{ js_url }}"></script>
 
   </body>
 </html>

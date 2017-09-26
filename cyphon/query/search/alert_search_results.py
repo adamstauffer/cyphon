@@ -128,6 +128,7 @@ class AlertSearchResults(SearchResults):
         Returns
         -------
         list of Distillery
+
         """
         return Distillery.objects.filter(
             alerts__in=Alert.objects.filter_by_user(user)
@@ -141,12 +142,14 @@ class AlertSearchResults(SearchResults):
         ----------
         user : appusers.models.AppUser
             User making the search request.
+
         keywords : list of str
             Keywords to search for.
 
         Returns
         -------
         Q
+
         """
         distilleries = AlertSearchResults._get_distilleries_with_alerts(user)
 
@@ -170,6 +173,7 @@ class AlertSearchResults(SearchResults):
         Returns
         -------
         list of Q
+
         """
         return [Q(title__icontains=keyword) for keyword in keywords]
 
@@ -184,8 +188,9 @@ class AlertSearchResults(SearchResults):
         Returns
         -------
         list of Q
+
         """
-        return [Q(notes__icontains=keyword) for keyword in keywords]
+        return [Q(analysis__notes__icontains=keyword) for keyword in keywords]
 
     @staticmethod
     def _get_alert_comments_query(keywords):
@@ -198,8 +203,9 @@ class AlertSearchResults(SearchResults):
         Returns
         -------
         list of Q
+
         """
-        return [Q(comment__content__icontains=keyword) for keyword in keywords]
+        return [Q(comments__content__icontains=keyword) for keyword in keywords]
 
     @staticmethod
     def _get_alert_search_query(user, keywords):
@@ -209,12 +215,14 @@ class AlertSearchResults(SearchResults):
         ----------
         user : appuser.models.AppUser
             User requesting the search query.
+
         keywords : list of str
             Keywords to search for.
 
         Returns
         -------
         Q
+
         """
         queries = []
         queries += [AlertSearchResults._create_data_query(user, keywords)]
@@ -238,6 +246,7 @@ class AlertSearchResults(SearchResults):
         Returns
         -------
         django.db.models.query.QuerySet
+
         """
         query = AlertSearchResults._get_alert_search_query(user, keywords)
 
@@ -282,11 +291,11 @@ class AlertSearchResults(SearchResults):
 
         Parameters
         ----------
-        request : django.http.HttpRequest
+        request : :class:`~django.http.HttpRequest`
 
         Returns
         -------
-        dict
+        |dict|
 
         """
         parent_dict = super(AlertSearchResults, self).as_dict(request)

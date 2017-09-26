@@ -13,25 +13,49 @@ Django
 Cyphon's backend is based on the `Django`_ web framework. Settings for the
 Cyphon Django project are found in the ``cyphon/settings`` directory.
 
-The ``conf.py`` file contains settings specific to your Cyphon instance, including credentials for connecting to PostgreSQL, RabbitMQ, Elasticsearch, and MongoDB.
+The ``conf.py`` file contains the primary settings for your Cyphon instance, including credentials for connecting to PostgreSQL, RabbitMQ, Elasticsearch, and MongoDB.
 
-Edit the ``conf.py`` file with the IP address and/or domain name for your host machine::
+The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general settings for Django and other third-party apps used by Cyphon. The ``prod.py`` file contains settings specific to the production environment, while the ``dev.py`` file contains settings for use in development. You can read more about Django's settings in
+`Django's documentation <https://docs.djangoproject.com/en/1.11/topics/settings/>`__.
+
+.. _secret-key:
+
+Secret Key
+----------
+
+The ``SECRET_KEY`` setting is used by Django to provide cryptographic signing. Change the  ``SECRET_KEY`` in the ``conf.py`` file to something unique. You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__. See the section on :ref:`secrets_management` for info on storing secrets such as this securely.
+
+.. _host-settings:
+
+Host Settings
+-------------
+
+In the ``conf.py`` file, configure the ``HOST_SETTINGS['ALLOWED_HOSTS']`` setting with the IP address and/or domain name for your host machine::
 
     HOST_SETTINGS = {
        'ALLOWED_HOSTS': ['example.com', '127.0.0.1'],
-       'CORS_ORIGIN_WHITELIST': ['example.com', '127.0.0.1'],
     }
 
-You should also change the Django ``SECRET_KEY`` to something unique.
-You can generate one `here <http://www.miniwebtool.com/django-secret-key-generator/>`__.
+.. _localization:
 
-Configure settings for PostgreSQL, RabbitMQ, Elasticsearch and/or MongoDB. (If you're deploying with `Cyphondock`_, you can use the default settings.)
+Localization
+------------
 
-The ``base.py``, ``dev.py``, and ``prod.py`` files contain more general
-settings for Django and other third-party apps used by Cyphon. At a
-minimum, you should configure the ``BASE_URL`` setting in the ``dev.py``
-and ``prod.py`` files. You can read more about Django's settings in
-`Django's documentation <https://docs.djangoproject.com/en/1.10/topics/settings/>`__.
+You can specify a default language and time zone for your instance by changing the ``LOCALIZATION`` settings in the ``conf.py`` file. Further localization settings can be found in the ``base.py`` file. See `Django's documentation <https://docs.djangoproject.com/en/1.11/topics/i18n/>`__ for more information on localization.
+
+.. _data-stores:
+
+Data Stores
+-----------
+
+Configure settings for PostgreSQL, RabbitMQ, Elasticsearch and/or MongoDB in the ``conf.py`` file. (If you're deploying with `Cyphondock`_, you can use the default settings.) See the section on :ref:`secrets_management` for info on securely storing these settings.
+
+.. _base-url:
+
+Base URL
+--------
+
+Configure the ``BASE_URL`` setting in the ``dev.py`` and ``prod.py`` files to match the URL for your Cyphon instance in your development and production environments.
 
 .. _secrets_management:
 
@@ -110,23 +134,18 @@ Cyclops is configured with the ``conf.py`` file in the Cyphon settings::
     CYCLOPS = {
         'ENABLED': True,
         'MAPBOX_ACCESS_TOKEN': '',
-        'LOCAL_ASSETS_ENABLED': False,
-        'LOCAL_ASSETS_PATH': os.path.abspath(os.path.join(PROJ_DIR, '../../cyclops/build')),
-        'LOCAL_FOLDER_NAME': 'cyclops',
-        'LOCAL_CSS_FILENAME': 'cyclops.css',
-        'LOCAL_JS_FILENAME': 'cyclops.js',
+        'DEVELOPMENT_ENABLED': False,
+        'DEVELOPMENT_URL': 'http://localhost:8080/',
     }
 
 In order to show maps with locations and get geolocation data, you can
 sign up for a mapbox access token `here <https://www.mapbox.com/studio/signup/>`__
 and place it as ``MAPBOX_ACCESS_TOKEN``.
 
-If you're using a local version of cyclops, then change ``LOCAL_ASSETS_ENABLED``
-to ``True`` and modify the ``LOCAL_ASSETS_PATH`` to the directory where the
-Cyclops build files are located. ``LOCAL_CSS_FILENAME`` and
-``LOCAL_JS_FILENAME`` should only be changed if the Cyclops build file has
-been altered, and ``LOCAL_FOLDER_NAME`` only affects how the static files are
-surfaced through the Django URL's.
+The development configurations are for using different versions of Cyclops
+static assets that are hosted on a different server. We use this internally to
+test release candidates on our development server before marking them as
+publicly available.
 
 The next optional step would be to set up push notifications for Cyclops,
 which is explained in :ref:`push-notifications`.

@@ -30,8 +30,9 @@ import rest_framework_jwt.views as rest_views
 # from rest_framework_docs.views import DRFDocsView
 
 # local
-from alerts.views import AlertViewSet, CommentViewSet
+from alerts.views import AlertViewSet, AnalysisViewSet, CommentViewSet
 from appusers.views import AppUserViewSet
+from articles.views import ArticleViewSet
 from categories.views import CategoryViewSet
 from contexts.views import ContextViewSet, ContextFilterViewSet
 from cyclops.views import application, manifest
@@ -48,6 +49,7 @@ from query.collectionqueries.views import (
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
+from tags.views import TagViewSet, TopicViewSet
 from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 
@@ -55,6 +57,7 @@ urlpatterns = [
     # url(r'^$', 'dashboard.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
@@ -90,6 +93,8 @@ router = DefaultRouter()
 
 router.register(r'actions', ActionViewSet)
 router.register(r'alerts', AlertViewSet)
+router.register(r'analyses', AnalysisViewSet)
+router.register(r'articles', ArticleViewSet)
 router.register(r'categories', CategoryViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'bottles', BottleViewSet)
@@ -106,7 +111,9 @@ router.register(r'queryfieldsets', QueryFieldsetViewSet)
 router.register(r'labels', LabelViewSet)
 router.register(r'labelfields', LabelFieldViewSet)
 router.register(r'monitors', MonitorViewSet)
+router.register(r'tags', TagViewSet)
 router.register(r'tastes', TasteViewSet)
+router.register(r'topics', TopicViewSet)
 router.register(r'users', AppUserViewSet)
 router.register(r'warehouses', WarehouseViewSet)
 

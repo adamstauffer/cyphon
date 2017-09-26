@@ -346,6 +346,23 @@ class ContextTestCase(ContextBaseTestCase):
         self.assertEqual(actual, expected)
 
     @patch('distilleries.models.Distillery.find')
+    def test_get_related_data_timeout(self, mock_find):
+        """
+        Tests the get_related_data method for a Context when the query
+        cannot be completed.
+        """
+        data = {'host': 'foo', 'message': 'bar'}
+        actual = self.context_w_filters.get_related_data(
+            data, page=1, page_size=10)
+        expected = {
+            'distillery': 'elasticsearch.test_index.test_docs',
+            'error': ('The query could not be completed. '
+                      'Please increase the timeout setting '
+                      'or try again later.')
+        }
+        self.assertEqual(actual, expected)
+
+    @patch('distilleries.models.Distillery.find')
     @patch('contexts.models.Context._create_filter_query', return_value=None)
     @patch('contexts.models.Context._create_timeframe_query', return_value=None)
     def test_get_related_data_wo_params(self, mock_tf, mock_filter, mock_find):

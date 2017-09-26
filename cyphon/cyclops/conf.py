@@ -18,23 +18,25 @@
 Settings for the Cyclops package.
 """
 
-CYCLOPS_VERSION = '0.4.3'
+CYCLOPS_AWS_BUCKET_URL = 'https://s3.amazonaws.com/cyclops-public'
+
+CYCLOPS_VERSION = '0.4.4'
 """str
 
 Version number of Cyclops to use.
 """
 
 CYCLOPS_JS_URL = (
-    'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.js'.format(
-        CYCLOPS_VERSION))
+    '{0}/{1}/cyclops.js'.format(
+        CYCLOPS_AWS_BUCKET_URL, CYCLOPS_VERSION))
 """str
 
 CDN URL of the cyclops JS file. Contains the main application.
 """
 
 CYCLOPS_CSS_URL = (
-    'https://cdn.rawgit.com/dunbarcyber/cyclops/{0}/dist/cyclops.css'.format(
-        CYCLOPS_VERSION))
+    '{0}/{1}/cyclops.css'.format(
+        CYCLOPS_AWS_BUCKET_URL, CYCLOPS_VERSION))
 """str
 
 CDN URL of the cyclops CSS file. Contains all the styling.

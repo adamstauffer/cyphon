@@ -35,9 +35,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Comment)
-def handle_comment_post_save_signal(sender, instance, created, **kwargs):
-    """Notify relevant users when a Comment on a Alert is saved."""
+def send_comment_notification(sender, instance, created, **kwargs):
+    """Email relevant users when a new |Comment| is saved."""
 
+    # email relevant users if a comment is created
     if created and emails_enabled():
         for user in instance.get_other_contributors():
             email_message = compose_comment_email(instance, user)

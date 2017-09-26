@@ -28,8 +28,26 @@ from distilleries.serializers import (
     DistilleryDetailSerializer,
     DistilleryListSerializer,
 )
+from tags.serializers import TagDetailSerializer
 from responder.dispatches.serializers import DispatchSerializer
-from .models import Alert, Comment
+from .models import Alert, Analysis, Comment
+
+
+class AnalysisSerializer(serializers.ModelSerializer):
+    """
+    Base serializer for the Analysis class.
+    """
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = Analysis
+        fields = (
+            'alert',
+            'created_date',
+            'last_updated',
+            'notes',
+        )
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -100,6 +118,7 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
         required=False,
         choices=ALERT_LEVEL_CHOICES,
     )
+    notes = serializers.CharField(source='analysis__notes')
 
     class Meta(object):
         """Metadata options."""
@@ -107,10 +126,10 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
         model = Alert
         fields = (
             'assigned_user',
-            'notes',
             'outcome',
             'status',
             'level',
+            'notes',
         )
 
 
@@ -124,6 +143,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
     dispatches = DispatchSerializer(many=True)
     distillery = DistilleryDetailSerializer()
     location = serializers.JSONField(source='coordinates')
+    tags = TagDetailSerializer(source='associated_tags', many=True)
     title = serializers.CharField(source='display_title')
 
     class Meta(object):
@@ -148,6 +168,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
             'notes',
             'outcome',
             'status',
+            'tags',
             'title',
             'url',
         )

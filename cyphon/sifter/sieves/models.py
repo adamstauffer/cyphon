@@ -16,6 +16,17 @@
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
 Defines Rule, Sieve, and SieveNode classes.
+
+======================  =======================================================
+Class                   Description
+======================  =======================================================
+:class:`~Rule`          An abstract base class for models that define rules.
+:class:`~StringRule`    A Rule subclass for use with a string.
+:class:`~FieldRule`     A Rule subclass for use with a dictionary.
+:class:`~Sieve`         An abstract base class for models that define rulesets.
+:class:`~SieveManager`  Model Manager for Sieves.
+======================  =======================================================
+
 """
 
 # standard library
@@ -42,19 +53,33 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Rule(models.Model):
-    """
-    An abstract base class for models that define rules.
+    """An abstract base class for models that define rules.
 
-    Attributes:
-        protocol: an optional Protocol that classifies the input data so the
-            result can be examined by the Rule. If no Protocol is specified,
-            the raw data is examined instead.
-        operator: a string representing a query operator or regex pattern
-        value: a string to be substituted for 'x' in the operator attribute
-        case_sensitive: a Boolean indicating whether a regex should ignore case
-        negate: a Boolean indicating whether the Rule should be evaluated as
-            True when data does NOT match the regex condition
+    Attributes
+    ----------
+    name : str
+        The name of the Rule.
+
+    protocol : Protocol
+        An optional |Protocol| that classifies the input data so the
+        result can be examined by the Rule. If no |Protocol| is specified,
+        the raw data is examined instead.
+
+    value : str
+        A |str| to be substituted for 'x' in the operator attribute.
+
+    is_regex : bool
+        Whether the value should be interpreted as a regular expression.
+
+    case_sensitive : bool
+        Whether a regex value should ignore case.
+
+    negate : bool
+        Whether the Rule should be evaluated as True when data does NOT
+        match the regex condition.
+
     """
+
     name = models.CharField(
         max_length=40,
         unique=True,
@@ -104,6 +129,7 @@ class Rule(models.Model):
 
     def clean(self):
         """
+        Validates the model as a whole.
 
         See also
         --------
@@ -212,9 +238,36 @@ class Rule(models.Model):
 
 
 class StringRule(Rule):
+    """A Rule subclass for use with a string.
+
+    Attributes
+    ----------
+    name : str
+        The name of the Rule.
+
+    protocol : Protocol
+        An optional |Protocol| that classifies the input data so the
+        result can be examined by the Rule. If no |Protocol| is specified,
+        the raw data is examined instead.
+
+    value : str
+        A |str| to be substituted for 'x' in the operator attribute.
+
+    is_regex : bool
+        Whether the value should be interpreted as a regular expression.
+
+    case_sensitive : bool
+        Whether a regex value should ignore case.
+
+    negate : bool
+        Whether the Rule should be evaluated as True when data does NOT
+        match the regex condition.
+
+    operator : str
+        The type of comparison to make.
+
     """
-    Defines a Rule subclass for use with a string.
-    """
+
     operator = models.CharField(
         max_length=40,
         choices=REGEX_CHOICES,
@@ -235,12 +288,43 @@ class StringRule(Rule):
 
 
 class FieldRule(Rule):
+    """A Rule subclass for use with a dictionary.
+
+    Attributes
+    ----------
+    name : str
+        The name of the Rule.
+
+    protocol : Protocol
+        An optional |Protocol| that classifies the input data so the
+        result can be examined by the Rule. If no |Protocol| is specified,
+        the raw data is examined instead.
+
+    value : str
+        A |str| to be substituted for 'x' in the operator attribute.
+
+    is_regex : bool
+        Whether the value should be interpreted as a regular expression.
+
+    case_sensitive : bool
+        Whether a regex value should ignore case.
+
+    negate : bool
+        Whether the Rule should be evaluated as True when data does NOT
+        match the regex condition.
+
+    operator : str
+        The type of comparison to make.
+
+    field_name : str
+        The name of the data field that should be examined by the Rule.
+
     """
-    Defines a Rule subclass for use with a dictionary.
-    """
+
     DATAFIELD_CHOICES = (
         ('EmptyField', 'is null'),
     )
+
     operator = models.CharField(
         max_length=40,
         choices=list(REGEX_CHOICES) + list(RANGE_CHOICES) + list(DATAFIELD_CHOICES),
@@ -349,10 +433,25 @@ class SieveManager(GetByNameManager):
 
 
 class Sieve(models.Model):
+    """An abstract base class for models that define rulesets.
+
+    A Sieve is associated with one or more SieveNodes.
+
+    Attributes
+    ----------
+    name : str
+        The name of the Sieve.
+
+    logic : str
+        The logic used to combine rulesets, which can be 'AND' or 'OR'.
+        Default is 'AND'.
+
+    negate : bool
+        Whether the Sieve should be evaluated as True when data does NOT
+        match the regex condition.
+
     """
-    An abstract base class for models that define rulesets. A Sieve is
-    associated with one or more SieveNodes.
-    """
+
     name = models.CharField(max_length=40, unique=True)
     logic = models.CharField(
         max_length=3,
@@ -362,7 +461,9 @@ class Sieve(models.Model):
                     'Choose "OR" if one or more nodes should return True.'))
     negate = models.BooleanField(default=False)
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
         ordering = ['name']
 
@@ -381,8 +482,8 @@ class Sieve(models.Model):
 
     def _matches_any(self, data):
         """
-        Takes a dictionary of data and returns True if the data matches any Rule
-        in the RuleSet. Otherwise, returns False.
+        Takes a dictionary of data and returns True if the data matches
+        any Rule in the RuleSet. Otherwise, returns False.
         """
         for node in self.nodes.all():
             if node.is_match(data):
@@ -414,9 +515,9 @@ class Sieve(models.Model):
 
 
 class SieveNode(models.Model):
-    """
-    A SieveNode can reference either a Rule or a Sieve. Allows
-    construction of nested Sieves for complex rules.
+    """A reference to a Rule or a Sieve.
+
+    Allows construction of nested Sieves for complex rules.
 
     The content_type choices should be limited to a derived class of Rules and
     a derived class of Sieves specifically designed to handle that class of
@@ -425,13 +526,13 @@ class SieveNode(models.Model):
 
     For example:
 
-        class MyRule(rules.DictionaryRule):
+        class MyRule(sifter.sieves.FieldRule):
             pass
 
-        class MyRuleSet(rules.RuleSet):
+        class MyRuleSet(sifter.sieves.RuleSet):
             pass
 
-        class MyRuleNode(rules.RuleSetNode):
+        class MyRuleNode(sifter.sieves.RuleSetNode):
             RULE = models.Q(app_label='myrules', model='myrule')
             RULESET = models.Q(app_label='myrules', model='myruleset')
             CONTENT_TYPES = RULE | RULESET
@@ -441,6 +542,7 @@ class SieveNode(models.Model):
             node_object = GenericForeignKey()
 
     """
+
     object_id = models.PositiveIntegerField()
     node_object = GenericForeignKey()
 
@@ -453,6 +555,31 @@ class SieveNode(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (self.node_object, self.node_type)
+
+    def _node_obj_is_valid(self, sieve=None):
+        """
+        Determines whether the SieveNode contains a recursion.
+        """
+        sieve = sieve or self.sieve
+        if isinstance(self.node_object, Sieve):
+            if sieve == self.node_object:
+                return False
+            else:
+                for node in self.node_object.nodes.all():
+                    if not node._node_obj_is_valid(sieve):
+                        return False
+        return True
+
+    def clean(self):
+        """
+        Validates the model as a whole.
+        """
+        super(SieveNode, self).clean()
+
+        if not self._node_obj_is_valid():
+            raise ValidationError(_('To prevent recursion, a SieveNode cannot '
+                                    'point to a Sieve that is its parent '
+                                    'Sieve or contains its parent Sieve.'))
 
     @property
     def node_type(self):

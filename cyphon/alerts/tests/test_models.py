@@ -28,6 +28,7 @@ except ImportError:
 
 # third party
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -161,6 +162,30 @@ class AlertCompanyTestCase(AlertModelTestCase):
         """
         alert = Alert.objects.get(pk=7)
         self.assertEqual(alert.company, None)
+
+
+class AlertMuzzleHashTestCase(AlertModelTestCase):
+    """
+    Tests the save method with respect to an Alert's muzzle_hash.
+    """
+
+    def test_duplicate_alert(self):
+        """
+        Checks that duplicate muzzle hashes are not generated when Alert
+        levels are changed.
+        """
+        new_alert = Alert.objects.get(pk=1)
+        new_alert.pk = None
+        new_alert.level = 'MEDIUM'
+        new_alert.save()
+
+        # create a potential duplicate alert
+        old_alert = Alert.objects.get(pk=1)
+        old_alert.level = 'MEDIUM'
+        try:
+            old_alert.save()
+        except IntegrityError:
+            self.fail('Alert raised IntergrityError unexpectedly')
 
 
 class AlertContentDateTestCase(AlertModelTestCase):
@@ -648,6 +673,26 @@ class DisplayTitleTestCase(AlertModelTestCase):
         actual = self.alert.redacted_title()
         expected = 'Welcome to **PEAK**'
         self.assertEqual(actual, expected)
+
+
+class AssociatedTagsTestCase(TestCase):
+    """
+    Tests the associated_tags property of an Alert.
+    """
+
+    fixtures = get_fixtures(['alerts', 'comments', 'tags'])
+
+    def test_alert_w_comments(self):
+        """
+
+        """
+        alert = Alert.objects.get(pk=3)
+        tags = alert.associated_tags
+        self.assertEqual(tags.count(), 4)
+        self.assertTrue(tags.filter(name='bird').exists())
+        self.assertTrue(tags.filter(name='cat').exists())
+        self.assertTrue(tags.filter(name='dog').exists())
+        self.assertTrue(tags.filter(name='turtle').exists())
 
 
 class AlertSummaryWithCommentsTestCase(AlertModelTestCase):

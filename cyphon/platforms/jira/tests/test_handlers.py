@@ -290,10 +290,9 @@ This alert isn't this important
                                 self.mock_settings):
                     handler_w_user = IssueAPI(endpoint=self.endpoint,
                                               user=self.user)
-                    alert = Alert.objects.get(pk=2)
-                    alert.notes = 'Some test notes.'
+                    alert = Alert.objects.get(pk=3)
                     actual = handler_w_user._format_description(alert)
-                    expected = 'Some test notes.'
+                    expected = 'Some example notes.'
         self.assertEqual(actual, expected)
 
     def test_format_descr_wo_notes(self):
@@ -310,7 +309,6 @@ This alert isn't this important
                     handler_w_user = IssueAPI(endpoint=self.endpoint,
                                               user=self.user)
                     alert = Alert.objects.get(pk=2)
-                    alert.notes = None
                     actual = handler_w_user._format_description(alert)
                     expected = ''
         self.assertEqual(actual, expected)
