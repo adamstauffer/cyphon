@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Changed
+
+- **utils.validators**: changed `db_name_validator()` to allow hyphens and disallow $ [PR #241](https://github.com/dunbarcyber/cyphon/pull/241) ([8c03a48](https://github.com/dunbarcyber/cyphon/commit/8c03a48))
+
 
 <a name="1.5.0"></a>
 ## [1.5.0](https://github.com/dunbarcyber/cyphon/compare/1.4.2...1.5.0) (2017-09-26)

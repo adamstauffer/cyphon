@@ -184,10 +184,8 @@ class DbNameValidatorTestCase(TestCase):
         """
         Test case for a name that ends with '$'.
         """
-        try:
+        with self.assertRaises(ValidationError):
             db_name_validator('id$')
-        except ValidationError:
-            self.fail('Name raised ValidationError unexpectedly')
 
     def test_underscore(self):
         """
@@ -202,8 +200,10 @@ class DbNameValidatorTestCase(TestCase):
         """
         Test case for a name with an asterisk.
         """
-        with self.assertRaises(ValidationError):
+        try:
             db_name_validator('logstash-')
+        except ValidationError:
+            self.fail('Name raised ValidationError unexpectedly')
 
     def test_asterisk(self):
         """
@@ -225,6 +225,13 @@ class DbNameValidatorTestCase(TestCase):
         """
         with self.assertRaises(ValidationError):
             db_name_validator('http log')
+
+    def test_period(self):
+        """
+        Test case for a name with a period.
+        """
+        with self.assertRaises(ValidationError):
+            db_name_validator('http.log')
 
 
 class FieldNameValidatorTestCase(TestCase):
