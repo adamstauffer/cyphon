@@ -188,7 +188,7 @@ class Monitor(Alarm):
             time_delta = timezone.now() - self.last_healthy
         else:
             time_delta = timezone.now() - self.created_date
-        return time_delta.seconds
+        return time_delta.total_seconds()
 
     def _get_last_alert_seconds(self):
         """
@@ -197,7 +197,7 @@ class Monitor(Alarm):
         """
         if self.last_alert_date is not None:
             time_delta = timezone.now() - self.last_alert_date
-            return time_delta.seconds
+            return time_delta.total_seconds()
 
     def _get_inactive_interval(self):
         """

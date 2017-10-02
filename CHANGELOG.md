@@ -8,9 +8,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/dunbarcyber/cyphon/compare/1.5.0...1.5.1) (2017-10-02)
+
 ### Changed
 
 - **utils.validators**: changed `db_name_validator()` to allow hyphens and disallow $ [PR #241](https://github.com/dunbarcyber/cyphon/pull/241) ([8c03a48](https://github.com/dunbarcyber/cyphon/commit/8c03a48))
+
+### Fixed
+
+- **monitors**: fixed time calculations used in `Monitor.update_status()` [PR #242](https://github.com/dunbarcyber/cyphon/pull/242) ([e48c089](https://github.com/dunbarcyber/cyphon/commit/e48c089))
 
 
 <a name="1.5.0"></a>
