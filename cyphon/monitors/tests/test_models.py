@@ -40,6 +40,7 @@ from tests.mock import patch_find_by_id
 EARLY = datetime.strptime('2016-01-01 09:04:00 +0000', '%Y-%m-%d %H:%M:%S %z')
 ON_TIME = datetime.strptime('2016-01-01 09:05:00 +0000', '%Y-%m-%d %H:%M:%S %z')
 LATE = datetime.strptime('2016-01-01 09:06:00 +0000', '%Y-%m-%d %H:%M:%S %z')
+VERY_LATE = datetime.strptime('2016-01-02 09:05:00 +0000', '%Y-%m-%d %H:%M:%S %z')
 
 
 class MonitorManagerTestCase(TestCase):
@@ -86,20 +87,22 @@ class MonitorTestCase(TestCase):
         """
         self.assertEqual(str(self.monitor_grn), 'health_alerts')
 
-    def test_save_overdue(self):
+    @patch('monitors.models.timezone.now', return_value=EARLY)
+    def test_save_overdue(self, mock_now):
         """
         Tests the save method for a green Monitor when the interval
-        is lengthened.
+        is shortened.
         """
         self.monitor_grn.time_unit = 's'
         self.monitor_grn.save()
         monitor_grn = Monitor.objects.get(pk=1)
         self.assertEqual(monitor_grn.status, 'RED')
 
-    def test_save_not_overdue(self):
+    @patch('monitors.models.timezone.now', return_value=LATE)
+    def test_save_not_overdue(self, mock_now):
         """
         Tests the save method for a red Monitor when the interval
-        is shortened.
+        is lengthened.
         """
         self.monitor_red.time_unit = 'd'
         self.monitor_red.save()
@@ -109,11 +112,11 @@ class MonitorTestCase(TestCase):
     def test_get_interval_in_seconds(self):
         """
         Tests the _get_interval_in_seconds method of the Monitor class
-        when there is a ast_healthy value.
+        when there is a last_healthy value.
         """
         self.assertEqual(self.monitor_grn._get_interval_in_seconds(), 300)
 
-    @patch('monitors.models.timezone.now', return_value=LATE)
+    @patch('monitors.models.timezone.now', return_value=VERY_LATE)
     def test_get_inactive_no_lasthealth(self, mock_now):
         """
         Tests the _get_inactive_seconds method of the Monitor class when
@@ -121,14 +124,14 @@ class MonitorTestCase(TestCase):
         """
         monitor = self.monitor_red_repeating
         assert monitor.last_healthy == None
-        self.assertEqual(monitor._get_inactive_seconds(), 360)
+        self.assertEqual(monitor._get_inactive_seconds(), 86700)
 
-    @patch('monitors.models.timezone.now', return_value=LATE)
+    @patch('monitors.models.timezone.now', return_value=VERY_LATE)
     def test_get_inactive_seconds(self, mock_now):
         """
         Tests the _get_inactive_seconds method of the Monitor class.
         """
-        self.assertEqual(self.monitor_grn._get_inactive_seconds(), 360)
+        self.assertEqual(self.monitor_grn._get_inactive_seconds(), 86700)
 
     @patch('monitors.models.timezone.now', return_value=EARLY)
     def test_is_overdue_for_not_late(self, mock_now):
@@ -246,8 +249,8 @@ class MonitorTestCase(TestCase):
     def test_overdue_red_enabled(self, mock_now, mock_teaser):
         """
         Tests the update_status method of the Monitor class when the
-        health check is overdue, the current status is 'RED', and alerts
-        are enabled.
+        health check is overdue, the current status is 'RED', alerts
+        are enabled, but repeating alerts are disabled.
         """
         monitor = self.monitor_red
         assert self.monitor_red.status == 'RED'
@@ -288,12 +291,12 @@ class MonitorTestCase(TestCase):
 
     @patch_find_by_id()
     @patch('alerts.models.Alert.teaser')
-    @patch('monitors.models.timezone.now', return_value=LATE)
+    @patch('monitors.models.timezone.now', return_value=VERY_LATE)
     def test_overdue_red_repeating(self, mock_now, mock_teaser):
         """
         Tests the update_status method of the Monitor class when the
-        health check is overdue, the current status is 'RED', and alerts
-        are disabled.
+        health check is overdue, the current status is 'RED', alerts
+        are enabled, and repeating alerts are enabled.
         """
         monitor = self.monitor_red_repeating
         assert monitor.status == 'RED'
@@ -306,14 +309,14 @@ class MonitorTestCase(TestCase):
 
         # get a fresh instance from the database
         updated_monitor = Monitor.objects.get(pk=monitor.pk)
-        self.assertEqual(updated_monitor.last_updated, LATE)
+        self.assertEqual(updated_monitor.last_updated, VERY_LATE)
         self.assertEqual(updated_monitor.status, 'RED')
         self.assertEqual(Alert.objects.count(), 1)
         self.assertEqual(result, 'RED')
 
     @patch_find_by_id()
     @patch('alerts.models.Alert.teaser')
-    @patch('monitors.models.timezone.now', return_value=LATE)
+    @patch('monitors.models.timezone.now', return_value=VERY_LATE)
     def test_overdue_not_red_enabled(self, mock_now, mock_teaser):
         """
         Tests the update_status method of the Monitor class when the
@@ -329,11 +332,11 @@ class MonitorTestCase(TestCase):
 
         # get a fresh instance from the database
         updated_monitor = Monitor.objects.get(pk=monitor.pk)
-        self.assertEqual(updated_monitor.last_updated, LATE)
+        self.assertEqual(updated_monitor.last_updated, VERY_LATE)
         self.assertEqual(updated_monitor.status, 'RED')
         self.assertEqual(Alert.objects.count(), 1)
         alert = Alert.objects.all()[0]
-        title = 'Health monitor "health_alerts" has seen no activity for over 6 m.'
+        title = 'Health monitor "health_alerts" has seen no activity for over 1 d.'
         self.assertEqual(alert.title, title)
         self.assertEqual(alert.alarm, monitor)
         self.assertEqual(alert.level, monitor.alert_level)

@@ -72,7 +72,7 @@ def convert_days_to_minutes(days):
     """
     (int or float) -> float
 
-    Takes time in hours and returns time in minutes.
+    Takes time in days and returns time in minutes.
     """
     hours = days * 24.0
     return convert_hours_to_minutes(hours)
@@ -82,7 +82,7 @@ def convert_days_to_seconds(days):
     """
     (int or float) -> float
 
-    Takes time in hours and returns time in seconds.
+    Takes time in days and returns time in seconds.
     """
     return convert_days_to_minutes(days) * 60.0
 
