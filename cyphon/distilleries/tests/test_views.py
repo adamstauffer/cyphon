@@ -59,6 +59,15 @@ class DistilleryAPITests(CyphonAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 6)
 
+    def test_filtered_distilleries(self):
+        """
+        Tests that GET /api/v1/distilleries/ filters distilleries by company.
+        """
+        self.user = AppUser.objects.get(id=2)
+        response = self.get_api_response(is_staff=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 3)
+
     def test_have_alerts(self):
         """
         Tests the GET /api/v1/distilleries/have-alerts/ REST API endpoint.
