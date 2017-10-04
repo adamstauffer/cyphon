@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Fixed
+
+- **Dockerfile**: cached NLTK data in the Docker image [PR #247](https://github.com/dunbarcyber/cyphon/pull/247) ([9b4cf31](https://github.com/dunbarcyber/cyphon/commit/9b4cf31))
+
+
+<a name="1.5.2"></a>
+## [1.5.2](https://github.com/dunbarcyber/cyphon/compare/1.5.1...1.5.2) (2017-10-03)
+
+### Fixed
+
+- **aggregator.streams**: prevented timeouts on Stream object admin pages [PR #245](https://github.com/dunbarcyber/cyphon/pull/245) ([6baa7ed](https://github.com/dunbarcyber/cyphon/commit/6baa7ed))
+
+
 <a name="1.5.1"></a>
 ## [1.5.1](https://github.com/dunbarcyber/cyphon/compare/1.5.0...1.5.1) (2017-10-02)
 
