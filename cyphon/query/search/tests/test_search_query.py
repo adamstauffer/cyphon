@@ -36,11 +36,14 @@ class SearchQueryTestCase(TestCase):
     user_model = get_user_model()
     fixtures = get_fixtures(['distilleries', 'users', 'alerts', 'comments'])
 
+    def setUp(self):
+        self.user = self.user_model.objects.get(pk=1)
+
     def test_empty_search_query_error(self):
         """
         Tests that an empty error is thrown if the query is empty.
         """
-        query = SearchQuery('')
+        query = SearchQuery('', self.user)
 
         self.assertFalse(query.is_valid())
         self.assertEqual(len(query.errors), 1)
@@ -50,7 +53,7 @@ class SearchQueryTestCase(TestCase):
         """
         Tests that a parsing error is thrown if the query cannot be parsed.
         """
-        query = SearchQuery(' ')
+        query = SearchQuery(' ', self.user)
 
         self.assertFalse(query.is_valid())
         self.assertEqual(len(query.errors), 1)
@@ -68,7 +71,8 @@ class SearchQueryTestCase(TestCase):
             '{} {}'.format(
                 unknown_parameter_string_1,
                 unknown_parameter_string_2,
-            )
+            ),
+            self.user,
         )
 
         self.assertFalse(query.is_valid())
@@ -88,7 +92,7 @@ class SearchQueryTestCase(TestCase):
         Tests that the parameter index is correct for each search
         parameter.
         """
-        query = SearchQuery('ip_address=34.25.12.32 "search phrase"')
+        query = SearchQuery('ip_address=34.25.12.32 "search phrase"', self.user)
 
         self.assertTrue(query.is_valid())
         self.assertEqual(len(query.keyword_parameters), 1)
@@ -100,7 +104,7 @@ class SearchQueryTestCase(TestCase):
         """
         Tests that a distillery filter string is correctly identified.
         """
-        query = SearchQuery('@source=*.test_logs')
+        query = SearchQuery('@source=*.test_logs', self.user)
 
         self.assertTrue(query.is_valid())
         self.assertIsNotNone(query.distillery_filter_parameter)
@@ -115,7 +119,7 @@ class SearchQueryTestCase(TestCase):
         """
         field_parameter_string = 'field_name=blah'
         field_parameter = FieldSearchParameter(0, field_parameter_string)
-        query = SearchQuery(field_parameter_string)
+        query = SearchQuery(field_parameter_string, self.user)
 
         self.assertFalse(query.is_valid())
         self.assertEqual(len(query.invalid_parameters), 1)
@@ -129,7 +133,8 @@ class SearchQueryTestCase(TestCase):
         Tests that the query invalidates when multiple distillery filters are
         used.
         """
-        query = SearchQuery('@source=*.test_logs @source=*.test_logs')
+        query = SearchQuery(
+            '@source=*.test_logs @source=*.test_logs', self.user)
 
         self.assertFalse(query.is_valid())
         self.assertEqual(len(query.errors), 1)

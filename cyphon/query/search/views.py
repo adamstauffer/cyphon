@@ -53,7 +53,7 @@ def search(request):
 
     """
     query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query)
+    search_query = SearchQuery(query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
@@ -81,7 +81,8 @@ def search_alerts(request):
     """
     query, page, page_size = _get_query_params(request.query_params)
     search_query = SearchQuery(
-        query, ignored_parameter_types=[SearchParameterType.FIELD],
+        query, request.user,
+        ignored_parameter_types=[SearchParameterType.FIELD],
     )
     response = _create_empty_response(search_query)
 
@@ -109,7 +110,7 @@ def search_distilleries(request):
     Response
     """
     query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query)
+    search_query = SearchQuery(query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
@@ -139,7 +140,8 @@ def search_distillery(request, pk):
     """
     query, page, page_size = _get_query_params(request.query_params)
     search_query = SearchQuery(
-        query, ignored_parameter_types=[SearchParameterType.DISTILLERY],
+        query, request.user,
+        ignored_parameter_types=[SearchParameterType.DISTILLERY],
     )
     response = _create_empty_response(search_query)
 

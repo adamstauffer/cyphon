@@ -40,7 +40,7 @@ class DistilleryFilterParameter(SearchParameter):
     warehouse : str
         Name of the warehouse(s) to search for related distilleries.
 
-    distilleries : list of Distillery
+    distilleries : django.db.models.query.QuerySet
         Matching distillery objects.
 
     """
@@ -106,7 +106,7 @@ class DistilleryFilterParameter(SearchParameter):
     should be included in the search.
     """
 
-    def __init__(self, index, parameter):
+    def __init__(self, index, parameter, user):
         """Constructor for DistilleryFilterParameter.
 
         Parameters
@@ -115,6 +115,7 @@ class DistilleryFilterParameter(SearchParameter):
             Index of this search parameter in the search query string.
         parameter : str
             String representation of this parameter.
+        user : appusers.models.AppUser
         """
         super(DistilleryFilterParameter, self).__init__(
             index,
@@ -136,6 +137,7 @@ class DistilleryFilterParameter(SearchParameter):
         self.distilleries = self._get_distilleries(
             self.warehouse,
             self.collection,
+            user,
         )
 
     def _get_filter(self, parameter):
@@ -194,7 +196,7 @@ class DistilleryFilterParameter(SearchParameter):
 
         return match_object
 
-    def _get_pks_of_warehouse_name(self, warehouse):
+    def _get_collections_by_warehouse(self, warehouse):
         """Return the pks of the collections related to the warehouse name.
 
         If the warehouse value is a wildcard it returns an empty array.
@@ -213,29 +215,21 @@ class DistilleryFilterParameter(SearchParameter):
 
         """
         if warehouse == DistilleryFilterParameter.WILDCARD:
-            return []
+            return Collection.objects.all()
 
-        warehouses = ([
-            warehouse.pk
-            for warehouse
-            in Warehouse.objects.filter(name=warehouse)
-        ])
+        warehouses = Warehouse.objects.filter(name=warehouse)
 
-        if not warehouses:
+        if not warehouses.count():
             self._add_error(
                 DistilleryFilterParameter.CANNOT_FIND_WAREHOUSE.format(
                     warehouse
                 )
             )
-            return []
+            return Collection.objects.none()
 
-        return ([
-            collection.pk
-            for collection
-            in Collection.objects.filter(warehouse__in=warehouses)
-        ])
+        return Collection.objects.filter(warehouse__in=warehouses)
 
-    def _get_pks_of_collection_name(self, collection):
+    def _get_collections_by_name(self, collection):
         """Return the pks of collections with the given name.
 
         If the collection is a wildcard, it returns an empty string.
@@ -254,25 +248,26 @@ class DistilleryFilterParameter(SearchParameter):
 
         """
         if collection == DistilleryFilterParameter.WILDCARD:
-            return []
+            return Collection.objects.all()
 
-        collections = ([
-            collection.pk
-            for collection
-            in Collection.objects.filter(name=collection)
-        ])
+        collections = Collection.objects.filter(name=collection)
 
-        if not collections:
+        if not collections.count():
             self._add_error(
                 DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format(
                     collection
                 )
             )
-            return []
 
         return collections
 
-    def _get_distilleries(self, warehouse, collection):
+    def _get_collections(self, warehouse, collection):
+        collections_by_warehouse = self._get_collections_by_warehouse(warehouse)
+        collections_by_name = self._get_collections_by_name(collection)
+
+        return collections_by_warehouse & collections_by_name
+
+    def _get_distilleries(self, warehouse, collection, user):
         """Return the distillery objects related to warehouse/collection names.
 
         If a related distillery cannot be found, adds a
@@ -286,44 +281,32 @@ class DistilleryFilterParameter(SearchParameter):
         collection : str
             Collection name to get related distilleries with.
 
+        user: appusers.models.AppUser
+
         Returns
         -------
         list of Distillery
             Distilleries related to the given warehouse/collection names.
 
         """
-        collections_from_warehouses = (
-            self._get_pks_of_warehouse_name(warehouse)
-        )
-        collections_by_name = (
-            self._get_pks_of_collection_name(collection)
-        )
-
-        if collections_by_name and collections_from_warehouses:
-            collections = list(
-                set(collections_from_warehouses).intersection(
-                    collections_by_name
-                )
-            )
-        else:
-            collections = list(
-                set(collections_from_warehouses + collections_by_name)
-            )
+        collections = self._get_collections(warehouse, collection)
 
         if not self.is_valid():
-            return []
+            return Distillery.objects.none()
 
-        distilleries = ([
-            distillery
-            for distillery
-            in Distillery.objects.filter(collection__in=collections)
-        ])
+        distillery_qs = Distillery.objects.all()
 
-        if not distilleries:
+        if not user.is_staff:
+            distillery_qs = distillery_qs.filter(company=user.company)
+
+        distilleries_qs = distillery_qs.filter(
+            collection__in=collections.values_list('id', flat=True),
+        )
+
+        if not distilleries_qs.count():
             self._add_error(DistilleryFilterParameter.NO_MATCHING_DISTILLERIES)
-            return []
 
-        return distilleries
+        return distilleries_qs
 
     def as_dict(self):
         """Return a JSON serializable representation of this object.

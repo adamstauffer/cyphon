@@ -22,6 +22,7 @@
 import re
 
 # local
+from distilleries.models import Distillery
 from .search_parameter import SearchParameterType, SearchParameter
 from .field_search_parameter import FieldSearchParameter
 from .keyword_search_parameter import KeywordSearchParameter
@@ -76,6 +77,8 @@ class SearchQuery(object):
     unknown_parameters : list of UnknownParameter
         Parameters that have no known type.
 
+    user: appusers.models.AppUser
+
     """
 
     PARAMETERS_REGEX = re.compile(
@@ -110,7 +113,7 @@ class SearchQuery(object):
     per search query.
     """
 
-    def __init__(self, query, ignored_parameter_types=None):
+    def __init__(self, query, user, ignored_parameter_types=None):
         """Initialize a SearchQuery.
 
         Parameters
@@ -118,18 +121,11 @@ class SearchQuery(object):
         query : str
             Search query string
         """
-        self._parameter_setters = {
-            SearchParameterType.KEYWORD: self._add_keyword_parameter,
-            SearchParameterType.FIELD: self._add_field_parameter,
-            SearchParameterType.DISTILLERY: (
-                self._set_distillery_filter_param
-            ),
-            None: self._add_unknown_parameter,
-        }
         self.errors = []
         self.invalid_parameters = []
         self.keyword_parameters = []
         self.field_parameters = []
+        self.user = user
         self.distillery_filter_parameter = None
         self.unknown_parameters = []
 
@@ -143,7 +139,7 @@ class SearchQuery(object):
             self._add_parsing_error(query)
             return
 
-        self._add_search_parameters(parameters, ignored_parameter_types)
+        self._add_search_parameters(parameters, user, ignored_parameter_types)
 
     @staticmethod
     def _get_search_query_parameters(query):
@@ -176,7 +172,7 @@ class SearchQuery(object):
         return (
             self.distillery_filter_parameter.distilleries
             if self.distillery_filter_parameter
-            else None
+            else Distillery.objects.none()
         )
 
     @property
@@ -188,35 +184,11 @@ class SearchQuery(object):
         list of str or None
 
         """
-        return (
-            [parameter.keyword for parameter in self.keyword_parameters]
-            if self.keyword_parameters
-            else None
-        )
+        return [parameter.keyword for parameter in self.keyword_parameters]
 
-    def _create_search_parameter(self, parameter_class, index, parameter):
-        """Create a search parameter using the given class.
-
-        Checks for search parameter validity as well.
-
-        Parameters
-        ----------
-        parameter_class : SearchParameter Class
-
-        index : int
-
-        parameter : str
-
-        Returns
-        -------
-        SearchParameter
-
-        """
-        search_parameter = parameter_class(index, parameter)
-
-        self._check_parameter_validity(search_parameter)
-
-        return search_parameter
+    @property
+    def field_names(self):
+        return [parameter.field_name for parameter in self.field_parameters]
 
     def _get_unknown_parameters_as_dict(self):
         return [parameter.as_dict() for parameter in self.unknown_parameters]
@@ -273,26 +245,15 @@ class SearchQuery(object):
         """
         self._add_error(SearchQuery.PARSING_ERROR.format(query))
 
-    def _get_parameter_setter(self, parameter_type):
-        """Return the parameter type's setter function.
-
-        Parameters
-        ----------
-        parameter_type : str
-
-        Returns
-        -------
-        (int, str) -> None
-
-        """
-        return self._parameter_setters[parameter_type]
-
-    def _add_search_parameters(self, parameters, ignored_parameter_types=None):
+    def _add_search_parameters(self, parameters, user,
+                               ignored_parameter_types=None):
         """Add the parsed query parameters as objects to the class.
 
         Parameters
         ----------
         parameters: list of str
+
+        user: appusers.models.AppUser
 
         ignored_parameter_types : list of str or None
             Parameter types to ignore while parsing the parameters.
@@ -306,8 +267,14 @@ class SearchQuery(object):
             if parameter_type in ignored_parameter_types:
                 continue
 
-            parameter_setter = self._get_parameter_setter(parameter_type)
-            parameter_setter(index, parameter)
+            if parameter_type == SearchParameterType.KEYWORD:
+                self._add_keyword_parameter(index, parameter)
+            elif parameter_type == SearchParameterType.FIELD:
+                self._add_field_parameter(index, parameter)
+            elif parameter_type == SearchParameterType.DISTILLERY:
+                self._set_distillery_filter_param(index, parameter, user)
+            else:
+                self._add_unknown_parameter(index, parameter)
 
     def _add_parameter_error(self, parameter):
         """Add a SearchParameter the the list of invalid parameters.
@@ -370,10 +337,9 @@ class SearchQuery(object):
         parameter : str
 
         """
-        search_parameter = self._create_search_parameter(
-            KeywordSearchParameter, index, parameter,
-        )
-        self.keyword_parameters.append(search_parameter)
+        keyword_parameter = KeywordSearchParameter(index, parameter)
+        self._check_parameter_validity(keyword_parameter)
+        self.keyword_parameters.append(keyword_parameter)
 
     def _add_field_parameter(self, index, parameter):
         """Add a field search parameter to the list of field search parameters.
@@ -386,12 +352,11 @@ class SearchQuery(object):
         parameter : str
 
         """
-        search_parameter = self._create_search_parameter(
-            FieldSearchParameter, index, parameter,
-        )
-        self.field_parameters.append(search_parameter)
+        field_parameter = FieldSearchParameter(index, parameter)
+        self._check_parameter_validity(field_parameter)
+        self.field_parameters.append(field_parameter)
 
-    def _set_distillery_filter_param(self, index, parameter):
+    def _set_distillery_filter_param(self, index, parameter, user):
         """Set the queries distillery filter parameter.
 
         Parameters
@@ -402,14 +367,14 @@ class SearchQuery(object):
         parameter : str
 
         """
-        search_parameter = self._create_search_parameter(
-            DistilleryFilterParameter, index, parameter,
-        )
+        distillery_filter_parameter = DistilleryFilterParameter(
+            index, parameter, user)
+        self._check_parameter_validity(distillery_filter_parameter)
 
         if self.distillery_filter_parameter:
             self._add_multi_distill_filters_err(parameter, index)
         else:
-            self.distillery_filter_parameter = search_parameter
+            self.distillery_filter_parameter = distillery_filter_parameter
 
     def _add_unknown_parameter(self, index, parameter):
         """Add an unknown parameter to the list of unknown parameters.
@@ -422,10 +387,9 @@ class SearchQuery(object):
         parameter : str
 
         """
-        search_parameter = self._create_search_parameter(
-            UnknownParameter, index, parameter,
-        )
-        self.unknown_parameters.append(search_parameter)
+        unknown_parameter = UnknownParameter(index, parameter)
+        self._check_parameter_validity(unknown_parameter)
+        self.unknown_parameters.append(unknown_parameter)
 
     def as_dict(self):
         """Return a JSON serializable representation of this object instance.
