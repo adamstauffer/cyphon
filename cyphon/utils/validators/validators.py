@@ -78,15 +78,12 @@ def db_name_validator(db_name):
     """
     Validates a Collection or Warehouse name.
     """
-    if re.match(r'^\$', db_name):
-        raise ValidationError(_('Name cannot start with "$"'))
-
-    elif re.search(r'\s', db_name):
+    if re.search(r'\s', db_name):
         raise ValidationError(_('Name cannot contain spaces'))
 
-    elif re.search(r'\W', db_name.replace('$', '')):
+    elif re.search(r'\W', db_name.replace('-', '')):
         raise ValidationError(_('Name cannot contain special characters'
-                                'other than underscores and $.'))
+                                'other than underscores and hypens.'))
 
 
 def field_name_validator(field_name):

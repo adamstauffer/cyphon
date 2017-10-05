@@ -193,13 +193,16 @@ def get_email_value(field_name, email):
     else:
         value = email.get(field_name, '')
 
-    if isinstance(value, (str, bytes)):
+    if isinstance(value, bytes):
+        value = value.decode('utf-8')
+
+    if isinstance(value, str):
         try:
             # strip any tags that aren't on the whitelist
             return bleach.clean(value, strip=True)
         except UnicodeDecodeError:
             _LOGGER.error('An error was encountered while parsing the %s '
-                         'field of an email.', field_name)
+                          'field of an email.', field_name)
             return 'The %s of this email could not be displayed due to an error.' \
                    % field_name
     else:

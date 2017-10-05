@@ -20,10 +20,10 @@
 Production Django settings for Cyphon.
 
 For more information on this Django file, see:
-https://docs.djangoproject.com/en/1.9/topics/settings/
+https://docs.djangoproject.com/en/1.11/topics/settings/
 
 For the full list of Django settings and their values, see:
-https://docs.djangoproject.com/en/1.9/ref/settings/
+https://docs.djangoproject.com/en/1.11/ref/settings/
 
 .. _source: ../_modules/cyphon/settings/prod.html
 
@@ -31,59 +31,41 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 # standard library
 import email.utils
-import logging
 import os
+
+# third party
+from ec2_metadata import ec2_metadata
 
 # local
 from .base import *
 
 
-if ON_EC2 or os.getenv('AWS_ACCESS_KEY'):
-    INSTALLED_APPS.insert(1, 'django_s3_storage')
-
-LOGGER = logging.getLogger(__name__)
-DEBUG = False
-
-ADMINS = []
-if 'DJANGO_ADMIN' in os.environ:
-    ADMINS.append(email.utils.parseaddr(os.getenv('DJANGO_ADMIN')))
-
-# Store media and static content in S3
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
-AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
-AWS_S3_BUCKET_NAME_STATIC = AWS_S3_BUCKET_NAME
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_S3_BUCKET_NAME
-AWS_S3_ENDPOINT_URL_STATIC = 'https://s3.amazonaws.com'
-if ON_EC2:
-    AWS_REGION = ec2_metadata.region
-else:
-    AWS_REGION = os.getenv('AWS_REGION_NAME', 'us-east-1')
-
-DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
-STATICFILES_LOCATION = 'static'
-STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
-
-AWS_S3_KEY_PREFIX_STATIC = 'static/'
-
-if AWS_S3_BUCKET_NAME:
-    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
-
-AWS_S3_BUCKET_AUTH = False
-
-MEDIAFILES_LOCATION = 'media'
-if AWS_S3_BUCKET_NAME:
-    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-    MEDIA_ROOT = 'media'
-
 #: URL for constructing link with MEDIA_URL, e.g. https://www.example.com
 BASE_URL = os.getenv('BASE_URL_PROD', 'http://localhost:8000')
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIALS = True
-
+#: Path to directory will logs will be saved.
 LOG_DIR = BASE_DIR
 
+
+###############################################################################
+# DJANGO SETTINGS
+###############################################################################
+
+#: Whether to enable debug mode.
+DEBUG = False
+
+#: A list of all the people who get code error notifications.
+ADMINS = [
+    # ('Jane Smith', 'jane@example.com'),
+]
+
+if 'DJANGO_ADMIN' in os.environ:
+    ADMINS.append(email.utils.parseaddr(os.getenv('DJANGO_ADMIN')))
+
+if ON_EC2 or os.getenv('AWS_ACCESS_KEY'):
+    INSTALLED_APPS.insert(1, 'django_s3_storage')
+
+#: A logging configuration dictionary.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -148,3 +130,53 @@ LOGGING = {
         },
     }
 }
+
+#: Default file storage class to be used for any file-related operations
+#: that don’t specify a particular storage system.
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
+
+#: The file storage engine to use when collecting static files with the
+#: collectstatic management command.
+STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
+
+
+###############################################################################
+# DJANGO S3 STORAGE
+# https://github.com/etianen/django-s3-storage
+###############################################################################
+
+# Store media and static content in S3
+
+#: The AWS secret access key to use.
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+
+#: The AWS region to connect to.
+if ON_EC2:
+    AWS_REGION = ec2_metadata.region
+else:
+    AWS_REGION = os.getenv('AWS_REGION_NAME', 'us-east-1')
+
+#: The AWS secret access key to use.
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
+
+#: Whether to enable authentication for stored files.
+AWS_S3_BUCKET_AUTH = False
+
+#: The name of the bucket to store files in.
+AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
+
+#: The name of the bucket to store static files in.
+AWS_S3_BUCKET_NAME_STATIC = AWS_S3_BUCKET_NAME
+
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_S3_BUCKET_NAME
+AWS_S3_ENDPOINT_URL_STATIC = 'https://s3.amazonaws.com'
+AWS_S3_KEY_PREFIX_STATIC = 'static/'
+
+MEDIAFILES_LOCATION = 'media'
+STATICFILES_LOCATION = 'static'
+
+# override Django settings
+if AWS_S3_BUCKET_NAME:
+    MEDIA_ROOT = 'media'
+    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)

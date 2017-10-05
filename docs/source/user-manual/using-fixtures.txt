@@ -1,8 +1,8 @@
 .. _using-fixtures:
 
-######################################
-Importing and Exporting Configurations
-######################################
+#######################################
+Backing Up and Restoring Configurations
+#######################################
 
 Django provides a way to import and export data from its database. 
 Because your project's settings (its rules, parsers, etc.) are stored 
@@ -32,46 +32,6 @@ Django loads and dumps data as `fixtures <initial data>`_, which can be JSON, XM
        }
      }
    ]
-
-
-.. _loading-data:
-
-************
-Loading data
-************
-
-Fixtures can be loaded into the database using Django's `loaddata`_ command. 
-For example::
-
-  $ python manage.py loaddata /opt/cyphon/fixtures.json
-
-.. warning::
-
-   If you encounter an error while loading fixtures (for example, if they 
-   are improperly formatted), you may encounter an IntegrityError when you
-   try to load them again. For example::
-
-      django.db.utils.IntegrityError: Problem installing fixture 'fixtures.json':
-      Could not load your_app_label.YourModelName(pk=None): duplicate key value 
-      violates unique constraint "yourapplabel_yourmodelname_pkey"
-      DETAIL:  Key (id)=(1) already exists.
-
-   This may occur if PostgreSQL autoincremented the sequence for a primary key
-   during the previous failed attempt to load the fixture. If the table in 
-   question is empty, try resetting the sequence within PostgreSQL::
-
-      ALTER SEQUENCE mytable_id_seq RESTART WITH 1;
-
-.. _test-fixtures:
-
-Test fixtures
-=============
-
-Cyphon uses fixtures to set up testing environments for many of its tests. 
-These fixtures can be found in the ``tests/fixtures`` project directory. 
-You can refer to these files to find fixture examples for most of Cyphon's
-models. See Django's documentation on `test fixtures`_ to learn how to use 
-them in tests.
 
 
 .. _dumping-data:
@@ -130,8 +90,49 @@ how to export data for models in the Bottles package::
 
    $ python manage.py dumpdata bottles --indent=2 --natural-foreign --output /opt/cyphon/bottles.json
 
-.. _fixtures ref: https://docs.djangoproject.com/en/1.9/howto/initial-data/
-.. _loaddata: https://docs.djangoproject.com/en/1.9/ref/django-admin/#loaddata
-.. _dumpdata: https://docs.djangoproject.com/en/1.9/ref/django-admin/#dumpdata
-.. _natural keys: https://docs.djangoproject.com/en/1.9/topics/serialization/#topics-serialization-natural-keys
-.. _test fixtures: https://docs.djangoproject.com/en/1.9/topics/testing/tools/#topics-testing-fixtures
+
+.. _loading-data:
+
+************
+Loading data
+************
+
+Fixtures can be loaded into the database using Django's `loaddata`_ command. 
+For example::
+
+  $ python manage.py loaddata /opt/cyphon/fixtures.json
+
+.. warning::
+
+   If you encounter an error while loading fixtures (for example, if they 
+   are improperly formatted), you may encounter an IntegrityError when you
+   try to load them again. For example::
+
+      django.db.utils.IntegrityError: Problem installing fixture 'fixtures.json':
+      Could not load your_app_label.YourModelName(pk=None): duplicate key value 
+      violates unique constraint "yourapplabel_yourmodelname_pkey"
+      DETAIL:  Key (id)=(1) already exists.
+
+   This may occur if PostgreSQL autoincremented the sequence for a primary key
+   during the previous failed attempt to load the fixture. If the table in 
+   question is empty, try resetting the sequence within PostgreSQL::
+
+      ALTER SEQUENCE mytable_id_seq RESTART WITH 1;
+
+.. _test-fixtures:
+
+Test fixtures
+=============
+
+Cyphon uses fixtures to set up testing environments for many of its tests. 
+These fixtures can be found in the ``tests/fixtures`` project directory. 
+You can refer to these files to find fixture examples for most of Cyphon's
+models. See Django's documentation on `test fixtures`_ to learn how to use 
+them in tests.
+
+
+.. _fixtures ref: https://docs.djangoproject.com/en/1.11/howto/initial-data/
+.. _loaddata: https://docs.djangoproject.com/en/1.11/ref/django-admin/#loaddata
+.. _dumpdata: https://docs.djangoproject.com/en/1.11/ref/django-admin/#dumpdata
+.. _natural keys: https://docs.djangoproject.com/en/1.11/topics/serialization/#topics-serialization-natural-keys
+.. _test fixtures: https://docs.djangoproject.com/en/1.11/topics/testing/tools/#topics-testing-fixtures

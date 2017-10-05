@@ -102,4 +102,8 @@ class ContextViewSet(CustomModelViewSet):
         else:
             msg = 'A document id must be provided.'
             result = {'error': msg}
+
+        if 'error' in result:
+            return Response(data=result, status=400)
+
         return Response(result)
