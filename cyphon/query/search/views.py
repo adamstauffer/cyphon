@@ -58,8 +58,7 @@ def search(request):
 
     if search_query.is_valid():
         search_results = AllSearchResults(
-            request.user, search_query, page=page, page_size=page_size,
-        )
+            search_query, page=page, page_size=page_size)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
@@ -88,8 +87,7 @@ def search_alerts(request):
 
     if search_query.is_valid():
         search_results = AlertSearchResults(
-            request.user, search_query, page=page, page_size=page_size,
-        )
+            search_query, page=page, page_size=page_size)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)

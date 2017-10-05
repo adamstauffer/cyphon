@@ -39,8 +39,9 @@ class AlertSearchResultsTestCase(TestCase):
     def _get_request(self):
         return self.request_factory.get('')
 
-    def _get_search_results(self, query, user=None, page=1, page_size=10):
-        return AlertSearchResults(user or self.user, query, page, page_size)
+    @staticmethod
+    def _get_search_results(query, page=1, page_size=10):
+        return AlertSearchResults(query, page, page_size)
 
     def setUp(self):
         self.request_factory = RequestFactory()
@@ -121,8 +122,7 @@ class AlertSearchResultsTestCase(TestCase):
         """
         restricted_user = self.user_model.objects.get(pk=3)
         search_query = SearchQuery('"Pied Piper"', restricted_user)
-        alert_results = self._get_search_results(
-            search_query, user=restricted_user)
+        alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 0)
 

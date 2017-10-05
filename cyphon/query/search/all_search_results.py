@@ -37,22 +37,18 @@ class AllSearchResults(object):
 
     """
 
-    def __init__(self, user, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
         """Initialize an AllSearchResults object.
 
         Parameters
         ----------
-        user : appusers.models.AppUser
-
         query : query.search.search_query.SearchQuery
 
         """
         self.distillery_results = DistillerySearchResultsList(
-            query, page=page, page_size=page_size,
-        )
+            query, page=page, page_size=page_size)
         self.alert_results = AlertSearchResults(
-            user, query, page=page, page_size=page_size,
-        )
+            query, page=page, page_size=page_size)
         self.count = self.distillery_results.count + self.alert_results.count
 
     def as_dict(self, request):
