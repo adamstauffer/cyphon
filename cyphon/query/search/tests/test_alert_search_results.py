@@ -161,3 +161,25 @@ class AlertSearchResultsTestCase(TestCase):
         )
         self.assertIsNone(alert_results_as_dict['next'])
         self.assertEqual(len(alert_results_as_dict['results']), 1)
+
+    def test_filtered_alert_searching(self):
+        """
+        Tests that only distilleries specified are searched.
+        """
+
+        passing_search = SearchQuery('"This is some text"', self.user)
+        alert_results = self._get_search_results(passing_search)
+
+        self.assertEqual(len(alert_results.results), 1)
+
+        failing_search = SearchQuery(
+            '@source=test_index.test_logs "This is some text"', self.user)
+        alert_results = self._get_search_results(failing_search)
+
+        self.assertEqual(len(alert_results.results), 0)
+
+        passing_search = SearchQuery(
+            '@source=test_index.test_logs "Acme Supply Co"', self.user)
+        alert_results = self._get_search_results(passing_search)
+
+        self.assertEqual(len(alert_results.results), 1)
