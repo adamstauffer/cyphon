@@ -24,7 +24,6 @@
 
 # standard library
 import os
-import sys
 
 # third party
 from ec2_metadata import ec2_metadata
@@ -33,28 +32,20 @@ from ec2_metadata import ec2_metadata
 from utils.settings import ON_EC2
 
 
+#: A unique, unpredictable value used to provide cryptographic signing.
 SECRET_KEY = 'this-should-be-a-string-of-random-characters'
 
 HOST_SETTINGS = {
     'ALLOWED_HOSTS': [addr.strip() for addr in os.getenv(
         'ALLOWED_HOSTS', 'localhost').split(',')],
-    'CORS_ORIGIN_WHITELIST': [addr.strip() for addr in os.getenv(
-        'CORS_ORIGIN_WHITELIST', 'localhost:8000').split(',')],
 }
 
 if ON_EC2:
     HOST_SETTINGS['ALLOWED_HOSTS'].append(ec2_metadata.private_ipv4)
 
-TEST = 'test' in sys.argv
-
-FUNCTIONAL_TESTS = {
-    'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
-    'DRIVER': os.getenv('FUNCTIONAL_TESTS_DRIVER', 'LOCALHOST'),  # 'DOCKER', 'SAUCELABS'
-    'HOST': os.getenv('FUNCTIONAL_TESTS_HOST', 'localhost'),
-    'PORT': os.getenv('FUNCTIONAL_TESTS_PORT', '4444'),
-    'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', 'ANY'),
-    'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', 'chrome'),
-    'VERSION': os.getenv('FUNCTIONAL_TESTS_VERSION', ''),
+LOCALIZATION = {
+    'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
+    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 }
 
 PAGE_SIZE = 10
@@ -62,6 +53,7 @@ PAGE_SIZE = 10
 PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 HOME_DIR = os.path.dirname(PROJ_DIR)
 KEYS_DIR = os.path.join(HOME_DIR, 'keys')
+
 
 APPUSERS = {
     'CUSTOM_FILTER_BACKENDS': []
@@ -147,6 +139,16 @@ EMAIL = {
     'PORT': 587,
     'SUBJECT_PREFIX': '[Cyphon] ',
     'USE_TLS': True,
+}
+
+FUNCTIONAL_TESTS = {
+    'ENABLED': os.getenv('FUNCTIONAL_TESTS_ENABLED', False),
+    'DRIVER': os.getenv('FUNCTIONAL_TESTS_DRIVER', 'LOCALHOST'),  # 'DOCKER', 'SAUCELABS'
+    'HOST': os.getenv('FUNCTIONAL_TESTS_HOST', 'localhost'),
+    'PORT': os.getenv('FUNCTIONAL_TESTS_PORT', '4444'),
+    'PLATFORM': os.getenv('FUNCTIONAL_TESTS_PLATFORM', 'ANY'),
+    'BROWSER': os.getenv('FUNCTIONAL_TESTS_BROWSER', 'chrome'),
+    'VERSION': os.getenv('FUNCTIONAL_TESTS_VERSION', ''),
 }
 
 GEOIP = {

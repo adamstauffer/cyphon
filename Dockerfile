@@ -30,6 +30,7 @@ ARG GID=1000
 ENV CYPHON_HOME /usr/src/app
 ENV LOG_DIR     /var/log/cyphon
 ENV PATH        $PATH:$CYPHON_HOME
+ENV NLTK_DATA   /usr/share/nltk_data
 
 # copy requirements.txt to the image
 COPY requirements.txt $CYPHON_HOME/requirements.txt
@@ -58,7 +59,8 @@ RUN apk add -U --repository http://dl-5.alpinelinux.org/alpine/edge/testing/ \
       zlib-dev \
       tiff-dev \
  && pip install -r $CYPHON_HOME/requirements.txt \
- && apk del build-deps
+ && apk del build-deps \
+ && python -m nltk.downloader -d /usr/local/share/nltk_data punkt wordnet
 
 # create unprivileged user
 RUN addgroup -S -g $GID cyphon && adduser -S -G cyphon -u $UID cyphon

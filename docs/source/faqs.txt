@@ -16,19 +16,13 @@ FAQs
 How can I access Cyphon through a domain name or IP address?
 ************************************************************
 
-To access your Cyphon instance using the external IP address or domain name of your server, add the IP address or domain name to ``'ALLOWED_HOSTS'`` and ``'CORS_ORIGIN_WHITELIST'`` under ``HOST_SETTINGS`` in your ``conf.py`` settings file::
+To access your Cyphon instance using the external IP address or domain name of your server, add the IP address or domain name to ``'ALLOWED_HOSTS'`` under ``HOST_SETTINGS`` in your ``conf.py`` settings file::
 
     HOST_SETTINGS = {
         'ALLOWED_HOSTS': [
             'example.com',
             'localhost',
             'cyphon',
-        ],
-        'CORS_ORIGIN_WHITELIST': [
-            'example.com',
-            'localhost:8000',
-            'cyphon:8000',
-            'nginx:80',
         ],
     }
 

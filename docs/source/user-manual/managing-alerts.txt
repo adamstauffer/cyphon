@@ -29,3 +29,8 @@ You can perform bulk admin actions on Alerts from the list view. Simply select t
     :alt: Bulk admin actions on Alerts
 
     **Bulk admin actions on Alerts.**
+
+
+.. note::
+
+    By default, the maximum number of Alerts you can delete at a time is 1000. If you need to delete more than this at once, adjust the settings for ``DATA_UPLOAD_MAX_MEMORY_SIZE`` and ``DATA_UPLOAD_MAX_NUMBER_FIELDS`` in your ``cyphon/settings/base.py`` file. See `Django's documentation <https://docs.djangoproject.com/en/1.11/ref/settings/#data-upload-max-memory-size>`__ for details.

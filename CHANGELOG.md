@@ -8,38 +8,77 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+### Fixed
+
+- **Dockerfile**: cached NLTK data in the Docker image [PR #247](https://github.com/dunbarcyber/cyphon/pull/247) ([9b4cf31](https://github.com/dunbarcyber/cyphon/commit/9b4cf31))
+
+
+<a name="1.5.2"></a>
+## [1.5.2](https://github.com/dunbarcyber/cyphon/compare/1.5.1...1.5.2) (2017-10-03)
+
+### Fixed
+
+- **aggregator.streams**: prevented timeouts on Stream object admin pages [PR #245](https://github.com/dunbarcyber/cyphon/pull/245) ([6baa7ed](https://github.com/dunbarcyber/cyphon/commit/6baa7ed))
+
+
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/dunbarcyber/cyphon/compare/1.5.0...1.5.1) (2017-10-02)
+
+### Changed
+
+- **utils.validators**: changed `db_name_validator()` to allow hyphens and disallow $ [PR #241](https://github.com/dunbarcyber/cyphon/pull/241) ([8c03a48](https://github.com/dunbarcyber/cyphon/commit/8c03a48))
+
+### Fixed
+
+- **monitors**: fixed time calculations used in `Monitor.update_status()` [PR #242](https://github.com/dunbarcyber/cyphon/pull/242) ([e48c089](https://github.com/dunbarcyber/cyphon/commit/e48c089))
+
+
+<a name="1.5.0"></a>
+## [1.5.0](https://github.com/dunbarcyber/cyphon/compare/1.4.2...1.5.0) (2017-09-26)
+
 ### Added
 
-- **alerts.models**: added ``associated_tags`` property to Alerts ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
-- **alerts.models**: added ``tag_relations`` property to Alerts and Comments ([ae10cf1](https://github.com/dunbarcyber/cyphon/commit/ae10cf1))
-- **alerts.serializers**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
+- **alerts**: added ``associated_tags`` property to Alerts ([dd274ca](https://github.com/dunbarcyber/cyphon/commit/dd274ca))
+- **alerts**: added ``tag_relations`` property to Alerts and Comments ([ae10cf1](https://github.com/dunbarcyber/cyphon/commit/ae10cf1))
+- **alerts**: added ``tags`` field to ``AlertDetailSerializer`` based on ``Alert.associated_tags`` property ([119bf21](https://github.com/dunbarcyber/cyphon/commit/d71474b))
 - **articles**: added Article model [PR #196](https://github.com/dunbarcyber/cyphon/pull/196) ([1dcf272](https://github.com/dunbarcyber/cyphon/commit/1dcf272))
+- **cyphon.settings**: added Elasticsearch index settings ([66f9bbb](https://github.com/dunbarcyber/cyphon/commit/66f9bbb))
+- **cyphon.settings**: added settings for data uploads ([9523dfb](https://github.com/dunbarcyber/cyphon/commit/9523dfb))
+- **cyphon.settings**: added localization settings ([a7adde9](https://github.com/dunbarcyber/cyphon/commit/a7adde9))
 - **cyphon.urls**: REST API endpoints for Tags ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **distilleries**: added ``engine`` property to Distilleries ([6e110e4](https://github.com/dunbarcyber/cyphon/commit/6e110e4))
 - **docs**: docs for Articles, Tags, Topics, and DataTaggers [PR #225](https://github.com/dunbarcyber/cyphon/pull/225) ([879af9d](https://github.com/dunbarcyber/cyphon/commit/879af9d))
+- **engines.elasticsearch**: added ``ElasticsearchEngine.create_template()`` method ([66f9bbb](https://github.com/dunbarcyber/cyphon/commit/66f9bbb))
 - **requirements.txt**: django-ckeditor package ([de94ecf](https://github.com/dunbarcyber/cyphon/commit/de94ecf))
 - **tags**: TagRelation, Topic, and DataTagger models [PR #178](https://github.com/dunbarcyber/cyphon/pull/178) ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
 - **tags**: post-save signals for tagging Alerts and Comments ([41e7f87](https://github.com/dunbarcyber/cyphon/commit/41e7f87))
+- **warehouses**: post_save signal receiver to create Elasticsearch index templates ([35627bc](https://github.com/dunbarcyber/cyphon/commit/35627bc))
 - **utils.validators**: ``lowercase_validator()`` function ([5b0ce6f](https://github.com/dunbarcyber/cyphon/commit/5b0ce6f))
 
 ### Changed
 
 - **alerts**: refactored ``Alert.notes`` into new Analysis model [PR #202](https://github.com/dunbarcyber/cyphon/pull/202) ([fa3077b](https://github.com/dunbarcyber/cyphon/commit/fa3077b))
-- **alerts.models**: used ``RichTextUploadingField`` for ``Comment.notes`` ([86c1635](https://github.com/dunbarcyber/cyphon/commit/86c1635))
+- **alerts**: used ``RichTextUploadingField`` for ``Comment.notes`` ([86c1635](https://github.com/dunbarcyber/cyphon/commit/86c1635))
 - **cyphon.settings**: removed local static assets options from CYCLOPS settings ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
-- **cyclops.views**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **cyclops**: removed local static asset options from the view and replaced it with urls ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
 - **docs**: updated configuration docs to reflect the removal of Cyclops static assets ([d62e95f](https://github.com/dunbarcyber/cyphon/commit/d62e95f))
+- **docs**: moved fixture docs to user manual ([c9122c0](https://github.com/dunbarcyber/cyphon/commit/c9122c0))
+- **docs**: updated instructions for project configuration ([d87111f](https://github.com/dunbarcyber/cyphon/commit/d87111f))
 - **responder.actions**: ordered Actions by title ([9298b82](https://github.com/dunbarcyber/cyphon/commit/9298b82))
 
 ### Fixed
 
-- **alerts.omdels:** prevented duplicate ``muzzle_hash`` when ``Alert.level`` is changed [Issue #223](https://github.com/dunbarcyber/cyphon/issues/223) ([68a1acc](https://github.com/dunbarcyber/cyphon/commit/68a1acc))
-- **engines.elasticsearch.queries**: prevented error from unmatched quote in query string [PR #209](https://github.com/dunbarcyber/cyphon/pull/209) ([ed94ac0](https://github.com/dunbarcyber/cyphon/commit/ed94ac0))
+- **alerts:** prevented duplicate ``muzzle_hash`` when ``Alert.level`` is changed [Issue #223](https://github.com/dunbarcyber/cyphon/issues/223) ([68a1acc](https://github.com/dunbarcyber/cyphon/commit/68a1acc))
+- **contexts:** prevented server error if Context query can't be completed [PR #224](https://github.com/dunbarcyber/cyphon/issues/224) ([9209dd6](https://github.com/dunbarcyber/cyphon/commit/9209dd6))
+- **engines.elasticsearch**: prevented error from unmatched quote in query string [PR #209](https://github.com/dunbarcyber/cyphon/pull/209) ([ed94ac0](https://github.com/dunbarcyber/cyphon/commit/ed94ac0))
+- **engines.elasticsearch**: avoided mapping conflicts in Kibana by creating index templates [PR #213](https://github.com/dunbarcyber/cyphon/pull/213) ([61b111c](https://github.com/dunbarcyber/cyphon/commit/61b111c))
 - **sifter.sieves**: prevented endless recursion in Sieves [PR #208](https://github.com/dunbarcyber/cyphon/pull/208) ([5f3fec0](https://github.com/dunbarcyber/cyphon/commit/5f3fec0))
 
 ### Removed
 
-- **alerts.models**: removed``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
-
+- **alerts.models**: removed ``Alert.tags`` field ([119bf21](https://github.com/dunbarcyber/cyphon/commit/119bf21))
+- **cyphon.settings**: removed CORS settings ([3dea449](https://github.com/dunbarcyber/cyphon/commit/3dea449))
+- **requirements.txt**: removed django-cors-headers ([3dea449](https://github.com/dunbarcyber/cyphon/commit/3dea449))
 
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/dunbarcyber/cyphon/compare/1.4.1...1.4.2) (2017-08-21)
