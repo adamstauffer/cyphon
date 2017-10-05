@@ -562,7 +562,7 @@ class FieldSearchParameter(SearchParameter):
         )
         parsed_parameter = FieldSearchParameter.FIELD_REGEX.search(parameter)
 
-        self.field_name = None
+        self.field_name = ''
         self.data_field = None
         self.operator = None
         self.value = None

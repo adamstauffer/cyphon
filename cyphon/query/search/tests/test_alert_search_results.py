@@ -33,23 +33,27 @@ class AlertSearchResultsTestCase(TestCase):
     """
 
     """
-    fixtures = get_fixtures(['alerts', 'comments'])
+    fixtures = get_fixtures(['alerts', 'comments', 'users'])
+    user_model = get_user_model()
 
     def _get_request(self):
         return self.request_factory.get('')
 
-    def _get_search_results(self, query, page=1, page_size=10):
-        return AlertSearchResults(self.user, query, page, page_size)
+    @staticmethod
+    def _get_search_results(query, page=1, page_size=10):
+        return AlertSearchResults(query, page, page_size)
 
     def setUp(self):
         self.request_factory = RequestFactory()
-        self.user = get_user_model().objects.get(pk=1)
+        self.user = self.user_model.objects.get(pk=1)
 
     def test_no_results(self):
         """
         Tests that no results are returned for an instance with no keywords.
         """
-        alert_results = self._get_search_results(SearchQuery('ip_address=2'))
+        alert_results = self._get_search_results(
+            SearchQuery('ip_address=2', self.user),
+        )
 
         self.assertEqual(alert_results.count, 0)
         self.assertEqual(len(alert_results.results), 0)
@@ -58,7 +62,7 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that the the class searches through alert notes.
         """
-        search_query = SearchQuery('"Some example notes"')
+        search_query = SearchQuery('"Some example notes"', self.user)
         alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 2)
@@ -69,7 +73,7 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that the class searches through alert data.
         """
-        search_query = SearchQuery('"user@example.com"')
+        search_query = SearchQuery('"user@example.com"', self.user)
         alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 1)
@@ -79,7 +83,7 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that the class searches through alert titles.
         """
-        search_query = SearchQuery('"Acme Supply co"')
+        search_query = SearchQuery('"Acme Supply co"', self.user)
         alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 3)
@@ -92,7 +96,8 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that the class searches through alert comments.
         """
-        search_query = SearchQuery('"This alert isn\'t this important"')
+        search_query = SearchQuery(
+            '"This alert isn\'t this important"', self.user)
         alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 1)
@@ -102,7 +107,7 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that the correct dictionary shape is returned from as_dict().
         """
-        search_query = SearchQuery('example')
+        search_query = SearchQuery('example', self.user)
         alert_results = self._get_search_results(search_query)
         alert_results_as_dict = alert_results.as_dict(self._get_request())
 
@@ -111,12 +116,22 @@ class AlertSearchResultsTestCase(TestCase):
         self.assertIsNone(alert_results_as_dict['previous'])
         self.assertEqual(len(alert_results_as_dict['results']), 3)
 
+    def test_restricted_user(self):
+        """
+        Tests that alerts specific to a certain user are limited.
+        """
+        restricted_user = self.user_model.objects.get(pk=3)
+        search_query = SearchQuery('"Pied Piper"', restricted_user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 0)
+
     def test_next_page(self):
         """
         Tests that a 'next' url is created if there is more than one page
         of results.
         """
-        search_query = SearchQuery('example')
+        search_query = SearchQuery('example', self.user)
         alert_results = self._get_search_results(search_query, page_size=1)
         alert_results_as_dict = alert_results.as_dict(self._get_request())
 
@@ -133,7 +148,7 @@ class AlertSearchResultsTestCase(TestCase):
         Tests that the 'previous' url is created if there is a previous
         page of results.
         """
-        search_query = SearchQuery('example')
+        search_query = SearchQuery('example', self.user)
         alert_results = self._get_search_results(
             search_query, page=3, page_size=1,
         )
@@ -146,3 +161,25 @@ class AlertSearchResultsTestCase(TestCase):
         )
         self.assertIsNone(alert_results_as_dict['next'])
         self.assertEqual(len(alert_results_as_dict['results']), 1)
+
+    def test_filtered_alert_searching(self):
+        """
+        Tests that only distilleries specified are searched.
+        """
+
+        passing_search = SearchQuery('"This is some text"', self.user)
+        alert_results = self._get_search_results(passing_search)
+
+        self.assertEqual(len(alert_results.results), 1)
+
+        failing_search = SearchQuery(
+            '@source=test_index.test_logs "This is some text"', self.user)
+        alert_results = self._get_search_results(failing_search)
+
+        self.assertEqual(len(alert_results.results), 0)
+
+        passing_search = SearchQuery(
+            '@source=test_index.test_logs "Acme Supply Co"', self.user)
+        alert_results = self._get_search_results(passing_search)
+
+        self.assertEqual(len(alert_results.results), 1)

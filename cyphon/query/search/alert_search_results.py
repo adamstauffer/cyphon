@@ -38,13 +38,11 @@ class AlertSearchResults(SearchResults):
     """
     VIEW_NAME = 'search_alerts'
 
-    def __init__(self, user, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
         """Find alerts that match a SearchQuery.
 
         Parameters
         ----------
-        user : appusers.models.AppUser
-
         query : query.search.search_query.SearchQuery
 
         """
@@ -53,14 +51,13 @@ class AlertSearchResults(SearchResults):
         )
         self.results = []
 
-        if query.keywords:
-            queryset = self._get_alert_search_queryset(user, query.keywords)
+        queryset = self._get_alert_search_queryset(query)
 
-            if queryset:
-                self.results = self._get_results_page(
-                    queryset, page, page_size,
-                )
-                self.count = queryset.count()
+        if queryset:
+            self.results = self._get_results_page(
+                queryset, page, page_size,
+            )
+            self.count = queryset.count()
 
     @staticmethod
     def _serialize_alert_object(alert, request):
@@ -82,67 +79,11 @@ class AlertSearchResults(SearchResults):
         return AlertDetailSerializer(alert, context={'request': request}).data
 
     @staticmethod
-    def _get_alert_data_query(distillery, keywords):
-        """Return a Q object that searches an alert's JSON data for keywords.
-
-        Parameters
-        ----------
-        distillery : Distillery
-            Distillery that created an alert.
-
-        keywords : list of str
-            Keywords to search for in the alert data.
-
-        Returns
-        -------
-        Q
-
-        """
-        text_fields = distillery.get_text_fields()
-        field_names = [field.field_name for field in text_fields]
-        field_keys = [name.replace('.', '__') for name in field_names]
-        queries = []
-
-        for key in field_keys:
-            query_field = 'data__{}__icontains'.format(key)
-            keyword_queries = [
-                Q(**{query_field: keyword})
-                for keyword
-                in keywords
-            ]
-            queries.extend(keyword_queries)
-
-        field_query = join_query(queries, 'OR')
-
-        return Q(distillery=distillery) & field_query
-
-    @staticmethod
-    def _get_distilleries_with_alerts(user):
-        """Return the distilleries that created alerts.
-
-        Parameters
-        ----------
-        user : appusers.models.AppUser
-            User requesting the distillery list.
-
-        Returns
-        -------
-        list of Distillery
-
-        """
-        return Distillery.objects.filter(
-            alerts__in=Alert.objects.filter_by_user(user)
-        ).distinct()
-
-    @staticmethod
-    def _create_data_query(user, keywords):
+    def _create_keyword_data_query(keywords, distilleries):
         """Create a search query that searches the alert data for keywords.
 
         Parameters
         ----------
-        user : appusers.models.AppUser
-            User making the search request.
-
         keywords : list of str
             Keywords to search for.
 
@@ -151,16 +92,20 @@ class AlertSearchResults(SearchResults):
         Q
 
         """
-        distilleries = AlertSearchResults._get_distilleries_with_alerts(user)
+        text_field_names = AlertSearchResults._get_shared_text_fields(
+            distilleries)
+        queries = []
 
-        if distilleries:
-            data_queries = [
-                AlertSearchResults._get_alert_data_query(distillery, keywords)
-                for distillery in distilleries
-            ]
-            return join_query(data_queries, 'OR')
+        for field_name in text_field_names:
+            underscored_field_name = field_name.replace('.', '__')
+            query_field = 'data__{}__icontains'.format(underscored_field_name)
+            queries.extend([
+                Q(**{query_field: keyword})
+                for keyword
+                in keywords
+            ])
 
-        return Q()
+        return join_query(queries, 'OR')
 
     @staticmethod
     def _create_title_queries(keywords):
@@ -208,16 +153,15 @@ class AlertSearchResults(SearchResults):
         return [Q(comments__content__icontains=keyword) for keyword in keywords]
 
     @staticmethod
-    def _get_alert_search_query(user, keywords):
+    def _get_keyword_search_query(keywords, distilleries):
         """Create a search query that searches alerts for keywords.
 
         Parameters
         ----------
-        user : appuser.models.AppUser
-            User requesting the search query.
-
         keywords : list of str
             Keywords to search for.
+
+        distilleries: list of distilleries.models.Distillery
 
         Returns
         -------
@@ -225,7 +169,11 @@ class AlertSearchResults(SearchResults):
 
         """
         queries = []
-        queries += [AlertSearchResults._create_data_query(user, keywords)]
+        queries += [
+            AlertSearchResults._create_keyword_data_query(
+                keywords, distilleries,
+            )
+        ]
         queries += AlertSearchResults._create_title_queries(keywords)
         queries += AlertSearchResults._create_note_queries(keywords)
         queries += AlertSearchResults._get_alert_comments_query(keywords)
@@ -233,14 +181,33 @@ class AlertSearchResults(SearchResults):
         return join_query(queries, 'OR')
 
     @staticmethod
-    def _get_alert_search_queryset(user, keywords):
+    def _get_shared_text_fields(distilleries):
+        """
+
+        Parameters
+        ----------
+        distilleries
+
+        Returns
+        -------
+
+        """
+        grouped_text_fields = [
+            distillery.get_text_fields() for distillery in distilleries]
+        text_fields = [
+            text_field for grouped_text_field in grouped_text_fields
+            for text_field in grouped_text_field]
+        field_names = [field.field_name for field in text_fields]
+
+        return list(set(field_names))
+
+    @staticmethod
+    def _get_alert_search_queryset(query):
         """Return the queryset of alerts matching particular keywords.
 
         Parameters
         ----------
-        user : appuser.models.AppUser
-            User requesting the queryset.
-        keywords : list of str
+        query : query.search.search_query.SearchQuery
             Keywords to search for.
 
         Returns
@@ -248,9 +215,28 @@ class AlertSearchResults(SearchResults):
         django.db.models.query.QuerySet
 
         """
-        query = AlertSearchResults._get_alert_search_query(user, keywords)
 
-        return Alert.objects.filter_by_user(user).filter(query)
+        if not query.keywords:
+            return Alert.objects.none()
+
+        alert_qs = Alert.objects.filter_by_user(query.user)
+
+        distillery_qs = Distillery.objects.all()
+
+        if not query.user.is_staff:
+            distillery_qs = distillery_qs.filter(company=query.user.company)
+
+        if query.distilleries.count():
+            distillery_qs = query.distilleries
+
+        keyword_query = AlertSearchResults._get_keyword_search_query(
+            query.keywords,
+            distillery_qs,
+        )
+        alert_qs = alert_qs.filter(keyword_query)
+        alert_qs = alert_qs.filter(distillery__in=distillery_qs)
+
+        return alert_qs
 
     @staticmethod
     def _serialize_alert_queryset(queryset, request):

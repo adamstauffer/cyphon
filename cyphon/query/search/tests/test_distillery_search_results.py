@@ -22,6 +22,7 @@ Tests for the DistillerySearchResults Class.
 from unittest.mock import patch
 
 # third party
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.test.client import RequestFactory
 
@@ -48,7 +49,8 @@ MOCK_FIND = patch(
 
 
 class DistillerySearchResultsTestCase(TestCase):
-    fixtures = get_fixtures(['distilleries'])
+    fixtures = get_fixtures(['distilleries', 'users'])
+    user_model = get_user_model()
 
     @staticmethod
     def _get_instance(query, distillery):
@@ -66,13 +68,16 @@ class DistillerySearchResultsTestCase(TestCase):
         with MOCK_FIND:
             return DistillerySearchResults(query, distillery)
 
+    def setUp(self):
+        self.user = self.user_model.objects.get(pk=1)
+
     def test_distillery_attribute_set(self):
         """
         Makes sure that the distillery attribute is set to the passed in
         distillery parameter.
         """
         distillery = Distillery.objects.get(pk=1)
-        search_query = SearchQuery('test')
+        search_query = SearchQuery('test', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(distillery, distillery_results.distillery)
@@ -83,7 +88,7 @@ class DistillerySearchResultsTestCase(TestCase):
         no keywords or parameters.
         """
         distillery = Distillery.objects.get(pk=1)
-        search_query = SearchQuery('')
+        search_query = SearchQuery('', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(distillery_results.fieldsets, [])
@@ -95,7 +100,7 @@ class DistillerySearchResultsTestCase(TestCase):
         FieldSearchParameters if the parameter is related to the distillery.
         """
         distillery = Distillery.objects.get(pk=3)
-        search_query = SearchQuery('ip_address=13.43')
+        search_query = SearchQuery('ip_address=13.43', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(len(distillery_results.fieldsets), 1)
@@ -111,7 +116,7 @@ class DistillerySearchResultsTestCase(TestCase):
         FieldSearchParameter is not related to the distillery
         """
         distillery = Distillery.objects.get(pk=1)
-        search_query = SearchQuery('ip_address=13.43')
+        search_query = SearchQuery('ip_address=13.43', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(len(distillery_results.fieldsets), 0)
@@ -122,7 +127,7 @@ class DistillerySearchResultsTestCase(TestCase):
         on a distillery.
         """
         distillery = Distillery.objects.get(pk=5)
-        search_query = SearchQuery('test "more testing"')
+        search_query = SearchQuery('test "more testing"', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(len(distillery_results.fieldsets), 2)
@@ -145,7 +150,7 @@ class DistillerySearchResultsTestCase(TestCase):
         search get put onto the results and count attribute
         """
         distillery = Distillery.objects.get(pk=5)
-        search_query = SearchQuery('test "more testing"')
+        search_query = SearchQuery('test "more testing"', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
         self.assertEqual(distillery_results.count, 1)
@@ -157,7 +162,7 @@ class DistillerySearchResultsTestCase(TestCase):
         as_dict() function.
         """
         distillery = Distillery.objects.get(pk=1)
-        search_query = SearchQuery('test "more testing"')
+        search_query = SearchQuery('test "more testing"', self.user)
         distillery_results = self._get_instance(search_query, distillery)
         factory = RequestFactory()
         request = factory.get('/api/v1/search/')
@@ -176,7 +181,8 @@ class DistillerySearchResultsTestCase(TestCase):
 
 
 class DistillerySearchResultsListTestCase(TestCase):
-    fixtures = get_fixtures(['distilleries'])
+    fixtures = get_fixtures(['distilleries', 'users'])
+    user_model = get_user_model()
 
     @staticmethod
     def _get_instance(query):
@@ -193,12 +199,15 @@ class DistillerySearchResultsListTestCase(TestCase):
         with MOCK_FIND:
             return DistillerySearchResultsList(query)
 
+    def setUp(self):
+        self.user = self.user_model.objects.get(pk=1)
+
     def test_distillery_filter(self):
         """
         Tests that the distilleries from a distillery filter are used for
         getting distillery results.
         """
-        search_query = SearchQuery('@source=test_database.test_posts test')
+        search_query = SearchQuery('@source=test_database.test_posts test', self.user)
         distillery_results_list = self._get_instance(search_query)
 
         self.assertEqual(len(distillery_results_list.distilleries), 1)
@@ -211,7 +220,7 @@ class DistillerySearchResultsListTestCase(TestCase):
         Tests that the result list returns a combined count of all
         DistillerySearchResults
         """
-        search_query = SearchQuery('test')
+        search_query = SearchQuery('test', self.user)
         distillery_results_list = self._get_instance(search_query)
 
         self.assertEqual(distillery_results_list.count, 6)
@@ -221,7 +230,7 @@ class DistillerySearchResultsListTestCase(TestCase):
         Tests that an accurate amount of DistillerySearchResults is created
         for the number of distilleries returned.
         """
-        distillery_results_list = self._get_instance(SearchQuery('test'))
+        distillery_results_list = self._get_instance(SearchQuery('test', self.user))
 
         self.assertEqual(len(distillery_results_list.results), 6)
 
@@ -230,7 +239,7 @@ class DistillerySearchResultsListTestCase(TestCase):
         Tests that the as_dict() function returns the correct
         dictionary shape.
         """
-        search_query = SearchQuery('@source=test_database.test_posts test')
+        search_query = SearchQuery('@source=test_database.test_posts test', self.user)
         distillery_results_list = self._get_instance(search_query)
         factory = RequestFactory()
         request = factory.get('/api/v1/search/')
