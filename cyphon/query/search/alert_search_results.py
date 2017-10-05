@@ -26,9 +26,6 @@ from django.db.models import Q
 from alerts.models import Alert
 from alerts.serializers import AlertDetailSerializer
 from distilleries.models import Distillery
-from bottler.labels.models import LabelField
-from cyphon.choices import TEXT_FIELDS
-from bottler.bottles.models import BottleField
 from utils.dbutils.dbutils import join_query
 from .search_results import DEFAULT_PAGE_SIZE, SearchResults
 
@@ -41,13 +38,11 @@ class AlertSearchResults(SearchResults):
     """
     VIEW_NAME = 'search_alerts'
 
-    def __init__(self, user, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
         """Find alerts that match a SearchQuery.
 
         Parameters
         ----------
-        user : appusers.models.AppUser
-
         query : query.search.search_query.SearchQuery
 
         """
@@ -205,7 +200,6 @@ class AlertSearchResults(SearchResults):
         field_names = [field.field_name for field in text_fields]
 
         return list(set(field_names))
-
 
     @staticmethod
     def _get_alert_search_queryset(query):
