@@ -54,6 +54,19 @@ class DistilleryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DistilleryDetailSerializer
     pagination_class = DistilleryPagination
 
+    def get_queryset(self):
+        """Returns a queryset of |Distilleries| associated with a company."""
+        user = self.request.user
+
+        if user.is_staff:
+            return self.queryset
+
+        if user.company:
+            return self.queryset.filter(company=user.company)
+
+        return self.queryset.none()
+
+
     @list_route(methods=['get'], url_path='have-alerts')
     def have_alerts(self, request, *args, **kwargs):
         """Get |Distilleries| that are associated with |Alerts|.
