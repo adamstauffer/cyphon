@@ -206,6 +206,7 @@ class BottleTestCase(BottleBaseTestCase):
         self.assertTrue(fields[12].field_name, 'user.screen_name')
         self.assertTrue(fields[12].field_type, 'CharField')
         self.assertTrue(fields[12].target_type, 'Account')
+
     def test_get_flat_field_choices(self):
         """
         Tests the get_field_choices method for nonnested fields.
@@ -297,4 +298,3 @@ class BottleTestCase(BottleBaseTestCase):
     }
 }"""
         self.assertEqual(actual, expected)
-
