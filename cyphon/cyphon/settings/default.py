@@ -49,7 +49,7 @@ HOST_SETTINGS = {
 
 LOCALIZATION = {
     'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
-    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    'TIME_ZONE': 'UTC',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 }
 
 FUNCTIONAL_TESTS = {
@@ -471,7 +471,7 @@ WSGI_APPLICATION = 'cyphon.wsgi.application'
 LANGUAGE_CODE = LOCALIZATION.get('DEFAULT_LANGUAGE', 'en-us')
 
 #: The time zone for this installation.
-TIME_ZONE = LOCALIZATION.get('TIME_ZONE', 'US/Eastern')
+TIME_ZONE = LOCALIZATION.get('TIME_ZONE', 'UTC')
 
 #: Whether Django’s translation system should be enabled.
 USE_I18N = True

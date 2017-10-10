@@ -251,7 +251,7 @@ WSGI_APPLICATION = 'cyphon.wsgi.application'
 LANGUAGE_CODE = LOCALIZATION.get('DEFAULT_LANGUAGE', 'en-us')
 
 #: The time zone for this installation.
-TIME_ZONE = LOCALIZATION.get('TIME_ZONE', 'US/Eastern')
+TIME_ZONE = LOCALIZATION.get('TIME_ZONE', 'UTC')
 
 #: Whether Django’s translation system should be enabled.
 USE_I18N = True
