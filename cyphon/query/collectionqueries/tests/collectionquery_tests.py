@@ -18,9 +18,6 @@
 Functional tests for the Cyphon QueryBuilder.
 """
 
-# standard library
-import unittest
-
 # third party
 from selenium.common.exceptions import ElementNotVisibleException
 
@@ -100,7 +97,6 @@ class CollectionQueryPageTest(FunctionalTest):
         new_options = self.webdriver.find_elements_by_css_selector('#id_formset .filter')
 
         self.assertEqual(len(new_options), len(old_options) + 1)
-        
 
         num_forms = self.webdriver.find_element_by_id('id_form-TOTAL_FORMS')
         self.assertEqual(num_forms.get_attribute('value'), str(len(new_options)))
@@ -231,9 +227,3 @@ class CollectionQueryPageTest(FunctionalTest):
 
         self.assertEqual(len(picker), 1)
         picker[0].click()
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
-
-
