@@ -62,4 +62,3 @@ class CollectionQuerySerializerTestCase(TestCase):
         self.assertEqual(len(validated_data['collections']), 2)
         self.assertEqual(len(validated_data['fieldsets']), 2)
         self.assertEqual(validated_data['joiner'], 'AND')
-
