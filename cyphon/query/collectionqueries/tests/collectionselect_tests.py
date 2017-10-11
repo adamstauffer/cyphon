@@ -18,9 +18,6 @@
 Functional tests for the Cyphon QueryBuilder.
 """
 
-# standard library
-import unittest
-
 # local
 from tests.functional_tests import FunctionalTest
 
@@ -30,7 +27,7 @@ class CollectionSelectPageTest(FunctionalTest):
     Functional tests for the Collection select page.
     """
 
-    def test_can_access_collectionselect(self):
+    def test_can_access_collectselect(self):
         """
         Test for accessing the page to select a Collection.
         """
@@ -60,8 +57,3 @@ class CollectionSelectPageTest(FunctionalTest):
         self.webdriver.find_element_by_id('id_collection_form').submit()
         self.assertIn('/collections/mongodb/cyphon/mail/query',
                       self.webdriver.current_url)
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
-
