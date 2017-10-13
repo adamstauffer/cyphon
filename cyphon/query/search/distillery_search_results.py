@@ -50,22 +50,18 @@ class DistillerySearchResults(SearchResults):
             self.VIEW_NAME, query, page, page_size,
         )
         self.results = []
+        self.count = 0
         self.distillery = distillery
-        self.fieldsets = []
-        self.engine_query = None
-        self.fieldsets = self._get_fieldsets(distillery, query)
+        self.engine_query = self._get_engine_query(distillery, query)
 
-        if not self.fieldsets:
+        if not self.engine_query:
             return
 
-        self.engine_query = EngineQuery(subqueries=self.fieldsets, joiner='OR')
-
         results = self.distillery.find(
-            self.engine_query, page=page, page_size=page_size,
-        )
+            self.engine_query, page=page, page_size=page_size)
 
         if results and results['count']:
-            self.count += results['count']
+            self.count = results['count']
             self.results = results['results']
 
     @staticmethod
@@ -91,7 +87,7 @@ class DistillerySearchResults(SearchResults):
         ).data
 
     @staticmethod
-    def _get_field_fieldsets(distillery, field_parameters):
+    def _get_field_engine_query(distillery, field_parameters):
         """Return QueryFieldsets of FieldSearchParameters based on Distillery.
 
         Parameters
@@ -102,26 +98,31 @@ class DistillerySearchResults(SearchResults):
 
         Returns
         -------
-        list of QueryFieldset
+        EngineQuery or None
 
         """
         if not field_parameters:
-            return []
+            return None
 
-        return [
+        fieldsets = [
             parameter.create_fieldset() for parameter in field_parameters
             if parameter.is_related_to_distillery(distillery)
         ]
 
+        if not fieldsets:
+            return None
+
+        return EngineQuery(subqueries=fieldsets, joiner='AND')
+
     @staticmethod
-    def _create_keyword_fieldset(text_field, keywords):
+    def _create_keyword_fieldset(text_field, keyword):
         """Return QueryFieldset of a DataField that takes keywords.
 
         Parameters
         ----------
         text_field : bottler.datafields.models.DataField
 
-        keywords : list of str
+        keywords : str
 
         Returns
         -------
@@ -132,11 +133,39 @@ class DistillerySearchResults(SearchResults):
             field_name=text_field.field_name,
             field_type=text_field.field_type,
             operator='regex',
-            value='|'.join(keywords),
+            value=keyword,
         )
 
     @staticmethod
-    def _get_keyword_fieldsets(distillery, keywords):
+    def _create_keyword_engine_query(text_fields, keyword):
+        """
+
+        Parameters
+        ----------
+        text_fields : list of DataField
+        keyword: str
+
+        Returns
+        -------
+        EngineQuery or None
+        """
+        fieldsets = [
+            QueryFieldset(
+                field_name=field.field_name,
+                field_type=field.field_type,
+                operator='regex',
+                value=keyword,
+            )
+            for field in text_fields
+        ]
+
+        if not fieldsets:
+            return None
+
+        return EngineQuery(subqueries=fieldsets, joiner='OR')
+
+    @staticmethod
+    def _get_keyword_engine_query(distillery, keywords):
         """Return QueryFieldsets for all text fields of a distillery.
 
         Parameters
@@ -149,21 +178,31 @@ class DistillerySearchResults(SearchResults):
 
         Returns
         -------
-        list of QueryFieldset
+        EngineQuery or None
 
         """
         if not keywords:
-            return []
+            return None
 
         text_fields = distillery.get_text_fields()
 
-        return [
-            DistillerySearchResults._create_keyword_fieldset(field, keywords)
-            for field in text_fields
-        ]
+        if not text_fields:
+            return None
+
+        keyword_engine_queries = []
+
+        for keyword in keywords:
+            keyword_engine_query = (
+                DistillerySearchResults._create_keyword_engine_query(
+                    text_fields, keyword))
+
+            if keyword_engine_query:
+                keyword_engine_queries.append(keyword_engine_query)
+
+        return EngineQuery(subqueries=keyword_engine_queries, joiner='AND')
 
     @staticmethod
-    def _get_fieldsets(distillery, query):
+    def _get_engine_query(distillery, query):
         """Return QueryFieldsets of keyword and field searches for a distillery.
 
         Parameters
@@ -174,18 +213,23 @@ class DistillerySearchResults(SearchResults):
 
         Returns
         -------
-        list of QueryFieldset
+        EngineQuery or None
 
         """
-        fieldsets = []
-        fieldsets += DistillerySearchResults._get_field_fieldsets(
-            distillery, query.field_parameters,
-        )
-        fieldsets += DistillerySearchResults._get_keyword_fieldsets(
-            distillery, query.keywords,
-        )
+        engine_queries = [
+            DistillerySearchResults._get_field_engine_query(
+                distillery, query.field_parameters),
+            DistillerySearchResults._get_keyword_engine_query(
+                distillery, query.keywords)
+        ]
+        subqueries = [
+            engine_query for engine_query in engine_queries if engine_query
+        ]
 
-        return fieldsets
+        if not subqueries:
+            return None
+
+        return EngineQuery(subqueries=subqueries, joiner='AND')
 
     def _get_path(self):
         return reverse(self.view_name, args=[self.distillery.pk])
