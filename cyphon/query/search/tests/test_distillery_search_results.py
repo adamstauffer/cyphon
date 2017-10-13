@@ -27,7 +27,9 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 
 # local
+from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
+from engines.queries import EngineQuery
 from query.search.distillery_search_results import (
     DistillerySearchResults,
     DistillerySearchResultsList,
@@ -46,6 +48,18 @@ MOCK_FIND = patch(
     'distilleries.models.Distillery.find',
     return_value=MOCK_RESULTS,
 )
+
+
+def get_fieldsets(subqueries):
+    fieldsets = []
+
+    for subquery in subqueries:
+        if isinstance(subquery, QueryFieldset):
+            fieldsets.append(subquery)
+        elif isinstance(subquery, EngineQuery):
+            fieldsets += get_fieldsets(subquery.subqueries)
+
+    return fieldsets
 
 
 class DistillerySearchResultsTestCase(TestCase):
@@ -91,7 +105,6 @@ class DistillerySearchResultsTestCase(TestCase):
         search_query = SearchQuery('', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
-        self.assertEqual(distillery_results.fieldsets, [])
         self.assertIsNone(distillery_results.engine_query)
 
     def test_field_fieldsets_if_related(self):
@@ -102,24 +115,25 @@ class DistillerySearchResultsTestCase(TestCase):
         distillery = Distillery.objects.get(pk=3)
         search_query = SearchQuery('ip_address=13.43', self.user)
         distillery_results = self._get_instance(search_query, distillery)
+        fieldsets = get_fieldsets(distillery_results.engine_query.subqueries)
 
-        self.assertEqual(len(distillery_results.fieldsets), 1)
+        self.assertEqual(len(fieldsets), 1)
 
-        field_fieldset = distillery_results.fieldsets[0]
+        field_fieldset = fieldsets[0]
 
         self.assertEqual(field_fieldset.field_name, 'ip_address')
         self.assertEqual(field_fieldset.field_type, 'GenericIPAddressField')
 
     def test_field_fieldsets_if_not_related(self):
         """
-        Tests that a list of QueryFieldsets are not created if the
+        Tests that an engine query is not created if the
         FieldSearchParameter is not related to the distillery
         """
         distillery = Distillery.objects.get(pk=1)
         search_query = SearchQuery('ip_address=13.43', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
-        self.assertEqual(len(distillery_results.fieldsets), 0)
+        self.assertIsNone(distillery_results.engine_query)
 
     def test_keyword_fieldsets(self):
         """
@@ -130,19 +144,29 @@ class DistillerySearchResultsTestCase(TestCase):
         search_query = SearchQuery('test "more testing"', self.user)
         distillery_results = self._get_instance(search_query, distillery)
 
-        self.assertEqual(len(distillery_results.fieldsets), 2)
-        fieldset_1 = distillery_results.fieldsets[0]
-        fieldset_2 = distillery_results.fieldsets[1]
+        self.assertIsNotNone(distillery_results.engine_query)
 
-        self.assertEqual(fieldset_1.field_name, 'host')
-        self.assertEqual(fieldset_1.field_type, 'GenericIPAddressField')
-        self.assertEqual(fieldset_1.operator, 'regex')
-        self.assertEqual(fieldset_1.value, 'test|more testing')
+        fieldsets = get_fieldsets(distillery_results.engine_query.subqueries)
 
-        self.assertEqual(fieldset_2.field_name, 'message')
-        self.assertEqual(fieldset_2.field_type, 'TextField')
-        self.assertEqual(fieldset_2.operator, 'regex')
-        self.assertEqual(fieldset_2.value, 'test|more testing')
+        self.assertEqual(fieldsets[0].field_name, 'host')
+        self.assertEqual(fieldsets[0].field_type, 'GenericIPAddressField')
+        self.assertEqual(fieldsets[0].operator, 'regex')
+        self.assertEqual(fieldsets[0].value, 'test')
+
+        self.assertEqual(fieldsets[1].field_name, 'message')
+        self.assertEqual(fieldsets[1].field_type, 'TextField')
+        self.assertEqual(fieldsets[1].operator, 'regex')
+        self.assertEqual(fieldsets[1].value, 'test')
+
+        self.assertEqual(fieldsets[2].field_name, 'host')
+        self.assertEqual(fieldsets[2].field_type, 'GenericIPAddressField')
+        self.assertEqual(fieldsets[2].operator, 'regex')
+        self.assertEqual(fieldsets[2].value, 'more testing')
+
+        self.assertEqual(fieldsets[3].field_name, 'message')
+        self.assertEqual(fieldsets[3].field_type, 'TextField')
+        self.assertEqual(fieldsets[3].operator, 'regex')
+        self.assertEqual(fieldsets[3].value, 'more testing')
 
     def test_results(self):
         """
