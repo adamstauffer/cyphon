@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 <a name="Unreleased"></a>
 ## [Unreleased]
 
+
+<a name="1.5.3"></a>
+## [1.5.3](https://github.com/dunbarcyber/cyphon/compare/1.5.2...1.5.3) (2017-10-13)
+
 ### Fixed
 
 - **Dockerfile**: cached NLTK data in the Docker image [PR #247](https://github.com/dunbarcyber/cyphon/pull/247) ([9b4cf31](https://github.com/dunbarcyber/cyphon/commit/9b4cf31))
+- **monitors**: fixed bug in `Monitor._get_inactive_seconds()` for new Monitors [PR #256](https://github.com/dunbarcyber/cyphon/pull/256) ([1e154a9](https://github.com/dunbarcyber/cyphon/commit/1e154a9))
 
 
 <a name="1.5.2"></a>

@@ -184,11 +184,14 @@ class Monitor(Alarm):
         Returns the number of seconds since a document was saved to one
         of the Monitor's distilleries.
         """
-        if self.last_healthy is not None:
-            time_delta = timezone.now() - self.last_healthy
+        if self.last_healthy is not None or self.created_date is not None:
+            if self.last_healthy is not None:
+                time_delta = timezone.now() - self.last_healthy
+            else:
+                time_delta = timezone.now() - self.created_date
+            return time_delta.total_seconds()
         else:
-            time_delta = timezone.now() - self.created_date
-        return time_delta.total_seconds()
+            return 0
 
     def _get_last_alert_seconds(self):
         """
