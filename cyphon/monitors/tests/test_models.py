@@ -87,6 +87,20 @@ class MonitorTestCase(TestCase):
         """
         self.assertEqual(str(self.monitor_grn), 'health_alerts')
 
+    def test_save_new(self):
+        """
+        Tests that the status is to GREEN on a new Monitor.
+        """
+        monitor = Monitor.objects.create(
+            name='new monitor',
+            time_interval=1,
+            time_unit='d',
+            alerts_enabled=True,
+            repeating_alerts=True,
+            alert_level='HIGH'
+        )
+        self.assertEqual(monitor.status, 'GREEN')
+
     @patch('monitors.models.timezone.now', return_value=EARLY)
     def test_save_overdue(self, mock_now):
         """
