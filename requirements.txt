@@ -13,7 +13,7 @@ django-constance==2.0.0
 django-extensions==1.9.1
 django-filter==1.0.4
 django-grappelli==2.10.1
-django-mailbox==4.5.4
+django-mailbox==4.6.0
 django-picklefield==1.0.0
 django-s3-storage==0.12.0
 Django==1.11.6
