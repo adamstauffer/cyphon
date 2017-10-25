@@ -21,6 +21,7 @@ at the expected rate.
 """
 
 # standard library
+from datetime import timedelta
 import json
 
 # third party
@@ -36,7 +37,10 @@ from cyphon.choices import (
     MONITOR_STATUS_CHOICES,
     TIME_UNIT_CHOICES,
 )
+from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
+from engines.queries import EngineQuery
+from engines.sorter import SortParam, Sorter
 import utils.dateutils.dateutils as dt
 
 
@@ -126,7 +130,6 @@ class Monitor(Alarm):
     distilleries = models.ManyToManyField(
         Distillery,
         related_name='+',  # do not create backwards relation
-        limit_choices_to={'is_shell': False}
     )
     time_interval = models.IntegerField()
     time_unit = models.CharField(max_length=3, choices=TIME_UNIT_CHOICES)
@@ -168,7 +171,8 @@ class Monitor(Alarm):
 
     def save(self, *args, **kwargs):
         """
-        Overrides the save() method to update the status of the Monitor.
+        Overrides the save() method to validate distilleries and update
+        the status of the Monitor.
         """
         self._set_current_status()
         super(Monitor, self).save(*args, **kwargs)
@@ -229,6 +233,63 @@ class Monitor(Alarm):
         else:
             self.status = self._HEALTHY
         return self.status
+
+    def _get_interval_start(self):
+        """
+        Returns a DateTime representing the start of the monitoring
+        interval.
+        """
+        seconds = self._get_interval_in_seconds()
+        return timezone.now() - timedelta(seconds=seconds)
+
+    def _get_start_time(self):
+        """
+        Returns the last_healthy date, if there is one, or the start of
+        the monitoring interval, if there isn't.
+        """
+        return self.last_healthy or self._get_interval_start()
+
+    def _get_query(self, date_field):
+        """
+        Takes the name of a date field and returns an |EngineQuery| for
+        documents with dates later than the last_healthy date (if there
+        is one) or the start of the monitoring interval (if there isn't).
+        """
+        start_time = self._get_start_time()
+        query = QueryFieldset(
+            field_name=date_field,
+            field_type='DateTimeField',
+            operator='gt',
+            value=start_time
+        )
+        return EngineQuery([query])
+
+    @staticmethod
+    def _get_sorter(date_field):
+        """
+        Takes the name of a date field and returns a |Sorter| for
+        sorting results in descending order of date.
+        """
+        sort = SortParam(
+            field_name=date_field,
+            field_type='DateTimeField',
+            order='DESC',
+        )
+        return Sorter(sort_list=[sort])
+
+    def _get_results(self, distillery):
+        """
+        Takes a Distillery and returns documents with dates later than
+        that of the last_healthy date, in descending order of date.
+        If no results are found, returns None.
+        """
+        date_field = distillery.get_searchable_date_field()
+        if date_field:
+            query = self._get_query(date_field)
+            sorter = self._get_sorter(date_field)
+            results = distillery.find(query, sorter)
+            if isinstance(results, list):
+                return results
 
     def _get_title(self):
         """
@@ -299,18 +360,17 @@ class Monitor(Alarm):
         """
         return str(self.time_interval) + self.time_unit
 
-    def process(self, doc_obj):
+    def last_doc(self):
         """
-        Takes a Distillery and a document id string. Updates the
-        Monitor's status as healthy, records the current time in the
-        last_healthy field, and records the Distillery and doc id to the
-        last_active_distillery and last_saved_doc fields.
+        Returns a string of the content for the last document saved to
+        one of the Monitor's distilleries. If the Monitor has no record
+        of a last saved document, returns None.
         """
-        self.last_healthy = timezone.now()
-        self.last_active_distillery = doc_obj.distillery
-        self.last_saved_doc = doc_obj.doc_id
-        self.status = self._HEALTHY
-        self.save()
+        if self.last_active_distillery:
+            doc = self._find_last_doc()
+            return json.dumps(doc, indent=4)
+
+    last_doc.short_description = _('Last saved document')
 
     def update_status(self):
         """
@@ -324,14 +384,18 @@ class Monitor(Alarm):
             self._alert(old_status)
         return self.status
 
-    def last_doc(self):
+    def run(self):
         """
-        Returns a string of the content for the last document saved to
-        one of the Monitor's distilleries. If the Monitor has no record
-        of a last saved document, returns None.
+        Searches for new documents in the Monitor's |Distilleries| and
+        updates the Monitor's status according to the results.
         """
-        if self.last_active_distillery:
-            doc = self._find_last_doc()
-            return json.dumps(doc, indent=4)
-
-    last_doc.short_description = _('Last saved document')
+        for distillery in self.distilleries.all():
+            results = self._get_results(distillery)
+            if results:
+                doc = results[0]  # results are sorted by date
+                date = distillery.get_date(doc)
+                if self.last_healthy is None or date > self.last_healthy:
+                    self.last_healthy = date
+                    self.last_active_distillery = distillery
+                    self.last_saved_doc = doc.get('_id')
+        self.update_status()

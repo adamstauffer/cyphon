@@ -28,9 +28,3 @@ class MonitorsConfig(AppConfig):
     """
     name = 'monitors'
     verbose_name = 'Monitors'
-
-    def ready(self):
-        """
-
-        """
-        import monitors.signals
