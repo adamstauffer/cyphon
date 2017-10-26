@@ -187,7 +187,7 @@ Open the "Shaping Data" panel on Cyphon's main admin page, and create the follow
     profile_pic       URLField
     ref_id            CharField              
     screen_name       CharField              Account
-    text              TextField              Keyowrd 
+    text              TextField              Keyword 
     ================  =====================  ===========
 
 Now we'll create two Bottles (one will be nested within the other). The first Bottle will contain data specific to the user who posted the tweet.

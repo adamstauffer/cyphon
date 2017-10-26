@@ -50,6 +50,7 @@ class ProcessMsgTestCase(TransactionTestCase):
     default_munger = 'default_log'
 
     mock_doc_obj = Mock()
+    mock_channel = Mock()
     mock_method = Mock()
     mock_method.routing_key = 'logchutes'
 
@@ -65,7 +66,7 @@ class ProcessMsgTestCase(TransactionTestCase):
     def setUp(self):
         logging.disable(logging.ERROR)
         self.kwargs = {
-            'channel': None,
+            'channel': self.mock_channel,
             'method': self.mock_method,
             'properties': None,
             'body': self.msg
