@@ -24,6 +24,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 # local
+from .forms import MonitorForm
 from .models import Monitor
 
 
@@ -31,6 +32,7 @@ class MonitorAdmin(admin.ModelAdmin):
     """
     Customizes admin pages for Monitors.
     """
+    form = MonitorForm
     readonly_fields = (
         'status',
         'created_date',
@@ -118,4 +120,3 @@ class MonitorAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Monitor, MonitorAdmin)
-
