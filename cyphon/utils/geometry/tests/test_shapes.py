@@ -435,3 +435,35 @@ class FactorPolygonTestCase(TestCase):
         with self.assertRaises(ValueError):
             polygon = Polygon(coord)
             shapes.factor_polygon_into_circles(polygon, radius_km)
+
+
+class ConvertToPointTestCase(TestCase):
+    """
+    Test class for the function convert_to_point function.
+    """
+
+    def test_convert_dict_to_point(self):
+        """
+        Tests the convert_to_point function with a dictionary.
+        """
+        point = shapes.convert_to_point({'lat': 40, 'lon': 100}, 'lon')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)
+
+    def test_convert_lat_list_to_point(self):
+        """
+        Tests the convert_to_point function with a list that starts with
+        latitude.
+        """
+        point = shapes.convert_to_point([40, 100], 'lat')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)
+
+    def test_convert_lon_list_to_point(self):
+        """
+        Tests the convert_to_point function with a list that starts with
+        longitude.
+        """
+        point = shapes.convert_to_point([100, 40], 'lon')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)
