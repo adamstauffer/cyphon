@@ -24,6 +24,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 # local
+from distilleries.models import Distillery
 from .models import Monitor
 
 
@@ -42,7 +43,8 @@ class MonitorForm(forms.ModelForm):
         defined.
         """
         distilleries = self.data.get('distilleries')
-        for distillery in distilleries:
+        for distillery_pk in distilleries:
+            distillery = Distillery.objects.get(pk=distillery_pk)
             if not distillery.get_searchable_date_field():
                 msg = _('The Container for the Distillery "%s" must have a '
                         'Taste with a designated Datetime field.' % distillery)

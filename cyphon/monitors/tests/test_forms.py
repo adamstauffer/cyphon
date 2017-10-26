@@ -44,7 +44,7 @@ class MonitorFormTestCase(TestCase):
         distillery.save()
         form_data = {
             'name': 'new monitor',
-            'distilleries': [distillery],
+            'distilleries': [distillery.pk],
             'time_interval': 1,
             'time_unit': 'd',
             'alerts_enabled': True,
