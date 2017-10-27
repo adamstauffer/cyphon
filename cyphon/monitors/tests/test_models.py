@@ -199,8 +199,8 @@ class MonitorTestCase(TestCase):
         assert monitor.status != 'GREEN'
 
         docs = [
-            [{'_id': 1, 'created_date': LATE}],
-            [{'_id': 2, 'created_date': VERY_LATE}],
+            {'count': 1, 'results': [{'_id': 1, 'created_date': LATE}]},
+            {'count': 1, 'results': [{'_id': 2, 'created_date': VERY_LATE}]},
         ]
         with patch('monitors.models.Distillery.find', side_effect=docs) \
                 as mock_find:
