@@ -242,20 +242,13 @@ class Monitor(Alarm):
         seconds = self._get_interval_in_seconds()
         return timezone.now() - timedelta(seconds=seconds)
 
-    def _get_start_time(self):
-        """
-        Returns the last_healthy date, if there is one, or the start of
-        the monitoring interval, if there isn't.
-        """
-        return self.last_healthy or self._get_interval_start()
-
     def _get_query(self, date_field):
         """
         Takes the name of a date field and returns an |EngineQuery| for
         documents with dates later than the last_healthy date (if there
         is one) or the start of the monitoring interval (if there isn't).
         """
-        start_time = self._get_start_time()
+        start_time = self._get_interval_start()
         query = QueryFieldset(
             field_name=date_field,
             field_type='DateTimeField',
@@ -277,19 +270,18 @@ class Monitor(Alarm):
         )
         return Sorter(sort_list=[sort])
 
-    def _get_results(self, distillery):
+    def _get_most_recent_doc(self, distillery):
         """
-        Takes a Distillery and returns documents with dates later than
-        that of the last_healthy date, in descending order of date.
-        If no results are found, returns None.
+        Takes a Distillery and the most recent document from the
+        monitoring interval, if one exists. Otherwise, returns None.
         """
         date_field = distillery.get_searchable_date_field()
         if date_field:
             query = self._get_query(date_field)
             sorter = self._get_sorter(date_field)
-            results = distillery.find(query, sorter)
-            if isinstance(results, list):
-                return results
+            results = distillery.find(query, sorter, page=1, page_size=1)
+            if results['results']:
+                return results['results'][0]
 
     def _get_title(self):
         """
@@ -390,9 +382,8 @@ class Monitor(Alarm):
         updates the Monitor's status according to the results.
         """
         for distillery in self.distilleries.all():
-            results = self._get_results(distillery)
-            if results:
-                doc = results[0]  # results are sorted by date
+            doc = self._get_most_recent_doc(distillery)
+            if doc:
                 date = distillery.get_date(doc)
                 if self.last_healthy is None or date > self.last_healthy:
                     self.last_healthy = date
