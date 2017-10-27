@@ -52,9 +52,9 @@ class AlertFilter(FilterSet):
 
         # add a blank choice to ChoiceFilter options
         for (dummy_name, field) in self.filters.items():
-            if isinstance(field, django_filters.ChoiceFilter):
-                field.extra['choices'] = tuple([('', '---------'), ] + \
-                    list(field.extra['choices']))
+            if type(field) is django_filters.ChoiceFilter:
+                field.choices = tuple([('', '---------'), ] +
+                                      list(field.choices))
 
     collection = django_filters.ModelMultipleChoiceFilter(
         name='distillery',
