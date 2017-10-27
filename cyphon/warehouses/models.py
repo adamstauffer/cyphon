@@ -479,8 +479,11 @@ class Collection(models.Model):
 
         Returns
         -------
-        |list| of |dict|
-            Documents matching the query.
+        |dict|
+            A dictionary with keys 'count' and 'results'. The 'count'
+            value is the total number of documents matching the search
+            criteria. The 'results' value is a list of documents from
+            the search result, with the doc ids added to each document.
 
         """
         return self.engine.find(query, sorter, page, page_size)
