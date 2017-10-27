@@ -277,6 +277,7 @@ class Monitor(Alarm):
         Looks for the most recently saved doc among the Distilleries
         being monitored, and updates the relevant filed in the Monitor.
         """
+        self.last_healthy = None  # reset last_healthy
         for distillery in self.distilleries.all():
             doc = self._get_most_recent_doc(distillery)
             if doc:
