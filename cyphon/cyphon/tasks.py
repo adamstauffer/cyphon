@@ -56,7 +56,7 @@ def run_health_check():
     monitors = monitor_model.objects.find_enabled()
 
     for monitor in monitors:
-        monitor.run()
+        monitor.update_status()
 
     close_old_connections()
 

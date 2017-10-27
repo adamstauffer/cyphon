@@ -174,7 +174,7 @@ class Monitor(Alarm):
         Overrides the save() method to validate distilleries and update
         the status of the Monitor.
         """
-        self._set_current_status()
+        self._update_fields()
         super(Monitor, self).save(*args, **kwargs)
 
     def _get_interval_in_seconds(self):
@@ -222,17 +222,6 @@ class Monitor(Alarm):
         Monitor's interval.
         """
         return self._get_inactive_seconds() > self._get_interval_in_seconds()
-
-    def _set_current_status(self):
-        """
-        Updates and returns the Monitor's current status.
-        """
-        is_overdue = self._is_overdue()
-        if is_overdue:
-            self.status = self._UNHEALTHY
-        else:
-            self.status = self._HEALTHY
-        return self.status
 
     def _get_interval_start(self):
         """
@@ -282,6 +271,31 @@ class Monitor(Alarm):
             results = distillery.find(query, sorter, page=1, page_size=1)
             if results['results']:
                 return results['results'][0]
+
+    def _update_doc_info(self):
+        """
+        Looks for the most recently saved doc among the Distilleries
+        being monitored, and updates the relevant filed in the Monitor.
+        """
+        for distillery in self.distilleries.all():
+            doc = self._get_most_recent_doc(distillery)
+            if doc:
+                date = distillery.get_date(doc)
+                if self.last_healthy is None or date > self.last_healthy:
+                    self.last_healthy = date
+                    self.last_active_distillery = distillery
+                    self.last_saved_doc = doc.get('_id')
+
+    def _set_current_status(self):
+        """
+        Updates and returns the Monitor's current status.
+        """
+        is_overdue = self._is_overdue()
+        if is_overdue:
+            self.status = self._UNHEALTHY
+        else:
+            self.status = self._HEALTHY
+        return self.status
 
     def _get_title(self):
         """
@@ -345,6 +359,15 @@ class Monitor(Alarm):
         """
         return self.last_active_distillery.find_by_id(self.last_saved_doc)
 
+    def _update_fields(self):
+        """
+        Updates the Monitor's fields relating to its status, and last
+        saved document.
+        """
+        if self.id:
+            self._update_doc_info()
+        self._set_current_status()
+
     @property
     def interval(self):
         """
@@ -370,23 +393,7 @@ class Monitor(Alarm):
         appropriate. Returns the Monitor's current status.
         """
         old_status = self.status
-        new_status = self._set_current_status()
-        self.save()
-        if new_status == self._UNHEALTHY:
+        self.save()  # update monitor
+        if self.status == self._UNHEALTHY:
             self._alert(old_status)
         return self.status
-
-    def run(self):
-        """
-        Searches for new documents in the Monitor's |Distilleries| and
-        updates the Monitor's status according to the results.
-        """
-        for distillery in self.distilleries.all():
-            doc = self._get_most_recent_doc(distillery)
-            if doc:
-                date = distillery.get_date(doc)
-                if self.last_healthy is None or date > self.last_healthy:
-                    self.last_healthy = date
-                    self.last_active_distillery = distillery
-                    self.last_saved_doc = doc.get('_id')
-        self.update_status()

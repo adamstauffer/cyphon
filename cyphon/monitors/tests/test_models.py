@@ -188,9 +188,9 @@ class MonitorTestCase(TestCase):
         self.assertEqual(alert.doc_id, self.monitor_red.last_saved_doc)
 
     @patch('monitors.models.timezone.now', return_value=ON_TIME)
-    def test_run(self, mock_now):
+    def test_update_status(self, mock_now):
         """
-        Tests the run method of the Monitor class.
+        Tests the update_status method of the Monitor class.
         """
         monitor = self.monitor_red
         assert monitor.last_healthy != ON_TIME
@@ -204,7 +204,7 @@ class MonitorTestCase(TestCase):
         ]
         with patch('monitors.models.Distillery.find', side_effect=docs) \
                 as mock_find:
-            monitor.run()
+            monitor.update_status()
             mock_find.call_count = 2
 
             # get a fresh instance from the database
