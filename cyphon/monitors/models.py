@@ -231,13 +231,24 @@ class Monitor(Alarm):
         seconds = self._get_interval_in_seconds()
         return timezone.now() - timedelta(seconds=seconds)
 
+    def _get_query_start_time(self):
+        """
+        Returns either the last_healthy datetime or the start of the
+        monitoring interval, whichever is older.
+        """
+        interval_start = self._get_interval_start()
+        if self.last_healthy and self.last_healthy < interval_start:
+            return self.last_healthy
+        else:
+            return interval_start
+
     def _get_query(self, date_field):
         """
         Takes the name of a date field and returns an |EngineQuery| for
         documents with dates later than the last_healthy date (if there
         is one) or the start of the monitoring interval (if there isn't).
         """
-        start_time = self._get_interval_start()
+        start_time = self._get_query_start_time()
         query = QueryFieldset(
             field_name=date_field,
             field_type='DateTimeField',
