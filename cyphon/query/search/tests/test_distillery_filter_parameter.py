@@ -240,7 +240,7 @@ class DistilleryFilterParameterTestCase(TestCase):
             ],
         })
 
-    def test_hyphon(self):
+    def test_hyphen(self):
         """
         Tests that the filter includes names with hyphens.
         """
@@ -250,3 +250,11 @@ class DistilleryFilterParameterTestCase(TestCase):
         self.assertEqual(parameter.warehouse, 'test-warehouse')
         self.assertEqual(parameter.collection, 'test-collection')
         self.assertEqual(len(parameter.errors), 2)
+        self.assertEqual(
+            parameter.errors[0],
+            DistilleryFilterParameter.CANNOT_FIND_WAREHOUSE.format(
+                'test-warehouse'))
+        self.assertEqual(
+            parameter.errors[1],
+            DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format(
+                'test-collection'))
