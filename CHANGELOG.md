@@ -5,12 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+<a name="Unreleased"></a>
+## [Unreleased]
+
+
 <a name="1.6.0"></a>
-## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0)(2017-11-03)
+## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0) (2017-11-07)
 
 ### Changed
 
-- **cyclops.conf**: change cyclops version from 0.4.4 to 0.5.0.
+- **cyclops.conf**: changed Cyclops version from 0.4.4 to 0.5.0 ([009ece0](https://github.com/dunbarcyber/cyphon/commit/009ece0))
+- **cyphon.tasks, monitors**: Monitor status is updated through polling ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
+- **query.search**: search terms joined with AND instead of OR ([09659ee](https://github.com/dunbarcyber/cyphon/commit/09659ee))
+
+### Fixed
+
+- **utils.geometry.shapes**: handle hash-based Geo-point datatypes [PR #273](https://github.com/dunbarcyber/cyphon/pull/273) ([38b6e49](https://github.com/dunbarcyber/cyphon/commit/38b6e49))
+
+### Removed
+
+- **reciever**: removed Monitor queue consumer ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
 
 
 <a name="1.5.3"></a>
