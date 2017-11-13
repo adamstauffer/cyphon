@@ -239,3 +239,14 @@ class DistilleryFilterParameterTestCase(TestCase):
                 DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format('bleh'),
             ],
         })
+
+    def test_hyphon(self):
+        """
+        Tests that the filter includes names with hyphens.
+        """
+        parameter = DistilleryFilterParameter(
+            1, '@source=test-warehouse.test-collection', self.user)
+
+        self.assertEqual(parameter.warehouse, 'test-warehouse')
+        self.assertEqual(parameter.collection, 'test-collection')
+        self.assertEqual(len(parameter.errors), 2)

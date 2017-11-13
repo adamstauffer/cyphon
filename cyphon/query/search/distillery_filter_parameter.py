@@ -45,14 +45,14 @@ class DistilleryFilterParameter(SearchParameter):
 
     """
 
-    FILTER_REGEX = re.compile(r'^@source=(?P<filter>[\w.*]+)?$')
+    FILTER_REGEX = re.compile(r'^@source=(?P<filter>[\w.*-]+)?$')
     """RegExp
 
     Regex used to get the distillery filter value from the parameter string.
     """
 
     FILTER_GROUPS_REGEX = re.compile(
-        r'^(?P<warehouse>\*|\w+)\.(?P<collection>\*|\w+)$',
+        r'^(?P<warehouse>\*|[\w-]+)\.(?P<collection>\*|[\w-]+)$',
     )
     """RegExp
 
