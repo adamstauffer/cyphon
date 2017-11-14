@@ -58,6 +58,9 @@ class SearchParameterTypeTestCase(TestCase):
         '@source=*.mail',
         '@source=personal.mail',
         '@source=persona*',
+        '@source=test-thing.*',
+        '@source=*.test-thing',
+        '@source=test-thing.test-thing',
     ]
     """list of str
 

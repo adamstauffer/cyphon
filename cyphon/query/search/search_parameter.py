@@ -48,7 +48,7 @@ class SearchParameterType(object):
 
     TYPE_CHECK_REGEX_MAP = [
         (KEYWORD, r'^\".*\"$|^\w[\w.]*$'),
-        (DISTILLERY, r'^@source=(?:\*?[\w.]+\*?)?$'),
+        (DISTILLERY, r'^@source=(?:\*?[\w.-]+\*?)?$'),
         (FIELD, r'^\w[\w.]*[=<>!]{1,2}(?:$|\".*\"$|[\w.]*$)')
     ]
     """list of tuple
