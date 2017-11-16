@@ -258,3 +258,14 @@ class DistilleryFilterParameterTestCase(TestCase):
             parameter.errors[1],
             DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format(
                 'test-collection'))
+
+        parameter = DistilleryFilterParameter(
+            0, '@source=test-warehouse.*', self.user)
+
+        self.assertEqual(parameter.warehouse, 'test-warehouse')
+        self.assertEqual(parameter.collection, '*')
+        self.assertEqual(len(parameter.errors), 1)
+        self.assertEqual(
+            parameter.errors[0],
+            DistilleryFilterParameter.CANNOT_FIND_WAREHOUSE.format(
+                'test-warehouse'))
