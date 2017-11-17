@@ -51,7 +51,7 @@ sauceclient==1.0.0
 selenium==3.7.0
 six==1.10.0
 testfixtures==5.3.0
-textblob==0.13.0
+textblob==0.13.1
 tlslite==0.4.9
 tweepy==3.5.0
 urllib3==1.22
