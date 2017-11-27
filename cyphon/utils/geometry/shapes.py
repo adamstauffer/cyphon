@@ -279,6 +279,6 @@ def convert_to_point(location, location_format):
         if location_format.lower().startswith('lat'):
             location = reverse_coordinate_order(location)
         return Point(location)
-    except (AssertionError, TypeError) as error:
+    except Exception as error:
         LOGGER.error('There was an error processing the location %s: %s',
                      location, error)
