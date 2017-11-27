@@ -36,8 +36,8 @@ class AllSearchResults(object):
     distillery_results : DistillerySearchResultsList
 
     """
-
-    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE,
+                 before=None, after=None):
         """Initialize an AllSearchResults object.
 
         Parameters
@@ -46,9 +46,9 @@ class AllSearchResults(object):
 
         """
         self.distillery_results = DistillerySearchResultsList(
-            query, page=page, page_size=page_size)
+            query, page=page, page_size=page_size, before=before, after=after)
         self.alert_results = AlertSearchResults(
-            query, page=page, page_size=page_size)
+            query, page=page, page_size=page_size, before=before, after=after)
         self.count = self.distillery_results.count + self.alert_results.count
 
     def as_dict(self, request):

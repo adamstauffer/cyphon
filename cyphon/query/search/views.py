@@ -18,6 +18,9 @@
 
 """
 
+# standard library
+from dateutil import parser
+
 # third party
 from rest_framework.decorators import api_view
 from rest_framework.status import HTTP_400_BAD_REQUEST
@@ -40,6 +43,32 @@ DISTILLERY_SEARCH_VIEW_NAME = DistillerySearchResults.VIEW_NAME
 DISTILLERIES_SEARCH_VIEW_NAME = 'search_distilleries'
 
 
+class QueryParams(object):
+    def __init__(self, params=None):
+        params = params if params else {}
+
+        self.query = params.get('query', '')
+        self.before = self._parse_date(params.get('before'))
+        self.after = self._parse_date(params.get('after'))
+        self.page = self._parse_int(params.get('page'), 1)
+        self.page_size = self._parse_int(
+            params.get('page_size'), DEFAULT_PAGE_SIZE)
+
+    @staticmethod
+    def _parse_date(date):
+        try:
+            return parser.parse(date)
+        except (ValueError, TypeError):
+            return None
+
+    @staticmethod
+    def _parse_int(integer, default):
+        try:
+            return int(integer)
+        except (ValueError, TypeError):
+            return default
+
+
 @api_view(['GET'])
 def search(request):
     """View that searches both alerts and distilleries based on a search query.
@@ -52,13 +81,14 @@ def search(request):
     -------
 
     """
-    query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query, request.user)
+    params = QueryParams(request.query_params)
+    search_query = SearchQuery(params.query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = AllSearchResults(
-            search_query, page=page, page_size=page_size)
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
@@ -78,16 +108,17 @@ def search_alerts(request):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
+    params = QueryParams(request.query_params)
     search_query = SearchQuery(
-        query, request.user,
+        params.query, request.user,
         ignored_parameter_types=[SearchParameterType.FIELD],
     )
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = AlertSearchResults(
-            search_query, page=page, page_size=page_size)
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
@@ -107,14 +138,14 @@ def search_distilleries(request):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query, request.user)
+    params = QueryParams(request.query_params)
+    search_query = SearchQuery(params.query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = DistillerySearchResultsList(
-            search_query, page=page, page_size=page_size,
-        )
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
@@ -136,9 +167,9 @@ def search_distillery(request, pk):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
+    params = QueryParams(request.query_params)
     search_query = SearchQuery(
-        query, request.user,
+        params.query, request.user,
         ignored_parameter_types=[SearchParameterType.DISTILLERY],
     )
     response = _create_empty_response(search_query)
@@ -151,9 +182,10 @@ def search_distillery(request, pk):
 
         if distillery:
             search_results = DistillerySearchResults(
-                search_query, page=page, page_size=page_size,
+                search_query, page=params.page,
+                page_size=params.page_size,
                 distillery=distillery,
-            )
+                after=params.after, before=params.before)
             response['results'] = search_results.as_dict(request)
 
         return Response(response)
@@ -171,10 +203,24 @@ def _get_query_params(query_params):
 
     Returns
     -------
-    (str, int, int)
+    Dict
         The string query, page, and page size.
     """
     query = query_params.get('query', '')
+    before = query_params.get('before')
+    after = query_params.get('after')
+
+    if before:
+        try:
+            before = parser.parse(before)
+        except ValueError:
+            before = None
+
+    if after:
+        try:
+            after = parser.parse(after)
+        except ValueError:
+            after = None
 
     try:
         page = int(query_params.get('page', 1))
@@ -186,7 +232,13 @@ def _get_query_params(query_params):
     except ValueError:
         page_size = DEFAULT_PAGE_SIZE
 
-    return query, page, page_size
+    return {
+        'query': query,
+        'page': page,
+        'page_size': page_size,
+        'before': before,
+        'after': after,
+    }
 
 
 def _create_empty_response(search_query):

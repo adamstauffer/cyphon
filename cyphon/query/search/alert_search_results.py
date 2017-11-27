@@ -38,7 +38,8 @@ class AlertSearchResults(SearchResults):
     """
     VIEW_NAME = 'search_alerts'
 
-    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE,
+                 after=None, before=None):
         """Find alerts that match a SearchQuery.
 
         Parameters

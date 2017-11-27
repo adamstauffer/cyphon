@@ -113,7 +113,9 @@ class SearchQuery(object):
     per search query.
     """
 
-    def __init__(self, query, user, ignored_parameter_types=None):
+    def __init__(
+            self, query, user,
+            before=None, after=None, ignored_parameter_types=None):
         """Initialize a SearchQuery.
 
         Parameters

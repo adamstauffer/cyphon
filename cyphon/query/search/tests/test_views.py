@@ -20,23 +20,103 @@ Tests for the search endpoints.
 
 # standard library
 from unittest.mock import patch
+from unittest import TestCase
+from datetime import datetime
 
 # local
 from appusers.models import AppUser
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
+from ..views import QueryParams
+from ..search_results import DEFAULT_PAGE_SIZE
 
 MOCK_RESULTS_LIST = [{'id': 1, 'content': 'content'}]
-
 MOCK_RESULTS = {
     'count': 1,
     'results': MOCK_RESULTS_LIST,
 }
-
 MOCK_FIND = patch(
     'distilleries.models.Distillery.find',
     return_value=MOCK_RESULTS,
 )
+
+
+class QueryParamsTestCase(TestCase):
+    def test_correct_default_params(self):
+        """
+        Tests that the object uses the correct default parameters.
+        """
+        params = QueryParams()
+
+        self.assertEqual(params.query, '')
+        self.assertEqual(params.page, 1)
+        self.assertEqual(params.page_size, DEFAULT_PAGE_SIZE)
+        self.assertEqual(params.before, None)
+        self.assertEqual(params.after, None)
+
+    def test_query_parsing(self):
+        """
+        Tests that the query parameter is passed through.
+        """
+        params = QueryParams({'query': 'oh la la'})
+
+        self.assertEqual(params.query, 'oh la la')
+
+    def test_page_parsing(self):
+        """
+        Tests that an integer is parsed from the page parameter.
+        """
+        params = QueryParams({'page': '34'})
+
+        self.assertTrue(type(params.page) is int)
+        self.assertEqual(params.page, 34)
+
+    def test_string_page_type(self):
+        """
+        Tests that a word in the page parameter is ignored.
+        """
+        params = QueryParams({'page': 'meep'})
+
+        self.assertEqual(params.page, 1)
+
+    def test_page_size_parsing(self):
+        """
+        Tests that page_size is correctly parsed.
+        """
+        params = QueryParams({'page_size': '32'})
+
+        self.assertTrue(type(params.page_size) is int)
+        self.assertEqual(params.page_size, 32)
+
+    def test_string_page_size_type(self):
+        """
+        Tests that a word in the page_size parameter is ignored.
+        """
+        params = QueryParams({'page_size': 'meep'})
+
+        self.assertEqual(params.page_size, DEFAULT_PAGE_SIZE)
+
+    def test_date_parsing(self):
+        """
+        Tests that a date is correctly parsed.
+        """
+        params = QueryParams({'before': '2017-11-27T06:00:00+05:00'})
+
+        self.assertTrue(isinstance(params.before, datetime))
+        self.assertEqual(params.before.year, 2017)
+        self.assertEqual(params.before.month, 11)
+        self.assertEqual(params.before.hour, 6)
+        self.assertEqual(params.before.minute, 0)
+        self.assertEqual(params.before.second, 0)
+        self.assertEqual(params.before.day, 27)
+
+    def test_incorrect_date_type(self):
+        """
+        Tests that an incorrect date string is ignored.
+        """
+        params = QueryParams({'before': 'wrong'})
+
+        self.assertIsNone(params.before)
 
 
 class SearchViewBaseTestCase(CyphonAPITestCase):
