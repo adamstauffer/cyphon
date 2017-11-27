@@ -44,7 +44,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from engines.registry import ENGINES_PACKAGE, ENGINE_MODULE, BACKEND_CHOICES
-from utils.validators.validators import db_name_validator
+from utils.validators.validators import db_name_validator, lowercase_validator
 
 _PAGE_SIZE = settings.PAGE_SIZE
 _WAREHOUSE_SETTINGS = settings.WAREHOUSES
@@ -108,8 +108,10 @@ class Warehouse(models.Model):
 
     backend = models.CharField(max_length=40, choices=BACKEND_CHOICES,
                                default=_DEFAULT_STORAGE_ENGINE.lower())
-    name = models.CharField(max_length=40,
-                            validators=[db_name_validator])
+    name = models.CharField(
+        max_length=40,
+        validators=[db_name_validator, lowercase_validator]
+    )
     time_series = models.BooleanField(
         default=False,
         help_text=_('When used with Elasticsearch, stores each day\'s '
