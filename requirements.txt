@@ -50,7 +50,7 @@ requests==2.18.4
 sauceclient==1.0.0
 selenium==3.7.0
 six==1.10.0
-testfixtures==5.3.0
+testfixtures==5.3.1
 textblob==0.13.1
 tlslite==0.4.9
 tweepy==3.5.0
