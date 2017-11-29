@@ -52,7 +52,8 @@ class AlertSearchResults(SearchResults):
         )
         self.results = []
 
-        queryset = self._get_alert_search_queryset(query)
+        queryset = self._get_alert_search_queryset(
+            query, after=after, before=before)
 
         if queryset:
             self.results = self._get_results_page(
@@ -203,13 +204,17 @@ class AlertSearchResults(SearchResults):
         return list(set(field_names))
 
     @staticmethod
-    def _get_alert_search_queryset(query):
+    def _get_alert_search_queryset(query, after=None, before=None):
         """Return the queryset of alerts matching particular keywords.
 
         Parameters
         ----------
         query : query.search.search_query.SearchQuery
             Keywords to search for.
+
+        after: datetime
+
+        before: datetime
 
         Returns
         -------
@@ -236,6 +241,11 @@ class AlertSearchResults(SearchResults):
         )
         alert_qs = alert_qs.filter(keyword_query)
         alert_qs = alert_qs.filter(distillery__in=distillery_qs)
+
+        if after:
+            alert_qs = alert_qs.filter(created_date__gte=after)
+        if before:
+            alert_qs = alert_qs.filter(created_date__lte=before)
 
         return alert_qs
 
