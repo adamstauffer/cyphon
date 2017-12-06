@@ -33,7 +33,7 @@ JIRA Oauth Example
     # Replace with the ID of a new issue you can use for testing
     NEW_ISSUE = 'BULK-1'
 
-    REQUEST_TOKEN_URL = JIRA_URL + '%s/plugins/servlet/oauth/request-token'
+    REQUEST_TOKEN_URL = JIRA_URL + 'plugins/servlet/oauth/request-token'
     ACCESS_TOKEN_URL = JIRA_URL + 'plugins/servlet/oauth/access-token'
     AUTHORIZE_URL = JIRA_URL + 'plugins/servlet/oauth/authorize'
     DATA_URL = JIRA_URL + 'rest/api/2/issue/' + NEW_ISSUE
