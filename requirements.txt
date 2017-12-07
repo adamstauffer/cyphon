@@ -27,7 +27,7 @@ feedparser==5.2.1
 geoip2==2.6.0
 geopy==1.11.0
 gunicorn==19.7.1
-html5lib==0.999999999
+html5lib==1.0.1
 httmock==1.2.6
 httplib2==0.10.3
 jira==1.0.10
