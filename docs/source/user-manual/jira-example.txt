@@ -23,9 +23,9 @@ JIRA Oauth Example
     # Replace with the path to your RSA .pem file
     RSA_PEM_FILEPATH = '../rsa.pem'
 
-    # Replace with your own consumer key and secret
+    # Replace with your own consumer key and shared secret
     CONSUMER_KEY = 'oauth-sample-consumer'
-    CONSUMER_SECRET = 'dont_care'
+    CONSUMER_SECRET = 'your-consumer-secret'
 
     # Replace with the URL for your JIRA instance (include the end slash!)
     JIRA_URL = 'http://localhost:8090/jira/'
@@ -41,36 +41,29 @@ JIRA Oauth Example
 
     class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
         name = 'RSA-SHA1'
-
         def signing_base(self, request, consumer, token):
             if not hasattr(request, 'normalized_url') \
                     or request.normalized_url is None:
                 raise ValueError("Base URL for request is not set.")
-
             sig = (
                 oauth.escape(request.method),
                 oauth.escape(request.normalized_url),
                 oauth.escape(request.get_normalized_parameters()),
             )
-
             key = '%s&' % oauth.escape(consumer.secret)
             if token:
                 key += oauth.escape(token.secret)
             raw = '&'.join(sig)
             return key, raw
-
         def sign(self, request, consumer, token):
             """Build the base signature string."""
             key, raw = self.signing_base(request, consumer, token)
-
+            raw = bytes(raw, 'utf8')
             with open(RSA_PEM_FILEPATH, 'r') as rsa_file:
                 data = rsa_file.read()
-
             private_key_string = data.strip()
-
             private_key = keyfactory.parsePrivateKey(private_key_string)
             signature = private_key.hashAndSign(raw)
-
             return base64.b64encode(signature)
 
 
@@ -87,9 +80,9 @@ JIRA Oauth Example
     client.set_signature_method(SignatureMethod_RSA_SHA1())
 
 
-    # Step 1: Get a request token. This is a temporary token that is used for
-    # having the user authorize an access token and to sign the request to obtain
-    # said access token.
+    # STEP 1: Get a request token. This is a temporary token that is
+    # used for authorizing an access token and to sign the request to
+    # obtain said access token.
 
     resp, content = client.request(REQUEST_TOKEN_URL, "POST")
     if resp['status'] != '200':
@@ -100,37 +93,19 @@ JIRA Oauth Example
     oauth_token = request_token[b'oauth_token']
     oauth_token_secret = request_token[b'oauth_token_secret']
 
-    print("Request Token:", request_token)
-    print("    - oauth_token        = %s" % oauth_token.decode('utf-8'))
-    print("    - oauth_token_secret = %s" % oauth_token_secret.decode('utf-8'))
-    print(resp, content)
 
+    # STEP 2: Authorize the access token. You'll need to visit following
+    # link in your browser to do this!
 
-    # Step 2: Redirect to the provider. Since this is a CLI script we do not
-    # redirect. In a web application you would redirect the user to the URL
-    # below.
-
-    print("Go to the following link in your browser:")
+    print("GO TO THE FOLLOWING LINK IN YOUR BROWSER:")
     print("%s?oauth_token=%s" % (AUTHORIZE_URL, oauth_token.decode('utf-8')))
     print()
 
-    # After the user has granted access to you, the consumer, the provider will
-    # redirect you to whatever URL you have told them to redirect to. You can
-    # usually define this in the oauth_callback argument as well.
-    accepted = 'n'
-    while accepted.lower() == 'n':
-        accepted = input('Have you authorized me? (y/n) ')
-    oauth_verifier = input('What is the PIN? ')
 
-
-    # Step 3: Once the consumer has redirected the user back to the oauth_callback
-    # URL, you can request the access token the user has approved. You use the
-    # request token to sign this request. After this is done, you throw away the
-    # request token and use the access token returned. You should store this
-    # access token somewhere safe, like a database, for future use.
+    # STEP 3: Request the access token, using the request token to sign
+    # the request.
     token = oauth.Token(request_token[b'oauth_token'].decode('utf-8'),
                         request_token[b'oauth_token_secret'].decode('utf-8'))
-    token.set_verifier(oauth_verifier)
 
     client = oauth.Client(consumer, token)
     client.set_signature_method(SignatureMethod_RSA_SHA1())
@@ -146,7 +121,6 @@ JIRA Oauth Example
     print("    - oauth_token_secret = %s" % oauth_token_secret.decode('utf-8'))
     print()
     print("You may now access protected resources using the access tokens above.")
-    print(resp, content)
 
     # Now let's try to access the same issue again with the access token.
     # We should get a 200!
@@ -157,4 +131,3 @@ JIRA Oauth Example
     resp, content = client.request(DATA_URL, "GET")
     if resp['status'] != '200':
         raise Exception("Should have access!")
-
