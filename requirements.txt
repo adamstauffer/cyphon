@@ -8,7 +8,7 @@ boto3==1.4.8
 celery==4.1.0
 cryptography==2.1.4
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
-django-ckeditor==5.3.1
+django-ckeditor==5.4.0
 django-constance==2.0.0
 django-extensions==1.9.8
 django-filter==1.1.0
