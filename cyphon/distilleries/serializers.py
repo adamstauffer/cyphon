@@ -40,7 +40,6 @@ class DistilleryDetailSerializer(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
     container = ContainerSerializer()
-    name = serializers.CharField(source='__str__')
     contexts = ContextSerializer(many=True)
 
     class Meta(object):
@@ -62,7 +61,6 @@ class DistilleryListSerializer(serializers.ModelSerializer):
     """Serializer for a |Distillery| list."""
 
     id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
-    name = serializers.CharField(source='__str__')
 
     class Meta(object):
         """Metadata options."""

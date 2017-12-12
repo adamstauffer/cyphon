@@ -37,14 +37,16 @@ class DistilleryAdmin(admin.ModelAdmin):
     """Customizes admin pages for |Distilleries|."""
 
     list_display = [
+        'name',
         'collection',
         'container',
         'is_shell',
     ]
-    list_display_links = ['collection', 'container']
+    list_display_links = ['name', 'collection']
     fields = [
+        'name',
         'collection',
         'container',
         'is_shell',
-        'categories'
+        'categories',
     ]

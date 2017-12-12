@@ -138,6 +138,10 @@ class Distillery(models.Model):
 
     _DATE_KEY = _DISTILLERY_SETTINGS['DATE_KEY']
 
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
     collection = models.OneToOneField(
         Collection,
         primary_key=True,
