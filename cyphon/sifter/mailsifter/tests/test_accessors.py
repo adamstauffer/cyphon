@@ -269,6 +269,20 @@ class GetFirstAttachmentTestCase(MailHelperTestCase):
         expected = None
         self.assertEqual(actual, expected)
 
+    def test_using_file_extension(self):
+        """
+        Tests the get_first_attachment function using file extension.
+        """
+        mock_settings_1 = {
+            'ALLOWED_EMAIL_ATTACHMENTS': (),
+            'ALLOWED_FILE_EXTENSIONS': ('.jar',),
+        }
+        with patch.dict('sifter.mailsifter.accessors.settings.MAILSIFTER',
+                        mock_settings_1):
+            self.msg.attach(self.application)
+            attachment = accessors.get_first_attachment(self.msg)
+            self.assertIsNotNone(attachment)
+
 
 class GetAttachmentsTestCase(MailHelperTestCase):
     """
