@@ -43,7 +43,7 @@ class DocumentSavedSignalTestCase(TransactionTestCase):
 
     def setUp(self):
         self.distillery = Distillery.objects.get_by_natural_key(
-            'mongodb', 'test_database', 'test_posts')
+            'mongodb.test_database.test_posts')
         doc = {'text': 'this is a text post'}
         self.doc_obj = DocumentObj(
             data=doc,

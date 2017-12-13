@@ -69,11 +69,11 @@ class DistilleryFilterParameterTestCase(TestCase):
         self.assertEqual(len(parameter.distilleries), 2)
         self.assertEqual(
             str(parameter.distilleries[0]),
-            'mongodb.test_database.test_docs',
+            'elasticsearch.test_index.test_docs',
         )
         self.assertEqual(
             str(parameter.distilleries[1]),
-            'elasticsearch.test_index.test_docs',
+            'mongodb.test_database.test_docs',
         )
 
     def test_collection_picker(self):
@@ -205,8 +205,8 @@ class DistilleryFilterParameterTestCase(TestCase):
             'collection': 'test_docs',
             'warehouse': '*',
             'distilleries': [
-                'mongodb.test_database.test_docs',
                 'elasticsearch.test_index.test_docs',
+                'mongodb.test_database.test_docs',
             ],
             'errors': [],
         })
