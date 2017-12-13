@@ -9,7 +9,11 @@ def populate_names(apps, schema_editor):
     """Populate names for Distilleries that don't have one."""
     Distillery = apps.get_model('distilleries', 'Distillery')
     for distillery in Distillery.objects.filter(name__isnull=True):
-        distillery.name = str(distillery.collection)
+        collection = distillery.collection
+        warehouse = collection.warehouse
+        distillery.name = '%s.%s.%s' % (warehouse.backend, warehouse.name,
+                                        collection.name)
+        distillery.name = 'test'
         distillery.save()
 
 
