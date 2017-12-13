@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='distillery',
             name='name',
-            field=models.CharField(default='New Distillery', max_length=255, null=True),
+            field=models.CharField(max_length=255, null=True),
             preserve_default=False,
         ),
     ]
