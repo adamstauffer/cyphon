@@ -36,17 +36,20 @@ from distilleries.models import Distillery
 class DistilleryAdmin(admin.ModelAdmin):
     """Customizes admin pages for |Distilleries|."""
 
-    list_display = [
-        'name',
-        'collection',
-        'container',
-        'is_shell',
-    ]
-    list_display_links = ['name', 'collection']
     fields = [
         'name',
         'collection',
         'container',
         'is_shell',
         'categories',
+    ]
+    list_display = [
+        'name',
+        'collection',
+        'container',
+        'is_shell',
+    ]
+    list_display_links = [
+        'name',
+        'collection',
     ]
