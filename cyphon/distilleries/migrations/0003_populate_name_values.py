@@ -29,7 +29,6 @@ def populate_names(apps, schema_editor):
         warehouse = collection.warehouse
         distillery.name = '%s.%s.%s' % (warehouse.backend, warehouse.name,
                                         collection.name)
-        distillery.name = 'test'
         distillery.save()
 
 
