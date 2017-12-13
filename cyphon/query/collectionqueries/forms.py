@@ -56,17 +56,14 @@ class CollectionQueryForm(forms.Form):
     value = forms.CharField()
 
     def __init__(self, *args, **kwargs):
-        backend = kwargs.pop('backend', None)
-        database = kwargs.pop('database', None)
-        collection = kwargs.pop('collection', None)
+        name = kwargs.pop('name', None)
         super(CollectionQueryForm, self).__init__(*args, **kwargs)
 
-        if backend and database and collection:
+        if name:
 
             # TODO(LH): provide contingency if no Distillery is associated with
             # the warehouse
-            distillery = Distillery.objects.get_by_natural_key(backend, database,
-                                                               collection)
+            distillery = Distillery.objects.get_by_natural_key(name)
             field_choices = self._get_field_choices(distillery.bottle)
             operator_choices = self._get_operator_choices()
 

@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'distilleries',
-                'ordering': ['collection'],
+                'ordering': ['name'],
             },
         ),
     ]

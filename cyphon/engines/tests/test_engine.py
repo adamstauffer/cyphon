@@ -120,9 +120,7 @@ class EngineTestCase(EngineBaseTestCase):
     Class for testing the Engine class.
     """
     def setUp(self):
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index', 
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         self.engine = Engine(distillery.collection)
 
     def test_find_by_id(self):
