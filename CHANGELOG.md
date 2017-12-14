@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **cyclops.conf**: changed Cyclops version from 0.4.4 to 0.5.0 ([009ece0](https://github.com/dunbarcyber/cyphon/commit/009ece0))
 - **cyphon.tasks, monitors**: Monitor status is updated through polling ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
 - **query.search**: search terms joined with AND instead of OR ([09659ee](https://github.com/dunbarcyber/cyphon/commit/09659ee))
+- **query.search.distillery_filter_parameter**: filters by given distillery name instead of the combination warehouse.collection. ([5fbb1a8](https://github.com/dunbarcyber/cyphon/commit/5fbb1a8))
 
 ### Fixed
 
