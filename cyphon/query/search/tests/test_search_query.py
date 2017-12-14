@@ -105,7 +105,7 @@ class SearchQueryTestCase(TestCase):
         Tests that a distillery filter string is correctly identified.
         """
         query = SearchQuery('@source="test_logs"', self.user)
-        print(query.distillery_filter_parameter)
+
         self.assertTrue(query.is_valid())
         self.assertIsNotNone(query.distillery_filter_parameter)
         self.assertIsInstance(
@@ -116,7 +116,7 @@ class SearchQueryTestCase(TestCase):
         """
         Tests that a distillery with a hyphen is correctly identified.
         """
-        query = SearchQuery('@source=test-logs.*', self.user)
+        query = SearchQuery('@source="test-logs"', self.user)
 
         self.assertFalse(query.is_valid())
         self.assertIsNotNone(query.distillery_filter_parameter)

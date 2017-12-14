@@ -119,19 +119,7 @@ class DistilleryFilterParameter(SearchParameter):
 
         return distillery_filter
 
-    def _get_collections(self, collection):
-        collections = Collection.objects.filter(name__icontains=collection)
-
-        if not collections.count():
-            self._add_error(
-                DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format(
-                    collection
-                )
-            )
-
-        return collections
-
-    def _get_distilleries(self, collection, user):
+    def _get_distilleries(self, name, user):
         """Return the distillery objects related to warehouse/collection names.
 
         If a related distillery cannot be found, adds a
@@ -139,8 +127,8 @@ class DistilleryFilterParameter(SearchParameter):
 
         Parameters
         ----------
-        collection : str
-            Collection name to get related distilleries with.
+        name : str
+            Distillery name to get related distilleries with.
 
         user: appusers.models.AppUser
 
@@ -150,24 +138,16 @@ class DistilleryFilterParameter(SearchParameter):
             Distilleries related to the given warehouse/collection names.
 
         """
-        collections = self._get_collections(collection)
-
-        if not self.is_valid():
-            return Distillery.objects.none()
-
-        distillery_qs = Distillery.objects.all()
+        distillery_qs = Distillery.objects.filter(name__icontains=name)
 
         if not user.is_staff:
             distillery_qs = distillery_qs.filter(company=user.company)
 
-        distilleries_qs = distillery_qs.filter(
-            collection__in=collections.values_list('id', flat=True),
-        )
+        if not distillery_qs.count():
+            self._add_error(
+                DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format(name))
 
-        if not distilleries_qs.count():
-            self._add_error(DistilleryFilterParameter.NO_MATCHING_DISTILLERIES)
-
-        return distilleries_qs
+        return distillery_qs
 
     def as_dict(self):
         """Return a JSON serializable representation of this object.

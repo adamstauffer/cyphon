@@ -301,7 +301,7 @@ class DistillerySearchResultsListTestCase(TestCase):
                 'results': MOCK_RESULTS_LIST,
                 'distillery': {
                     'id': 1,
-                    'name': 'test_posts',
+                    'name': 'mongodb.test_database.test_posts',
                     'url': 'http://testserver/api/v1/distilleries/1/',
                 }
             }]

@@ -310,7 +310,7 @@ class SearchDistilleriesViewTestCase(SearchViewBaseTestCase):
         Tests that the correct result shape is returned from the endpoint.
         """
         response = self._get_mock_response(
-            '?query=@source="test_mail" something'
+            '?query=%40source%3D%22test_mail%22+something'
         )
         self._is_valid_response(response)
         self.assertEqual(response.data['results']['count'], 1)
@@ -370,7 +370,7 @@ class SearchDistilleryViewTestCase(SearchViewBaseTestCase):
         Tests that distillery filter parameters are ignored.
         """
         response = self._get_empty_mock_response(
-            '2/?query=@source="test_mail" something',
+            '2/?query=%40source%3D%22test_mail%22+something',
         )
         self._is_valid_response(response)
         self.assertEqual(response.data['query']['distilleries'], None)

@@ -46,11 +46,11 @@ class DistilleryFilterParameterTestCase(TestCase):
         self.assertEqual(len(parameter.distilleries), 2)
         self.assertEqual(
             str(parameter.distilleries[0]),
-            'test_docs',
+            'elasticsearch.test_index.test_docs',
         )
         self.assertEqual(
             str(parameter.distilleries[1]),
-            'test_docs',
+            'mongodb.test_database.test_docs',
         )
 
     def test_collection_picker(self):
@@ -59,7 +59,7 @@ class DistilleryFilterParameterTestCase(TestCase):
         a particular distillery.
         """
         parameter = DistilleryFilterParameter(
-            3, '@source=test_database.test_posts', self.user)
+            3, '@source="test_database.test_posts"', self.user)
 
         self.assertTrue(parameter.is_valid())
         self.assertEqual(len(parameter.distilleries), 1)
@@ -150,8 +150,8 @@ class DistilleryFilterParameterTestCase(TestCase):
             'index': 3,
             'filter': 'test_docs',
             'distilleries': [
-                'test_docs',
-                'test_docs',
+                'elasticsearch.test_index.test_docs',
+                'mongodb.test_database.test_docs',
             ],
             'errors': [],
         })
@@ -178,6 +178,6 @@ class DistilleryFilterParameterTestCase(TestCase):
             'filter': 'bleh',
             'distilleries': [],
             'errors': [
-                DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format('bleh'),
+                DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format('bleh'),
             ],
         })
