@@ -54,10 +54,9 @@ class SearchParameterTypeTestCase(TestCase):
     """
 
     VALID_DISTILLERIES = [
-        '@source=',
-        '@source=*.mail',
-        '@source=personal.mail',
-        '@source=persona*',
+        '@source=""',
+        '@source="mail"',
+        '@source="mail stuff"',
     ]
     """list of str
 

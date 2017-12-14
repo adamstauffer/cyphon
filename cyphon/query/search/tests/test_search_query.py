@@ -104,8 +104,8 @@ class SearchQueryTestCase(TestCase):
         """
         Tests that a distillery filter string is correctly identified.
         """
-        query = SearchQuery('@source=*.test_logs', self.user)
-
+        query = SearchQuery('@source="test_logs"', self.user)
+        print(query.distillery_filter_parameter)
         self.assertTrue(query.is_valid())
         self.assertIsNotNone(query.distillery_filter_parameter)
         self.assertIsInstance(
@@ -134,13 +134,13 @@ class SearchQueryTestCase(TestCase):
         used.
         """
         query = SearchQuery(
-            '@source=*.test_logs @source=*.test_logs', self.user)
+            '@source="test_logs" @source="test_logs"', self.user)
 
         self.assertFalse(query.is_valid())
         self.assertEqual(len(query.errors), 1)
         self.assertEqual(
             query.errors[0],
             SearchQuery.MULTIPLE_DISTILLERY_FILTERS.format(
-                '@source=*.test_logs', 1,
+                '@source="test_logs"', 1,
             ),
         )
