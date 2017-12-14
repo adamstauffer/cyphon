@@ -379,3 +379,10 @@ class FieldSearchParameterTestCase(TestCase):
 
         for distillery in distilleries:
             self.assertTrue(parameter.is_related_to_distillery(distillery))
+
+    def test_ip_address_value(self):
+        parameter = FieldSearchParameter(0, 'ip_address=123.123.123.123')
+
+        self.assertTrue(parameter.is_valid())
+        self.assertEqual(
+            parameter.data_field.field_type, 'GenericIPAddressField')

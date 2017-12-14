@@ -60,6 +60,9 @@ class MailHelperTestCase(TestCase):
         self.java = MIMEApplication('', 'java')
         self.java['Content-Disposition'] = 'attachment; filename=' + self.java_file
 
+        self.application = MIMEApplication('')
+        self.application['Content-Disposition'] = 'attachment; filename=' + self.java_file
+
         self.text_file = 'test.txt'
         self.text_attach = MIMEText('mock_txt_payload', 'plain')
         self.text_attach['Content-Disposition'] = 'attachment; filename=' + self.text_file

@@ -109,13 +109,13 @@ class DistilleryFilterParameter(SearchParameter):
 
         if match_object is None:
             self._add_error(DistilleryFilterParameter.INVALID_PARAMETER)
-            return None
+            return ''
 
         distillery_filter = match_object.group('filter')
 
         if distillery_filter is None:
             self._add_error(DistilleryFilterParameter.FILTER_VALUE_IS_EMPTY)
-            return None
+            return ''
 
         return distillery_filter
 

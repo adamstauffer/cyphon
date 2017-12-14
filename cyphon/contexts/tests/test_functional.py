@@ -34,12 +34,8 @@ class ContextFunctionalTest(ModelPreviewFunctionalTest):
     def setUp(self):
         super(ContextFunctionalTest, self).setUp()
         self.page = ContextPage(self.driver)
-        self.syslog = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                            'test_time_series',
-                                                            'test_syslogs')
-        self.mail = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                          'test_index',
-                                                          'test_mail')
+        self.syslog = Distillery.objects.get_by_natural_key('elasticsearch.test_time_series.test_syslogs')
+        self.mail = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_mail')
 
 
 class AddContextFunctionalTest(ContextFunctionalTest):

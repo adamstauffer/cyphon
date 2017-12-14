@@ -18,6 +18,9 @@
 Tests for the AlertSearchResults class.
 """
 
+#standard
+from dateutil import parser
+
 # third party
 from django.test import TestCase
 from django.test import RequestFactory
@@ -40,8 +43,10 @@ class AlertSearchResultsTestCase(TestCase):
         return self.request_factory.get('')
 
     @staticmethod
-    def _get_search_results(query, page=1, page_size=10):
-        return AlertSearchResults(query, page, page_size)
+    def _get_search_results(query, page=1, page_size=10,
+                            after=None, before=None):
+        return AlertSearchResults(query, page, page_size,
+                                  after=after, before=before)
 
     def setUp(self):
         self.request_factory = RequestFactory()
@@ -183,3 +188,21 @@ class AlertSearchResultsTestCase(TestCase):
         alert_results = self._get_search_results(passing_search)
 
         self.assertEqual(len(alert_results.results), 1)
+
+    def test_alert_time_filtering(self):
+        """
+        Tests that alerts are filtered by time.
+        """
+        search_query = SearchQuery('Acme', self.user)
+        alert_results = self._get_search_results(
+            search_query,
+            after=parser.parse('2015-03-01 02:41:00.468404+00:00'))
+
+        self.assertEqual(alert_results.count, 2)
+
+        alert_results = self._get_search_results(
+            search_query,
+            after=parser.parse('2015-03-01 02:39:24.468404+00:00'),
+            before=parser.parse('2015-03-01 02:41:24.468404+00:00'))
+
+        self.assertEqual(alert_results.count, 1)

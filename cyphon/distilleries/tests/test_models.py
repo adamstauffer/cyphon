@@ -45,22 +45,22 @@ class DistilleryManagerTestCase(TestCase):
     """
     fixtures = get_fixtures(['distilleries', 'alerts'])
 
-    def test_get_by_natural_key(self):
+    def test_get_by_collection_nk(self):
         """
         Tests the get_by_natural_key method when the Distillery exists.
         """
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_mail')
+        distillery = Distillery.objects.get_by_collection_nk('elasticsearch',
+                                                             'test_index',
+                                                             'test_mail')
         self.assertEqual(distillery.pk, 6)
 
     def test_natural_key_exception(self):
         """
-        Tests the get_by_natural_key method when the Distillery does not exist.
+        Tests the get_by_collection_nk method when the Distillery does not exist.
         """
         with LogCapture() as log_capture:
             natural_key = ['elasticsearch', 'test_index', 'fake_doctype']
-            Distillery.objects.get_by_natural_key(*natural_key)
+            Distillery.objects.get_by_collection_nk(*natural_key)
             log_capture.check(
                 ('warehouses.models',
                  'ERROR',
@@ -332,9 +332,7 @@ class DistilleryTestCase(TestCase, DistilleryTestCaseMixin):
         """
         data = {'subject': 'test title'}
         sample = {'title': 'test title'}
-        distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                           'test_database',
-                                                           'test_posts')
+        distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_posts')
         with patch('distilleries.models.Distillery.container') \
                 as mock_container:
             mock_container.get_blind_sample = Mock(return_value=sample)

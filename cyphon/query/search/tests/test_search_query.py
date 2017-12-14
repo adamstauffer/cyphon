@@ -112,6 +112,17 @@ class SearchQueryTestCase(TestCase):
             query.distillery_filter_parameter, DistilleryFilterParameter,
         )
 
+    def test_distillery_hyphen(self):
+        """
+        Tests that a distillery with a hyphen is correctly identified.
+        """
+        query = SearchQuery('@source=test-logs.*', self.user)
+
+        self.assertFalse(query.is_valid())
+        self.assertIsNotNone(query.distillery_filter_parameter)
+        self.assertIsInstance(query.distillery_filter_parameter,
+                              DistilleryFilterParameter)
+
     def test_parameter_errors(self):
         """
         Tests that the parameter errors are passed onto the search

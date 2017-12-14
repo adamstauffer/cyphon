@@ -20,6 +20,7 @@ Tests for the DistillerySearchResults Class.
 
 # standard library
 from unittest.mock import patch
+from dateutil import parser
 
 # third party
 from django.contrib.auth import get_user_model
@@ -67,7 +68,7 @@ class DistillerySearchResultsTestCase(TestCase):
     user_model = get_user_model()
 
     @staticmethod
-    def _get_instance(query, distillery):
+    def _get_instance(query, distillery, after=None, before=None):
         """
 
         Parameters
@@ -80,7 +81,8 @@ class DistillerySearchResultsTestCase(TestCase):
         DistillerySearchResults
         """
         with MOCK_FIND:
-            return DistillerySearchResults(query, distillery)
+            return DistillerySearchResults(
+                query, distillery, after=after, before=before)
 
     def setUp(self):
         self.user = self.user_model.objects.get(pk=1)
@@ -179,6 +181,28 @@ class DistillerySearchResultsTestCase(TestCase):
 
         self.assertEqual(distillery_results.count, 1)
         self.assertEqual(distillery_results.results, MOCK_RESULTS_LIST)
+
+    def test_time_search(self):
+        distillery = Distillery.objects.get(pk=6)
+        search_query = SearchQuery('body=test', self.user)
+        before_iso = '2017-11-27T06:00:00+05:00'
+        before_date = parser.parse(before_iso)
+        after_iso = '2017-11-27T06:00:00+05:00'
+        after_date = parser.parse(before_iso)
+        distillery_results = self._get_instance(
+            search_query, distillery, before=before_date, after=after_date)
+        fieldsets = get_fieldsets(distillery_results.engine_query.subqueries)
+
+        self.assertEqual(len(fieldsets), 3)
+        self.assertEqual(fieldsets[1].field_name, 'date')
+        self.assertEqual(fieldsets[1].field_type, 'DateTimeField')
+        self.assertEqual(fieldsets[1].operator, 'lte')
+        self.assertEqual(fieldsets[1].value, before_iso)
+
+        self.assertEqual(fieldsets[2].field_name, 'date')
+        self.assertEqual(fieldsets[2].field_type, 'DateTimeField')
+        self.assertEqual(fieldsets[2].operator, 'gte')
+        self.assertEqual(fieldsets[2].value, after_iso)
 
     def test_as_dict(self):
         """

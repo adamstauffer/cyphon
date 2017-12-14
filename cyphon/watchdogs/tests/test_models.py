@@ -81,9 +81,7 @@ class WatchdogBaseTestCase(TestCase):
         super(WatchdogBaseTestCase, cls).tearDownClass()
 
     def setUp(self):
-        self.distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                                'test_database',
-                                                                'test_docs')
+        self.distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_docs')
         self.email_wdog = Watchdog.objects.get_by_natural_key('inspect_emails')
         self.log_wdog = Watchdog.objects.get_by_natural_key('inspect_logs')
 
@@ -98,9 +96,7 @@ class WatchdogManagerTestCase(WatchdogBaseTestCase):
         Tests the find_relevant method for a Distillery that is not
         associated with any categories.
         """
-        distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                           'test_database',
-                                                           'test_posts')
+        distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_posts')
         relevant_watchdogs = Watchdog.objects.find_relevant(distillery)
         self.assertEqual(relevant_watchdogs.count(), 1)
         self.assertEqual(relevant_watchdogs[0].name, 'inspect_logs')
@@ -111,9 +107,7 @@ class WatchdogManagerTestCase(WatchdogBaseTestCase):
         Tests the find_relevant method for a Distillery that is
         associated with one category.
         """
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         relevant_watchdogs = Watchdog.objects.find_relevant(distillery)
         self.assertEqual(relevant_watchdogs.count(), 2)
         self.assertEqual(relevant_watchdogs[0].name, 'inspect_emails')
@@ -124,9 +118,7 @@ class WatchdogManagerTestCase(WatchdogBaseTestCase):
         Tests the find_relevant method for a Distillery that is
         associated with multiple categories.
         """
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_mail')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_mail')
         relevant_watchdogs = Watchdog.objects.find_relevant(distillery)
         self.assertEqual(relevant_watchdogs.count(), 2)
 
@@ -423,9 +415,7 @@ class WatchdogTransactionTestCase(TransactionTestCase):
     )
 
     def setUp(self):
-        self.distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                                'test_database',
-                                                                'test_docs')
+        self.distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_docs')
         self.email_wdog = Watchdog.objects.get_by_natural_key('inspect_emails')
 
     @patch_find_by_id

@@ -65,9 +65,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         """
 
         # distillery with no categories
-        distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                           'test_database',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
 
         doc_id = distillery._save_and_send_signal(self.data)
@@ -87,9 +85,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         watchdog.save()
 
         # distillery with categories
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
         doc_id = distillery._save_and_send_signal(self.data)
 
@@ -105,9 +101,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         """
 
         # distillery with categories
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
         doc_id = distillery._save_and_send_signal(self.data)
         watchdog = Watchdog.objects.get_by_natural_key('inspect_emails')

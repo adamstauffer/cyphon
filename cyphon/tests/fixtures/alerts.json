@@ -9,7 +9,7 @@
       "assigned_user": null,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["elasticsearch", "test_index", "test_logs"],
+      "distillery": ["elasticsearch.test_index.test_logs"],
       "title": "Acme Supply Co",
       "doc_id": 1,
       "location": "POINT (-78.2 36.4)"
@@ -26,7 +26,7 @@
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
       "title": "Threat Alert",
-      "distillery": ["mongodb", "test_database", "test_posts"],
+      "distillery": ["mongodb.test_database.test_posts"],
       "doc_id": 2,
       "location": "POINT (-78.2 36.4)",
       "data": {
@@ -53,7 +53,7 @@
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
       "title": "Acme Supply Co",
-      "distillery": ["mongodb", "test_database", "test_posts"],
+      "distillery": ["mongodb.test_database.test_posts"],
       "doc_id": 3,
       "data": {"foo": "bar"}
     }
@@ -69,7 +69,7 @@
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
       "title": "Acme Supply Co",
-      "distillery": ["mongodb", "test_database", "test_posts"],
+      "distillery": ["mongodb.test_database.test_posts"],
       "doc_id": 1,
       "data": {
         "subject": "test doc",
@@ -91,7 +91,7 @@
       "assigned_user": null,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 2,
       "location": "POINT (-78.2 36.4)"
     }
@@ -106,7 +106,7 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 3
     }
   },
@@ -132,7 +132,7 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 2,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 3,
       "location": "POINT (-78.2 36.4)"
     }
