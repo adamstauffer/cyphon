@@ -49,7 +49,7 @@ class AlertSearchResults(SearchResults):
         """
         super(AlertSearchResults, self).__init__(
             self.VIEW_NAME, query, page, page_size,
-        )
+            after=after, before=before)
         self.results = []
 
         queryset = self._get_alert_search_queryset(
@@ -57,8 +57,7 @@ class AlertSearchResults(SearchResults):
 
         if queryset:
             self.results = self._get_results_page(
-                queryset, page, page_size,
-            )
+                queryset, page, page_size)
             self.count = queryset.count()
 
     @staticmethod
@@ -99,13 +98,25 @@ class AlertSearchResults(SearchResults):
         queries = []
 
         for field_name in text_field_names:
+            sub_queries = []
             underscored_field_name = field_name.replace('.', '__')
             query_field = 'data__{}__icontains'.format(underscored_field_name)
-            queries.extend([
+            sub_queries += [
                 Q(**{query_field: keyword})
                 for keyword
-                in keywords
-            ])
+                in keywords]
+            queries.append(join_query(sub_queries, 'OR'))
+
+        return join_query(queries, 'AND')
+
+    @staticmethod
+    def _create_new_keyword_data_query(keyword, text_fields):
+        queries = []
+
+        for field in text_fields:
+            underscored_field = field.replace('.', '__')
+            query_field = 'data__{}__icontains'.format(underscored_field)
+            queries.append(Q(**{query_field: keyword}))
 
         return join_query(queries, 'OR')
 
@@ -122,7 +133,11 @@ class AlertSearchResults(SearchResults):
         list of Q
 
         """
-        return [Q(title__icontains=keyword) for keyword in keywords]
+        joined_query =join_query(
+            [Q(title__icontains=keyword) for keyword in keywords], 'AND')
+
+        print(joined_query)
+        return joined_query
 
     @staticmethod
     def _create_note_queries(keywords):
@@ -137,7 +152,17 @@ class AlertSearchResults(SearchResults):
         list of Q
 
         """
-        return [Q(analysis__notes__icontains=keyword) for keyword in keywords]
+        keywords_length = len(keywords)
+
+        if not keywords_length:
+            return Q()
+
+        if keywords_length == 1:
+            return Q(Q(analysis__notes__icontains=keywords[0]))
+
+        return join_query(
+            [Q(analysis__notes__icontains=keyword) for keyword in keywords],
+            'AND')
 
     @staticmethod
     def _get_alert_comments_query(keywords):
@@ -145,17 +170,44 @@ class AlertSearchResults(SearchResults):
 
         Parameters
         ----------
-        keywords : list of str
+        keywords : list of string
 
         Returns
         -------
-        list of Q
+        Q
 
         """
-        return [Q(comments__content__icontains=keyword) for keyword in keywords]
+        keywords_length = len(keywords)
+
+        if not keywords_length:
+            return Q()
+
+        if keywords_length == 1:
+            return Q(comments__content__icontains=keywords[0])
+
+        queries = [
+            Q(comments__content__icontains=keyword)
+            for keyword in keywords]
+
+        return join_query(queries, 'AND')
 
     @staticmethod
-    def _get_keyword_search_query(keywords, distilleries):
+    def _get_keyword_search_query(keyword, text_fields):
+        queries = [
+            Q(title__icontains=keyword),
+            Q(analysis__notes__icontains=keyword),
+            Q(comments__content__icontains=keyword)]
+
+        for field in text_fields:
+            underscored_field = field.replace('.', '__')
+            query_field = 'data__{}__icontains'.format(underscored_field)
+            queries.append(Q(**{query_field: keyword}))
+
+        return join_query(queries, 'OR')
+
+
+    @staticmethod
+    def _get_keyword_list_search_query(keywords, distilleries):
         """Create a search query that searches alerts for keywords.
 
         Parameters
@@ -170,17 +222,18 @@ class AlertSearchResults(SearchResults):
         Q
 
         """
-        queries = []
-        queries += [
-            AlertSearchResults._create_keyword_data_query(
-                keywords, distilleries,
-            )
-        ]
-        queries += AlertSearchResults._create_title_queries(keywords)
-        queries += AlertSearchResults._create_note_queries(keywords)
-        queries += AlertSearchResults._get_alert_comments_query(keywords)
+        if not keywords:
+            return Q()
 
-        return join_query(queries, 'OR')
+        text_fields = AlertSearchResults._get_shared_text_fields(distilleries)
+        queries = [
+            AlertSearchResults._get_keyword_search_query(keyword, text_fields)
+            for keyword in keywords]
+
+        if len(queries) == 1:
+            return queries[0]
+
+        return join_query(queries, 'AND')
 
     @staticmethod
     def _get_shared_text_fields(distilleries):
@@ -235,17 +288,16 @@ class AlertSearchResults(SearchResults):
         if query.distilleries.count():
             distillery_qs = query.distilleries
 
-        keyword_query = AlertSearchResults._get_keyword_search_query(
-            query.keywords,
-            distillery_qs,
-        )
-        alert_qs = alert_qs.filter(keyword_query)
         alert_qs = alert_qs.filter(distillery__in=distillery_qs)
 
         if after:
             alert_qs = alert_qs.filter(created_date__gte=after)
         if before:
             alert_qs = alert_qs.filter(created_date__lte=before)
+
+        keyword_query = AlertSearchResults._get_keyword_list_search_query(
+            query.keywords, distillery_qs)
+        alert_qs = alert_qs.filter(keyword_query)
 
         return alert_qs
 
@@ -298,6 +350,6 @@ class AlertSearchResults(SearchResults):
         parent_dict = super(AlertSearchResults, self).as_dict(request)
 
         parent_dict['results'] = self._serialize_alert_queryset(
-            self.results, request,
-        )
+            self.results, request)
+
         return parent_dict
