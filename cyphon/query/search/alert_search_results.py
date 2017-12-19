@@ -80,119 +80,18 @@ class AlertSearchResults(SearchResults):
         return AlertDetailSerializer(alert, context={'request': request}).data
 
     @staticmethod
-    def _create_keyword_data_query(keywords, distilleries):
-        """Create a search query that searches the alert data for keywords.
-
-        Parameters
-        ----------
-        keywords : list of str
-            Keywords to search for.
-
-        Returns
-        -------
-        Q
-
-        """
-        text_field_names = AlertSearchResults._get_shared_text_fields(
-            distilleries)
-        queries = []
-
-        for field_name in text_field_names:
-            sub_queries = []
-            underscored_field_name = field_name.replace('.', '__')
-            query_field = 'data__{}__icontains'.format(underscored_field_name)
-            sub_queries += [
-                Q(**{query_field: keyword})
-                for keyword
-                in keywords]
-            queries.append(join_query(sub_queries, 'OR'))
-
-        return join_query(queries, 'AND')
-
-    @staticmethod
-    def _create_new_keyword_data_query(keyword, text_fields):
-        queries = []
-
-        for field in text_fields:
-            underscored_field = field.replace('.', '__')
-            query_field = 'data__{}__icontains'.format(underscored_field)
-            queries.append(Q(**{query_field: keyword}))
-
-        return join_query(queries, 'OR')
-
-    @staticmethod
-    def _create_title_queries(keywords):
-        """Create search queries that search alert titles for keywords.
-
-        Parameters
-        ----------
-        keywords : list of str
-
-        Returns
-        -------
-        list of Q
-
-        """
-        joined_query =join_query(
-            [Q(title__icontains=keyword) for keyword in keywords], 'AND')
-
-        print(joined_query)
-        return joined_query
-
-    @staticmethod
-    def _create_note_queries(keywords):
-        """Create search queries that search alert notes for keywords.
-
-        Parameters
-        ----------
-        keywords : list of str
-
-        Returns
-        -------
-        list of Q
-
-        """
-        keywords_length = len(keywords)
-
-        if not keywords_length:
-            return Q()
-
-        if keywords_length == 1:
-            return Q(Q(analysis__notes__icontains=keywords[0]))
-
-        return join_query(
-            [Q(analysis__notes__icontains=keyword) for keyword in keywords],
-            'AND')
-
-    @staticmethod
-    def _get_alert_comments_query(keywords):
-        """Create search queries that search alert comments for keywords.
-
-        Parameters
-        ----------
-        keywords : list of string
-
-        Returns
-        -------
-        Q
-
-        """
-        keywords_length = len(keywords)
-
-        if not keywords_length:
-            return Q()
-
-        if keywords_length == 1:
-            return Q(comments__content__icontains=keywords[0])
-
-        queries = [
-            Q(comments__content__icontains=keyword)
-            for keyword in keywords]
-
-        return join_query(queries, 'AND')
-
-    @staticmethod
     def _get_keyword_search_query(keyword, text_fields):
+        """ Create a search query for searching by keyword.
+
+        Parameters
+        ----------
+        keyword : string
+        text_fields : list of DataField
+
+        Returns
+        -------
+        Q
+        """
         queries = [
             Q(title__icontains=keyword),
             Q(analysis__notes__icontains=keyword),
@@ -204,7 +103,6 @@ class AlertSearchResults(SearchResults):
             queries.append(Q(**{query_field: keyword}))
 
         return join_query(queries, 'OR')
-
 
     @staticmethod
     def _get_keyword_list_search_query(keywords, distilleries):
@@ -237,15 +135,15 @@ class AlertSearchResults(SearchResults):
 
     @staticmethod
     def _get_shared_text_fields(distilleries):
-        """
+        """Gets the shared text fields from a list of distilleries.
 
         Parameters
         ----------
-        distilleries
+        distilleries : list of Distillery
 
         Returns
         -------
-
+        list of DataFields
         """
         grouped_text_fields = [
             distillery.get_text_fields() for distillery in distilleries]
