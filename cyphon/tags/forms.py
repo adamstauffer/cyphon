@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Forms for selecting a Warehouse and constructing a database query.
+Forms for selecting a Tags and DataTaggers.
 """
 
 # third party

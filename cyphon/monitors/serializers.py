@@ -48,5 +48,4 @@ class MonitorSerializer(serializers.ModelSerializer):
             'last_healthy',
             'last_active_distillery',
             'last_saved_doc',
-            'last_doc',
         )

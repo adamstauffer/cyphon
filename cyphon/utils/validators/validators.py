@@ -82,7 +82,7 @@ def db_name_validator(db_name):
         raise ValidationError(_('Name cannot contain spaces'))
 
     elif re.search(r'\W', db_name.replace('-', '')):
-        raise ValidationError(_('Name cannot contain special characters'
+        raise ValidationError(_('Name cannot contain special characters '
                                 'other than underscores and hypens.'))
 
 

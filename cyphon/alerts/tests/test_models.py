@@ -101,7 +101,7 @@ class AlertModelTestCase(TestCase):
         Edit distillery so that it has a Company with a Codebook.
         """
         distillery = Distillery.objects.get_by_natural_key(
-            'elasticsearch', 'test_index', 'test_mail')
+            'elasticsearch.test_index.test_mail')
         distillery.company = Company.objects.get(pk=1)
         distillery.save()
         return distillery

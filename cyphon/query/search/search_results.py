@@ -51,7 +51,9 @@ class SearchResults(object):
 
     """
 
-    def __init__(self, view_name, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(
+            self, view_name, query,
+            page=1, page_size=DEFAULT_PAGE_SIZE, before=None, after=None):
         """Initialize a SearchResults object.
 
         Parameters
@@ -67,6 +69,8 @@ class SearchResults(object):
         self.count = 0
         self.query = query
         self.page = page
+        self.before = before
+        self.after = after
         self.page_size = page_size
         self.view_name = view_name
 

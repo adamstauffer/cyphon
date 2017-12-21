@@ -26,7 +26,6 @@ from django.conf import settings
 from rest_framework import status
 
 # local
-from appusers.models import AppUser
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 

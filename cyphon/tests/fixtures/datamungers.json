@@ -5,7 +5,7 @@
       "id": 1,
       "name": "syslog",
       "condenser": ["demo__syslog"],
-      "distillery": ["elasticsearch", "test_time_series", "test_syslogs"]
+      "distillery": ["elasticsearch.test_time_series.test_syslogs"]
     }
   },
   {
@@ -14,7 +14,7 @@
       "id": 2,
       "name": "snmptrap",
       "condenser": ["demo__snmptrap"],
-      "distillery": ["elasticsearch", "test_index", "test_logs"]
+      "distillery": ["elasticsearch.test_index.test_logs"]
     }
   }
 ]

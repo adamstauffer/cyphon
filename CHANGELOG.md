@@ -9,6 +9,40 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ## [Unreleased]
 
 
+<a name="1.6.0"></a>
+## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0) (2017-12-14)
+
+### Added
+
+- **distilleries**: added `name` property to Distillery model [PR #320](https://github.com/dunbarcyber/cyphon/pull/320) ([d25c147](https://github.com/dunbarcyber/cyphon/commit/d25c147))
+- **query.search**: added before and after filters to search views ([c3f3e64](https://github.com/dunbarcyber/cyphon/commit/c3f3e64))
+- **query.search**: added time filtering to alert results ([a993356](https://github.com/dunbarcyber/cyphon/commit/a993356))
+
+### Changed
+
+- **contexts**: changed `ContextManager.get_by_natural_key()` and `ContextFilterManager.get_by_natural_key()` to use `Distillery.name` [PR #320](https://github.com/dunbarcyber/cyphon/pull/320) ([d25c147](https://github.com/dunbarcyber/cyphon/commit/d25c147))
+- **cyclops.conf**: updated Cyclops version to 0.5.2 ([cc48152](https://github.com/dunbarcyber/cyphon/commit/cc48152))
+- **cyphon.tasks**: Monitor status is updated through polling ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
+- **distilleries**: changed `DistilleryManager.get_by_natural_key()` to use `Distillery.name` [PR #320](https://github.com/dunbarcyber/cyphon/pull/320) ([d25c147](https://github.com/dunbarcyber/cyphon/commit/d25c147))
+- **monitors**: Monitor status is updated through polling ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
+- **query.search**: search terms joined with AND instead of OR ([09659ee](https://github.com/dunbarcyber/cyphon/commit/09659ee))
+- **query.search.distillery_filter_parameter**: filters by given distillery name instead of the combination warehouse.collection. ([5fbb1a8](https://github.com/dunbarcyber/cyphon/commit/5fbb1a8))
+
+### Fixed
+
+- **docs**: fixed incorrect token request URL in JIRA oauth example [PR #315](https://github.com/dunbarcyber/cyphon/pull/315) ([7008c64](https://github.com/dunbarcyber/cyphon/commit/7008c64))
+- **query.search**: fixed search parameter for Distillery name with hyphens ([d64e38d](https://github.com/dunbarcyber/cyphon/commit/d64e38d))
+- **query.search**: fixed IPAddress field searches ([44feca7](https://github.com/dunbarcyber/cyphon/commit/44feca7))
+- **sifter.mailsifter**: allow either valid content type or valid file extension for email attachments [PR #319](https://github.com/dunbarcyber/cyphon/pull/319) ([efef0bc](https://github.com/dunbarcyber/cyphon/commit/efef0bc))
+- **warehouses**: added lowercase_validator to `Warehouse.name` for Elasticsearch compatibility ([598dd96](https://github.com/dunbarcyber/cyphon/commit/598dd96))
+- **utils.geometry.shapes**: fixed handling of hash-based Geo-point datatypes [PR #273](https://github.com/dunbarcyber/cyphon/pull/273) ([38b6e49](https://github.com/dunbarcyber/cyphon/commit/38b6e49))
+- **utils.geometry.shapes**: catch all exceptions in `convert_to_point()` [PR #298](https://github.com/dunbarcyber/cyphon/pull/298) ([598dd96](https://github.com/dunbarcyber/cyphon/commit/598dd96))
+
+### Removed
+
+- **reciever**: removed Monitor queue consumer ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
+
+
 <a name="1.5.3"></a>
 ## [1.5.3](https://github.com/dunbarcyber/cyphon/compare/1.5.2...1.5.3) (2017-10-13)
 

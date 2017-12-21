@@ -108,7 +108,6 @@ def process_msg(channel, method, properties, body):
     consumers = {
         'datachutes': DataChute.objects.process,
         'logchutes': LogChute.objects.process,
-        'monitors': Monitor.objects.process,
         'watchdogs': Watchdog.objects.process,
     }
 
@@ -180,7 +179,7 @@ def create_consumers(routing_key, num):
     ----------
     routing_key : str
         Indicates how the messages will be processed. Options are
-        'datachutes', 'logchutes', 'monitors', 'watchdogs'.
+        'datachutes', 'logchutes', 'watchdogs'.
 
     num : str
         A string representation of an integer representing the number of

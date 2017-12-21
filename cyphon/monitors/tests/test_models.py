@@ -31,8 +31,6 @@ from django.test import TestCase
 
 # local
 from alerts.models import Alert
-from cyphon.documents import DocumentObj
-from distilleries.models import Distillery
 from monitors.models import Monitor
 from tests.fixture_manager import get_fixtures
 from tests.mock import patch_find_by_id
@@ -47,6 +45,7 @@ class MonitorManagerTestCase(TestCase):
     """
     Tests clean method of the MonitorManager class.
     """
+
     fixtures = get_fixtures(['monitors'])
 
     def test_find_enabled(self):
@@ -188,30 +187,32 @@ class MonitorTestCase(TestCase):
         self.assertEqual(alert.distillery, self.monitor_red.last_active_distillery)
         self.assertEqual(alert.doc_id, self.monitor_red.last_saved_doc)
 
-    @patch('monitors.models.timezone.now', return_value=LATE)
-    def test_process(self, mock_now):
+    @patch('monitors.models.timezone.now', return_value=ON_TIME)
+    def test_update_status(self, mock_now):
         """
-        Tests the process method of the Monitor class.
+        Tests the update_status method of the Monitor class.
         """
         monitor = self.monitor_red
-        assert monitor.last_healthy != LATE
-        assert monitor.last_active_distillery.pk != 2
+        assert monitor.last_healthy != ON_TIME
+        assert monitor.last_active_distillery.pk != 1
         assert monitor.last_saved_doc != '11'
         assert monitor.status != 'GREEN'
 
-        distillery = Distillery.objects.get(pk=2)
-        collection = str(distillery)
-        doc_id = '11'
+        docs = [
+            {'count': 1, 'results': [{'_id': 1, 'created_date': LATE}]},
+            {'count': 1, 'results': [{'_id': 2, 'created_date': VERY_LATE}]},
+        ]
+        with patch('monitors.models.Distillery.find', side_effect=docs) \
+                as mock_find:
+            monitor.update_status()
+            mock_find.call_count = 2
 
-        doc_obj = DocumentObj(doc_id=doc_id, collection=collection)
-        monitor.process(doc_obj)
-
-        # get a fresh instance from the database
-        updated_monitor = Monitor.objects.get(pk=monitor.pk)
-        self.assertEqual(updated_monitor.last_healthy, LATE)
-        self.assertEqual(updated_monitor.last_active_distillery.pk, distillery.pk)
-        self.assertEqual(updated_monitor.last_saved_doc, doc_id)
-        self.assertEqual(updated_monitor.status, 'GREEN')
+            # get a fresh instance from the database
+            updated_monitor = Monitor.objects.get(pk=monitor.pk)
+            self.assertEqual(updated_monitor.last_healthy, VERY_LATE)
+            self.assertEqual(updated_monitor.last_active_distillery.pk, 1)
+            self.assertEqual(updated_monitor.last_saved_doc, '2')
+            self.assertEqual(updated_monitor.status, 'GREEN')
 
     @patch_find_by_id()
     @patch('alerts.models.Alert.teaser')
