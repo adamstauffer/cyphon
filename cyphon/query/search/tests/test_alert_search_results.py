@@ -212,8 +212,8 @@ class AlertSearchResultsTestCase(TestCase):
         """
         Tests that multiple keywords are considered.
         """
-        search_query = SearchQuery('super awesome mike', self.user)
+        search_query = SearchQuery('acme foobar', self.user)
         alert_results = self._get_search_results(search_query)
 
         self.assertEqual(alert_results.count, 1)
-        self.assertEqual(alert_results.results[0].id, 9)
+        self.assertEqual(alert_results.results[0].id, 4)
