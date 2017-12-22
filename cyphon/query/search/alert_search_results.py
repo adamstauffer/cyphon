@@ -178,15 +178,19 @@ class AlertSearchResults(SearchResults):
 
         alert_qs = Alert.objects.filter_by_user(query.user)
 
-        distillery_qs = Distillery.objects.all()
+        distillery_qs = None
 
         if not query.user.is_staff:
-            distillery_qs = distillery_qs.filter(company=query.user.company)
+            distillery_qs = Distillery.objects.filter(
+                company=query.user.company)
 
         if query.distilleries.count():
             distillery_qs = query.distilleries
 
-        alert_qs = alert_qs.filter(distillery__in=distillery_qs)
+        if distillery_qs:
+            alert_qs = alert_qs.filter(distillery__in=distillery_qs)
+        else:
+            distillery_qs = Distillery.objects.all()
 
         if after:
             alert_qs = alert_qs.filter(created_date__gte=after)

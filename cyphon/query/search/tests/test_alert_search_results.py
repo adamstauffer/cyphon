@@ -30,6 +30,7 @@ from django.contrib.auth import get_user_model
 from query.search.alert_search_results import AlertSearchResults
 from query.search.search_query import SearchQuery
 from tests.fixture_manager import get_fixtures
+from alerts.models import Alert
 
 
 class AlertSearchResultsTestCase(TestCase):
@@ -206,3 +207,13 @@ class AlertSearchResultsTestCase(TestCase):
             before=parser.parse('2015-03-01 02:41:24.468404+00:00'))
 
         self.assertEqual(alert_results.count, 1)
+
+    def test_multiple_keywords(self):
+        """
+        Tests that multiple keywords are considered.
+        """
+        search_query = SearchQuery('super awesome mike', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 9)

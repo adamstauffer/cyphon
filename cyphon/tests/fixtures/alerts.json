@@ -138,6 +138,33 @@
     }
   },
   {
+    "model": "alerts.alert",
+    "fields": {
+      "id": 9,
+      "level": "HIGH",
+      "status": "BUSY",
+      "created_date": "2015-03-01 02:41:24.468404+00:00",
+      "assigned_user": null,
+      "alarm_type": ["watchdogs", "watchdog"],
+      "alarm_id": 1,
+      "title": "Koopa Trooper",
+      "distillery": ["mongodb.test_database.test_posts"],
+      "doc_id": 2,
+      "location": "POINT (-78.2 36.4)",
+      "data": {
+        "content": {
+          "title": "Super cool",
+          "text": "Awesome"
+        },
+        "user": {
+          "email": "mike@email.com",
+          "name": "Magic Mike",
+          "screenname": "magic_mike"
+        }
+      }
+    }
+  },
+  {
     "model": "alerts.analysis",
     "fields": {
       "alert": 1,
@@ -153,6 +180,15 @@
       "created_date": "2015-03-01 02:46:24.468404+00:00",
       "last_updated": "2015-03-01 02:40:24.468404+00:00",
       "notes": "Some example notes."
+    }
+  },
+  {
+    "model": "alerts.analysis",
+    "fields": {
+      "alert": 9,
+      "created_date": "2015-03-01 02:40:24.468404+00:00",
+      "last_updated": "2015-03-01 02:40:24.468404+00:00",
+      "notes": "Secret"
     }
   }
 ]
