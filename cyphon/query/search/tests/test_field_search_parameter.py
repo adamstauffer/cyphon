@@ -386,3 +386,26 @@ class FieldSearchParameterTestCase(TestCase):
         self.assertTrue(parameter.is_valid())
         self.assertEqual(
             parameter.data_field.field_type, 'GenericIPAddressField')
+
+    def test_nested_field(self):
+        """
+        Tests that a nested field returns a data field.
+        """
+        parameter = FieldSearchParameter(0, 'content.text=test')
+
+        self.assertTrue(parameter.is_valid())
+        self.assertEqual(parameter.data_field.field_type, 'TextField')
+
+        parameter = FieldSearchParameter(0, 'not.exist=test')
+
+        self.assertFalse(parameter.is_valid())
+        self.assertEqual(
+            parameter.errors,
+            [FieldSearchParameter.FIELD_DOES_NOT_EXIST.format('not.exist')])
+
+        parameter = FieldSearchParameter(0, 'content.exist=test')
+
+        self.assertFalse(parameter.is_valid())
+        self.assertEqual(
+            parameter.errors,
+            [FieldSearchParameter.FIELD_DOES_NOT_EXIST.format('content.exist')])
