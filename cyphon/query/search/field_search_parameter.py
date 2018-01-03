@@ -586,7 +586,7 @@ class FieldSearchParameter(SearchParameter):
         self.value = FieldValue(value, self.data_field.field_type)
 
     @staticmethod
-    def _get_bottle_field(field_name):
+    def _get_bottle_field(field_name, bottle_field_queryset):
         """Return the BottleField with the given field name.
 
         Parameters
@@ -599,8 +599,18 @@ class FieldSearchParameter(SearchParameter):
             BottleField or None.
 
         """
+        nested_fields = field_name.split('.')
+
         try:
-            return BottleField.objects.get(field_name__exact=field_name)
+            bottle_field = bottle_field_queryset.get(
+                field_name__exact=nested_fields[0])
+
+            if bottle_field.embedded_doc:
+                return FieldSearchParameter._get_bottle_field(
+                    '.'.join(nested_fields[1:]),
+                    bottle_field.embedded_doc.fields)
+
+            return bottle_field
         except BottleField.DoesNotExist:
             return None
 
@@ -638,8 +648,11 @@ class FieldSearchParameter(SearchParameter):
             The associated bottle/label field or None if the field
             doesn't exist.
         """
-        return FieldSearchParameter._get_bottle_field(field_name) or \
-            FieldSearchParameter._get_label_field(field_name)
+        return (
+            FieldSearchParameter._get_bottle_field(
+                field_name, BottleField.objects.all())
+            or
+            FieldSearchParameter._get_label_field(field_name))
 
     @property
     def combined_errors(self):
@@ -732,7 +745,7 @@ class FieldSearchParameter(SearchParameter):
             raise ValueError(FieldSearchParameter.CANNOT_CREATE_FIELDSET)
 
         return QueryFieldset(
-            self.data_field.field_name,
+            self.field_name,
             self.data_field.field_type,
             self.operator.fieldset_operator,
             self.value.parsed_value,

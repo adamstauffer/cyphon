@@ -37,6 +37,12 @@ class AlertSearchResults(SearchResults):
 
     """
     VIEW_NAME = 'search_alerts'
+    OPERATOR_CONVERSIONS = {
+        'regex': 'icontains',
+        'eq': '',
+        'not:eq': '',
+    }
+    NEGATIVE_QUERY_FLAGS = ['not:eq']
 
     def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE,
                  after=None, before=None):
@@ -134,6 +140,74 @@ class AlertSearchResults(SearchResults):
         return join_query(queries, 'AND')
 
     @staticmethod
+    def _convert_fieldset_operator(fieldset_operator):
+        """Converts a Fieldset operator to the django filter equivalent.
+
+        Parameters
+        ----------
+        fieldset_operator: str
+
+        Returns
+        -------
+        str
+        """
+
+        return (
+            AlertSearchResults.OPERATOR_CONVERSIONS[fieldset_operator]
+            or fieldset_operator)
+
+    @staticmethod
+    def _format_fieldset_operator(fieldset_operator):
+        conversion = AlertSearchResults._convert_fieldset_operator(
+            fieldset_operator)
+
+        return '__{}'.format(conversion) if conversion else ''
+
+    @staticmethod
+    def _create_field_query(field_parameter):
+        field_name = field_parameter.field_name
+        fieldset_operator = field_parameter.operator.fieldset_operator
+        parsed_value = field_parameter.value.parsed_value
+        query_field = 'data__{}{}'.format(
+            field_name.replace('.', '__'),
+            AlertSearchResults._format_fieldset_operator(fieldset_operator))
+        query = Q(**{query_field: parsed_value})
+
+        return (
+            ~query
+            if fieldset_operator in AlertSearchResults.NEGATIVE_QUERY_FLAGS
+            else query)
+
+    @staticmethod
+    def _get_field_search_query(field_parameters):
+        """
+
+        Parameters
+        ----------
+        field_parameters : list of query.search.field_search_parameter.FieldSearchParameter
+
+        Returns
+        -------
+        Q
+        """
+        if not field_parameters:
+            return Q()
+
+        queries = []
+
+        for parameter in field_parameters:
+            if not parameter.is_valid():
+                continue
+
+            if not parameter.operator.fieldset_operator:
+                continue
+
+            query = AlertSearchResults._create_field_query(parameter)
+            queries.append(query)
+
+        return join_query(queries, 'AND') if queries else Q()
+
+    @staticmethod
     def _get_shared_text_fields(distilleries):
         """Gets the shared text fields from a list of distilleries.
 
@@ -172,12 +246,7 @@ class AlertSearchResults(SearchResults):
         django.db.models.query.QuerySet
 
         """
-
-        if not query.keywords:
-            return Alert.objects.none()
-
         alert_qs = Alert.objects.filter_by_user(query.user)
-
         distillery_qs = None
 
         if not query.user.is_staff:
@@ -199,7 +268,10 @@ class AlertSearchResults(SearchResults):
 
         keyword_query = AlertSearchResults._get_keyword_list_search_query(
             query.keywords, distillery_qs)
-        alert_qs = alert_qs.filter(keyword_query)
+        field_query = AlertSearchResults._get_field_search_query(
+            query.field_parameters)
+        alert_qs = alert_qs.filter(
+            join_query([keyword_query, field_query], 'AND'))
 
         return alert_qs
 

@@ -217,3 +217,30 @@ class AlertSearchResultsTestCase(TestCase):
 
         self.assertEqual(alert_results.count, 1)
         self.assertEqual(alert_results.results[0].id, 4)
+
+    def test_field_search(self):
+        """
+        Tests that individual fields on alert data are searched.
+        """
+        search_query = SearchQuery('subject="Test doc"', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 4)
+
+    def test_multiple_field_search(self):
+        """
+        Tests that multiple search fields are combined together by AND.
+        """
+        search_query = SearchQuery(
+            'subject="Test doc" content.text=foobar', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 4)
+
+        search_query = SearchQuery(
+            'subject="Test doc" content.text=nothing', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 0)
