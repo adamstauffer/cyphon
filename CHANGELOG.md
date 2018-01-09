@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 - **distilleries**: changed `DistilleryManager.get_by_natural_key()` to use `Distillery.name` [PR #320](https://github.com/dunbarcyber/cyphon/pull/320) ([d25c147](https://github.com/dunbarcyber/cyphon/commit/d25c147))
 - **monitors**: Monitor status is updated through polling ([0eff575](https://github.com/dunbarcyber/cyphon/commit/0eff575))
 - **query.search**: search terms joined with AND instead of OR ([09659ee](https://github.com/dunbarcyber/cyphon/commit/09659ee))
+- **query.search**: added alert field filtering [PR #338](https://github.com/dunbarcyber/cyphon/pull/338) ([a91498e](https://github.com/dunbarcyber/cyphon/commit/a91498e))
 - **query.search.distillery_filter_parameter**: filters by given distillery name instead of the combination warehouse.collection. ([5fbb1a8](https://github.com/dunbarcyber/cyphon/commit/5fbb1a8))
 
 ### Fixed
