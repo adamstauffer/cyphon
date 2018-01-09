@@ -294,7 +294,7 @@ class AlertViewSet(CustomModelViewSet):
 
             for distillery in distilleries:
                 filtered_qs = queryset.filter(distillery=distillery)
-                counts[str(distillery)] = filtered_qs.count()
+                counts[distillery.name] = filtered_qs.count()
 
             return Response(counts)
 
