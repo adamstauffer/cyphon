@@ -18,9 +18,6 @@
 # standard library
 from functools import reduce
 
-# third party
-from django.urls import reverse
-
 # local
 from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
@@ -118,28 +115,6 @@ class DistillerySearchResults(SearchResults):
             return None
 
         return EngineQuery(subqueries=fieldsets, joiner='AND')
-
-    @staticmethod
-    def _create_keyword_fieldset(text_field, keyword):
-        """Return QueryFieldset of a DataField that takes keywords.
-
-        Parameters
-        ----------
-        text_field : bottler.datafields.models.DataField
-
-        keywords : str
-
-        Returns
-        -------
-        QueryFieldset
-
-        """
-        return QueryFieldset(
-            field_name=text_field.field_name,
-            field_type=text_field.field_type,
-            operator='regex',
-            value=keyword,
-        )
 
     @staticmethod
     def _create_keyword_engine_query(text_fields, keyword):
@@ -259,9 +234,6 @@ class DistillerySearchResults(SearchResults):
                     )]
 
         return EngineQuery(subqueries=subqueries, joiner='AND')
-
-    def _get_path(self):
-        return reverse(self.view_name, args=[self.distillery.pk])
 
     def as_dict(self, request):
         """Return a JSON serializable representation of this instance.
