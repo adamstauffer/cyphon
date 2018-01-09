@@ -379,3 +379,14 @@ class SearchDistilleryViewTestCase(SearchViewBaseTestCase):
             'name': 'mongodb.test_database.test_docs',
             'url': 'http://testserver/api/v1/distilleries/2/',
         })
+
+    def test_distillery_not_found(self):
+        response = self._get_empty_mock_response('12/?query=woo')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['detail'], 'Distillery 12 not found.')
+
+    def test_empty_search_query(self):
+        response = self._get_empty_mock_response('6/?query=')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['query']['errors'][0],
+                         'Search query is empty.')

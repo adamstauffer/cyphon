@@ -23,7 +23,7 @@ from dateutil import parser
 
 # third party
 from rest_framework.decorators import api_view
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework import status
 from rest_framework.response import Response
 
 # local
@@ -93,7 +93,7 @@ def search(request):
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -123,7 +123,7 @@ def search_alerts(request):
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -150,7 +150,7 @@ def search_distilleries(request):
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -174,71 +174,24 @@ def search_distillery(request, pk):
     )
     response = _create_empty_response(search_query)
 
-    if search_query.is_valid():
-        try:
-            distillery = Distillery.objects.get(pk=int(pk))
-        except Distillery.DoesNotExist:
-            distillery = None
-
-        if distillery:
-            search_results = DistillerySearchResults(
-                search_query, page=params.page,
-                page_size=params.page_size,
-                distillery=distillery,
-                after=params.after, before=params.before)
-            response['results'] = search_results.as_dict(request)
-
-        return Response(response)
-
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
-
-
-def _get_query_params(query_params):
-    """Returns the GET parameters of a search view.
-
-    Parameters
-    ----------
-    query_params : dict
-        Dictionary of query parameters.
-
-    Returns
-    -------
-    Dict
-        The string query, page, and page size.
-    """
-    query = query_params.get('query', '')
-    before = query_params.get('before')
-    after = query_params.get('after')
-
-    if before:
-        try:
-            before = parser.parse(before)
-        except ValueError:
-            before = None
-
-    if after:
-        try:
-            after = parser.parse(after)
-        except ValueError:
-            after = None
+    if not search_query.is_valid():
+        return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        page = int(query_params.get('page', 1))
-    except ValueError:
-        page = 1
+        distillery = Distillery.objects.get(pk=int(pk))
+    except Distillery.DoesNotExist:
+        return Response(
+            data={'detail': 'Distillery {} not found.'.format(pk)},
+            status=status.HTTP_404_NOT_FOUND)
 
-    try:
-        page_size = int(query_params.get('page_size', DEFAULT_PAGE_SIZE))
-    except ValueError:
-        page_size = DEFAULT_PAGE_SIZE
+    search_results = DistillerySearchResults(
+        search_query, page=params.page,
+        page_size=params.page_size,
+        distillery=distillery,
+        after=params.after, before=params.before)
+    response['results'] = search_results.as_dict(request)
 
-    return {
-        'query': query,
-        'page': page,
-        'page_size': page_size,
-        'before': before,
-        'after': after,
-    }
+    return Response(response)
 
 
 def _create_empty_response(search_query):
