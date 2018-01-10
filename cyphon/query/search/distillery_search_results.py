@@ -18,6 +18,9 @@
 # standard library
 from functools import reduce
 
+# third party
+from django.urls import reverse
+
 # local
 from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
@@ -234,6 +237,9 @@ class DistillerySearchResults(SearchResults):
                     )]
 
         return EngineQuery(subqueries=subqueries, joiner='AND')
+
+    def _get_path(self):
+        return reverse(self.view_name, args=[self.distillery.pk])
 
     def as_dict(self, request):
         """Return a JSON serializable representation of this instance.
