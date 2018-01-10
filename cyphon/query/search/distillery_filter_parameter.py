@@ -159,7 +159,7 @@ class DistilleryFilterParameter(SearchParameter):
         """
         info = super(DistilleryFilterParameter, self).as_dict()
         distillery_names = [
-            str(distillery)
+            distillery.name
             for distillery
             in self.distilleries
         ]
