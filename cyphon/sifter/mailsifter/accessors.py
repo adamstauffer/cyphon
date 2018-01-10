@@ -22,6 +22,7 @@
 import email.utils as email_utils
 from email.header import decode_header
 import logging
+import os
 
 # third party
 import bleach
@@ -125,7 +126,9 @@ def get_attachment(email_part):
     if not email_part.is_multipart() \
             and 'attachment' in email_part.get('Content-Disposition', ''):
         content_type = email_part.get_content_type()
-        if content_type in _MAILSIFTER_SETTINGS['ALLOWED_EMAIL_ATTACHMENTS']:
+        _, extension = os.path.splitext(email_part.get_filename())
+        if content_type in _MAILSIFTER_SETTINGS['ALLOWED_EMAIL_ATTACHMENTS'] \
+                or extension in _MAILSIFTER_SETTINGS['ALLOWED_FILE_EXTENSIONS']:
             return email_part
 
 
