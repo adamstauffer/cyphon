@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -17,6 +17,7 @@
 
 # third party
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 # local
 from query.search.search_parameter import SearchParameterType
@@ -28,45 +29,28 @@ class DistilleryFilterParameterTestCase(TestCase):
     """
     Test case for the DistilleryFilterParameter class.
     """
-    fixtures = get_fixtures(['distilleries'])
+    fixtures = get_fixtures(['distilleries', 'users'])
+    user_model = get_user_model()
 
-    def test_warehouse_filter(self):
-        """
-        Tests that the warehouse filter filters distilleries by
-        warehouse.
-        """
-        parameter = DistilleryFilterParameter(3, '@source=test_index.*')
-
-        self.assertTrue(parameter.is_valid())
-        self.assertEqual(len(parameter.distilleries), 3)
-        self.assertEqual(
-            str(parameter.distilleries[0]),
-            'elasticsearch.test_index.test_docs',
-        )
-        self.assertEqual(
-            str(parameter.distilleries[1]),
-            'elasticsearch.test_index.test_logs',
-        )
-        self.assertEqual(
-            str(parameter.distilleries[2]),
-            'elasticsearch.test_index.test_mail',
-        )
+    def setUp(self):
+        self.user = self.user_model.objects.get(pk=1)
 
     def test_collection_filter(self):
         """
         Tests that the distilleries get filtered by collection name.
         """
-        parameter = DistilleryFilterParameter(3, '@source=*.test_docs')
+        parameter = DistilleryFilterParameter(
+            3, '@source="test_docs"', self.user)
 
         self.assertTrue(parameter.is_valid())
         self.assertEqual(len(parameter.distilleries), 2)
         self.assertEqual(
             str(parameter.distilleries[0]),
-            'mongodb.test_database.test_docs',
+            'elasticsearch.test_index.test_docs',
         )
         self.assertEqual(
             str(parameter.distilleries[1]),
-            'elasticsearch.test_index.test_docs',
+            'mongodb.test_database.test_docs',
         )
 
     def test_collection_picker(self):
@@ -75,9 +59,7 @@ class DistilleryFilterParameterTestCase(TestCase):
         a particular distillery.
         """
         parameter = DistilleryFilterParameter(
-            3,
-            '@source=test_database.test_posts',
-        )
+            3, '@source="test_database.test_posts"', self.user)
 
         self.assertTrue(parameter.is_valid())
         self.assertEqual(len(parameter.distilleries), 1)
@@ -91,7 +73,7 @@ class DistilleryFilterParameterTestCase(TestCase):
         Tests that an INVALID_PARAMETER is placed on the parameter errors
         if the string parameter cannot be parsed.
         """
-        parameter = DistilleryFilterParameter(3, 'mah')
+        parameter = DistilleryFilterParameter(3, 'mah', self.user)
 
         self.assertFalse(parameter.is_valid())
         self.assertEqual(len(parameter.errors), 1)
@@ -105,27 +87,13 @@ class DistilleryFilterParameterTestCase(TestCase):
         Tests that a FILTER_VALUE_IS_EMPTY error is placed on the
         parameter errors if the filter value is empty.
         """
-        parameter = DistilleryFilterParameter(3, '@source=')
+        parameter = DistilleryFilterParameter(3, '@source=', self.user)
 
         self.assertFalse(parameter.is_valid())
         self.assertEqual(len(parameter.errors), 1)
         self.assertEqual(
             parameter.errors[0],
-            DistilleryFilterParameter.FILTER_VALUE_IS_EMPTY,
-        )
-
-    def test_invalid_filter(self):
-        """
-        Tests that an INVALID_FILTER error is placed on the parameter errors
-        for an invalid filter value.
-        """
-        parameter = DistilleryFilterParameter(3, '@source=blegh')
-
-        self.assertFalse(parameter.is_valid())
-        self.assertEqual(len(parameter.errors), 1)
-        self.assertEqual(
-            parameter.errors[0],
-            DistilleryFilterParameter.INVALID_FILTER,
+            DistilleryFilterParameter.INVALID_PARAMETER,
         )
 
     def test_parsed_properties(self):
@@ -133,39 +101,24 @@ class DistilleryFilterParameterTestCase(TestCase):
         Tests that the properties are parsed correctly from the
         parameter string.
         """
-        parameter = DistilleryFilterParameter(3, '@source=*.test_docs')
+        parameter = DistilleryFilterParameter(
+            3, '@source="test_do"', self.user)
 
         self.assertTrue(parameter.is_valid())
-        self.assertEqual(parameter.filter, '*.test_docs')
-        self.assertEqual(parameter.collection, 'test_docs')
-        self.assertEqual(parameter.warehouse, '*')
-
-    def test_invalid_warehouse(self):
-        """
-        Tests that a CANNOT_FIND_WAREHOUSE error is placed on the
-        parameter errors when a warehouse is not found.
-        """
-        parameter = DistilleryFilterParameter(3, '@source=meh.*')
-
-        self.assertFalse(parameter.is_valid())
-        self.assertEqual(len(parameter.errors), 1)
-        self.assertEqual(
-            parameter.errors[0],
-            DistilleryFilterParameter.CANNOT_FIND_WAREHOUSE.format('meh'),
-        )
+        self.assertEqual(parameter.filter, 'test_do')
 
     def test_invalid_collection(self):
         """
         Tests that a CANNOT_FIND_COLLECTION error is placed on the
         parameter errors when a collection is not found.
         """
-        parameter = DistilleryFilterParameter(3, '@source=*.meh')
+        parameter = DistilleryFilterParameter(3, '@source="meh"', self.user)
 
         self.assertFalse(parameter.is_valid())
         self.assertEqual(len(parameter.errors), 1)
         self.assertEqual(
             parameter.errors[0],
-            DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format('meh'),
+            DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format('meh'),
         )
 
     def test_unknown_distillery(self):
@@ -174,15 +127,13 @@ class DistilleryFilterParameterTestCase(TestCase):
         parameter errors when no matching distilleries are found.
         """
         parameter = DistilleryFilterParameter(
-            3,
-            '@source=test_time_series.test_logs',
-        )
+            3, '@source="no_match"', self.user)
 
         self.assertFalse(parameter.is_valid())
         self.assertEqual(len(parameter.errors), 1)
         self.assertEqual(
             parameter.errors[0],
-            DistilleryFilterParameter.NO_MATCHING_DISTILLERIES,
+            DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format('no_match'),
         )
 
     def test_get_parameter_info_success(self):
@@ -190,39 +141,43 @@ class DistilleryFilterParameterTestCase(TestCase):
         Tests that .get_parameter_info() returns the correct dictionary
         for a valid parameter.
         """
-        parameter = DistilleryFilterParameter(3, '@source=*.test_docs')
+        parameter = DistilleryFilterParameter(
+            3, '@source="test_docs"', self.user)
 
         self.assertDictEqual(parameter.as_dict(), {
-            'parameter': '@source=*.test_docs',
+            'parameter': '@source="test_docs"',
             'type': SearchParameterType.DISTILLERY,
             'index': 3,
-            'filter': '*.test_docs',
-            'collection': 'test_docs',
-            'warehouse': '*',
+            'filter': 'test_docs',
             'distilleries': [
-                'mongodb.test_database.test_docs',
                 'elasticsearch.test_index.test_docs',
+                'mongodb.test_database.test_docs',
             ],
             'errors': [],
         })
+
+    def test_limited_distilleries_per_user(self):
+        restricted_user = self.user_model.objects.get(pk=3)
+        parameter = DistilleryFilterParameter(
+            3, '@source="_docs"', restricted_user)
+
+        self.assertTrue(parameter.is_valid())
+        self.assertEqual(len(parameter.distilleries), 1)
 
     def test_get_parameter_info_error(self):
         """
         Tests that .get_parameter_info() returns the correct dictionary
         for an invalid parameter.
         """
-        parameter = DistilleryFilterParameter(3, '@source=bleh.bleh')
+        parameter = DistilleryFilterParameter(3, '@source="bleh"', self.user)
 
         self.assertDictEqual(parameter.as_dict(), {
-            'parameter': '@source=bleh.bleh',
+            'parameter': '@source="bleh"',
             'type': SearchParameterType.DISTILLERY,
             'index': 3,
-            'filter': 'bleh.bleh',
-            'collection': 'bleh',
-            'warehouse': 'bleh',
+            'filter': 'bleh',
             'distilleries': [],
             'errors': [
-                DistilleryFilterParameter.CANNOT_FIND_WAREHOUSE.format('bleh'),
-                DistilleryFilterParameter.CANNOT_FIND_COLLECTION.format('bleh'),
+                DistilleryFilterParameter.NO_MATCHING_DISTILLERIES.format('bleh'),
             ],
         })

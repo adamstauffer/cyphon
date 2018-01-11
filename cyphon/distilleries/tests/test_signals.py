@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -43,7 +43,7 @@ class DocumentSavedSignalTestCase(TransactionTestCase):
 
     def setUp(self):
         self.distillery = Distillery.objects.get_by_natural_key(
-            'mongodb', 'test_database', 'test_posts')
+            'mongodb.test_database.test_posts')
         doc = {'text': 'this is a text post'}
         self.doc_obj = DocumentObj(
             data=doc,

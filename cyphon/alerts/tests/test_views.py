@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -567,14 +567,14 @@ class AlertDistilleryAPITests(AlertBaseAPITests):
         response = self.get_api_response(is_staff=False)
         expected = [
             {
-                'id': 1,
-                'name': 'mongodb.test_database.test_posts',
-                'url': 'http://testserver/api/v1/distilleries/1/'
-            },
-            {
                 'id': 5,
                 'name': 'elasticsearch.test_index.test_logs',
                 'url': 'http://testserver/api/v1/distilleries/5/'
+            },
+            {
+                'id': 1,
+                'name': 'mongodb.test_database.test_posts',
+                'url': 'http://testserver/api/v1/distilleries/1/'
             },
         ]
         self.assertEqual(response.json()['results'], expected)

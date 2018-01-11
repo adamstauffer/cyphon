@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -117,18 +117,6 @@ class ProcessMsgTestCase(TransactionTestCase):
         Tests the process_msg function for Watchdogs.
         """
         self.kwargs['method'].routing_key = 'watchdogs'
-        with patch('receiver.receiver.create_doc_obj',
-                   return_value=self.mock_doc_obj) as mock_create:
-            process_msg(**self.kwargs)
-            mock_create.assert_called_once_with(self.decoded_msg)
-            mock_process.assert_called_once_with(self.mock_doc_obj)
-
-    @patch('receiver.receiver.Monitor.objects.process')
-    def test_process_msg_monitors(self, mock_process):
-        """
-        Tests the process_msg function for Monitors.
-        """
-        self.kwargs['method'].routing_key = 'monitors'
         with patch('receiver.receiver.create_doc_obj',
                    return_value=self.mock_doc_obj) as mock_create:
             process_msg(**self.kwargs)

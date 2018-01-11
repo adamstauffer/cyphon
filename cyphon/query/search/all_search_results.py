@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -36,23 +36,19 @@ class AllSearchResults(object):
     distillery_results : DistillerySearchResultsList
 
     """
-
-    def __init__(self, user, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE,
+                 before=None, after=None):
         """Initialize an AllSearchResults object.
 
         Parameters
         ----------
-        user : appusers.models.AppUser
-
         query : query.search.search_query.SearchQuery
 
         """
         self.distillery_results = DistillerySearchResultsList(
-            query, page=page, page_size=page_size,
-        )
+            query, page=page, page_size=page_size, before=before, after=after)
         self.alert_results = AlertSearchResults(
-            user, query, page=page, page_size=page_size,
-        )
+            query, page=page, page_size=page_size, before=before, after=after)
         self.count = self.distillery_results.count + self.alert_results.count
 
     def as_dict(self, request):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -45,7 +45,7 @@ if ON_EC2:
 
 LOCALIZATION = {
     'DEFAULT_LANGUAGE': 'en-us',  # http://www.i18nguy.com/unicode/language-identifiers.html
-    'TIME_ZONE': 'US/Eastern',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    'TIME_ZONE': 'UTC',    # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 }
 
 PAGE_SIZE = 10

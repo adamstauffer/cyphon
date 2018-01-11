@@ -5,7 +5,7 @@
       "id": 1,
       "name": "log",
       "condenser": ["simple_log"],
-      "distillery": ["mongodb", "test_database", "test_docs"]
+      "distillery": ["mongodb.test_database.test_docs"]
     }
   },
   {
@@ -14,7 +14,7 @@
       "id": 2,
       "name": "default_log",
       "condenser": ["simple_log"],
-      "distillery": ["elasticsearch", "test_index", "test_logs"]
+      "distillery": ["elasticsearch.test_index.test_logs"]
     }
   }
 ]

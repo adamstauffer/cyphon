@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -46,7 +46,7 @@ class PutTemplateTestCase(TransactionTestCase):
         Tests that the put_template is called when a Distllery is saved.
         """
         distillery = Distillery.objects.get_by_natural_key(
-            'elasticsearch', 'test_index', 'test_docs')
+            'elasticsearch.test_index.test_docs')
         distillery.save()
         self.assertEqual(mock_template.call_count, 1)
 
@@ -65,7 +65,7 @@ class PutTemplateTestCase(TransactionTestCase):
         Tests that the put_template is called when a Distllery is saved.
         """
         distillery = Distillery.objects.get_by_natural_key(
-            'mongodb', 'test_database', 'test_docs')
+            'mongodb.test_database.test_docs')
         try:
             distillery.save()
         except AttributeError:

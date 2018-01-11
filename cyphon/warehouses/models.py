@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -44,7 +44,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from engines.registry import ENGINES_PACKAGE, ENGINE_MODULE, BACKEND_CHOICES
-from utils.validators.validators import db_name_validator
+from utils.validators.validators import db_name_validator, lowercase_validator
 
 _PAGE_SIZE = settings.PAGE_SIZE
 _WAREHOUSE_SETTINGS = settings.WAREHOUSES
@@ -108,8 +108,10 @@ class Warehouse(models.Model):
 
     backend = models.CharField(max_length=40, choices=BACKEND_CHOICES,
                                default=_DEFAULT_STORAGE_ENGINE.lower())
-    name = models.CharField(max_length=40,
-                            validators=[db_name_validator])
+    name = models.CharField(
+        max_length=40,
+        validators=[db_name_validator, lowercase_validator]
+    )
     time_series = models.BooleanField(
         default=False,
         help_text=_('When used with Elasticsearch, stores each day\'s '
@@ -479,8 +481,11 @@ class Collection(models.Model):
 
         Returns
         -------
-        |list| of |dict|
-            Documents matching the query.
+        |dict|
+            A dictionary with keys 'count' and 'results'. The 'count'
+            value is the total number of documents matching the search
+            criteria. The 'results' value is a list of documents from
+            the search result, with the doc ids added to each document.
 
         """
         return self.engine.find(query, sorter, page, page_size)

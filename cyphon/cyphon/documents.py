@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -105,7 +105,7 @@ class DocumentObj(object):
         try:
             # use get_model to avoid circular dependency
             distillery_model = apps.get_model('distilleries', 'Distillery')
-            return distillery_model.objects.get_by_natural_key(*natural_key)
+            return distillery_model.objects.get_by_collection_nk(*natural_key)
         except AttributeError:
             _LOGGER.error('The DocumentObj %s has an improperly formatted '
                           'Collection string', self)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -294,7 +294,7 @@ class AlertViewSet(CustomModelViewSet):
 
             for distillery in distilleries:
                 filtered_qs = queryset.filter(distillery=distillery)
-                counts[str(distillery)] = filtered_qs.count()
+                counts[distillery.name] = filtered_qs.count()
 
             return Response(counts)
 

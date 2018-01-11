@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -36,15 +36,20 @@ from distilleries.models import Distillery
 class DistilleryAdmin(admin.ModelAdmin):
     """Customizes admin pages for |Distilleries|."""
 
+    fields = [
+        'name',
+        'collection',
+        'container',
+        'is_shell',
+        'categories',
+    ]
     list_display = [
+        'name',
         'collection',
         'container',
         'is_shell',
     ]
-    list_display_links = ['collection', 'container']
-    fields = [
+    list_display_links = [
+        'name',
         'collection',
-        'container',
-        'is_shell',
-        'categories'
     ]

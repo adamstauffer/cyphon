@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -28,9 +28,3 @@ class MonitorsConfig(AppConfig):
     """
     name = 'monitors'
     verbose_name = 'Monitors'
-
-    def ready(self):
-        """
-
-        """
-        import monitors.signals

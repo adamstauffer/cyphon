@@ -18,6 +18,7 @@ Submodules
 
    monitors.admin
    monitors.apps
+   monitors.forms
    monitors.models
    monitors.serializers
    monitors.signals
