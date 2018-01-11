@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -66,7 +66,7 @@ class ContextManagerTestCase(ContextBaseTestCase):
         """
         Tests the get_by_natural_key method for an existing Context.
         """
-        key = ['context_w_filters', 'mongodb', 'test_database', 'test_posts']
+        key = ['context_w_filters', 'mongodb.test_database.test_posts']
         context = Context.objects.get_by_natural_key(*key)
         self.assertEqual(context.pk, 1)
 
@@ -77,7 +77,7 @@ class ContextManagerTestCase(ContextBaseTestCase):
         exist.
         """
         with LogCapture() as log_capture:
-            key = ['dummy_context', 'mongodb', 'test_database', 'test_posts']
+            key = ['dummy_context', 'mongodb.test_database.test_posts']
             Context.objects.get_by_natural_key(*key)
             expected = ('Context dummy_context:mongodb.test_database.'
                         'test_posts does not exist')
@@ -645,7 +645,7 @@ class ContextFilterManagerTestCase(ContextBaseTestCase):
         """
         Tests the get_by_natural_key method for an existing ContextFilter.
         """
-        key = ['context_w_filters', 'mongodb', 'test_database', 'test_posts',
+        key = ['context_w_filters', 'mongodb.test_database.test_posts',
                'host', 'from']
         context = ContextFilter.objects.get_by_natural_key(*key)
         self.assertEqual(context.pk, 1)
@@ -657,7 +657,7 @@ class ContextFilterManagerTestCase(ContextBaseTestCase):
         doesn't exist.
         """
         with LogCapture() as log_capture:
-            key = ['dummy_context', 'mongodb', 'test_database', 'test_posts',
+            key = ['dummy_context', 'mongodb.test_database.test_posts',
                    'host', 'from']
             ContextFilter.objects.get_by_natural_key(*key)
             expected_1 = ('Context dummy_context:mongodb.test_database.'

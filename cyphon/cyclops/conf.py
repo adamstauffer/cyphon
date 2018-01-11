@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,7 @@ Settings for the Cyclops package.
 
 CYCLOPS_AWS_BUCKET_URL = 'https://s3.amazonaws.com/cyclops-public'
 
-CYCLOPS_VERSION = '0.4.4'
+CYCLOPS_VERSION = '0.5.3'
 """str
 
 Version number of Cyclops to use.

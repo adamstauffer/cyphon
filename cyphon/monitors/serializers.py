@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -48,5 +48,4 @@ class MonitorSerializer(serializers.ModelSerializer):
             'last_healthy',
             'last_active_distillery',
             'last_saved_doc',
-            'last_doc',
         )

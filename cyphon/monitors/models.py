@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -231,13 +231,24 @@ class Monitor(Alarm):
         seconds = self._get_interval_in_seconds()
         return timezone.now() - timedelta(seconds=seconds)
 
+    def _get_query_start_time(self):
+        """
+        Returns either the last_healthy datetime or the start of the
+        monitoring interval, whichever is older.
+        """
+        interval_start = self._get_interval_start()
+        if self.last_healthy and self.last_healthy < interval_start:
+            return self.last_healthy
+        else:
+            return interval_start
+
     def _get_query(self, date_field):
         """
         Takes the name of a date field and returns an |EngineQuery| for
         documents with dates later than the last_healthy date (if there
         is one) or the start of the monitoring interval (if there isn't).
         """
-        start_time = self._get_interval_start()
+        start_time = self._get_query_start_time()
         query = QueryFieldset(
             field_name=date_field,
             field_type='DateTimeField',
@@ -275,9 +286,8 @@ class Monitor(Alarm):
     def _update_doc_info(self):
         """
         Looks for the most recently saved doc among the Distilleries
-        being monitored, and updates the relevant filed in the Monitor.
+        being monitored, and updates the relevant field in the Monitor.
         """
-        self.last_healthy = None  # reset last_healthy
         for distillery in self.distilleries.all():
             doc = self._get_most_recent_doc(distillery)
             if doc:

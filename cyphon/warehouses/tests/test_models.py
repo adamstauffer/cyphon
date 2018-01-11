@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -80,6 +80,35 @@ class WarehouseTestCase(TestCase):
             name='test_database',
         )
         self.assertEqual(str(warehouse), 'mongodb.test_database')
+
+    def test_special_character_name(self):
+        """
+        Tests the clean method when the name contains a special
+        character.
+        """
+        warehouse = Warehouse(
+            backend='elasticsearch',
+            name='test_databa$e',
+            time_series=True
+        )
+        msg = ('Name cannot contain special characters other than '
+               'underscores and hypens.')
+        with six.assertRaisesRegex(self, ValidationError, msg):
+            warehouse.full_clean()
+
+    def test_upppercase_name(self):
+        """
+        Tests the clean method when the name contains an uppercase
+        character.
+        """
+        warehouse = Warehouse(
+            backend='elasticsearch',
+            name='testDatabase',
+            time_series=True
+        )
+        msg = 'Value must be lowercase string.'
+        with six.assertRaisesRegex(self, ValidationError, msg):
+            warehouse.full_clean()
 
     def test_disallowed_time_series(self):
         """

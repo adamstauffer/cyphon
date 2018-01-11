@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -188,7 +188,7 @@ class GetAttachmentUrl(MailAttachmentTestCase):
         mock_settings.BASE_URL = 'https://www.example.com/'
         mock_settings.MEDIA_URL = '/media/'
         with patch.dict('sifter.mailsifter.attachments.settings.MAILSIFTER',
-                   return_value=self.mock_mailsifter_settings):
+                        return_value=self.mock_mailsifter_settings):
             with patch('sifter.mailsifter.attachments.settings',
                        self.mock_settings):
                 actual = attachments.get_attachment_url('/attachments/')
@@ -203,7 +203,7 @@ class GetAttachmentUrl(MailAttachmentTestCase):
         mock_settings.BASE_URL = 'https://www.example.com'
         mock_settings.MEDIA_URL = 'media'
         with patch.dict('sifter.mailsifter.attachments.settings.MAILSIFTER',
-                   return_value=self.mock_mailsifter_settings):
+                        return_value=self.mock_mailsifter_settings):
             with patch('sifter.mailsifter.attachments.settings',
                        self.mock_settings):
                 actual = attachments.get_attachment_url('attachments')

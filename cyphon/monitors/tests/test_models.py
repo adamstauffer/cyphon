@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -31,6 +31,7 @@ from django.test import TestCase
 
 # local
 from alerts.models import Alert
+from distilleries.models import Distillery
 from monitors.models import Monitor
 from tests.fixture_manager import get_fixtures
 from tests.mock import patch_find_by_id
@@ -61,6 +62,14 @@ class MonitorManagerTestCase(TestCase):
 
         self.assertEqual(enabled_monitors.count(),
                          Monitor.objects.filter(enabled=True).count())
+
+    def test_find_relevant(self):
+        """
+        Tests the find_relevant method of the MonitorManager class.
+        """
+        distillery = Distillery.objects.get(pk=1)
+        relevant_monitors = Monitor.objects.find_relevant(distillery)
+        self.assertEqual(relevant_monitors.count(), 3)
 
 
 class MonitorTestCase(TestCase):

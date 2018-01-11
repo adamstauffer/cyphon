@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,6 +18,9 @@
 Tests for the AlertSearchResults class.
 """
 
+#standard
+from dateutil import parser
+
 # third party
 from django.test import TestCase
 from django.test import RequestFactory
@@ -27,6 +30,7 @@ from django.contrib.auth import get_user_model
 from query.search.alert_search_results import AlertSearchResults
 from query.search.search_query import SearchQuery
 from tests.fixture_manager import get_fixtures
+from alerts.models import Alert
 
 
 class AlertSearchResultsTestCase(TestCase):
@@ -40,8 +44,10 @@ class AlertSearchResultsTestCase(TestCase):
         return self.request_factory.get('')
 
     @staticmethod
-    def _get_search_results(query, page=1, page_size=10):
-        return AlertSearchResults(query, page, page_size)
+    def _get_search_results(query, page=1, page_size=10,
+                            after=None, before=None):
+        return AlertSearchResults(query, page, page_size,
+                                  after=after, before=before)
 
     def setUp(self):
         self.request_factory = RequestFactory()
@@ -173,13 +179,68 @@ class AlertSearchResultsTestCase(TestCase):
         self.assertEqual(len(alert_results.results), 1)
 
         failing_search = SearchQuery(
-            '@source=test_index.test_logs "This is some text"', self.user)
+            '@source="test_index.test_logs" "This is some text"', self.user)
         alert_results = self._get_search_results(failing_search)
 
         self.assertEqual(len(alert_results.results), 0)
 
         passing_search = SearchQuery(
-            '@source=test_index.test_logs "Acme Supply Co"', self.user)
+            '@source="test_index.test_logs" "Acme Supply Co"', self.user)
         alert_results = self._get_search_results(passing_search)
 
         self.assertEqual(len(alert_results.results), 1)
+
+    def test_alert_time_filtering(self):
+        """
+        Tests that alerts are filtered by time.
+        """
+        search_query = SearchQuery('Acme', self.user)
+        alert_results = self._get_search_results(
+            search_query,
+            after=parser.parse('2015-03-01 02:41:00.468404+00:00'))
+
+        self.assertEqual(alert_results.count, 2)
+
+        alert_results = self._get_search_results(
+            search_query,
+            after=parser.parse('2015-03-01 02:39:24.468404+00:00'),
+            before=parser.parse('2015-03-01 02:41:24.468404+00:00'))
+
+        self.assertEqual(alert_results.count, 1)
+
+    def test_multiple_keywords(self):
+        """
+        Tests that multiple keywords are considered.
+        """
+        search_query = SearchQuery('acme foobar', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 4)
+
+    def test_field_search(self):
+        """
+        Tests that individual fields on alert data are searched.
+        """
+        search_query = SearchQuery('subject="Test doc"', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 4)
+
+    def test_multiple_field_search(self):
+        """
+        Tests that multiple search fields are combined together by AND.
+        """
+        search_query = SearchQuery(
+            'subject="Test doc" content.text=foobar', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 1)
+        self.assertEqual(alert_results.results[0].id, 4)
+
+        search_query = SearchQuery(
+            'subject="Test doc" content.text=nothing', self.user)
+        alert_results = self._get_search_results(search_query)
+
+        self.assertEqual(alert_results.count, 0)
