@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 
 
 <a name="1.6.0"></a>
-## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0) (2017-12-14)
+## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0) (2018-01-11)
 
 ### Added
 
