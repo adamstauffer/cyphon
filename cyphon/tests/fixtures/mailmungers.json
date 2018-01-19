@@ -5,7 +5,7 @@
       "id": 1,
       "name": "mail",
       "condenser": ["mail"],
-      "distillery": ["mongodb", "test_database", "test_docs"]
+      "distillery": ["mongodb.test_database.test_docs"]
     }
   },
   {
@@ -14,7 +14,7 @@
       "id": 2,
       "name": "default_mail",
       "condenser": ["mail"],
-      "distillery": ["elasticsearch", "test_index", "test_mail"]
+      "distillery": ["elasticsearch.test_index.test_mail"]
     }
   }
 ]

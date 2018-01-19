@@ -2,6 +2,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "mongodb.test_database.test_posts",
       "collection": ["mongodb", "test_database", "test_posts"],
       "container": ["labeled_post"],
       "company": ["Acme"],
@@ -12,6 +13,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "mongodb.test_database.test_docs",
       "collection": ["mongodb", "test_database", "test_docs"],
       "container": ["labeled_post"],
       "company": ["ECorp"],
@@ -22,6 +24,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "elasticsearch.test_index.test_docs",
       "collection": ["elasticsearch", "test_index", "test_docs"],
       "container": ["test_doc"],
       "company": ["Acme"],
@@ -32,6 +35,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "elasticsearch.test_time_series.test_syslogs",
       "collection": ["elasticsearch", "test_time_series", "test_syslogs"],
       "container": ["syslog"],
       "company": ["Acme"],
@@ -42,6 +46,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "elasticsearch.test_index.test_logs",
       "collection": ["elasticsearch", "test_index", "test_logs"],
       "container": ["snmptrap"],
       "company": null,
@@ -52,6 +57,7 @@
   {
     "model": "distilleries.distillery",
     "fields": {
+      "name": "elasticsearch.test_index.test_mail",
       "collection": ["elasticsearch", "test_index", "test_mail"],
       "container": ["mail"],
       "company": ["ECorp"],

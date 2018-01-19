@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,7 +18,7 @@
 # third party
 from django.utils.deprecation import MiddlewareMixin
 
-VERSION = '1.5.3'
+VERSION = '1.6.0'
 """str
 
 Current Cyphon version.

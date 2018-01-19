@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -54,10 +54,9 @@ class SearchParameterTypeTestCase(TestCase):
     """
 
     VALID_DISTILLERIES = [
-        '@source=',
-        '@source=*.mail',
-        '@source=personal.mail',
-        '@source=persona*',
+        '@source=""',
+        '@source="mail"',
+        '@source="mail stuff"',
     ]
     """list of str
 

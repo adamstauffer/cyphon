@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('backend', models.CharField(choices=[('elasticsearch', 'elasticsearch'), ('mongodb', 'mongodb')], default='elasticsearch', max_length=40)),
-                ('name', models.CharField(max_length=40, validators=[utils.validators.validators.db_name_validator])),
+                ('name', models.CharField(max_length=40, validators=[utils.validators.validators.db_name_validator, utils.validators.validators.lowercase_validator])),
                 ('time_series', models.BooleanField(default=False, help_text="When used with Elasticsearch, stores each day's data in a separate index. Allows easy deletion of old data in Elasticsearch.")),
             ],
             options={

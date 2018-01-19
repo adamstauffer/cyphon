@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -42,7 +42,8 @@ class MonitorForm(forms.ModelForm):
         Checks that the Monitor's Distilleries have a Datetime field
         defined.
         """
-        distilleries = self.data.get('distilleries')
+        super(MonitorForm, self).clean()
+        distilleries = self.cleaned_data.get('distilleries', [])
         for distillery_pk in distilleries:
             distillery = Distillery.objects.get(pk=distillery_pk)
             if not distillery.get_searchable_date_field():

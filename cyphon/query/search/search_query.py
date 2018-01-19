@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -113,7 +113,9 @@ class SearchQuery(object):
     per search query.
     """
 
-    def __init__(self, query, user, ignored_parameter_types=None):
+    def __init__(
+            self, query, user,
+            before=None, after=None, ignored_parameter_types=None):
         """Initialize a SearchQuery.
 
         Parameters

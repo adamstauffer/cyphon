@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -36,7 +36,8 @@ class DistillerySearchResults(SearchResults):
 
     VIEW_NAME = 'search_distillery'
 
-    def __init__(self, query, distillery, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(self, query, distillery, page=1, page_size=DEFAULT_PAGE_SIZE,
+                 before=None, after=None):
         """Create a DistillerySearchResults instance.
 
         Parameters
@@ -52,13 +53,17 @@ class DistillerySearchResults(SearchResults):
         self.results = []
         self.count = 0
         self.distillery = distillery
-        self.engine_query = self._get_engine_query(distillery, query)
+        self.engine_query = self._get_engine_query(
+            distillery, query, before=before, after=after)
 
         if not self.engine_query:
             return
 
-        results = self.distillery.find(
-            self.engine_query, page=page, page_size=page_size)
+        if (before or after) and not distillery.get_searchable_date_field():
+            results = None
+        else:
+            results = self.distillery.find(
+                self.engine_query, page=page, page_size=page_size)
 
         if results and results['count']:
             self.count = results['count']
@@ -113,28 +118,6 @@ class DistillerySearchResults(SearchResults):
             return None
 
         return EngineQuery(subqueries=fieldsets, joiner='AND')
-
-    @staticmethod
-    def _create_keyword_fieldset(text_field, keyword):
-        """Return QueryFieldset of a DataField that takes keywords.
-
-        Parameters
-        ----------
-        text_field : bottler.datafields.models.DataField
-
-        keywords : str
-
-        Returns
-        -------
-        QueryFieldset
-
-        """
-        return QueryFieldset(
-            field_name=text_field.field_name,
-            field_type=text_field.field_type,
-            operator='regex',
-            value=keyword,
-        )
 
     @staticmethod
     def _create_keyword_engine_query(text_fields, keyword):
@@ -202,7 +185,7 @@ class DistillerySearchResults(SearchResults):
         return EngineQuery(subqueries=keyword_engine_queries, joiner='AND')
 
     @staticmethod
-    def _get_engine_query(distillery, query):
+    def _get_engine_query(distillery, query, before=None, after=None):
         """Return QueryFieldsets of keyword and field searches for a distillery.
 
         Parameters
@@ -210,6 +193,10 @@ class DistillerySearchResults(SearchResults):
         distillery : Distillery
 
         query: query.search.search_query.SearchQuery
+
+        before: datetime.datetime or None
+
+        after: datetime.datetime or None
 
         Returns
         -------
@@ -228,6 +215,26 @@ class DistillerySearchResults(SearchResults):
 
         if not subqueries:
             return None
+
+        if before or after:
+            searchable_date_field = distillery.get_searchable_date_field()
+
+            if searchable_date_field:
+                if before:
+                    subqueries += [QueryFieldset(
+                        field_name=searchable_date_field,
+                        field_type='DateTimeField',
+                        operator='lte',
+                        value=before.isoformat()
+                    )]
+
+                if after:
+                    subqueries += [QueryFieldset(
+                        field_name=searchable_date_field,
+                        field_type='DateTimeField',
+                        operator='gte',
+                        value=after.isoformat()
+                    )]
 
         return EngineQuery(subqueries=subqueries, joiner='AND')
 
@@ -261,7 +268,9 @@ class DistillerySearchResultsList(object):
 
     """
 
-    def __init__(self, query, page=1, page_size=DEFAULT_PAGE_SIZE):
+    def __init__(
+            self, query, page=1, page_size=DEFAULT_PAGE_SIZE,
+            before=None, after=None):
         """Create a DistillerySearchResultsList instance.
 
         Parameters
@@ -274,7 +283,8 @@ class DistillerySearchResultsList(object):
             query.distilleries or Distillery.objects.all()
         )
         self.results = self._get_distillery_search_results(
-            self.distilleries, query, page, page_size,
+            self.distilleries, query,
+            page=page, page_size=page_size, before=before, after=after
         )
         self.count = self._get_result_count(self.results)
 
@@ -294,7 +304,9 @@ class DistillerySearchResultsList(object):
         return reduce((lambda count, result: count + result.count), results, 0)
 
     @staticmethod
-    def _get_distillery_search_results(distilleries, query, page, page_size):
+    def _get_distillery_search_results(
+            distilleries, query, page, page_size,
+            before=None, after=None):
         """Return a list of DistillerySearchResults for a query.
 
         Parameters
@@ -310,7 +322,9 @@ class DistillerySearchResultsList(object):
         """
         if query.keywords or query.field_parameters:
             return [
-                DistillerySearchResults(query, distillery, page, page_size)
+                DistillerySearchResults(
+                    query, distillery,
+                    page=page, page_size=page_size, before=before, after=after)
                 for distillery in distilleries
             ]
 

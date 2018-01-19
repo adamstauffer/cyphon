@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,9 +18,12 @@
 
 """
 
+# standard library
+from dateutil import parser
+
 # third party
 from rest_framework.decorators import api_view
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework import status
 from rest_framework.response import Response
 
 # local
@@ -40,6 +43,32 @@ DISTILLERY_SEARCH_VIEW_NAME = DistillerySearchResults.VIEW_NAME
 DISTILLERIES_SEARCH_VIEW_NAME = 'search_distilleries'
 
 
+class QueryParams(object):
+    def __init__(self, params=None):
+        params = params if params else {}
+
+        self.query = params.get('query', '')
+        self.before = self._parse_date(params.get('before'))
+        self.after = self._parse_date(params.get('after'))
+        self.page = self._parse_int(params.get('page'), 1)
+        self.page_size = self._parse_int(
+            params.get('page_size'), DEFAULT_PAGE_SIZE)
+
+    @staticmethod
+    def _parse_date(date):
+        try:
+            return parser.parse(date)
+        except (ValueError, TypeError):
+            return None
+
+    @staticmethod
+    def _parse_int(integer, default):
+        try:
+            return int(integer)
+        except (ValueError, TypeError):
+            return default
+
+
 @api_view(['GET'])
 def search(request):
     """View that searches both alerts and distilleries based on a search query.
@@ -52,18 +81,19 @@ def search(request):
     -------
 
     """
-    query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query, request.user)
+    params = QueryParams(request.query_params)
+    search_query = SearchQuery(params.query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = AllSearchResults(
-            search_query, page=page, page_size=page_size)
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -78,21 +108,22 @@ def search_alerts(request):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
+    params = QueryParams(request.query_params)
     search_query = SearchQuery(
-        query, request.user,
+        params.query, request.user,
         ignored_parameter_types=[SearchParameterType.FIELD],
     )
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = AlertSearchResults(
-            search_query, page=page, page_size=page_size)
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -107,19 +138,19 @@ def search_distilleries(request):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
-    search_query = SearchQuery(query, request.user)
+    params = QueryParams(request.query_params)
+    search_query = SearchQuery(params.query, request.user)
     response = _create_empty_response(search_query)
 
     if search_query.is_valid():
         search_results = DistillerySearchResultsList(
-            search_query, page=page, page_size=page_size,
-        )
+            search_query, page=params.page, page_size=params.page_size,
+            after=params.after, before=params.before)
         response['results'] = search_results.as_dict(request)
 
         return Response(response)
 
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
+    return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -136,57 +167,31 @@ def search_distillery(request, pk):
     -------
     Response
     """
-    query, page, page_size = _get_query_params(request.query_params)
+    params = QueryParams(request.query_params)
     search_query = SearchQuery(
-        query, request.user,
+        params.query, request.user,
         ignored_parameter_types=[SearchParameterType.DISTILLERY],
     )
     response = _create_empty_response(search_query)
 
-    if search_query.is_valid():
-        try:
-            distillery = Distillery.objects.get(pk=int(pk))
-        except Distillery.DoesNotExist:
-            distillery = None
-
-        if distillery:
-            search_results = DistillerySearchResults(
-                search_query, page=page, page_size=page_size,
-                distillery=distillery,
-            )
-            response['results'] = search_results.as_dict(request)
-
-        return Response(response)
-
-    return Response(data=response, status=HTTP_400_BAD_REQUEST)
-
-
-def _get_query_params(query_params):
-    """Returns the GET parameters of a search view.
-
-    Parameters
-    ----------
-    query_params : dict
-        Dictionary of query parameters.
-
-    Returns
-    -------
-    (str, int, int)
-        The string query, page, and page size.
-    """
-    query = query_params.get('query', '')
+    if not search_query.is_valid():
+        return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        page = int(query_params.get('page', 1))
-    except ValueError:
-        page = 1
+        distillery = Distillery.objects.get(pk=int(pk))
+    except Distillery.DoesNotExist:
+        return Response(
+            data={'detail': 'Distillery {} not found.'.format(pk)},
+            status=status.HTTP_404_NOT_FOUND)
 
-    try:
-        page_size = int(query_params.get('page_size', DEFAULT_PAGE_SIZE))
-    except ValueError:
-        page_size = DEFAULT_PAGE_SIZE
+    search_results = DistillerySearchResults(
+        search_query, page=params.page,
+        page_size=params.page_size,
+        distillery=distillery,
+        after=params.after, before=params.before)
+    response['results'] = search_results.as_dict(request)
 
-    return query, page, page_size
+    return Response(response)
 
 
 def _create_empty_response(search_query):
