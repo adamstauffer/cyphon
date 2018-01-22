@@ -24,7 +24,7 @@ drfdocs==0.0.11
 ec2-metadata==1.6.0
 elasticsearch==5.4.0
 feedparser==5.2.1
-geoip2==2.6.0
+geoip2==2.7.0
 geopy==1.11.0
 gunicorn==19.7.1
 html5lib==1.0.1
