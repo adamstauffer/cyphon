@@ -282,19 +282,22 @@ class AlertViewSet(CustomModelViewSet):
         by Collection.
         """
         days = request.query_params.get('days')
-
         error = self._catch_days_param_error(days)
+        date = self._get_date(days)
 
         if error:
             return error
         else:
-            queryset = self._filter_by_start_date(int(days))
-            distilleries = Distillery.objects.filter(alerts__in=queryset)
+            distilleries = Distillery.objects.all()
             counts = {}
 
             for distillery in distilleries:
-                filtered_qs = queryset.filter(distillery=distillery)
-                counts[distillery.name] = filtered_qs.count()
+                alerts = distillery.alerts.filter(created_date__gte=date)
+                filtered_alerts = Alert.objects.filter_by_user(request.user,
+                                                               queryset=alerts)
+                alert_count = filtered_alerts.count()
+                if alert_count:
+                    counts[distillery.name] = filtered_alerts.count()
 
             return Response(counts)
 
