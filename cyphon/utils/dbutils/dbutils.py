@@ -22,6 +22,14 @@ import json
 
 # third party
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import IntegerField, Subquery
+
+
+class SQCount(Subquery):
+    """A modified :class:`django.db.models.Subquery` that selects counts."""
+
+    template = "(SELECT count(*) FROM (%(subquery)s) _count)"
+    output_field = IntegerField()
 
 
 def count_by_group(queryset, column, options):

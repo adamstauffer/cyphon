@@ -40,7 +40,7 @@ from cyphon.choices import ALERT_LEVEL_CHOICES, ALERT_STATUS_CHOICES
 from cyphon.views import CustomModelViewSet
 from distilleries.models import Distillery
 from distilleries.serializers import DistilleryListSerializer
-from utils.dbutils.dbutils import count_by_group
+from utils.dbutils.dbutils import count_by_group, SQCount
 from .filters import AlertFilter
 from .models import Alert, Analysis, Comment
 from .serializers import (
@@ -288,17 +288,15 @@ class AlertViewSet(CustomModelViewSet):
         if error:
             return error
         else:
-            distilleries = Distillery.objects.all()
-            counts = {}
-
-            for distillery in distilleries:
-                alerts = distillery.alerts.filter(created_date__gte=date)
-                filtered_alerts = Alert.objects.filter_by_user(request.user,
-                                                               queryset=alerts)
-                alert_count = filtered_alerts.count()
-                if alert_count:
-                    counts[distillery.name] = filtered_alerts.count()
-
+            alerts = Alert.objects.filter(
+                created_date__gte=date,
+                distillery_id=OuterRef('collection_id'))
+            counts = {
+                d.name: d.alert_count
+                for d in Distillery.objects.annotate(
+                    alert_count=SQCount(alerts))
+                if d.alert_count
+            }
             return Response(counts)
 
     @list_route(methods=['get'], url_path='locations')
