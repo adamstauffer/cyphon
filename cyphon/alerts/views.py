@@ -292,6 +292,7 @@ class AlertViewSet(CustomModelViewSet):
             alerts = Alert.objects.filter(
                 created_date__gte=date,
                 distillery_id=OuterRef('collection_id'))
+            alerts = Alert.objects.filter_by_user(request.user, alerts)
             counts = {
                 d.name: d.alert_count
                 for d in Distillery.objects.annotate(
