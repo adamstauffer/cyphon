@@ -38,9 +38,10 @@ def count_by_group(queryset, column, options):
     Returns a dictionary containing the number of records for each option.
     """
     counts = {key: 0 for key, _ in options}
-    for obj in queryset.values(column).order_by(column).annotate(
-            Count(column)):
-        counts[getattr(obj, column)] = getattr(obj, column + '__count')
+    queryset = queryset.values_list(column, column + '__count')
+    queryset = queryset.order_by(column).annotate(Count(column))
+    for col, count in queryset:
+        counts[col] = count
     return {column: counts}
 
 

@@ -46,14 +46,10 @@ class CountByGroupTestCase(TestCase):
             ('low', 'Low'),
         )
 
-        # mock_queryset.count = Mock(return_value=3)
-        mock_queryset.values = Mock(return_value=mock_queryset)
+        mock_queryset.values_list = Mock(return_value=mock_queryset)
         mock_queryset.order_by = Mock(return_value=mock_queryset)
-        mock_queryset.annotate = Mock(return_value=[Mock() for _ in range(3)])
-
-        for i in range(3):
-            mock_queryset.annotate.return_value[i].level = options[i][0]
-            mock_queryset.annotate.return_value[i].level__count = 1
+        mock_queryset.annotate = Mock(return_value=[
+            (value, 1) for value, _ in options])
 
         actual = dbutils.count_by_group(mock_queryset, 'level', options)
         expected = {
