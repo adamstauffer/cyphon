@@ -22,7 +22,7 @@ import json
 
 # third party
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import IntegerField, Subquery
+from django.db.models import Count, IntegerField, Subquery
 
 
 class SQCount(Subquery):
@@ -37,13 +37,10 @@ def count_by_group(queryset, column, options):
     Takes a QuerySet, a column name, and an options list (tuple of 2-tuples).
     Returns a dictionary containing the number of records for each option.
     """
-    counts = {}
-
-    for option in options:
-        value = option[0]
-        kwargs = {column: value}
-        counts[value] = queryset.filter(**kwargs).count()
-
+    counts = {key: 0 for key, _ in options}
+    for obj in queryset.values(column).order_by(column).annotate(
+            Count(column)):
+        counts[getattr(obj, column)] = getattr(obj, column + '__count')
     return {column: counts}
 
 

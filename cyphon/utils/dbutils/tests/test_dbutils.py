@@ -39,24 +39,35 @@ class CountByGroupTestCase(TestCase):
         """
         Tests the count_by_group function.
         """
+
         options = (
             ('high', 'High'),
             ('medium', 'Medium'),
             ('low', 'Low'),
         )
 
-        mock_queryset.count = Mock(return_value=3)
-        mock_queryset.filter = Mock(return_value=mock_queryset)
+        # mock_queryset.count = Mock(return_value=3)
+        mock_queryset.values = Mock(return_value=mock_queryset)
+        mock_queryset.order_by = Mock(return_value=mock_queryset)
+        mock_queryset.annotate = Mock(return_value=[Mock() for _ in range(3)])
+
+        for i in range(3):
+            mock_queryset.annotate.return_value[i].level = options[i][0]
+            mock_queryset.annotate.return_value[i].level__count = 1
 
         actual = dbutils.count_by_group(mock_queryset, 'level', options)
-
         expected = {
             'level': {
-                'high': 3,
-                'medium': 3,
-                'low': 3
+                'high': 1,
+                'medium': 1,
+                'low': 1
             }
         }
+        self.assertEqual(actual, expected)
 
+        mock_queryset.annotate.return_value.clear()
+        for value, _ in options:
+            expected['level'][value] = 0
+        actual = dbutils.count_by_group(mock_queryset, 'level', options)
         self.assertEqual(actual, expected)
 
