@@ -21,7 +21,7 @@ Tests functions in the dbutils package.
 # standard library
 from unittest import TestCase
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:
     from mock import Mock, patch
 
@@ -39,24 +39,37 @@ class CountByGroupTestCase(TestCase):
         """
         Tests the count_by_group function.
         """
+
         options = (
             ('high', 'High'),
             ('medium', 'Medium'),
             ('low', 'Low'),
         )
 
-        mock_queryset.count = Mock(return_value=3)
-        mock_queryset.filter = Mock(return_value=mock_queryset)
+        mock_queryset.model = Mock()
+        mock_queryset.model._meta = MagicMock()
+        mock_queryset.model.objects = mock_queryset
+        mock_queryset.annotate.return_value = mock_queryset
+        mock_queryset.filter.return_value = mock_queryset
+        mock_queryset.values.return_value = mock_queryset
+        mock_queryset.order_by.return_value = [
+            {'level': value, 'level__count': 1}
+            for value, _ in options
+        ]
 
         actual = dbutils.count_by_group(mock_queryset, 'level', options)
-
         expected = {
             'level': {
-                'high': 3,
-                'medium': 3,
-                'low': 3
+                'high': 1,
+                'medium': 1,
+                'low': 1
             }
         }
+        self.assertEqual(actual, expected)
 
+        mock_queryset.order_by.return_value.clear()
+        for value, _ in options:
+            expected['level'][value] = 0
+        actual = dbutils.count_by_group(mock_queryset, 'level', options)
         self.assertEqual(actual, expected)
 

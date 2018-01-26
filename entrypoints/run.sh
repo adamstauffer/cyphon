@@ -49,6 +49,7 @@ if [ "$CYPHON_ENV" = 'PROD' ]; then
          --bind 0.0.0.0:8000 \
          --workers 3 \
          --log-level=warning \
+         --log-file=- \
          "$@"  # allow additional arguments when starting container
 
 elif [ "$CYPHON_ENV" = 'TEST' ]; then
