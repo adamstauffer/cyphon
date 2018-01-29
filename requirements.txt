@@ -12,7 +12,7 @@ django-ckeditor==5.4.0
 django-constance==2.0.0
 django-extensions==1.9.9
 django-filter==1.1.0
-django-grappelli==2.10.1
+django-grappelli==2.11.1
 django-mailbox==4.7.0
 django-picklefield==1.0.0
 django-s3-storage==0.12.3
