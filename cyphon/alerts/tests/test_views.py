@@ -34,6 +34,7 @@ from rest_framework import status
 # local
 from appusers.models import AppUser
 from alerts.models import Alert, Analysis
+from tags.models import TagRelation
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 from .expected_values import ALERT_DETAIL, ALERT_LIST
@@ -248,6 +249,18 @@ class UpdateAlertAPITests(AlertBaseAPITests):
         self.patch_to_api('3/', {'notes': notes})
         analysis = Analysis.objects.get(pk=3)
         self.assertEqual(analysis.notes, notes)
+
+    def test_add_tag(self):
+        """
+        Tests that adding a tag returns an updated tag list.
+        """
+        response = self.patch_to_api('1/', {'tags': [1]})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['tags'], [{
+            'id': 1,
+        }])
+        relations = TagRelation.objects.filter(tag=1)
+        self.assertEqual(relations.count(), 1)
 
 
 class AlertCollectionAPITests(AlertBaseAPITests):

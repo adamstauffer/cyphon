@@ -29,6 +29,7 @@ from distilleries.serializers import (
     DistilleryListSerializer,
 )
 from tags.serializers import TagDetailSerializer
+from tags.models import Tag
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Alert, Analysis, Comment
 
@@ -116,9 +117,12 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
     """
     level = serializers.ChoiceField(
         required=False,
-        choices=ALERT_LEVEL_CHOICES,
-    )
+        choices=ALERT_LEVEL_CHOICES)
     notes = serializers.CharField(source='analysis__notes')
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True,
+    )
 
     class Meta(object):
         """Metadata options."""
@@ -130,6 +134,7 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
             'status',
             'level',
             'notes',
+            'tags',
         )
 
 
@@ -172,6 +177,9 @@ class AlertDetailSerializer(serializers.ModelSerializer):
             'title',
             'url',
         )
+
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags')
 
 
 class RedactedAlertDetailSerializer(AlertDetailSerializer):

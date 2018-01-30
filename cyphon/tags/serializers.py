@@ -90,4 +90,5 @@ class TagListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'topic',
         )
