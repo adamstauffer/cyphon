@@ -248,6 +248,19 @@ class FieldRuleTestCase(TestCase):
         data = {'age': '1foobar'}
         self.assertFalse(rule.is_match(data))
 
+    def test_null_w_numeric(self):
+        """
+        Tests the is_match method for a numeric comparison with a
+        null value.
+        """
+        rule = FieldRule(
+            field_name='age',
+            operator='FloatField:<=',
+            value='20'
+        )
+        data = {'age': None}
+        self.assertFalse(rule.is_match(data))
+
     def test_is_null(self):
         """
         Tests the is_match method for 'is null'.
