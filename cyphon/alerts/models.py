@@ -74,13 +74,6 @@ class AlertManager(models.Manager):
     Adds methods to the default model manager.
     """
 
-    def api_queryset(self):
-        """
-        Overrides the default get_queryset method to select the related
-        Distillery and AppUser.
-        """
-        return super(AlertManager, self).get_queryset()
-
     def with_codebooks(self):
         """
         Overrides the default get_queryset method to select the related
