@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,6 +22,6 @@ sleep 20
 cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
-su -m cyphon -c 'python receiver.py "$@"'  
+exec python receiver/receiver.py "$@"

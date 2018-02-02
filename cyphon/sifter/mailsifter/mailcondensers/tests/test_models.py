@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,8 +21,10 @@
 # standard library
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from unittest import TestCase
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 import re
 
 # third party

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -24,7 +24,10 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.test import TestCase
@@ -56,6 +59,9 @@ class MailHelperTestCase(TestCase):
         self.java_file = 'test.jar'
         self.java = MIMEApplication('', 'java')
         self.java['Content-Disposition'] = 'attachment; filename=' + self.java_file
+
+        self.application = MIMEApplication('')
+        self.application['Content-Disposition'] = 'attachment; filename=' + self.java_file
 
         self.text_file = 'test.txt'
         self.text_attach = MIMEText('mock_txt_payload', 'plain')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -44,12 +44,12 @@ class MailRule(Rule):
 
     objects = GetByNameManager()
 
-    def _get_string(self, email):
+    def _get_string(self, data):
         """
         Takes an email Message object and returns the Message component
         indicated by the MailRule's field_name.
         """
-        value = accessors.get_email_value(self.field_name, email)
+        value = accessors.get_email_value(self.field_name, data)
         return str(value)
 
 
@@ -77,4 +77,3 @@ class MailSieveNode(SieveNode):
     content_type = models.ForeignKey(ContentType,
                                      limit_choices_to=_CONTENT_TYPES,
                                      verbose_name=_('node type'))
-

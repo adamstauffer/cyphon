@@ -7,10 +7,9 @@ Getting Started
 .. toctree::
    :maxdepth: 2
 
-   configure-server
    install-cyphon
    configure-project
    securing-cyphon
-   start-docker
+   start-services
    load-settings
    create-superuser

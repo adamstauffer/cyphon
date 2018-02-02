@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -223,12 +223,12 @@ class IssueAPI(JiraHandler):
 
         return issue
 
-    def process_request(self, alert):
+    def process_request(self, obj):
         """Create a JIRA issue for an Alert.
 
         Parameters
         ----------
-        alert : |Alert|
+        obj : |Alert|
             The |Alert| used to create the JIRA Issue.
 
         Returns
@@ -238,7 +238,7 @@ class IssueAPI(JiraHandler):
 
         """
         try:
-            issue = self._create_issue(alert)
+            issue = self._create_issue(obj)
             status_code = '200'
             data = self._format_results(issue)
             notes = None

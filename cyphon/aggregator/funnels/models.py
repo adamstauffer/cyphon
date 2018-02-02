@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -77,7 +77,7 @@ class FunnelManager(models.Manager):
         ----------
 
         bottle_id : str
-            The primary key of the |Bottle| associated with the |Funnel|. 
+            The primary key of the |Bottle| associated with the |Funnel|.
 
         pipe_natural_key : list of str
 

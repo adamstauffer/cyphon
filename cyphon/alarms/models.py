@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -26,18 +26,53 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from alerts.models import Alert
-from categories.models import Category
+from cyphon.baseclass import BaseClass
 from cyphon.models import GetByNameManager, FindEnabledMixin
+from cyphon.transaction import close_old_connections
 
 
-class AlarmManager(GetByNameManager, FindEnabledMixin):
+class AlarmManager(GetByNameManager, FindEnabledMixin, BaseClass):
     """
     Adds methods to the default model manager.
     """
-    pass
+
+    def find_relevant(self, distillery):
+        """Find appropriate Alarms to inspect a document.
+
+        This method should be overridden in derived classes.
+
+        Parameters
+        ----------
+        doc_obj : |Distillery|
+            The |Distillery| associated with the document.
+
+        Raises
+        ------
+        NotImplementedError
+
+        """
+        self.raise_method_not_implemented()
+
+    @close_old_connections
+    def process(self, doc_obj):
+        """Inspect a document with Alarms.
+
+        Parameters
+        ----------
+        doc_obj : |DocumentObj|
+            The document that Alarms should inspect.
+
+        Returns
+        -------
+        None
+
+        """
+        alarms = self.find_relevant(doc_obj.distillery)
+        for alarm in alarms:
+            alarm.process(doc_obj)
 
 
-class Alarm(models.Model):
+class Alarm(models.Model, BaseClass):
     """
     Defines a class for inspecting data produced by a Distillery. Used
     to create Alerts when appropriate.
@@ -51,6 +86,7 @@ class Alarm(models.Model):
         A |bool| indicating whether the Watchdog is active.
 
     groups : `QuerySet` of `Groups`
+        |Groups| to which the generated Alerts should be visible.
 
     """
     name = models.CharField(max_length=255, unique=True)
@@ -69,5 +105,25 @@ class Alarm(models.Model):
         related_query_name='%(class)s'
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
+
+    def process(self, doc_obj):
+        """Inspect a document and generate an Alert if appropriate.
+
+        This method should be overridden in derived classes.
+
+        Parameters
+        ----------
+        doc_obj : |DocumentObj|
+            The document that Alarms should inspect.
+
+        Raises
+        ------
+        NotImplementedError
+
+        """
+        self.raise_method_not_implemented()

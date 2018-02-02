@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -78,15 +78,12 @@ def db_name_validator(db_name):
     """
     Validates a Collection or Warehouse name.
     """
-    if re.match(r'^\$', db_name):
-        raise ValidationError(_('Name cannot start with "$"'))
-
-    elif re.search(r'\s', db_name):
+    if re.search(r'\s', db_name):
         raise ValidationError(_('Name cannot contain spaces'))
 
-    elif re.search(r'\W', db_name.replace('$', '')):
-        raise ValidationError(_('Name cannot contain special characters'
-                                'other than underscores and $.'))
+    elif re.search(r'\W', db_name.replace('-', '')):
+        raise ValidationError(_('Name cannot contain special characters '
+                                'other than underscores and hypens.'))
 
 
 def field_name_validator(field_name):
@@ -127,6 +124,14 @@ def key_file_validator(field_file):
     if not valid_ext:
         raise ValidationError(_('The key file must be either '
                                 'a .pem or .pub file.'))
+
+
+def lowercase_validator(value):
+    """
+    Validates that a string is lowercase.
+    """
+    if value != value.lower():
+        raise ValidationError(_('Value must be lowercase string.'))
 
 
 def regex_validator(value):

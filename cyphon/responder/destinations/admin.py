@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -23,16 +23,8 @@ Django Admin.
 from django.contrib import admin
 
 # local
+from ambassador.platforms.admin import PlatformAdmin
 from .models import Destination
 
 
-class DestinationAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for Destinations.
-    """
-    list_display = ['id', 'name']
-    exclude = []
-
-
-admin.site.register(Destination, DestinationAdmin)
-
+admin.site.register(Destination, PlatformAdmin)

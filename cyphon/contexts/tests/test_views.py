@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -83,6 +83,7 @@ class ContextAPITest(CyphonAPITestCase):
         response = self.client.get(url, query)
         actual = response.json()
         expected = {'error': 'A document id must be provided.'}
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(actual, expected)
 
 

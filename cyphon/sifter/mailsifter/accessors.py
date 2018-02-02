@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,6 +22,7 @@
 import email.utils as email_utils
 from email.header import decode_header
 import logging
+import os
 
 # third party
 import bleach
@@ -125,7 +126,9 @@ def get_attachment(email_part):
     if not email_part.is_multipart() \
             and 'attachment' in email_part.get('Content-Disposition', ''):
         content_type = email_part.get_content_type()
-        if content_type in _MAILSIFTER_SETTINGS['ALLOWED_EMAIL_ATTACHMENTS']:
+        _, extension = os.path.splitext(email_part.get_filename())
+        if content_type in _MAILSIFTER_SETTINGS['ALLOWED_EMAIL_ATTACHMENTS'] \
+                or extension in _MAILSIFTER_SETTINGS['ALLOWED_FILE_EXTENSIONS']:
             return email_part
 
 
@@ -193,13 +196,16 @@ def get_email_value(field_name, email):
     else:
         value = email.get(field_name, '')
 
-    if isinstance(value, (str, bytes)):
+    if isinstance(value, bytes):
+        value = value.decode('utf-8')
+
+    if isinstance(value, str):
         try:
             # strip any tags that aren't on the whitelist
             return bleach.clean(value, strip=True)
         except UnicodeDecodeError:
             _LOGGER.error('An error was encountered while parsing the %s '
-                         'field of an email.', field_name)
+                          'field of an email.', field_name)
             return 'The %s of this email could not be displayed due to an error.' \
                    % field_name
     else:

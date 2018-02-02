@@ -7,7 +7,11 @@ receiver
     :width: 60px
     :align: left
 
-.. automodule:: receiver
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. include:: ../summaries/receiver.summary.txt
+
+Subpackages
+-----------
+
+.. toctree::
+
+    receiver.receiver

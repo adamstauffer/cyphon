@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,14 +21,19 @@ Tests Alert model methods.
 # standard library
 import datetime
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
 # local
-from alerts.models import Alert
+from alerts.models import Alert, Comment
 from companies.models import Company
 from distilleries.models import Distillery
 from tests.fixture_manager import get_fixtures
@@ -96,7 +101,7 @@ class AlertModelTestCase(TestCase):
         Edit distillery so that it has a Company with a Codebook.
         """
         distillery = Distillery.objects.get_by_natural_key(
-            'elasticsearch', 'test_index', 'test_mail')
+            'elasticsearch.test_index.test_mail')
         distillery.company = Company.objects.get(pk=1)
         distillery.save()
         return distillery
@@ -149,14 +154,38 @@ class AlertCompanyTestCase(AlertModelTestCase):
         company.
         """
         alert = Alert.objects.get(pk=1)
-        self.assertEqual(alert.company, None) 
+        self.assertEqual(alert.company, None)
 
     def test_without_distillery(self):
         """
         Tests the company property when the Alert has no Distillery.
         """
         alert = Alert.objects.get(pk=7)
-        self.assertEqual(alert.company, None) 
+        self.assertEqual(alert.company, None)
+
+
+class AlertMuzzleHashTestCase(AlertModelTestCase):
+    """
+    Tests the save method with respect to an Alert's muzzle_hash.
+    """
+
+    def test_duplicate_alert(self):
+        """
+        Checks that duplicate muzzle hashes are not generated when Alert
+        levels are changed.
+        """
+        new_alert = Alert.objects.get(pk=1)
+        new_alert.pk = None
+        new_alert.level = 'MEDIUM'
+        new_alert.save()
+
+        # create a potential duplicate alert
+        old_alert = Alert.objects.get(pk=1)
+        old_alert.level = 'MEDIUM'
+        try:
+            old_alert.save()
+        except IntegrityError:
+            self.fail('Alert raised IntergrityError unexpectedly')
 
 
 class AlertContentDateTestCase(AlertModelTestCase):
@@ -423,6 +452,44 @@ class GetDataStrTestCase(AlertModelTestCase):
         self.assertEqual(actual, expected)
 
 
+class AlertTidyDataTestCase(AlertModelTestCase):
+    """
+    Tests the tidy_data property of an Alert.
+    """
+
+    def test_tidy_data_wo_distillery(self):
+        """
+        Tests the tidy_data property when the Alert has no Distillery.
+        """
+        self.alert.distillery = None
+        self.assertEqual(self.alert.tidy_data, self.alert.data)
+
+    def test_tidy_data_w_distillery(self):
+        """
+        Tests the tidy_data property when the Alert has no Distillery.
+        """
+        alert = Alert.objects.get(pk=4)
+        self.assertEqual(alert.tidy_data,
+                         {'content': {'link': 'url', 'text': 'foobar'}})
+
+
+class AddIncidentTestCase(AlertModelTestCase):
+    """
+    Tests the add_incident method of an Alert.
+    """
+
+    @patch_find_by_id
+    def test_add_incident(self):
+        """
+        Tests the add_incident method.
+        """
+        alert = Alert.objects.get(pk=1)
+        old_incidents = alert.incidents
+        alert.add_incident()
+        alert_updated = Alert.objects.get(pk=1)
+        self.assertEqual(alert_updated.incidents, old_incidents + 1)
+
+
 class AlertTeaserTestCase(AlertModelTestCase):
     """
     Tests the teaser property of an Alert.
@@ -608,6 +675,26 @@ class DisplayTitleTestCase(AlertModelTestCase):
         self.assertEqual(actual, expected)
 
 
+class AssociatedTagsTestCase(TestCase):
+    """
+    Tests the associated_tags property of an Alert.
+    """
+
+    fixtures = get_fixtures(['alerts', 'comments', 'tags'])
+
+    def test_alert_w_comments(self):
+        """
+
+        """
+        alert = Alert.objects.get(pk=3)
+        tags = alert.associated_tags
+        self.assertEqual(tags.count(), 4)
+        self.assertTrue(tags.filter(name='bird').exists())
+        self.assertTrue(tags.filter(name='cat').exists())
+        self.assertTrue(tags.filter(name='dog').exists())
+        self.assertTrue(tags.filter(name='turtle').exists())
+
+
 class AlertSummaryWithCommentsTestCase(AlertModelTestCase):
     """
     Tests the summary_with_comments method.
@@ -629,18 +716,18 @@ class AlertSummaryWithCommentsTestCase(AlertModelTestCase):
             'subject': 'Welcome to Acme Supply Co',
             'body': 'example text'
         }
-        alert = Alert.objects.get(pk=1)
+        alert = Alert.objects.get(pk=3)
         alert.data = mock_doc
         actual = alert.summary(include_comments=True)
         expected = \
-"""Alert ID:     1
+"""Alert ID:     3
 Title:        Acme Supply Co
-Level:        HIGH
+Level:        MEDIUM
 Incidents:    1
-Created date: 2015-03-01 02:40:24.468404+00:00
+Created date: 2015-03-01 02:46:24.468404+00:00
 
-Collection:   elasticsearch.test_index.test_logs
-Document ID:  1
+Collection:   mongodb.test_database.test_posts
+Document ID:  3
 Source Data:  
 {
     "body": "example text",
@@ -660,4 +747,53 @@ I have something to say
 Jack Miller commented at 2015-03-01 02:42:24.468404+00:00:
 I have something to say about what you have to say"""
 
+        self.assertEqual(actual, expected)
+
+
+class CommentTestCase(TestCase):
+    """
+    Tests the Comment model methods.
+    """
+    fixtures = get_fixtures(['comments'])
+
+    def setUp(self):
+        self.comment = Comment.objects.get(pk=1)
+
+    def test_get_all_comments(self):
+        """
+        Tests the get_all_comments method.
+        """
+        results = self.comment.get_all_comments()
+        self.assertEqual(len(results), 2)
+
+    def test_get_alert_assignee(self):
+        """
+        Tests the get_alert_assignee method.
+        """
+        user_model = get_user_model()
+        actual = self.comment.get_alert_assignee()
+        expected = user_model.objects.get(pk=1)
+        self.assertEqual(actual, expected)
+
+    def test_get_other_contributors(self):
+        """
+        Tests the get_other_contributors method.
+        """
+        contributors = self.comment.get_other_contributors()
+        self.assertEqual(len(contributors), 1)
+        self.assertEqual(contributors[0].pk, 2)
+
+        comment = Comment.objects.get(pk=2)
+        contributors = comment.get_other_contributors()
+        self.assertEqual(len(contributors), 1)
+        self.assertEqual(contributors[0].pk, 1)
+
+    def test_summary(self):
+        """
+        Tests the summary method.
+        """
+        comment = Comment.objects.get(pk=1)
+        actual = comment.summary()
+        expected = ('John Smith commented at 2015-03-01 02:41:24.468404+00:00:\n'
+                    'I have something to say')
         self.assertEqual(actual, expected)

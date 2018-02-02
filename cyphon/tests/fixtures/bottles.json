@@ -4,16 +4,7 @@
     "fields": {
       "id": 1,
       "field_name": "_source",
-      "field_type": "EmbeddedDocument"
-    }
-  },
-  {
-    "model": "bottles.bottlefield",
-    "fields": {
-      "id": 2,
-      "field_name": "content",
-      "field_type": "EmbeddedDocument"
-    }
+      "field_type": "EmbeddedDocument"    }
   },
   {
     "model": "bottles.bottlefield",
@@ -266,18 +257,10 @@
     }
   },
   {
-    "model": "bottles.bottlefield",
-    "fields": {
-      "id": 32,
-      "field_name": "user",
-      "field_type": "EmbeddedDocument"
-    }
-  },
-  {
     "model": "bottles.bottle",
     "pk": 1,
     "fields": {
-      "name": "content",
+      "name": "post_content",
       "fields": [
         ["title"],
         ["text"],
@@ -300,6 +283,24 @@
         ["profile_pic"],
         ["link"]
       ]
+    }
+  },
+  {
+    "model": "bottles.bottlefield",
+    "fields": {
+      "id": 2,
+      "field_name": "content",
+      "field_type": "EmbeddedDocument",
+      "embedded_doc": ["post_content"]
+    }
+  },  
+  {
+    "model": "bottles.bottlefield",
+    "fields": {
+      "id": 32,
+      "field_name": "user",
+      "field_type": "EmbeddedDocument",
+      "embedded_doc": ["user"]
     }
   },
   {

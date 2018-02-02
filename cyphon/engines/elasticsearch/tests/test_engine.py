@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,7 +22,10 @@
 import logging
 import time
 from unittest import skipIf
-from unittest.mock import patch
+try:
+    from unittest.mock import call, patch
+except ImportError:
+    from mock import call, patch
 
 # third party
 from elasticsearch.exceptions import ConnectionError
@@ -310,6 +313,13 @@ class ElasticsearchHelperTestCase(ElasticsearchBaseTestCase):
         },
     }
 
+    index_settings = {
+        'settings': {
+            'index.mapping.ignore_malformed': True,
+            'number_of_shards': 1,
+        },
+    }
+
     def test_init(self):
         """
         Tests the __init__ method of an Elasticsearch object. Checks
@@ -344,30 +354,54 @@ class ElasticsearchHelperTestCase(ElasticsearchBaseTestCase):
         Tests the _create_mapping method.
         """
         actual = self.engine._create_mapping()
+        expected = self.index_settings
         if VERSION < '5.0':
-            expected = {
-                'settings': {
-                    'index.mapping.ignore_malformed': True
-                },
+            expected.update({
                 'mappings': {
                     'test_docs': {
                         'properties': self.expected_properties_v2
                     }
                 }
-            }
+            })
 
         else:
-            expected = {
-                'settings': {
-                    'index.mapping.ignore_malformed': True
-                },
+            expected.update({
                 'mappings': {
                     'test_docs': {
                         'properties': self.expected_properties_v5
                     }
                 }
-            }
+            })
         self.assertEqual(actual, expected)
+
+    @patch('engines.elasticsearch.engine.ELASTICSEARCH.indices.put_template')
+    def test_create_template(self, mock_template):
+        """
+        Tests the create_template method.
+        """
+        self.engine.create_template()
+        body = self.index_settings
+        body.update({'template': self.engine._index_for_template})
+
+        if VERSION < '5.0':
+            body.update({
+                'mappings': {
+                    'test_docs': {
+                        'properties': self.expected_properties_v2
+                    }
+                }
+            })
+        else:
+            body.update({
+                'mappings': {
+                    'test_docs': {
+                        'properties': self.expected_properties_v5
+                    }
+                }
+            })
+        mock_template.assert_has_calls([
+            call(name=str(self.engine), body=body),
+        ])
 
 
 class ElasticsearchCRUDTestCase(ElasticsearchBaseTestCase, CRUDTestCaseMixin):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -47,7 +47,7 @@ class ReverseCoordinateOrderTestCase(TestCase):
         """
         Tests the function reverse_coordinate_order for a 4-tuple.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             shapes.reverse_coordinate_order((1, 2, 3, 1))
 
 
@@ -432,7 +432,38 @@ class FactorPolygonTestCase(TestCase):
                  (0.025, 0.01), (0.05, -0.01), (0.0, -0.01))
         radius_km = 0.01
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             polygon = Polygon(coord)
             shapes.factor_polygon_into_circles(polygon, radius_km)
 
+
+class ConvertToPointTestCase(TestCase):
+    """
+    Test class for the function convert_to_point function.
+    """
+
+    def test_convert_dict_to_point(self):
+        """
+        Tests the convert_to_point function with a dictionary.
+        """
+        point = shapes.convert_to_point({'lat': 40, 'lon': 100}, 'lon')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)
+
+    def test_convert_lat_list_to_point(self):
+        """
+        Tests the convert_to_point function with a list that starts with
+        latitude.
+        """
+        point = shapes.convert_to_point([40, 100], 'lat')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)
+
+    def test_convert_lon_list_to_point(self):
+        """
+        Tests the convert_to_point function with a list that starts with
+        longitude.
+        """
+        point = shapes.convert_to_point([100, 40], 'lon')
+        self.assertEqual(point[0], 100)
+        self.assertEqual(point[1], 40)

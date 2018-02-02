@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -41,6 +41,7 @@ Function                              Description
 
 # standard library
 import json
+import re
 
 # local
 from engines.queries import EngineQuery, EngineQueryFieldset
@@ -74,7 +75,8 @@ def regex_query(field_name, value):
         An Elasticsearch regexp query.
 
     """
-    return {'regexp': {field_name: '.*"%s".*' % value}}
+    value = re.escape(value)
+    return {'regexp': {field_name: '.*%s.*' % value}}
 
 
 def bool_query(must=None, should=None, must_not=None, filter_expr=None):
@@ -452,8 +454,9 @@ class ElasticsearchQueryFieldset(EngineQueryFieldset):
         """
         geometry = polygon_feature['geometry']
 
-        assert geometry['type'] == 'Polygon', 'Feature is a %s not a Polygon' \
-            % geometry['type']
+        if geometry['type'] != 'Polygon':  # pragma: no cover
+            raise ValueError('Feature is a %s not a Polygon'
+                             % geometry['type'])
 
         return {
             'geo_polygon': {

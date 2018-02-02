@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -23,6 +23,7 @@ Overrides default Cyphon settings when compiling docs.
 
 """
 
+# local imports
 from .default import *
 from .default import DATABASES as DB_SETTINGS
 

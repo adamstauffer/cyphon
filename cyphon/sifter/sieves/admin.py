@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -23,14 +23,16 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 # local
-from cyphon.admin import CONFIG_TOOL_CLASSES
-from cyphon.forms import CONFIG_TOOL_INPUTS 
+from cyphon.admin import ConfigToolAdmin, CONFIG_TOOL_CLASSES
+from cyphon.forms import CONFIG_TOOL_INPUTS
 
 
-class RuleAdmin(admin.ModelAdmin):
+class RuleAdmin(ConfigToolAdmin):
     """
     Customizes admin pages for Rules.
     """
+    model_method = 'is_match'
+
     list_display = [
         'id',
         'name',
@@ -43,6 +45,13 @@ class RuleAdmin(admin.ModelAdmin):
     ]
     list_display_links = ['name', ]
     fieldsets = (
+        ('Test this rule', {
+            'classes': CONFIG_TOOL_CLASSES,
+            'description': _('Enter a test string and click "Run test" '
+                             'to check whether the rule is True or False '
+                             'for the string.'),
+            'fields': CONFIG_TOOL_INPUTS,
+        }),
         (None, {
             'fields': [
                 'name',
@@ -54,13 +63,6 @@ class RuleAdmin(admin.ModelAdmin):
                 'protocol',
             ]
         }),
-        ('Test this rule', {
-            'classes': CONFIG_TOOL_CLASSES,
-            'description': _('Enter a test string and click "Run test" '
-                             'to check whether the rule is True or False '
-                             'for the string.'),
-            'fields': CONFIG_TOOL_INPUTS,
-        })
     )
     save_as = True
 
@@ -132,4 +134,3 @@ class SieveAdmin(admin.ModelAdmin):
     ]
     list_display_links = ['name', ]
     save_as = True
-

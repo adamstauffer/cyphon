@@ -1,4 +1,4 @@
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -17,11 +17,14 @@
 
 """
 import os
+from pip.download import PipSession
 from pip.req import parse_requirements
 from setuptools import find_packages, setup
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
-INSTALL_REQS = parse_requirements('requirements.txt')
+INSTALL_REQS = parse_requirements(
+    'requirements.txt',
+    session=PipSession())
 
 # reqs is a list of requirements
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']
@@ -35,7 +38,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='cyphon',
-    version='1.0.1',
+    version='1.5.3',
     install_requires=REQUIREMENTS,
     packages=find_packages(),
     include_package_data=True,
@@ -54,5 +57,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: Implementation :: CPython',
     ],
 )

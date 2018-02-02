@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,6 +18,7 @@
 Defines a |QueryFieldset| class. |QueryFieldsets| are used to construct
 queries to data stores.
 """
+import collections
 
 # local
 from cyphon.choices import FIELD_TYPE_CHOICES, OPERATOR_CHOICES
@@ -60,17 +61,18 @@ class QueryFieldset(object):
         self.operator = operator
         self.value = value
 
-        assert self.field_type in self.FIELD_TYPES
-        assert self.operator in self.OPERATORS
+        if self.field_type not in self.FIELD_TYPES:  # pragma: no cover
+            raise ValueError('%s is not a valid field_type' % self.field_type)
+
+        if self.operator not in self.OPERATORS:  # pragma: no cover
+            raise ValueError('%s is not a valid operator' % self.operator)
 
     def __str__(self):
-        return "%s: %s" % (self.__class__.__name__, self.__dict__)
-
-    @property
-    def __dict__(self):
-        return {
-            'field_name': self.field_name,
-            'field_type': self.field_type,
-            'operator': self.operator,
-            'value': self.value
-        }
+        items = collections.OrderedDict([
+            ('field_name', self.field_name),
+            ('field_type', self.field_type),
+            ('operator', self.operator),
+            ('value', self.value),
+        ])
+        items_str = '{' + ', '.join('%r: %r' % i for i in items.items()) + '}'
+        return "%s: %s" % (self.__class__.__name__, items_str)

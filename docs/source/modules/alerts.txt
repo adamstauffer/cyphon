@@ -20,4 +20,5 @@ Submodules
    alerts.filters
    alerts.models
    alerts.serializers
+   alerts.services
    alerts.views

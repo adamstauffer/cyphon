@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -15,16 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Defines a signal reciever for incoming emails.
+Defines a signal receiver for incoming emails.
 """
 
 # third party
-from django.db import close_old_connections
+from django.conf import settings
 from django.dispatch import receiver
 from django_mailbox.signals import message_received
 
 # local
-from .services import process_email
+from cyphon.documents import DocumentObj
+from .models import MailChute
+
+_MAILSIFTER_SETTINGS = settings.MAILSIFTER
 
 
 @receiver(message_received)
@@ -36,8 +39,11 @@ def handle_message(sender, message, **args):
     # get the Python email.message.Message object
     email = message.get_email_object()
 
+    doc_obj = DocumentObj(
+        data=email,
+        doc_id=email['Message-ID'],
+        collection=_MAILSIFTER_SETTINGS['MAIL_COLLECTION'],
+    )
+
     # process the email through enabled MailChutes
-    process_email(email)
-
-    close_old_connections()
-
+    MailChute.objects.process(doc_obj)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,6 +19,7 @@
 """
 
 # standard library
+import socket
 import time
 
 # third party
@@ -32,12 +33,14 @@ TIMEOUT = 1
 
 SLEEP = 0.5
 
+
 class HtmlElement(object):
     """
     Base element class.
     """
 
-    def __init__(self):
+    def __init__(self, locator=''):
+        self.locator = locator
         self.timeout = TIMEOUT
 
 
@@ -142,8 +145,9 @@ class AutocompleteElement(HtmlElement):
     """
 
     """
-    def __init__(self, driver):
-        super(AutocompleteElement, self).__init__()
+
+    def __init__(self, driver, *args, **kwargs):
+        super(AutocompleteElement, self).__init__(*args, **kwargs)
         self.driver = driver
         self.path = '//span[@data-input-id="id_%s-autocomplete"]' % self.locator
         self.name = self.locator + '-autocomplete'
@@ -211,7 +215,7 @@ class AutocompleteElement(HtmlElement):
             )
             options = self.driver.find_elements_by_xpath(option_path)
             return len(options)
-        except TimeoutException:
+        except (TimeoutException, socket.timeout):
             return 0
 
     def get_value(self):

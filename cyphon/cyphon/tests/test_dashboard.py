@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -50,6 +50,8 @@ class DashboardFunctionalTest(AdminFunctionalTest):
         self.assertIn('Manage Alerts', self.page.module_10)
         self.assertIn('Manage Mail', self.page.module_11)
         self.assertIn('People and Permissions', self.page.module_12)
-        self.assertIn('App Configurations', self.page.module_13)
-        self.assertIn('Records', self.page.module_14)
-        self.assertIn('Support', self.page.module_15)
+        self.assertIn('Records', self.page.module_13)
+        self.assertIn('App Configurations', self.page.module_14)
+        # self.assertIn('Recent Actions', self.page.module_15)  # no listings
+        self.assertIn('Support', self.page.module_16)
+        self.assertIn('Latest Cyphon News', self.page.module_17)

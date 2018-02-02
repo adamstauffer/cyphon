@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -67,6 +67,10 @@ class Taste(Teaser):
 
     objects = TasteManager()
 
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['container']
+
     def __str__(self):
         return str(self.container)
-

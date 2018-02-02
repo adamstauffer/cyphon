@@ -19,6 +19,7 @@ Submodules
    cyphon.celeryapp
    cyphon.choices
    cyphon.dashboard
+   cyphon.documents
    cyphon.fieldsets
    cyphon.filters
    cyphon.forms
@@ -27,5 +28,6 @@ Submodules
    cyphon.tasks
    cyphon.transaction
    cyphon.urls
+   cyphon.version
    cyphon.views
    cyphon.wsgi

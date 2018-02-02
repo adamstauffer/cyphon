@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,32 +22,10 @@
 from .element import SelectElement, TextInputElement, LinkElement
 
 
-class ContentTypeField(SelectElement):
-    """
-
-    """
-    locator = 'content_type'
-
-
-class ObjectIdField(TextInputElement):
-    """
-
-    """
-    locator = 'object_id'
-
-
-class LookupField(LinkElement):
-    """
-
-    """
-    locator = 'lookup_id_object_id'
-
-
 class GenericRelationMixin(object):
     """
     Page class for a Fitting admin page.
     """
-    content_type = ContentTypeField()
-    object_id = ObjectIdField()
-    lookup = LookupField()
-
+    content_type = SelectElement('content_type')
+    object_id = TextInputElement('object_id')
+    lookup = LinkElement('lookup_id_object_id')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -120,7 +120,8 @@ class Container(models.Model):
         """
         Returns a dictionary representing the Container's Label.
         """
-        assert self.label, 'Container "%s" has no Label' % self.name
+        if not self.label:  # pragma: no cover
+            raise RuntimeError('Container "%s" has no Label' % self.name)
         return self.label.get_structure()
 
     def add_label(self, data):

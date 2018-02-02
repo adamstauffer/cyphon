@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -164,6 +164,7 @@ class CyphonIndexDashboard(Dashboard):
             column=1,
             css_classes=('grp-collapse grp-closed',),
             models=(
+                'categories.models.Category',
                 'distilleries.models.Distillery',
             ),
         ))
@@ -174,6 +175,18 @@ class CyphonIndexDashboard(Dashboard):
             css_classes=('grp-collapse grp-closed',),
             models=(
                 'contexts.models.Context',
+            ),
+        ))
+
+        self.children.append(modules.ModelList(
+            _('Tagging Data'),
+            column=1,
+            css_classes=('grp-collapse grp-closed',),
+            models=(
+                'tags.models.DataTagger',
+                'articles.models.Article',
+                'tags.models.Topic',
+                'tags.models.Tag',
             ),
         ))
 
@@ -218,6 +231,18 @@ class CyphonIndexDashboard(Dashboard):
             ),
         ))
 
+        self.children.append(modules.ModelList(
+            _('Records'),
+            column=2,
+            collapsible=False,
+            models=(
+                'responder.dispatches.models.Dispatch',
+                'aggregator.invoices.models.Invoice',
+                'ambassador.stamps.models.Stamp',
+                'aggregator.streams.models.Stream',
+            ),
+        ))
+
         self.children.append(modules.Group(
             _('App Configurations'),
             column=2,
@@ -258,7 +283,7 @@ class CyphonIndexDashboard(Dashboard):
                     ),
                 ),
                 modules.ModelList(
-                    _('Push Notifications'),
+                    _('Notifications'),
                     css_classes=('grp-collapse grp-open',),
                     models=(
                         'constance.*',
@@ -280,15 +305,11 @@ class CyphonIndexDashboard(Dashboard):
         #     ),
         # ))
 
-        self.children.append(modules.ModelList(
-            _('Records'),
+        self.children.append(modules.RecentActions(
+            _('Recent Actions'),
             column=3,
             collapsible=False,
-            models=(
-                'responder.dispatches.models.Dispatch',
-                'aggregator.invoices.models.Invoice',
-                'ambassador.stamps.models.Stamp',
-            ),
+            limit=3,
         ))
 
         self.children.append(modules.LinkList(
@@ -303,9 +324,9 @@ class CyphonIndexDashboard(Dashboard):
             ]
         ))
 
-        self.children.append(modules.RecentActions(
-            _('Recent Actions'),
-            limit=3,
-            collapsible=False,
+        self.children.append(modules.Feed(
+            _('Latest Cyphon News'),
+            feed_url='https://www.cyphon.io/blog?format=rss&utm_source=admin',
             column=3,
+            limit=3,
         ))

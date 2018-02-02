@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,10 @@ Functional tests for the LogCondenser app.
 
 # standard library
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.core.exceptions import ValidationError
@@ -195,10 +198,6 @@ class ChangeLogCondenserConfigToolTest(CondenserFunctionalTest):
     url = '/admin/logcondensers/logcondenser/1/change/'
 
     test_doc = 'Mar 29 13:02:58 0.0.0.0 [3:19187:7] THIS IS A TEST'
-
-    def setUp(self):
-        super(ChangeLogCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
 
     def test_invalid_form(self):
         """

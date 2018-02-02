@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,10 +22,10 @@ sleep 10
 cd /usr/src/app/cyphon
 
 # migrate db, so we have the latest db schema
-su -m cyphon -c "python manage.py migrate --verbosity 0"
+su-exec cyphon python manage.py migrate --verbosity 0
 
 # collect static files
-su -m cyphon -c "python manage.py collectstatic --noinput --verbosity 0"
+su-exec cyphon python manage.py collectstatic --noinput --verbosity 0
 
 # create superuser
 if [ "$CYPHON_SUPERUSER" = 'YES' ]; then
@@ -39,7 +39,7 @@ fi
 # load example fixtures
 if [ "$LOAD_EXAMPLE_FIXTURES" = 'YES' ]; then
     echo "Loading example fixtures..."
-    su -m cyphon -c "python manage.py loaddata fixtures/starter-fixtures.json"
+    su-exec cyphon python manage.py loaddata fixtures/starter-fixtures.json
 fi
 
 if [ "$CYPHON_ENV" = 'PROD' ]; then
@@ -49,6 +49,7 @@ if [ "$CYPHON_ENV" = 'PROD' ]; then
          --bind 0.0.0.0:8000 \
          --workers 3 \
          --log-level=warning \
+         --log-file=- \
          "$@"  # allow additional arguments when starting container
 
 elif [ "$CYPHON_ENV" = 'TEST' ]; then

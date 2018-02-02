@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,10 @@ Tests the Container class.
 
 # standard library
 from collections import OrderedDict
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
 from django.test import TestCase
@@ -314,5 +317,5 @@ class ContainerTestCase(TestCase):
         "profile_pic": "URLField",
         "screen_name": "CharField (Account)"
     }
-}"""     
+}"""
         self.assertEqual(actual, expected)

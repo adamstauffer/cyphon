@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -26,7 +26,6 @@ from django.conf import settings
 from rest_framework import status
 
 # local
-from appusers.models import AppUser
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 

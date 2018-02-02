@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,10 +18,8 @@
 Defines forms for DataFittings and DataCondensers.
 """
 
-# third party
-import autocomplete_light
-
 # local
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from sifter.condensers.forms import (
     CondenserForm,
     FittingForm,
@@ -62,9 +60,12 @@ class DataFittingForm(FittingForm):
         autocomplete_names = {
             'target_field': 'FilterTargetFieldsByDataCondenser'
         }
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByDataCondenser'),
+        }
 
 
-class DataFittingInlineForm(FittingInlineForm):
+class DataFittingInlineForm(FittingInlineForm, AutoCompleteModelFormMixin):
     """
     Defines an inline form for adding or updating a DataFitting using
     autocomplete fields.
@@ -72,4 +73,6 @@ class DataFittingInlineForm(FittingInlineForm):
 
     class Meta(FittingInlineForm.Meta):
         model = DataFitting
-
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByBottle'),
+        }

@@ -9,10 +9,9 @@
       "assigned_user": null,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["elasticsearch", "test_index", "test_logs"],
+      "distillery": ["elasticsearch.test_index.test_logs"],
       "title": "Acme Supply Co",
       "doc_id": 1,
-      "notes": "Some example notes.",
       "location": "POINT (-78.2 36.4)"
     }
   },
@@ -27,12 +26,18 @@
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
       "title": "Threat Alert",
-      "distillery": ["mongodb", "test_database", "test_posts"],
+      "distillery": ["mongodb.test_database.test_posts"],
       "doc_id": 2,
       "location": "POINT (-78.2 36.4)",
       "data": {
+        "content": {
+          "title": "This is some text about wild dogs.",
+          "text": "This is some text about wild cats."
+        },
         "user": {
-          "email": "user@example.com"
+          "email": "user@example.com",
+          "name": "Pied Piper",
+          "screenname": "piedpiper"
         }
       }
     }
@@ -47,8 +52,10 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["mongodb", "test_database", "test_posts"],
-      "doc_id": 3
+      "title": "Acme Supply Co",
+      "distillery": ["mongodb.test_database.test_posts"],
+      "doc_id": 3,
+      "data": {"foo": "bar"}
     }
   },
   {
@@ -62,9 +69,16 @@
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
       "title": "Acme Supply Co",
-      "distillery": ["mongodb", "test_database", "test_posts"],
+      "distillery": ["mongodb.test_database.test_posts"],
       "doc_id": 1,
-      "data": {"subject": "test doc"}
+      "data": {
+        "subject": "test doc",
+        "content": {
+            "link": "url",
+            "text": "foobar",
+            "bogus": "foobar"
+        }
+      }
     }
   },
   {
@@ -77,7 +91,7 @@
       "assigned_user": null,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 2,
       "location": "POINT (-78.2 36.4)"
     }
@@ -92,7 +106,7 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 1,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 3
     }
   },
@@ -118,9 +132,27 @@
       "assigned_user": 1,
       "alarm_type": ["watchdogs", "watchdog"],
       "alarm_id": 2,
-      "distillery": ["mongodb", "test_database", "test_docs"],
+      "distillery": ["mongodb.test_database.test_docs"],
       "doc_id": 3,
       "location": "POINT (-78.2 36.4)"
+    }
+  },
+  {
+    "model": "alerts.analysis",
+    "fields": {
+      "alert": 1,
+      "created_date": "2015-03-01 02:40:24.468404+00:00",
+      "last_updated": "2015-03-01 02:40:24.468404+00:00",
+      "notes": "Some example notes."
+    }
+  },
+  {
+    "model": "alerts.analysis",
+    "fields": {
+      "alert": 3,
+      "created_date": "2015-03-01 02:46:24.468404+00:00",
+      "last_updated": "2015-03-01 02:40:24.468404+00:00",
+      "notes": "Some example notes."
     }
   }
 ]

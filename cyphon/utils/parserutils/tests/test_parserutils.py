@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -26,6 +26,7 @@ from unittest import TestCase
 from bson import ObjectId
 
 # local
+from bottler.datafields.models import DataField
 from utils.parserutils import parserutils
 
 
@@ -111,6 +112,36 @@ class GetDictValueTestCase(TestCase):
         self.assertEqual(parserutils.get_dict_value(field, doc), 20)
 
 
+class AbridgeDictTestCase(TestCase):
+    """
+    Tests the abridge_dict function.
+    """
+    schema = [
+        DataField(field_name='test1.foo', field_type='TextField'),
+        DataField(field_name='test1.bar', field_type='TextField'),
+        DataField(field_name='test3', field_type='TextField'),
+        DataField(field_name='test4', field_type='TextField'),
+    ]
+
+    def test_abridge_dict(self):
+        """
+        Tests method for getting a value from a nested dictionary.
+        """
+        doc = {
+            'test1': {
+                'foo': 1,
+                'bar': 2,
+                'bogus': 3
+            },
+            'test2': 4,  # not in schema
+            'test3': 5,
+            'test4': None  # null value
+        }
+        actual = parserutils.abridge_dict(self.schema, doc)
+        expected = {'test1': {'foo': 1, 'bar': 2}, 'test3': 5}
+        self.assertEqual(actual, expected)
+
+
 class DivideIntoGroupsTestCase(TestCase):
     """
     Tests the divide_into_groups function.
@@ -120,14 +151,14 @@ class DivideIntoGroupsTestCase(TestCase):
         """
         Tests divide_into_groups for negative group size.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             parserutils.divide_into_groups(['a', 'b', 'c', 'd', 'e'], -1)
 
     def test_group_size_of_zero(self):
         """
         Tests divide_into_groups for group size of 0.
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             parserutils.divide_into_groups(['a', 'b', 'c', 'd', 'e'], 0)
 
     def test_empty_list(self):

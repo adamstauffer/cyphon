@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -24,7 +24,7 @@ import importlib
 
 def create_targets(data):
     """
-    Takes a dictionary of data and creates target objects from it. Each 
+    Takes a dictionary of data and creates target objects from it. Each
     key in the dictionary must align to an attribute of the target object
     it's trying to create.
     """
@@ -39,11 +39,11 @@ def create_targets(data):
             target_objects[key] = create_target_object(target, value)
 
     return target_objects
-    
+
 
 def create_target_object(object_package, data_list):
     """
-    Creates a list of target objects given the target object package 
+    Creates a list of target objects given the target object package
     and a list of dictionaries whose keys map to the objects attributes.
     """
     targets = []
@@ -53,7 +53,6 @@ def create_target_object(object_package, data_list):
         if serializer.is_valid():
             targets.append(serializer.save())
         else:
-            return 
-    
-    return targets
+            return
 
+    return targets

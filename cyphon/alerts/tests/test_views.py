@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,7 +21,10 @@ Tests Alert views.
 # standard library
 from datetime import timedelta
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.conf import settings
@@ -30,14 +33,15 @@ from rest_framework import status
 
 # local
 from appusers.models import AppUser
-from alerts.models import Alert
+from alerts.models import Alert, Analysis
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 from .expected_values import ALERT_DETAIL, ALERT_LIST
 
 API_URL = settings.API_URL
 
-ALERT_FIXTURES = get_fixtures(['alerts', 'comments', 'contexts', 'dispatches'])
+ALERT_FIXTURES = get_fixtures(['alerts', 'comments', 'contexts',
+                               'dispatches', 'tags'])
 
 
 class AlertBaseAPITests(CyphonAPITestCase):
@@ -121,7 +125,8 @@ class AlertBasicAPITests(AlertBaseAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), ALERT_DETAIL)
         self.assertEqual(response.data.get('title'), 'Acme Supply Co')
-        self.assertEqual(response.data.get('data'), {'subject': 'test doc'})
+        self.assertEqual(response.data.get('data'),
+                         {'content': {'link': 'url', 'text': 'foobar'}})
 
     def test_get_redacted_alert(self):
         """
@@ -132,7 +137,8 @@ class AlertBasicAPITests(AlertBaseAPITests):
         response = self.get_api_response('4/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('title'), '**PEAK**')
-        self.assertEqual(response.data.get('data'), {'subject': 'test doc'})
+        self.assertEqual(response.data.get('data'),
+                         {'content': {'link': 'url', 'text': 'foobar'}})
 
     def test_user_w_alert_wo(self):
         """
@@ -182,6 +188,66 @@ class AlertBasicAPITests(AlertBaseAPITests):
         self.alert.alarm.groups.add(self.group2)
         response = self.get_api_response(self.obj_url, is_staff=False)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class UpdateAlertAPITests(AlertBaseAPITests):
+    """
+    Tests REST API endpoint for updating an Alert.
+    """
+
+    def test_patch_alert(self):
+        """
+        Tests the partial_update view of the Alerts endpoint.
+        """
+        self.maxDiff = None
+        self.user.use_redaction = False
+        response = self.patch_to_api('4/', {
+            'level': 'MEDIUM',
+            'status': 'BUSY',
+        })
+        old_muzzle_hash = Alert.objects.get(pk=4).muzzle_hash
+        updated_alert = ALERT_DETAIL.copy()
+        updated_alert['data'] = {
+            'content': {
+                'link': 'url',
+                'text': 'foobar',
+            }
+        }
+        updated_alert['level'] = 'MEDIUM'
+        updated_alert['status'] = 'BUSY'
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), updated_alert)
+        self.assertEqual(response.data.get('level'), 'MEDIUM')
+        self.assertEqual(response.data.get('status'), 'BUSY')
+
+        # make sure muzzle_hash doesn't change on update
+        response = self.patch_to_api('4/', {
+            'level': 'MEDIUM',
+        })
+        new_muzzle_hash = Alert.objects.get(pk=4).muzzle_hash
+        self.assertEqual(response.data.get('level'), 'MEDIUM')
+        self.assertEqual(old_muzzle_hash, new_muzzle_hash)
+
+    def test_create_analysis(self):
+        """
+        Tests the partial_update view of the Alerts endpoint when an
+        Analysis is created.
+        """
+        self.assertFalse(Analysis.objects.filter(pk=4).exists())
+        notes = 'Here are some notes.'
+        self.patch_to_api('4/', {'notes': notes})
+        analysis = Analysis.objects.get(pk=4)
+        self.assertEqual(analysis.notes, notes)
+
+    def test_update_analysis(self):
+        """
+        Tests the partial_update view of the Alerts endpoint when an
+        Analysis is updated.
+        """
+        notes = 'Here are some updated notes.'
+        self.patch_to_api('3/', {'notes': notes})
+        analysis = Analysis.objects.get(pk=3)
+        self.assertEqual(analysis.notes, notes)
 
 
 class AlertCollectionAPITests(AlertBaseAPITests):
@@ -423,7 +489,7 @@ class AlertTimeseriesAPITests(AlertBaseAPITests):
         self.maxDiff = None
         test_url = '?days=7'
         date1 = self.date + timedelta(days=7)
-        with patch('alerts.views.timezone.now', return_value=date1):
+        with patch('alerts.views.timezone.localtime', return_value=date1):
             response = self.get_api_response(test_url, is_staff=False)
             expected = {
                 'CRITICAL': [0, 0, 0, 0, 0, 0, 0],
@@ -443,7 +509,7 @@ class AlertTimeseriesAPITests(AlertBaseAPITests):
             self.assertEqual(response.json(), expected)
 
         date2 = self.date + timedelta(days=3)
-        with patch('alerts.views.timezone.now', return_value=date2):
+        with patch('alerts.views.timezone.localtime', return_value=date2):
             response = self.get_api_response(test_url, is_staff=False)
             expected = {
                 'CRITICAL': [0, 0, 0, 0, 0, 0, 0],
@@ -501,17 +567,53 @@ class AlertDistilleryAPITests(AlertBaseAPITests):
         response = self.get_api_response(is_staff=False)
         expected = [
             {
-                'id': 1,
-                'name': 'mongodb.test_database.test_posts',
-                'url': 'http://testserver/api/v1/distilleries/1/'
-            },
-            {
                 'id': 5,
                 'name': 'elasticsearch.test_index.test_logs',
                 'url': 'http://testserver/api/v1/distilleries/5/'
             },
+            {
+                'id': 1,
+                'name': 'mongodb.test_database.test_posts',
+                'url': 'http://testserver/api/v1/distilleries/1/'
+            },
         ]
         self.assertEqual(response.json()['results'], expected)
+
+
+class AnalysisAPITests(CyphonAPITestCase):
+    """
+    Tests the API endpoint for alert analyses.
+    """
+    fixtures = get_fixtures(['alerts'])
+
+    model_url = 'analyses/'
+
+    def test_get_analyses(self):
+        """
+        Tests the REST API endpoint for Analyses.
+        """
+        response = self.get_api_response()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+        self.assertEqual(response.data['results'][0].get('notes'),
+                         'Some example notes.')
+
+    def test_get_analysis(self):
+        """
+        Tests getting a single Analysis.
+        """
+        response = self.get_api_response('1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('notes'), 'Some example notes.')
+
+    def test_only_analysts_can_patch(self):
+        """
+        Tests that only the user who created the Analysis can alter it.
+        """
+        url = self.url + '1/'
+        self.authenticate()
+        response = self.client.patch(url, {'notes': 'new'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class CommentAPITests(CyphonAPITestCase):

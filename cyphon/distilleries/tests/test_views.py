@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -17,6 +17,12 @@
 """
 Tests views for Distilleries.
 """
+
+# standard library
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.contrib.auth.models import Group
@@ -59,6 +65,24 @@ class DistilleryAPITests(CyphonAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 6)
 
+    def test_filtered_distilleries(self):
+        """
+        Tests that GET /api/v1/distilleries/ filters distilleries by company.
+        """
+        self.user = AppUser.objects.get(id=2)
+        response = self.get_api_response(is_staff=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 3)
+
+    def test_no_company_nonstaff(self):
+        """
+        Tests that GET /api/v1/distilleries/ returns no distilleries
+        if the user has no company and is not staff.
+        """
+        response = self.get_api_response(is_staff=False)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 0)
+
     def test_have_alerts(self):
         """
         Tests the GET /api/v1/distilleries/have-alerts/ REST API endpoint.
@@ -66,3 +90,14 @@ class DistilleryAPITests(CyphonAPITestCase):
         response = self.get_api_response('have-alerts/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 3)
+
+    @patch('distilleries.views.DistilleryViewSet.paginate_queryset',
+           return_value=None)
+    def test_have_alerts_no_paging(self, mock_page):
+        """
+        Tests the GET /api/v1/distilleries/have-alerts/ REST API endpoint
+        without pagination.
+        """
+        response = self.get_api_response('have-alerts/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 6)

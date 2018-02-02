@@ -8,6 +8,5 @@ Developer Guide
    :maxdepth: 2
 
    Architecture <../architecture/overview>
-   dependencies
-   using-fixtures
    graphing-models
+   testing

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -53,8 +53,7 @@ class ContextManager(models.Manager):
     Adds methods to the default Django model manager.
     """
 
-    def get_by_natural_key(self, name, backend, warehouse_name,
-                           collection_name):
+    def get_by_natural_key(self, name, distillery_name):
         """Get a |Context| by its natural key.
 
         Allows retrieval of a |Context| by its natural key instead of
@@ -83,13 +82,11 @@ class ContextManager(models.Manager):
 
         """
         try:
-            distillery_key = [backend, warehouse_name, collection_name]
-            distillery = Distillery.objects.get_by_natural_key(*distillery_key)
-            return self.get(name=name, primary_distillery=distillery)
+            return self.get(name=name,
+                            primary_distillery__name=distillery_name)
         except ObjectDoesNotExist:
-            _LOGGER.error('%s %s:%s.%s.%s does not exist',
-                          self.model.__name__, name,
-                          backend, warehouse_name, collection_name)
+            _LOGGER.error('%s %s:%s does not exist',
+                          self.model.__name__, name, distillery_name)
 
 
 class Context(models.Model):
@@ -167,6 +164,7 @@ class Context(models.Model):
 
     class Meta:
         unique_together = ['name', 'primary_distillery']
+        ordering = ['name', 'primary_distillery', 'related_distillery']
 
     def __str__(self):
         return self.name
@@ -382,7 +380,13 @@ class Context(models.Model):
         sorter = self._get_sorter()
 
         if query:
-            return self.related_distillery.find(query, sorter, page, page_size)
+            results = self.related_distillery.find(query, sorter, page, page_size)
+            if isinstance(results, dict):
+                return results
+            else:
+                return {'error': 'The query could not be completed. '
+                                 'Please increase the timeout setting '
+                                 'or try again later.'}
         else:
             return {'error': 'No query parameters available for searching '
                              'related data. Please define a time interval, '
@@ -452,14 +456,14 @@ class Context(models.Model):
 
 
 class ContextFilterManager(models.Manager):
-    """Manage |ContextFilte| objects.
+    """Manage |ContextFilter| objects.
 
     Adds methods to the default Django model manager.
     """
 
     # pylint: disable=R0913
-    def get_by_natural_key(self, name, backend, warehouse_name,
-                           collection_name, value_field, search_field):
+    def get_by_natural_key(self, name, distillery_name, value_field,
+                           search_field):
         """Get a |ContextFilter| by its natural key.
 
         Allows retrieval of a |ContextFilter| by its natural key instead
@@ -468,7 +472,7 @@ class ContextFilterManager(models.Manager):
         Parameters
         ----------
         name : str
-            The name of the |Context| to which the |ComtextFilter| belongs.
+            The name of the |Context| to which the |ContextFilter| belongs.
 
         backend : str
             The backend associated with the `primary_distillery` of the
@@ -495,14 +499,14 @@ class ContextFilterManager(models.Manager):
 
         """
         try:
-            filter_key = [name, backend, warehouse_name, collection_name]
+            filter_key = [name, distillery_name]
             context = Context.objects.get_by_natural_key(*filter_key)
             return self.get(context=context, value_field=value_field,
                             search_field=search_field)
         except ObjectDoesNotExist:
-            _LOGGER.error('%s %s:%s.%s.%s (%s -> %s) does not exist',
-                          self.model.__name__, name, backend, warehouse_name,
-                          collection_name, value_field, search_field)
+            _LOGGER.error('%s %s:%s (%s -> %s) does not exist',
+                          self.model.__name__, name, distillery_name,
+                          value_field, search_field)
 
 
 class ContextFilter(models.Model):

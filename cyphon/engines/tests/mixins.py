@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -401,7 +401,7 @@ class FilterTestCaseMixin(object):
                 value=json.dumps(features)
             )
         ]
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             query = EngineQuery(fieldsets, 'AND')
             self.engine.find(query)
 
@@ -488,6 +488,25 @@ class FilterTestCaseMixin(object):
         self.assertEqual(count, 2)
         self.assertIn(self._get_doc(docs, 0)['user']['screen_name'], expected_names)
         self.assertIn(self._get_doc(docs, 1)['user']['screen_name'], expected_names)
+
+    def test_regex_unmatched_quote(self):
+        """
+        Tests the find method for a 'regex' filter with a string
+        containing an unmatched quotation mark.
+        """
+        fieldsets = [
+            QueryFieldset(
+                field_name='user.screen_name',
+                field_type='CharField',
+                operator='regex',
+                value='"john'
+            )
+        ]
+
+        query = EngineQuery(fieldsets, 'AND')
+        results = self.engine.find(query)
+        count = results['count']
+        self.assertEqual(count, 0)
 
     def test_not_regex_with_fragment(self):
         """

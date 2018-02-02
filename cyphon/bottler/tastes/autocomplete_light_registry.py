@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -74,14 +74,15 @@ class FilterFieldsByContainer(FilterFieldsAutocompleteBase):
         """
         Filters field options based on a selected Container.
         """
-        assert self.choices is not None, 'autocomplete.choices is not set'
+        if self.choices is None:  # pragma: no cover
+            raise RuntimeError('autocomplete.choices is not set')
 
         request_choices = []
 
         # text typed in autocomplete input
         query = self.request.GET.get('q', '').lower().strip()
 
-        # selected bottle on Container admin page
+        # selected container on Taste admin page
         container_id = self.request.GET.get('container', None)
 
         if container_id:
@@ -130,7 +131,8 @@ class FilterFieldsByBottleAndLabel(FilterFieldsAutocompleteBase):
         Filters field options based on a selected Bottle and
         (optionally) Label.
         """
-        assert self.choices is not None, 'autocomplete.choices is not set'
+        if self.choices is None:
+            raise RuntimeError('autocomplete.choices is not set')
 
         request_choices = []
 

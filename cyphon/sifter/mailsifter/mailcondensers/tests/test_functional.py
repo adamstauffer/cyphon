@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,10 @@ Functional tests for the MailCondenser app.
 
 # standard library
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.core.exceptions import ValidationError
@@ -197,11 +200,11 @@ class AddMailCondenserFunctionalTest(CondenserFunctionalTest):
         self.assertEqual(actual, expected)
 
         self.page.scroll_to_bottom()
-        field = BottleField.objects.get_by_natural_key('subject')
+        field = BottleField.objects.get_by_natural_key('body')
         self.page.target_field_0.select(field.pk)
-        self.page.object_id_0 = '3'
+        self.page.object_id_0 = '4'
         actual = self.page.run_test()
-        expected = '{\n    "subject": "the meaning of life"\n}'
+        expected = '{\n    "body": "   The answer is 42."\n}'
         self.assertEqual(actual, expected)
 
 
@@ -214,10 +217,6 @@ class ChangeMailCondenserConfigToolTest(CondenserFunctionalTest):
     url = '/admin/mailcondensers/mailcondenser/1/change/'
 
     test_doc = TEST_DOC
-
-    def setUp(self):
-        super(ChangeMailCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
 
     def test_invalid_form(self):
         """

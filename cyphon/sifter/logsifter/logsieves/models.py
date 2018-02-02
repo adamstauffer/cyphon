@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -59,4 +59,3 @@ class LogSieveNode(SieveNode):
     content_type = models.ForeignKey(ContentType,
                                      limit_choices_to=CONTENT_TYPES,
                                      verbose_name=_('node type'))
-

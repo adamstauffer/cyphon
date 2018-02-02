@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,7 +19,10 @@ Tests the JiraHandler and IssueAPI classes.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django.contrib.auth import get_user_model
@@ -287,10 +290,9 @@ This alert isn't this important
                                 self.mock_settings):
                     handler_w_user = IssueAPI(endpoint=self.endpoint,
                                               user=self.user)
-                    alert = Alert.objects.get(pk=2)
-                    alert.notes = 'Some test notes.'
+                    alert = Alert.objects.get(pk=3)
                     actual = handler_w_user._format_description(alert)
-                    expected = 'Some test notes.'
+                    expected = 'Some example notes.'
         self.assertEqual(actual, expected)
 
     def test_format_descr_wo_notes(self):
@@ -307,7 +309,6 @@ This alert isn't this important
                     handler_w_user = IssueAPI(endpoint=self.endpoint,
                                               user=self.user)
                     alert = Alert.objects.get(pk=2)
-                    alert.notes = None
                     actual = handler_w_user._format_description(alert)
                     expected = ''
         self.assertEqual(actual, expected)

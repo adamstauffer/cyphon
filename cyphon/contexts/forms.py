@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,11 +20,10 @@ Defines forms for ContextFilters.
 
 # third party
 from autocomplete_light import forms as auto_forms
-from autocomplete_light import widgets as auto_widgets
 
 # local
 from cyphon.choices import OPERATOR_CHOICES
-from cyphon.autocomplete import AutoCompleteModelFormMixin
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from .models import ContextFilter
 
 
@@ -50,9 +49,9 @@ class ContextFilterForm(auto_forms.ModelForm, AutoCompleteModelFormMixin):
         model = ContextFilter
         fields = ['context', 'search_field', 'operator', 'value_field']  # reorder
         widgets = {
-            'search_field': auto_widgets.ChoiceWidget('FilterSearchFieldsByContext'),
-            'operator': auto_widgets.ChoiceWidget('FilterOperatorsBySearchField'),
-            'value_field': auto_widgets.ChoiceWidget('FilterValueFieldsByContext'),
+            'search_field': ChoiceWidget('FilterSearchFieldsByContext'),
+            'operator': ChoiceWidget('FilterOperatorsBySearchField'),
+            'value_field': ChoiceWidget('FilterValueFieldsByContext'),
         }
 
 
@@ -78,8 +77,8 @@ class ContextFilterInlineForm(auto_forms.ModelForm, AutoCompleteModelFormMixin):
         model = ContextFilter
         fields = ['context', 'search_field', 'operator', 'value_field']  # reorder
         widgets = {
-            'search_field': auto_widgets.ChoiceWidget('FilterSearchFieldsByRelatedDistillery'),
-            'operator': auto_widgets.ChoiceWidget('FilterOperatorsBySearchField'),
-            'value_field': auto_widgets.ChoiceWidget('FilterValueFieldsByFocalDistillery'),
+            'search_field': ChoiceWidget('FilterSearchFieldsByRelatedDistillery'),
+            'operator': ChoiceWidget('FilterOperatorsBySearchField'),
+            'value_field': ChoiceWidget('FilterValueFieldsByFocalDistillery'),
         }
 

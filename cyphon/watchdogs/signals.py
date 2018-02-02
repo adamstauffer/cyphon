@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,7 +19,6 @@ Defines a reciever for the Distillery app's document_saved signal.
 """
 
 # third party
-from django.db import close_old_connections
 from django.dispatch import receiver
 
 # local
@@ -28,14 +27,9 @@ from watchdogs.models import Watchdog
 
 
 @receiver(document_saved)
-def inspect_document(sender, doc, distillery, doc_id, **args):
+def inspect_document(sender, doc_obj, **args):
     """
     Receiver for the Distillery app's document_saved signal. Gathers all
     Watchdogs to inspect the newly saved document and create Alerts if necessary.
     """
-    watchdogs = Watchdog.objects.find_relevant(distillery)
-
-    for watchdog in watchdogs:
-        watchdog.process(doc, distillery, doc_id)
-
-    close_old_connections()
+    Watchdog.objects.process(doc_obj)

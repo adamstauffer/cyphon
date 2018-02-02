@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,25 +22,42 @@ Serializers for Alerts.
 from rest_framework import serializers
 
 # local
-from cyphon.choices import (
-    ALERT_LEVEL_CHOICES,
-    ALERT_OUTCOME_CHOICES,
-    ALERT_STATUS_CHOICES,
-)
-from appusers.models import AppUser
+from cyphon.choices import ALERT_LEVEL_CHOICES
 from appusers.serializers import AppUserSerializer
 from distilleries.serializers import (
     DistilleryDetailSerializer,
     DistilleryListSerializer,
 )
+from tags.serializers import TagDetailSerializer
 from responder.dispatches.serializers import DispatchSerializer
-from .models import Alert, Comment
+from .models import Alert, Analysis, Comment
+
+
+class AnalysisSerializer(serializers.ModelSerializer):
+    """
+    Base serializer for the Analysis class.
+    """
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = Analysis
+        fields = (
+            'alert',
+            'created_date',
+            'last_updated',
+            'notes',
+        )
+
 
 class CommentSerializer(serializers.ModelSerializer):
     """
     Base serializer for the Comment class.
     """
-    class Meta:
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Comment
         fields = (
             'id',
@@ -49,6 +66,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'created_date',
             'content',
         )
+
 
 class CommentDetailSerializer(CommentSerializer):
     """
@@ -65,7 +83,9 @@ class AlertListSerializer(serializers.ModelSerializer):
     distillery = DistilleryListSerializer()
     title = serializers.CharField(source='display_title')
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         depth = 1
         fields = (
@@ -98,14 +118,18 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
         required=False,
         choices=ALERT_LEVEL_CHOICES,
     )
-    class Meta:
+    notes = serializers.CharField(source='analysis__notes')
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         fields = (
             'assigned_user',
-            'notes',
             'outcome',
             'status',
             'level',
+            'notes',
         )
 
 
@@ -115,12 +139,16 @@ class AlertDetailSerializer(serializers.ModelSerializer):
     """
     assigned_user = AppUserSerializer()
     comments = CommentDetailSerializer(many=True)
+    data = serializers.JSONField(source='tidy_data')
     dispatches = DispatchSerializer(many=True)
     distillery = DistilleryDetailSerializer()
     location = serializers.JSONField(source='coordinates')
+    tags = TagDetailSerializer(source='associated_tags', many=True)
     title = serializers.CharField(source='display_title')
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = Alert
         depth = 2
         fields = (
@@ -132,6 +160,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
             'data',
             'dispatches',
             'distillery',
+            'doc_id',
             'incidents',
             'level',
             'link',
@@ -139,6 +168,7 @@ class AlertDetailSerializer(serializers.ModelSerializer):
             'notes',
             'outcome',
             'status',
+            'tags',
             'title',
             'url',
         )

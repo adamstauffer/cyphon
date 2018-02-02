@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,6 +19,7 @@ Defines filters for Actions.
 """
 
 # third party
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 
 # local
@@ -55,4 +56,7 @@ class ActionFilterBackend(DjangoFilterBackend):
             current user has an available |Courier|.
 
         """
-        return Action.objects.filter(emissary__passport__users=request.user)
+        has_user = Q(emissary__passport__users=request.user)
+        is_public = Q(emissary__passport__public=True)
+
+        return Action.objects.filter(has_user | is_public).distinct()

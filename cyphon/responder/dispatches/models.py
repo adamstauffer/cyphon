@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -85,7 +85,7 @@ class Dispatch(Record):
 
     def get_title(self):
         """
-            
+
         """
         action = self.get_endpoint()
         return action.title
@@ -94,7 +94,7 @@ class Dispatch(Record):
 
     def get_user(self):
         """
-        
+
         """
         return self.stamp.user
 
@@ -110,4 +110,3 @@ class Dispatch(Record):
         # copy cargo.data to dispatch.data
         self.data = cargo.data
         self.save()
-

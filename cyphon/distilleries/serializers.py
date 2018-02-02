@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -31,8 +31,8 @@ from rest_framework import serializers
 
 # local
 from bottler.containers.serializers import ContainerSerializer
-from .models import Distillery
 from contexts.serializers import ContextSerializer
+from .models import Distillery
 
 
 class DistilleryDetailSerializer(serializers.ModelSerializer):
@@ -40,7 +40,6 @@ class DistilleryDetailSerializer(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
     container = ContainerSerializer()
-    name = serializers.CharField(source='__str__')
     contexts = ContextSerializer(many=True)
 
     class Meta(object):
@@ -62,7 +61,6 @@ class DistilleryListSerializer(serializers.ModelSerializer):
     """Serializer for a |Distillery| list."""
 
     id = serializers.ReadOnlyField(source='pk')  # pylint: disable=C0103
-    name = serializers.CharField(source='__str__')
 
     class Meta(object):
         """Metadata options."""

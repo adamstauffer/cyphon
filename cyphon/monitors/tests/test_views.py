@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,10 @@ Tests views for Monitors.
 
 # standard library
 from collections import OrderedDict
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from rest_framework import status
@@ -56,7 +59,6 @@ class MonitorAPITestCase(CyphonAPITestCase):
                 'url': 'http://testserver/api/v1/distilleries/1/',
                 'id': 1
             },
-            'last_doc': '{\n    "title": "foo"\n}',
             'last_saved_doc': '10',
             'status': 'GREEN',
             'alert_level': 'HIGH',
@@ -114,7 +116,6 @@ class MonitorAPITestCase(CyphonAPITestCase):
                 ('url', 'http://testserver/api/v1/distilleries/1/')
             ])),
             ('last_saved_doc', '10'),
-            ('last_doc', '{\n    "title": "foo"\n}'),
         ])
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

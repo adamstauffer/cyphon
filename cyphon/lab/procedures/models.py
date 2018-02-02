@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -15,54 +15,50 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
+Defines models for analyzing data.
+
+===================  ========================================================
+Class                Description
+===================  ========================================================
+:class:`~Protocol`   Analyzes data using a function in a Lab subpackage.
+:class:`~Procedure`  Applies a Protocol to one or all fields of a dictionary.
+===================  ========================================================
 
 """
 
 # standard library
 import importlib
-import logging
 
 # third party
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 
 # local
+from cyphon.models import GetByNameManager
 from lab.registry import LAB_CHOICES
 from utils.parserutils import parserutils
 from utils.validators.validators import IDENTIFIER_VALIDATOR
 
 
-LOGGER = logging.getLogger(__name__)
-
-
-class ProtocolManager(models.Manager):
-    """
-    Adds methods to the default model manager.
-    """
-
-    def get_by_natural_key(self, package, module, function):
-        """
-        Allows retrieval of a Lab by its natural key instead of its
-        primary key.
-        """
-        try:
-            return self.get(package=package, module=module, function=function)
-        except ObjectDoesNotExist:
-            LOGGER.error('%s "%s.%s.%s" does not exist',
-                         self.model.__name__, package, module, function)
-
-
 class Protocol(models.Model):
+    """Analyzes data using a function in a Lab subpackage.
+
+    Attributes
+    ----------
+    name : str
+        The name of the Protocol.
+
+    package : str
+        The name of a subpackage within the `labs` package that will
+        analyze the data.
+
+    module : str
+        The name of the module in the package that will analyze the data.
+
+    function : str
+        The name of the function that will analyze the data.
+
     """
 
-    Attributes:
-        name: a string representing the name of the Protocol
-        package: the name of a subpackage within the labs package that will
-            analyze the data
-        module: the name of the module the package that will analyze the data
-        function: the name of the function that will analyze the data
-
-    """
     name = models.CharField(max_length=255, unique=True)
     package = models.CharField(
         max_length=32,
@@ -78,21 +74,19 @@ class Protocol(models.Model):
         validators=[IDENTIFIER_VALIDATOR]
     )
 
-    objects = ProtocolManager()
+    objects = GetByNameManager()
 
-    class Meta:
-        """
-        Metadata options.
-        """
+    class Meta(object):
+        """Metadata options."""
+
         unique_together = ('package', 'module', 'function')
 
     def __str__(self):
+        """Represent a Protocol as a string."""
         return self.name
 
     def _get_module(self):
-        """
-        Returns the module for analyzing the data.
-        """
+        """Return the module for analyzing the data."""
         module_full_name = 'lab.%s.%s' % (self.package, self.module)
 
         # load the module (will raise ImportError if module cannot be loaded)
@@ -101,8 +95,21 @@ class Protocol(models.Model):
         return module
 
     def process(self, data):
-        """
-        Passes the data to the classfying function and returns the result.
+        """Analyze a dictionary of data.
+
+        Passes data to the Protocol's :attr:`~Protocol.function` and
+        returns the result.
+
+        Parameters
+        ----------
+        data : dict
+            The data to analyze.
+
+        Returns
+        -------
+        any
+            The result of the analysis.
+
         """
         module = self._get_module()
 
@@ -113,35 +120,59 @@ class Protocol(models.Model):
 
 
 class Procedure(models.Model):
+    """Applies a Protocol to one or all fields of a dictionary.
+
+    Attributes
+    ----------
+    name : str
+        The name of the procedure.
+
+    protocol : str
+        A Protocol used to analyze the data.
+
+    field_name : str
+        The name of the field containing the data to analyze. If none
+        is provided, the entire data dictionary is analyzed.
+
     """
 
-    Attributes:
-        name: a string representing the name of the procedure
-        protocol: a Protocol used to analyze
-        field_name: the name of the field containing the data to analyze. If no
-            field_name is provide, the entire data dictionary is analyzed.
-    """
     name = models.CharField(max_length=255, unique=True)
     protocol = models.ForeignKey(Protocol)
     field_name = models.CharField(max_length=255, blank=True, null=True)
 
+    objects = GetByNameManager()
+
     def __str__(self):
+        """Represent a Procedure as a string."""
         return self.name
 
     def _analyze(self, data):
         return self.protocol.process(data)
 
     def get_result(self, data):
-        """
-        Takes a data dictionary and analyzes it using the Procedure's protocol.
-        If the Procedure has a field_name, only the corresponding field within
-        the data dictionary is analyzed. Otherwise, the entire data dictionary
-        is analyzed with the protocol.
+        """Analayze data according to a Protocol.
+
+        Analyzes a data dictionary using the Procedure's
+        :attr:`~Procedure.protocol`. If the Procedure has a
+        :attr:`~Procedure.field_name`, only the corresponding field
+        within the data dictionary is analyzed. Otherwise, the entire
+        data dictionary is analyzed with the protocol.
+
+        Parameters
+        ----------
+        data : dict
+            The data to analyze.
+
+        Returns
+        -------
+        any
+            The results of the analysis.
 
         Notes
         -----
         This method should have the same name as the corresponding
         method in an Inspection.
+
         """
         if self.field_name:
             value = parserutils.get_dict_value(self.field_name, data)

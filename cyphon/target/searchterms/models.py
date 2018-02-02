@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,11 +19,46 @@ Defines a class for a search term, which can be a keyword or phrase.
 """
 
 # standard library
+import logging
+
+# standard library
 from copy import deepcopy
+from django.core.exceptions import ObjectDoesNotExist
 import re
 
 # third party
 from django.db import models
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class SearchTermManager(models.Manager):
+    """Manage |SearchTerm| objects.
+
+    Adds methods to the default Django model manager.
+    """
+
+    def get_by_natural_key(self, term):
+        """Get a |SearchTerm| by its natural key.
+
+        Allows retrieval of a |SearchTerm| by its natural key instead of
+        its primary key.
+
+        Parameters
+        ----------
+        term : str
+            The SearchTerm's `~SearchTerm.term`.
+
+        Returns
+        -------
+        |SearchTerm|
+            The |SearchTerm| associated with the natural key.
+
+        """
+        try:
+            return self.get(term=term)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s "%s" does not exist', self.model.__name__, term)
 
 
 class SearchTerm(models.Model):
@@ -32,6 +67,8 @@ class SearchTerm(models.Model):
     """
     term = models.CharField(max_length=255, unique=True)
     negate = models.BooleanField(default=False)
+
+    objects = SearchTermManager()
 
     def __str__(self):
         if self.negate:
@@ -121,4 +158,3 @@ class SearchTerm(models.Model):
         """
         self.term = '\"%s\"' % (self.term)
         return self
-

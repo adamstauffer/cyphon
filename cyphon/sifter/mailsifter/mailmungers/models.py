@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,15 +19,12 @@
 """
 
 # third party
-from django.conf import settings
 from django.db import models
 
 # local
 from cyphon.models import GetByNameManager
 from sifter.mungers.models import Munger
 from sifter.mailsifter.mailcondensers.models import MailCondenser
-
-_MAILSIFTER_SETTINGS = settings.MAILSIFTER
 
 
 class MailMunger(Munger):
@@ -60,22 +57,3 @@ class MailMunger(Munger):
         """
         company = self._get_company()
         return self.condenser.process(data=data, company=company)
-
-    def process(self, data, doc_id=None, collection=None, platform=None):
-        """
-        Condenses data into the Distillery's Bottle, adds the doc_id and
-        source to the data, saves it in the Distillery's Collection
-        (database collection), and sends a signal that the document has been
-        saved.
-
-        Parameters:
-            data: a dictionary of raw data
-            condenser: a Condenser that should be used to distill the data
-            doc_id: the id of the document that contains the data
-            collection: a string representing the Collection in which the raw
-                    data is stored (e.g., 'elasticsearch.cyphon.twitter')
-        """
-        doc = self._process_data(data)
-        collection = _MAILSIFTER_SETTINGS['MAIL_COLLECTION']
-        doc_id = data['Message-ID']
-        return self._save_data(doc, doc_id, collection, platform)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -168,6 +168,54 @@ def get_dict_value(field_name, doc):
         return value
 
 
+def merge_dict(target, addition):
+    """Merge additional keys into a target dictionary.
+
+    Parameters
+    ----------
+    target : dict
+        The dict to mutate.
+
+    addition : dict
+        The dict containing keys to merge into the `target` dict.
+
+    Returns
+    -------
+    dict
+
+    """
+    for key in addition:
+        if key in target and isinstance(target[key], dict) \
+                and isinstance(addition[key], dict):
+            merge_dict(target[key], addition[key])
+        else:
+            target[key] = addition[key]
+
+
+def abridge_dict(schema, data):
+    """Abridge a data document to only include specified fields.
+
+    Parameters
+    ----------
+    schema : |list| of |DataFields|
+        The fields that should be included in the abridged dict.
+
+    data : dict
+        The dictionary to be tidied.
+
+    """
+    abridged_dict = {}
+    for field in schema:
+        value = get_dict_value(field.field_name, data)
+        if value:
+            keys = field.field_name.split('.')
+            val = {keys.pop(-1): value}
+            while len(keys):
+                val = {keys.pop(-1): val}
+            merge_dict(abridged_dict, val)
+    return abridged_dict
+
+
 def divide_into_groups(items, max_group_size):
     """Divide a list of items into a list of smaller lists.
 
@@ -197,7 +245,8 @@ def divide_into_groups(items, max_group_size):
     [[]]
 
     """
-    assert max_group_size > 0, 'Maximum group size must be greater than 0'
+    if max_group_size <= 0:
+        raise ValueError('maximum group size must be greater than 0')
 
     items_copy = deepcopy(items)
     groups = []
@@ -416,11 +465,12 @@ def get_dup_key_val(errmsg):
     keys = re.split(r'_[0-9]+_', key)
     values = val.split(', : ')
 
-    assert len(keys) == len(values)
+    if len(keys) != len(values):  # pragma: no cover
+        raise ValueError('cannot match index keys with values')
 
     key_val = {}
 
-    for index in range(len(values)):
+    for index, value in enumerate(values):
         key_val[keys[index]] = restore_type_from_str(values[index])
 
     return key_val
@@ -474,4 +524,3 @@ def format_fields(field_data, include_empty=True):
             fields.append(joined_field)
 
     return '\n'.join(fields)
-

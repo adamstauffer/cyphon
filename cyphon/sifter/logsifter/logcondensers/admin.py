@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,6 @@ LogFittings, and registers them with Django Admin.
 """
 
 # third party
-import autocomplete_light
 from django.contrib import admin
 
 # local
@@ -73,4 +72,3 @@ class LogCondenserAdmin(CondenserAdmin):
 admin.site.register(LogParser, LogParserAdmin)
 admin.site.register(LogCondenser, LogCondenserAdmin)
 admin.site.register(LogFitting, LogFittingAdmin)
-

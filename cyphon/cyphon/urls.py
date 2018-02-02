@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -24,15 +24,18 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from rest_framework.routers import DefaultRouter
 import rest_framework_jwt.views as rest_views
 # from rest_framework_docs.views import DRFDocsView
 
 # local
-from alerts.views import AlertViewSet, CommentViewSet
+from alerts.views import AlertViewSet, AnalysisViewSet, CommentViewSet
 from appusers.views import AppUserViewSet
+from articles.views import ArticleViewSet
+from categories.views import CategoryViewSet
 from contexts.views import ContextViewSet, ContextFilterViewSet
+from cyclops.views import application, manifest
 from bottler.bottles.views import BottleViewSet, BottleFieldViewSet
 from bottler.containers.views import ContainerViewSet
 from bottler.labels.views import LabelFieldViewSet, LabelViewSet
@@ -46,23 +49,53 @@ from query.collectionqueries.views import (
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
+from tags.views import TagViewSet, TopicViewSet
 from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 
 urlpatterns = [
     # url(r'^$', 'dashboard.views.index', name='index'),
-    url(r'^$', RedirectView.as_view(url='admin/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 ]
+
+# CYCLOPS
+if settings.CYCLOPS['ENABLED']:
+    urlpatterns += [
+        url(
+            r'^login/$',
+            auth_views.login,
+            {'template_name': 'cyclops/login.html'},
+            name='login'
+        ),
+        url(
+            r'^logout/',
+            auth_views.logout,
+            {'next_page': 'login'},
+            name='logout'
+        ),
+        url(r'^manifest.json$', manifest, name='manifest.json'),
+        url(r'^sw.js$', TemplateView.as_view(
+            template_name="cyclops/sw.js",
+            content_type='application/javascript',
+        ), name='service_worker'),
+        url(r'^app/', application, name='cyclops'),
+        url(r'^$', RedirectView.as_view(url='app/')),
+    ]
+else:
+    urlpatterns += [url(r'^$', RedirectView.as_view(url='admin/'))]
 
 # REST API
 router = DefaultRouter()
 
 router.register(r'actions', ActionViewSet)
 router.register(r'alerts', AlertViewSet)
+router.register(r'analyses', AnalysisViewSet)
+router.register(r'articles', ArticleViewSet)
+router.register(r'categories', CategoryViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'bottles', BottleViewSet)
 router.register(r'bottlefields', BottleFieldViewSet)
@@ -78,7 +111,9 @@ router.register(r'queryfieldsets', QueryFieldsetViewSet)
 router.register(r'labels', LabelViewSet)
 router.register(r'labelfields', LabelFieldViewSet)
 router.register(r'monitors', MonitorViewSet)
+router.register(r'tags', TagViewSet)
 router.register(r'tastes', TasteViewSet)
+router.register(r'topics', TopicViewSet)
 router.register(r'users', AppUserViewSet)
 router.register(r'warehouses', WarehouseViewSet)
 
@@ -101,6 +136,7 @@ urlpatterns += [
 
     # REST API
     url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/search/', include('query.search.urls')),
     url(r'^api/v1/auth/',
         include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v1/notifications/', include('notifications.urls')),

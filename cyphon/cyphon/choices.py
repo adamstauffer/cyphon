@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -119,6 +119,13 @@ OPERATOR_CHOICES = (
     ('not:regex', 'does not contain'),
     ('not:missing', 'is not null'),
     ('within', 'within')
+)
+
+RANGE_CHOICES = (
+    ('FloatField:>', 'greater than'),
+    ('FloatField:>=', 'greater than or equal to'),
+    ('FloatField:<', 'less than'),
+    ('FloatField:<=', 'less than or equal to'),
 )
 
 REGEX_CHOICES = (

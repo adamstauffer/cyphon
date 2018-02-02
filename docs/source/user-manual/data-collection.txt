@@ -17,12 +17,9 @@ Currently, Cyphon can collect three kinds of data:
 Log Messages
 ************
 
-Cyphon ingests log messages using `Logstash`_ and `RabbitMQ`_. You can send logs to Logstash using `Filebeat`_. Once Logstash receives them, you can pass them on to RabbitMQ. From there, messages are processed by Cyphon's Receiver process. If you follow the instructions for a :ref:`Docker-based installation<configure-server>`, this process will be started automatically when you run our Docker Compose files for dev or production environments.
+Cyphon ingests log messages using `Logstash`_ and `RabbitMQ`_. You can send logs to Logstash using `Filebeat`_. Once Logstash receives them, you can pass them on to RabbitMQ. From there, messages are processed by Cyphon's Receiver process. If you deploy Cyphon using `Cyphondock`_, this process will be started automatically when you run our Docker Compose files for dev or production environments.
 
-Setup Instructions
-==================
-
-    * :ref:`Logstash Configuration<logstash-config>`
+See :ref:`logstash-tutorial` for an example.
 
 
 .. _mail-collection:
@@ -45,6 +42,8 @@ To configure an email-based data source, click the "Mailboxes" link in the "Mana
 .. image:: ../_static/images/admin/email-admin.png
     :alt: Email admin
 
+See :ref:`email-tutorial` for an example.
+
 
 .. _social-media-collection:
 
@@ -59,10 +58,7 @@ First create search parameters for Followees, Locations, and SearchTerms. You ca
 .. image:: ../_static/images/admin/filtering-data-admin.png
     :alt: Filter admin
 
-Setup Instructions
-==================
-
-    * :ref:`twitter-setup`
+See :ref:`twitter-tutorial` for an example.
 
 .. note::
 

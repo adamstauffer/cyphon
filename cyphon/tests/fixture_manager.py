@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -34,6 +34,7 @@ LOGGER = logging.getLogger(__name__)
 FIXTURE_DEPENDENCIES = {
     'actions': ['destinations'],
     'alerts': ['distilleries', 'watchdogs', 'users'],
+    'articles': [],
     'bottles': [],
     'categories': [],
     'codebooks': ['companies'],
@@ -46,6 +47,7 @@ FIXTURE_DEPENDENCIES = {
     'datacondensers': ['bottles'],
     'datamungers': ['datacondensers', 'distilleries'],
     'datasieves': [],
+    'datataggers': ['containers', 'tags'],
     'destinations': [],
     'dispatches': ['alerts', 'stamps'],
     'distilleries': ['categories', 'containers', 'companies',
@@ -79,6 +81,7 @@ FIXTURE_DEPENDENCIES = {
     'searchterms': [],
     'stamps': ['passports', 'pipes', 'actions', 'users'],
     'streams': ['invoices'],
+    'tags': ['alerts', 'comments', 'articles'],
     'tastes': ['containers'],
     'timeframes': [],
     'warehouses': [],
@@ -124,4 +127,3 @@ def get_fixtures(dependencies):
             fixtures.append(file_name)
 
     return fixtures
-

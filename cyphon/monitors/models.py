@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,6 +21,7 @@ at the expected rate.
 """
 
 # standard library
+from datetime import timedelta
 import json
 
 # third party
@@ -36,8 +37,24 @@ from cyphon.choices import (
     MONITOR_STATUS_CHOICES,
     TIME_UNIT_CHOICES,
 )
+from cyphon.fieldsets import QueryFieldset
 from distilleries.models import Distillery
+from engines.queries import EngineQuery
+from engines.sorter import SortParam, Sorter
 import utils.dateutils.dateutils as dt
+
+
+class MonitorManager(AlarmManager):
+    """
+
+    """
+
+    def find_relevant(self, distillery):
+        """
+
+        """
+        active_monitors = self.find_enabled()
+        return active_monitors.filter(distilleries=distillery)
 
 
 class Monitor(Alarm):
@@ -113,7 +130,6 @@ class Monitor(Alarm):
     distilleries = models.ManyToManyField(
         Distillery,
         related_name='+',  # do not create backwards relation
-        limit_choices_to={'is_shell': False}
     )
     time_interval = models.IntegerField()
     time_unit = models.CharField(max_length=3, choices=TIME_UNIT_CHOICES)
@@ -148,10 +164,18 @@ class Monitor(Alarm):
     _HEALTHY = 'GREEN'
     _UNHEALTHY = 'RED'
 
-    objects = AlarmManager()
+    objects = MonitorManager()
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save() method to validate distilleries and update
+        the status of the Monitor.
+        """
+        self._update_fields()
+        super(Monitor, self).save(*args, **kwargs)
 
     def _get_interval_in_seconds(self):
         """
@@ -164,11 +188,14 @@ class Monitor(Alarm):
         Returns the number of seconds since a document was saved to one
         of the Monitor's distilleries.
         """
-        if self.last_healthy is not None:
-            time_delta = timezone.now() - self.last_healthy
+        if self.last_healthy is not None or self.created_date is not None:
+            if self.last_healthy is not None:
+                time_delta = timezone.now() - self.last_healthy
+            else:
+                time_delta = timezone.now() - self.created_date
+            return time_delta.total_seconds()
         else:
-            time_delta = timezone.now() - self.created_date
-        return time_delta.seconds
+            return 0
 
     def _get_last_alert_seconds(self):
         """
@@ -177,7 +204,7 @@ class Monitor(Alarm):
         """
         if self.last_alert_date is not None:
             time_delta = timezone.now() - self.last_alert_date
-            return time_delta.seconds
+            return time_delta.total_seconds()
 
     def _get_inactive_interval(self):
         """
@@ -195,6 +222,91 @@ class Monitor(Alarm):
         Monitor's interval.
         """
         return self._get_inactive_seconds() > self._get_interval_in_seconds()
+
+    def _get_interval_start(self):
+        """
+        Returns a DateTime representing the start of the monitoring
+        interval.
+        """
+        seconds = self._get_interval_in_seconds()
+        return timezone.now() - timedelta(seconds=seconds)
+
+    def _get_query_start_time(self):
+        """
+        Returns either the last_healthy datetime or the start of the
+        monitoring interval, whichever is older.
+        """
+        interval_start = self._get_interval_start()
+        if self.last_healthy and self.last_healthy < interval_start:
+            return self.last_healthy
+        else:
+            return interval_start
+
+    def _get_query(self, date_field):
+        """
+        Takes the name of a date field and returns an |EngineQuery| for
+        documents with dates later than the last_healthy date (if there
+        is one) or the start of the monitoring interval (if there isn't).
+        """
+        start_time = self._get_query_start_time()
+        query = QueryFieldset(
+            field_name=date_field,
+            field_type='DateTimeField',
+            operator='gt',
+            value=start_time
+        )
+        return EngineQuery([query])
+
+    @staticmethod
+    def _get_sorter(date_field):
+        """
+        Takes the name of a date field and returns a |Sorter| for
+        sorting results in descending order of date.
+        """
+        sort = SortParam(
+            field_name=date_field,
+            field_type='DateTimeField',
+            order='DESC',
+        )
+        return Sorter(sort_list=[sort])
+
+    def _get_most_recent_doc(self, distillery):
+        """
+        Takes a Distillery and the most recent document from the
+        monitoring interval, if one exists. Otherwise, returns None.
+        """
+        date_field = distillery.get_searchable_date_field()
+        if date_field:
+            query = self._get_query(date_field)
+            sorter = self._get_sorter(date_field)
+            results = distillery.find(query, sorter, page=1, page_size=1)
+            if results['results']:
+                return results['results'][0]
+
+    def _update_doc_info(self):
+        """
+        Looks for the most recently saved doc among the Distilleries
+        being monitored, and updates the relevant field in the Monitor.
+        """
+        for distillery in self.distilleries.all():
+            doc = self._get_most_recent_doc(distillery)
+            if doc:
+                date = distillery.get_date(doc)
+                if self.last_healthy is None or date > self.last_healthy:
+                    self.last_healthy = date
+                    self.last_active_distillery = distillery
+                    self.last_saved_doc = doc.get('_id')
+
+    def _set_current_status(self):
+        """
+        Updates and returns the Monitor's current status.
+        """
+        is_overdue = self._is_overdue()
+        if is_overdue:
+            self.status = self._UNHEALTHY
+        else:
+            self.status = self._HEALTHY
+        return self.status
 
     def _get_title(self):
         """
@@ -258,38 +370,21 @@ class Monitor(Alarm):
         """
         return self.last_active_distillery.find_by_id(self.last_saved_doc)
 
+    def _update_fields(self):
+        """
+        Updates the Monitor's fields relating to its status, and last
+        saved document.
+        """
+        if self.id:
+            self._update_doc_info()
+        self._set_current_status()
+
     @property
     def interval(self):
         """
         Returns a string with the Monitor's time_interval and time_unit.
         """
         return str(self.time_interval) + self.time_unit
-
-    def register_healthy(self, distillery, doc_id):
-        """
-        Takes a Distillery and a document id string. Updates the
-        Monitor's status as healthy, records the current time in the
-        last_healthy field, and records the Distillery and doc id to the
-        last_active_distillery and last_saved_doc fields.
-        """
-        self.last_healthy = timezone.now()
-        self.last_active_distillery = distillery
-        self.last_saved_doc = doc_id
-        self.status = self._HEALTHY
-        self.save()
-
-    def update_status(self):
-        """
-        Determines whether the Monitor's status should be changed to
-        unhealthy. If so, updates the status and creates an Alert if
-        appropriate. Returns the Monitor's updated status.
-        """
-        old_status = self.status
-        if self._is_overdue():
-            self.status = self._UNHEALTHY
-            self._alert(old_status)
-        self.save()  # update record even if healthy
-        return self.status
 
     def last_doc(self):
         """
@@ -303,3 +398,13 @@ class Monitor(Alarm):
 
     last_doc.short_description = _('Last saved document')
 
+    def update_status(self):
+        """
+        Updates the Monitor's status and creates an Alert if
+        appropriate. Returns the Monitor's current status.
+        """
+        old_status = self.status
+        self.save()  # update monitor
+        if self.status == self._UNHEALTHY:
+            self._alert(old_status)
+        return self.status

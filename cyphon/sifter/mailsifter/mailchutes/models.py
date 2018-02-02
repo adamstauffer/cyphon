@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,12 +19,21 @@
 """
 
 # third party
+from django.conf import settings as conf
 from django.db import models
 
 # local
 from sifter.chutes.models import Chute, ChuteManager
 from sifter.mailsifter.mailmungers.models import MailMunger
 from sifter.mailsifter.mailsieves.models import MailSieve
+
+
+class MailChuteManager(ChuteManager):
+    """
+    Adds methods to the default model manager.
+    """
+
+    settings = conf.MAILSIFTER
 
 
 class MailChute(Chute):
@@ -41,5 +50,4 @@ class MailChute(Chute):
     )
     munger = models.ForeignKey(MailMunger)
 
-    objects = ChuteManager()
-
+    objects = MailChuteManager()

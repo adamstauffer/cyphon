@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -243,8 +243,10 @@ class MongoDbQueryFieldset(EngineQueryFieldset):
         """
         geometry = polygon_feature['geometry']
 
-        assert geometry['type'] in ['Polygon', 'MuliPolygon'], \
-            'Feature is a %s not a Polygon or MuiltPolygon' % geometry['type']
+        if geometry['type'] not in ['Polygon', 'MuliPolygon']:  # pragma: no cover
+            raise ValueError('Feature is a %s not a Polygon or MuiltPolygon'
+                             % geometry['type'])
+
         return {
             self.field_name: {
                 '$geoWithin': {

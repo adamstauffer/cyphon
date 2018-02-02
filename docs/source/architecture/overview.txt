@@ -26,7 +26,6 @@ Sifting Data
 ************
 
 .. image:: ../_static/images/icons/sifter.png
-    :target: ../architecture/sifting-data.html
     :width: 100px
     :align: left
 
@@ -38,7 +37,6 @@ Reshaping Data
 **************
 
 .. image:: ../_static/images/icons/condenser.png
-    :target: ../architecture/reshaping-data.html
     :width: 100px
     :align: left
 
@@ -50,7 +48,6 @@ Enhancing Data
 **************
 
 .. image:: ../_static/images/icons/procedure.png
-    :target: ../architecture/enhancing-data.html
     :width: 100px
     :align: left
 
@@ -62,7 +59,6 @@ Distilling Data
 ***************
 
 .. image:: ../_static/images/icons/distillery.png
-    :target: ../architecture/processing-data.html
     :width: 100px
     :align: left
 
@@ -75,7 +71,6 @@ Storing Data
 ************
 
 .. image:: ../_static/images/icons/warehouse.png
-    :target: ../architecture/storing-data.html
     :width: 100px
     :align: left
 
@@ -96,12 +91,22 @@ Cyphon can generate alerts based on either the characteristics of the data itsel
 :ref:`Read More<generating-alerts>`
 
 
+**************
+Tagging Alerts
+**************
+
+.. image:: ../_static/images/icons/tag.png
+    :width: 100px
+    :align: left
+
+The :ref:`Tags<tags>` package is used to automagically tag |Alerts|, |Comments|, and |Analyses|. |Tags| can link to |Articles|, which can provide detailed information to help diagnose and remediate |Alerts|. |DataTaggers| can create new |Tags| from specific data fields from |Alerts|.
+
+
 ********************
 Investigating Alerts
 ********************
 
 .. image:: ../_static/images/icons/query.png
-    :target: ../architecture/finding-related-data.html
     :width: 100px
     :align: left
 
@@ -113,7 +118,6 @@ Responding to Alerts
 ********************
 
 .. image:: ../_static/images/icons/responder.png
-    :target: ../architecture/responding-to-alerts.html
     :width: 100px
     :align: left
 
@@ -125,7 +129,6 @@ Managing Users
 **************
 
 .. image:: ../_static/images/icons/users.png
-    :target: ../architecture/managing-users.html
     :width: 100px
     :align: left
 

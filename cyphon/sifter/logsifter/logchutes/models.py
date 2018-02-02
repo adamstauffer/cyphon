@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,12 +19,21 @@
 """
 
 # third party
+from django.conf import settings as conf
 from django.db import models
 
 # local
 from sifter.chutes.models import Chute, ChuteManager
 from sifter.logsifter.logsieves.models import LogSieve
 from sifter.logsifter.logmungers.models import LogMunger
+
+
+class LogChuteManager(ChuteManager):
+    """
+    Adds methods to the default model manager.
+    """
+
+    settings = conf.LOGSIFTER
 
 
 class LogChute(Chute):
@@ -35,5 +44,4 @@ class LogChute(Chute):
                               related_name='chutes', related_query_name='chute')
     munger = models.ForeignKey(LogMunger)
 
-    objects = ChuteManager()
-
+    objects = LogChuteManager()

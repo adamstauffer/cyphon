@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -31,17 +31,17 @@ Constant                 Description
 from django.conf import settings
 import elasticsearch
 
+
 _ES_SETTINGS = settings.ELASTICSEARCH
+ES_HOSTS = _ES_SETTINGS.get('HOSTS', ['localhost:9200'])
+ES_KWARGS = _ES_SETTINGS.get('KWARGS', {'timeout': 30})
+ES_INDEX_SETTINGS = _ES_SETTINGS.get('INDEX', {
+    'index.mapping.ignore_malformed': True,
+    'number_of_shards': 1,
+})
 
-TIMEOUT = _ES_SETTINGS['TIMEOUT']
-"""|int|
+ELASTICSEARCH = elasticsearch.Elasticsearch(ES_HOSTS, **ES_KWARGS)
 
-Request timeout in seconds.
-"""
-
-
-ELASTICSEARCH = elasticsearch.Elasticsearch(_ES_SETTINGS['HOSTS'],
-                                            timeout=TIMEOUT)
 """:class:`~elasticsearch.Elasticsearch`
 
 Low-level Elasticsearch client. Provides a straightforward mapping from

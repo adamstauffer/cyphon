@@ -1,6 +1,6 @@
 # Creates a minimal stack for testing Cyphon Engine on Travis CI.
 #
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,7 +21,11 @@ version: '2'
 services:
 
   elasticsearch:
-    image: elasticsearch:latest
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - xpack.security.enabled=0
     ports:
       - "9200:9200"
 

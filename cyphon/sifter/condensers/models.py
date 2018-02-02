@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -58,8 +58,11 @@ class Condenser(models.Model):
                     'will be distilled and stored.')
     )
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -160,7 +163,9 @@ class Fitting(models.Model):
         else:
             return super(Fitting, self).__str__()
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
 
     def clean(self):
@@ -256,4 +261,3 @@ class Fitting(models.Model):
         # method to handle data, since the field_parser can be either a
         # Condenser or a Parser
         return self.field_parser.process(data, *args, **kwargs)
-

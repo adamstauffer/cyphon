@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -18,10 +18,8 @@
 Defines forms for LogFittings and LogCondensers.
 """
 
-# third party
-import autocomplete_light
-
 # local
+from cyphon.autocomplete import AutoCompleteModelFormMixin, ChoiceWidget
 from sifter.condensers.forms import (
     CondenserForm,
     FittingForm,
@@ -51,7 +49,7 @@ class LogCondenserForm(CondenserForm):
         model = LogCondenser
 
 
-class LogFittingForm(FittingForm):
+class LogFittingForm(FittingForm, AutoCompleteModelFormMixin):
     """
     Defines a form for adding or updating a LogaFitting using autocomplete
     fields.
@@ -62,9 +60,12 @@ class LogFittingForm(FittingForm):
         autocomplete_names = {
             'target_field': 'FilterTargetFieldsByLogCondenser'
         }
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByLogCondenser'),
+        }
 
 
-class LogFittingInlineForm(FittingInlineForm):
+class LogFittingInlineForm(FittingInlineForm, AutoCompleteModelFormMixin):
     """
     Defines an inline form for adding or updating a LogFitting using
     autocomplete fields.
@@ -72,4 +73,7 @@ class LogFittingInlineForm(FittingInlineForm):
 
     class Meta(FittingInlineForm.Meta):
         model = LogFitting
+        widgets = {
+            'target_field': ChoiceWidget('FilterTargetFieldsByBottle'),
+        }
 

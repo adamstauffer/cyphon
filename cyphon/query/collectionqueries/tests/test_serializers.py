@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -62,4 +62,3 @@ class CollectionQuerySerializerTestCase(TestCase):
         self.assertEqual(len(validated_data['collections']), 2)
         self.assertEqual(len(validated_data['fieldsets']), 2)
         self.assertEqual(validated_data['joiner'], 'AND')
-

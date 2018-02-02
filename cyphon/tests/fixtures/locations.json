@@ -67,7 +67,7 @@
     "model": "locations.location",
     "fields": {
       "id": 8,
-      "name": "Multipolygon",
+      "name": "Multipolygon2",
       "geom": "MULTIPOLYGON (((0.0 0.0, 0.0 1.0, 1.0 1.0, 0.0 0.0)), ((1.0 1.0, 1.0 2.0, 50.0 20.0, 1.0 1.0)))",
       "created_by": 1     
     }

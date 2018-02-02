@@ -11,11 +11,13 @@ Packages
    alerts
    ambassador
    appusers
+   articles
    bottler
    categories
    codebooks
    companies
    contexts
+   cyclops
    cyphon
    distilleries
    engines

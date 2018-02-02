@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -167,7 +167,10 @@ class Engine(BaseClass):
         Returns
         -------
         |list| of |dict|
-            Documents matching the query.
+            A dictionary with keys 'count' and 'results'. The 'count'
+            value is the total number of documents matching the search
+            criteria. The 'results' value is a list of documents from
+            the search result, with the doc ids added to each document.
 
         Notes
         -----

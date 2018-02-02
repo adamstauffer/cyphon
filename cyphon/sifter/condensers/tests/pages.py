@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -33,69 +33,15 @@ from tests.pages.configtool import ConfigToolPage
 from tests.pages.generic import GenericRelationMixin
 
 
-class CondenserField(SelectElement):
-    locator = 'condenser'
-
-class TargetField(AutocompleteElement):
-    locator = 'target_field'
-
-
 class FittingPage(ModelAdminPage, GenericRelationMixin):
     """
     Page class for a Fitting admin page.
     """
-    condenser = CondenserField()
+    condenser = SelectElement('condenser')
 
     def __init__(self, *args, **kwargs):
         super(FittingPage, self).__init__(*args, **kwargs)
-        self.target_field = TargetField(self.driver)
-
-
-class NameField(TextInputElement):
-    locator = 'name'
-
-class BottleField(SelectElement):
-    locator = 'bottle'
-
-
-class InlineTargetField(AutocompleteElement):
-    """
-    An target_field for an inline Fitting.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'fittings-%s-target_field' % index
-        super(InlineTargetField, self).__init__(driver)
-
-
-class InlineContentTypeField(SelectElement):
-    """
-    A content_type for an inline Fitting.
-    """
-
-    def __init__(self, index):
-        super(InlineContentTypeField, self).__init__()
-        self.locator = 'fittings-%s-content_type' % index
-
-
-class InlineObjectIdField(TextInputElement):
-    """
-    An object_id for an inline Fitting.
-    """
-
-    def __init__(self, index):
-        super(InlineObjectIdField, self).__init__()
-        self.locator = 'fittings-%s-object_id' % index
-
-
-class InlineLookupField(LinkElement):
-    """
-    A lookup link for an inline Fitting.
-    """
-
-    def __init__(self, index):
-        super(InlineLookupField, self).__init__()
-        self.locator = 'lookup_id_fittings-%s-object_id' % index
+        self.target_field = AutocompleteElement(self.driver, 'target_field')
 
 
 class CondenserPageLocators(object):
@@ -111,21 +57,23 @@ class CondenserPage(ConfigToolPage):
     """
     Page class for a Condenser admin page.
     """
-    name = NameField()
-    bottle = BottleField()
+    name = TextInputElement('name')
+    bottle = SelectElement('bottle')
 
-    content_type_0 = InlineContentTypeField(index=0)
-    object_id_0 = InlineObjectIdField(index=0)
-    lookup_0 = InlineLookupField(index=0)
+    content_type_0 = SelectElement('fittings-0-content_type')
+    object_id_0 = TextInputElement('fittings-0-object_id')
+    lookup_0 = LinkElement('lookup_id_fittings-0-object_id')
 
-    content_type_1 = InlineContentTypeField(index=1)
-    object_id_1 = InlineObjectIdField(index=1)
-    lookup_1 = InlineLookupField(index=0)
+    content_type_1 = SelectElement('fittings-1-content_type')
+    object_id_1 = TextInputElement('fittings-1-object_id')
+    lookup_1 = LinkElement('lookup_id_fittings-1-object_id')
 
     def __init__(self, driver):
         super(CondenserPage, self).__init__(driver)
-        self.target_field_0 = InlineTargetField(self.driver, index=0)
-        self.target_field_1 = InlineTargetField(self.driver, index=1)
+        self.target_field_0 = AutocompleteElement(self.driver,
+                                                  'fittings-0-target_field')
+        self.target_field_1 = AutocompleteElement(self.driver,
+                                                  'fittings-1-target_field')
 
     def add_fitting(self):
         """

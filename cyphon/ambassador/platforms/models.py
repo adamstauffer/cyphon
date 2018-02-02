@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -60,9 +60,11 @@ class Platform(models.Model):
                             choices=PLATFORM_CHOICES)
     enabled = models.BooleanField(default=True)
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         abstract = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
-

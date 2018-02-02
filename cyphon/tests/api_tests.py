@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -80,6 +80,17 @@ class CyphonAPITestCase(APITestCase):
         if authenticate:
             self.authenticate(is_staff=is_staff)
         return self.client.post(url, data, format='json')
+
+    def patch_to_api(self, endpoint, data, is_staff=True, authenticate=True):
+        """
+
+        """
+        url = self.url
+        if endpoint:
+            url += endpoint
+        if authenticate:
+            self.authenticate(is_staff=is_staff)
+        return self.client.patch(url, data, format='json')
 
     def test_unauthorized_access(self):
         """

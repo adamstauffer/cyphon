@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -114,7 +114,7 @@ class Pump(object):
         Returns a Boolean indicating whether the Pump's Pipe is for a
         streaming API.
         """
-        return self._specsheet.streaming           
+        return self._specsheet.streaming
 
     def _factor_query(self, query):
         """
@@ -228,4 +228,3 @@ class Pump(object):
                 return self._process_nonstreaming_queries(queries)
         else:
             LOGGER.error('The Pipe %s is missing a Specsheet.', self.endpoint)
-

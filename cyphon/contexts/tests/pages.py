@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -30,69 +30,17 @@ from tests.pages.element import (
 from tests.pages.modeladmin import ModelAdminPage
 
 
-class ContextField(SelectElement):
-    locator = 'context'
-
-class SearchField(AutocompleteElement):
-    locator = 'search_field'
-
-class OperatorField(AutocompleteElement):
-    locator = 'operator'
-
-class ValueField(AutocompleteElement):
-    locator = 'value_field'
-
-
 class ContextFilterPage(ModelAdminPage):
     """
     Page class for a ContextFilter admin page.
     """
-    context = ContextField()
+    context = SelectElement('context')
 
     def __init__(self, *args, **kwargs):
         super(ContextFilterPage, self).__init__(*args, **kwargs)
-        self.search_field = SearchField(self.driver)
-        self.operator = OperatorField(self.driver)
-        self.value_field = ValueField(self.driver)
-
-
-class NameField(TextInputElement):
-    locator = 'name'
-
-class FocalDistilleryField(SelectElement):
-    locator = 'primary_distillery'
-
-class RelatedDistilleryField(SelectElement):
-    locator = 'related_distillery'
-
-
-class InlineSearchField(AutocompleteElement):
-    """
-    A search_field field for an inline ContextFilter.
-    """
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-search_field' % index
-        super(InlineSearchField, self).__init__(driver)
-
-
-class InlineOperatorField(AutocompleteElement):
-    """
-    An operator field for an inline ContextFilter.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-operator' % index
-        super(InlineOperatorField, self).__init__(driver)
-
-
-class InlineValueField(AutocompleteElement):
-    """
-    A value_field field for an inline ContextFilter.
-    """
-
-    def __init__(self, driver, index):
-        self.locator = 'filters-%s-value_field' % index
-        super(InlineValueField, self).__init__(driver)
+        self.search_field = AutocompleteElement(self.driver, 'search_field')
+        self.operator = AutocompleteElement(self.driver, 'operator')
+        self.value_field = AutocompleteElement(self.driver, 'value_field')
 
 
 class ContextPageLocators(object):
@@ -108,19 +56,25 @@ class ContextPage(ModelAdminPage):
     """
     Page class for a Context admin page.
     """
-    name = NameField()
-    primary_distillery = FocalDistilleryField()
-    related_distillery = RelatedDistilleryField()
+    name = TextInputElement('name')
+    primary_distillery = SelectElement('primary_distillery')
+    related_distillery = SelectElement('related_distillery')
 
     def __init__(self, driver):
         super(ContextPage, self).__init__(driver)
-        self.search_field_0 = InlineSearchField(self.driver, index=0)
-        self.operator_0 = InlineOperatorField(self.driver, index=0)
-        self.value_field_0 = InlineValueField(self.driver, index=0)
+        self.search_field_0 = AutocompleteElement(self.driver,
+                                                  'filters-0-search_field')
+        self.operator_0 = AutocompleteElement(self.driver,
+                                              'filters-0-operator')
+        self.value_field_0 = AutocompleteElement(self.driver,
+                                                 'filters-0-value_field')
 
-        self.search_field_1 = InlineSearchField(self.driver, index=1)
-        self.operator_1 = InlineOperatorField(self.driver, index=1)
-        self.value_field_1 = InlineValueField(self.driver, index=1)
+        self.search_field_1 = AutocompleteElement(self.driver,
+                                                  'filters-1-search_field')
+        self.operator_1 = AutocompleteElement(self.driver,
+                                              'filters-1-operator')
+        self.value_field_1 = AutocompleteElement(self.driver,
+                                                 'filters-1-value_field')
 
     def add_filter(self):
         """
@@ -142,4 +96,3 @@ class ContextPage(ModelAdminPage):
         """
         element = self.driver.find_element(*ContextPageLocators.DELETE_FILTER_0)
         element.click()
-

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,14 +19,12 @@ Defines Watchdog, Trigger, and Muzzle classes for generating Alerts.
 """
 
 # standard library
-import datetime
+import contextlib
 import logging
 
 # third party
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.db import transaction
-from django.utils import timezone
+from django.db import IntegrityError, models, transaction
 from django.utils.translation import ugettext_lazy as _
 
 # local
@@ -34,9 +32,7 @@ from alarms.models import Alarm, AlarmManager
 from alerts.models import Alert
 from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
-from cyphon.transaction import require_lock
-from utils.dateutils.dateutils import convert_time_to_whole_minutes
-from utils.parserutils.parserutils import get_dict_value
+from utils.dbutils.dbutils import json_encodeable
 from sifter.datasifter.datasieves.models import DataSieve
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,12 +43,32 @@ class WatchdogManager(AlarmManager):
     Adds methods to the default model manager.
     """
 
-    def find_relevant(self, distillery):
+    @staticmethod
+    def _get_categories(distillery):
         """
+        Takes a Distillery and returns a Queryset of Categories
+        associated with the Distillery. If distillery=None, returns None.
+        """
+        if distillery:
+            return distillery.categories.all()
+
+    def find_relevant(self, distillery):
+        """Find appropriate Watchdogs for inspecting a document.
+
+        Parameters
+        ----------
+        distillery : |Distillery| or |None|
+            The |Distillery| associated with the document to be
+            inspected.
+
+        Returns
+        -------
+        |Queryset|
+            A |Queryset| of |Watchdogs| for inspecting a document.
 
         """
-        enabled_watchdogs = super(WatchdogManager, self).find_enabled()
-        categories = distillery.categories.all()
+        enabled_watchdogs = self.find_enabled()
+        categories = self._get_categories(distillery)
         queryset = enabled_watchdogs.annotate(
             categories_cnt=models.Count('categories')
         )
@@ -100,61 +116,97 @@ class Watchdog(Alarm):
     def __str__(self):
         return self.name
 
-    def _is_muzzled(self, alert):
-        """
-        Takes an Alert and returns True if it should be suppressed.
-        Otherwise, returns False.
-        """
-        if hasattr(self, 'muzzle') and self.muzzle.enabled:
-            return self.muzzle.is_match(alert)
-        else:
-            return False
-
-    def _create_alert(self, level, distillery, doc_id):
+    def _create_alert(self, level, doc_obj):
         """
         Takes an alert level, a distillery, and a document id. Returns
         an Alert object.
         """
+        data = json_encodeable(doc_obj.data)
+
         return Alert(
             level=level,
             alarm=self,
-            distillery=distillery,
-            doc_id=doc_id,
+            distillery=doc_obj.distillery,
+            doc_id=doc_obj.doc_id,
+            data=data
         )
 
-    @transaction.atomic
-    @require_lock(Alert, 'ACCESS EXCLUSIVE')
-    def _process_alert(self, alert):
+    def _is_muzzled(self):
         """
+        Returns a boolean indicates if the Watchdog has an enabled Muzzle.
+        """
+        return hasattr(self, 'muzzle') and self.muzzle.enabled
 
+    def _save_alert(self, alert):
         """
-        if not self._is_muzzled(alert):
+        Saves a new Alert to the database and returns the saved Alert.
+        """
+        with contextlib.ExitStack() as stack:
+            if self._is_muzzled():
+                stack.enter_context(transaction.atomic())
             alert.save()
-            return alert
+        return alert
+
+    @staticmethod
+    @transaction.atomic
+    def _increment_incidents(alert):
+        """
+        Takes an Alert and increments a previous Alert that it
+        duplicates. Returns the previous Alert.
+        """
+        old_alert = Alert.objects.filter(muzzle_hash=alert.muzzle_hash).first()
+        old_alert.add_incident()
+        return old_alert
 
     def inspect(self, data):
-        """
-        Takes a data dictionary and returns the alert_level of the first
-        Trigger that matches the data. If the data matches no Triggers,
-        returns None.
+        """Return an Alert level for a document.
+
+        Parameters
+        ----------
+        data: dict
+            The document to be inspected.
+
+        Returns
+        -------
+        |str| or |None|
+            If the data matches one of the Watchdog's |triggers|,
+            returns the :attr:`~Trigger.alert_level` for that Ttrigger|.
+            Otherwise, returns |None|.
+
         """
         triggers = self.triggers.all()
         for trigger in triggers:
             if trigger.is_match(data):
                 return trigger.alert_level
 
-    def process(self, data, distillery, doc_id):
-        """
-        Takes a dictionary of data, a distillery, and a document id.
-        If the Watchdog is enabled, inspects the data and generates an
-        Alert if necessary. If the Watchdog is disabled or an Alert is
-        not warranted, returns None.
+    def process(self, doc_obj):
+        """Generate an |Alert| for a document if appropriate.
+
+        Parameters
+        ----------
+        doc_obj: |DocumentObj|
+            Data and related information about the document to be
+            inspected.
+
+        Returns
+        -------
+        |Alert| or |None|
+            Returns an |Alert| if the Watchdog is enabled and the
+            document matches one of the Watchdog's |Triggers|.
+            Otherwise, returns |None|.
+
         """
         if self.enabled:
-            alert_level = self.inspect(data)
+            alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
-                alert = self._create_alert(alert_level, distillery, doc_id)
-                return self._process_alert(alert)
+                alert = self._create_alert(alert_level, doc_obj)
+
+                # save the alert or increment incidents on a previous
+                # alert it duplicates
+                try:
+                    return self._save_alert(alert)
+                except IntegrityError:
+                    return self._increment_incidents(alert)
 
 
 class TriggerManager(models.Manager):
@@ -243,8 +295,10 @@ class Trigger(models.Model):
 
     objects = TriggerManager()
 
-    class Meta:
-        ordering = ['rank']
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['watchdog', 'rank']
         unique_together = [('watchdog', 'sieve'), ('watchdog', 'rank')]
 
     def __str__(self):
@@ -308,10 +362,15 @@ class Muzzle(models.Model):
     )
     enabled = models.BooleanField(default=True)
 
+    class Meta(object):
+        """Metadata options."""
+
+        ordering = ['watchdog']
+
     def __str__(self):
         return str(self.watchdog)
 
-    def _get_fields(self):
+    def get_fields(self):
         """
         Returns a list of field names created from the Muzzle's
         matching_fields.
@@ -325,50 +384,3 @@ class Muzzle(models.Model):
                 cleaned_fields.append(cleaned_field)
 
         return cleaned_fields
-
-    def _get_start_time(self):
-        """
-        Returns a DateTime object equal to the current time minus the
-        Muzzle's time_interval.
-        """
-        minutes = convert_time_to_whole_minutes(self.time_interval,
-                                                self.time_unit)
-        return timezone.now() - datetime.timedelta(minutes=minutes)
-
-    def _get_filtered_alerts(self, alert):
-        """
-        Takes an Alert and returns a queryset of Alerts with the same
-        level and distillery that were generated within the Muzzle's
-        time frame.
-        """
-        time = self._get_start_time()
-        return Alert.objects.filter(
-            created_date__gte=time,
-            level=alert.level,
-            distillery=alert.distillery,
-            alarm_type=alert.alarm_type,
-            alarm_id=alert.alarm_id
-        ).order_by('created_date')
-
-    def is_match(self, alert):
-        """
-        Takes an Alert and returns a Boolean indicating whether the
-        Alert duplicates a previous Alert within the Muzzle's time frame.
-        """
-        fields = self._get_fields()
-        alerts = self._get_filtered_alerts(alert)
-        new_data = alert.saved_data
-        for old_alert in alerts:
-            match = True
-            old_data = old_alert.data
-            for field in fields:
-                new_data_val = get_dict_value(field, new_data)
-                old_data_val = get_dict_value(field, old_data)
-                if new_data_val != old_data_val:
-                    match = False
-                    break
-            if match:
-                old_alert.add_incident()
-                return True
-
-        return False

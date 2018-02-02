@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -37,7 +37,8 @@ def reverse_coordinate_order(coords):
     Takes a tuple of (lat, lng) or (lng, lat) coordinates and reverses their
     order.
     """
-    assert(len(coords) == 2)
+    if len(coords) != 2:
+        raise ValueError('coordinates must contain exactly 2 points')
     return (coords[1], coords[0])
 
 
@@ -48,7 +49,8 @@ def sides_parallel(coords, clockwise=True):
     (min_x, min_y) and end at (min_x, min_y). Returns True if the
     coordinates define a rectangle. Otherwise returns False.
     """
-    assert(len(coords) == 5)
+    if len(coords) != 5:  # pragma: no cover
+        raise ValueError('quadrilateral must contain exactly 5 coordinates')
 
     # get coordinates for [bottom left, top left, top right, bottom right]
     if clockwise:
@@ -68,10 +70,7 @@ def sides_parallel(coords, clockwise=True):
     has_width = (c0_min_x != c2_max_x and c1_min_x != c3_max_x)
     has_height = (c0_min_y != c1_max_y and c3_min_y != c2_max_y)
 
-    if left_rt_parallel and top_btm_parallel and has_width and has_height:
-        return True
-    else:
-        return False
+    return left_rt_parallel and top_btm_parallel and has_width and has_height
 
 
 def is_rectangle(coords):
@@ -92,11 +91,8 @@ def is_rectangle(coords):
         if is_closed:
 
             # test sides for both clockwise or counterwise ordering of points
-            if sides_parallel(coords, clockwise=True) or \
-                sides_parallel(coords, clockwise=False):
-                return True
-            else:
-                return False
+            return sides_parallel(coords, clockwise=True) or \
+                sides_parallel(coords, clockwise=False)
         else:
             return False
     else:
@@ -154,7 +150,8 @@ def calculate_polygon_radius_km(polygon):
     between the Polygon's centroid and the point on the polygon farthest
     from the centroid.
     """
-    assert(isinstance(polygon, Polygon))
+    if not isinstance(polygon, Polygon):  # pragma: no cover
+        raise TypeError('object is not a Polygon')
     target = polygon.centroid
     points = polygon.exterior_ring
     return calculate_farthest_dist_km(points, target)
@@ -166,7 +163,9 @@ def calculate_multipoly_radius_km(multipolygon):
     between the MultiPolygon's centroid and the point on the MultiPolygon
     farthest from the centroid.
     """
-    assert(isinstance(multipolygon, MultiPolygon))
+    if not isinstance(multipolygon, MultiPolygon):  # pragma: no cover
+        raise TypeError('object is not a MultiPolygon')
+
     target = multipolygon.centroid
     max_radius_km = 0
 
@@ -185,7 +184,8 @@ def create_buffered_bounds(polygon, buffer_m):
     Returns a Bounds object representing the polygon bounds buffered
     by the specified distance.
     """
-    assert(isinstance(polygon, Polygon))
+    if not isinstance(polygon, Polygon):  # pragma: no cover
+        raise TypeError('object is not a Polygon')
     return Bounds(*polygon.extent).buffer(buffer_m)
 
 
@@ -197,7 +197,8 @@ def calculate_circle_spacing(radius_m, overlap_m=0):
     The overlap insures against gaps between circles when used to calculate
     geographic coordinates.
     """
-    assert(radius_m > overlap_m)
+    if radius_m <= overlap_m:  # pragma: no cover
+        raise ValueError('radius_m must be greater than overlap_m')
     return (2 * radius_m / math.sqrt(2)) - overlap_m
 
 
@@ -207,11 +208,16 @@ def factor_polygon_into_circles(polygon, radius_km):
     of (lng, lat) tuples representing the centers of circles of the specified
     radius that together cover the area of the Polygon.
     """
-    assert(isinstance(polygon, Polygon))
-    assert(radius_km > 0.01) # radius should be greater than overlap_m in spacing
+    safety_buffer = 0.01  # small safety buffer for overlap
 
-    # get the bounds of the polygon with a small safety buffer (1% of radius)
-    buffer_dist_m = (radius_km * 1000) * 0.01
+    if not isinstance(polygon, Polygon):
+        raise TypeError('object is not a Polygon')
+
+    if radius_km <= safety_buffer:
+        raise ValueError('radius must be greater than safety buffer')
+
+    # get the bounds of the polygon with a small safety buffer
+    buffer_dist_m = (radius_km * 1000) * safety_buffer
     bounds = create_buffered_bounds(polygon, buffer_dist_m)
 
     # get the space between circle centers, with a safety margin of 10 meters
@@ -220,7 +226,7 @@ def factor_polygon_into_circles(polygon, radius_km):
     # create a coordinate calculator for the increment distance
     calculator = vincenty(meters=dist_bw_centers_m)
 
-    points = [] # array for collecting the circle centers
+    points = []  # array for collecting the circle centers
 
     # position first point so the circle intersects with the sw corner of bounds
     starting_pt = vincenty(kilometers=radius_km).destination(
@@ -261,15 +267,18 @@ def factor_polygon_into_circles(polygon, radius_km):
 
 def convert_to_point(location, location_format):
     """
-    Takes a tuple or list of coordinates and converts them to a Point.
+    Takes a dict, tuple, or list of coordinates and converts them to a
+    Point.
     """
     if isinstance(location, Point):
         return location
     try:
+        if (isinstance(location, dict) and
+                'lat' in location and 'lon' in location):
+            return Point(location['lon'], location['lat'])
         if location_format.lower().startswith('lat'):
             location = reverse_coordinate_order(location)
         return Point(location)
-    except (AssertionError, TypeError) as error:
+    except Exception as error:
         LOGGER.error('There was an error processing the location %s: %s',
                      location, error)
-

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -234,7 +234,8 @@ class Emissary(models.Model):
             current request interval.
 
         """
-        assert self.visa is not None
+        if self.visa is None:  # pragma: no cover
+            raise RuntimeError('No Visa exists.')
         calls_allowed = self._get_allowed_calls()
         calls_made = self.call_count()
         return calls_allowed - calls_made
@@ -250,7 +251,8 @@ class Emissary(models.Model):
             current rate limit interval.
 
         """
-        assert self.visa is not None
+        if self.visa is None:  # pragma: no cover
+            raise RuntimeError('No Visa exists.')
         return self.remaining_calls() > 0
 
     def enabled(self, endpoint):

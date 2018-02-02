@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -17,6 +17,9 @@
 """
 
 """
+
+# standard library
+import copy
 
 # third party
 from django.db import models
@@ -51,11 +54,11 @@ class Munger(models.Model):
     def __str__(self):
         return self.name
 
-    def _save_data(self, data, doc_id=None, collection=None, platform=None):
+    def _save_data(self, doc_obj):
         """
 
         """
-        return self.distillery.save_data(data, doc_id, collection, platform)
+        return self.distillery.save_data(doc_obj)
 
     def _process_data(self, data):
         """
@@ -65,21 +68,21 @@ class Munger(models.Model):
         """
         return self.condenser.process(data)
 
-    def process(self, data, doc_id=None, collection=None, platform=None):
+    def process(self, doc_obj):
         """
         Condenses data into the Distillery's Bottle, adds the doc_id and
         source to the data, saves it in the Distillery's Collection
         (database collection), and sends a signal that the document has been
         saved.
 
-        Parameters:
-            data: a dictionary of raw data
-            condenser: a Condenser that should be used to distill the data
-            doc_id: the id of the document that contains the data
-            collection: a string representing the Collection in which the raw
-                    data is stored (e.g., 'elasticsearch.cyphon.twitter')
-        """
-        doc = self._process_data(data)
-        doc_id = self._save_data(doc, doc_id, collection, platform)
-        return doc_id
+        Parameters
+        ----------
+        doc_obj : |DocumentObj|
+            The document to be processed.
 
+        """
+        parsed_data = self._process_data(doc_obj.data)
+        new_doc_obj = copy.deepcopy(doc_obj)
+        new_doc_obj.data = parsed_data
+        doc_id = self._save_data(new_doc_obj)
+        return doc_id

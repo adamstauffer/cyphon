@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,7 +21,10 @@ Functional tests for the DataCondenser app.
 # standard library
 import json
 import logging
-from unittest.mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 # third party
 from django.core.exceptions import ValidationError
@@ -196,10 +199,6 @@ class ChangeDataCondenserConfigToolTest(CondenserFunctionalTest):
             'screen_name': 'zebrafinch'
         }
     })
-
-    def setUp(self):
-        super(ChangeDataCondenserConfigToolTest, self).setUp()
-        self.page.remove_fitting()  # clear extra fitting
 
     def test_invalid_form(self):
         """

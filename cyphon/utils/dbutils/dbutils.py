@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,20 +22,27 @@ import json
 
 # third party
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Count, IntegerField, Subquery
+
+
+class SQCount(Subquery):
+    """A modified :class:`django.db.models.Subquery` that selects counts."""
+
+    template = "(SELECT count(*) FROM (%(subquery)s) _count)"
+    output_field = IntegerField()
 
 
 def count_by_group(queryset, column, options):
     """
     Takes a QuerySet, a column name, and an options list (tuple of 2-tuples).
-    Returns a dictionary containing the number of records for each option. 
+    Returns a dictionary containing the number of records for each option.
     """
-    counts = {}
-
-    for option in options:
-        value = option[0]
-        kwargs = {column: value}
-        counts[value] = queryset.filter(**kwargs).count()
-
+    counts = {key: 0 for key, _ in options}
+    grouped_qs = queryset.model.objects.filter(
+        id__in=queryset.values(queryset.model._meta.pk.name))
+    grouped_qs = grouped_qs.values(column).annotate(Count(column)).order_by()
+    for result in grouped_qs:
+        counts[result[column]] = result[column + '__count']
     return {column: counts}
 
 
@@ -51,7 +58,8 @@ def join_query(queries, logic):
     """
 
     """
-    assert logic in ['AND', 'OR']
+    if logic not in ['AND', 'OR']:
+        raise ValueError('%s is not a valid logic value', logic)
 
     joined_query = queries.pop()
 
@@ -64,4 +72,3 @@ def join_query(queries, logic):
             joined_query &= query
 
     return joined_query
-

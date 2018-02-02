@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -23,19 +23,11 @@ from .element import StyledElement
 from .modeladmin import ModelAdminPage
 
 
-class PreviewField(StyledElement):
+class ModelPreviewPage(ModelAdminPage):
     """
-    A readonly preview field.
+    Page class for a ModelAdmin page with readonly preview field.
 
     NOTE: a more general form of the "readonly" selector is used for
     compatibility with Django Grappelli selectors (e.g., ".grp-readonly").
     """
-    locator = '.preview [class$="readonly"]'
-
-
-class ModelPreviewPage(ModelAdminPage):
-    """
-    Page class for a ModelAdmin page with readonly preview field.
-    """
-    preview = PreviewField()
-
+    preview = StyledElement('.preview [class$="readonly"]')

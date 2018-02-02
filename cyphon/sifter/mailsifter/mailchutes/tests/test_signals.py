@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -19,7 +19,10 @@ Tests signal recievers in the MailSifter package.
 """
 
 # standard library
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock, patch
+except ImportError:
+    from mock import Mock, patch
 
 # third party
 from django_mailbox.signals import message_received
@@ -35,12 +38,11 @@ class HandleMessageTestCase(TestCase):
         """
         Tests the handle_email signal receiver.
         """
-        mock_email = Mock()
+        mock_email = {'Message-ID': 'abc', 'Subject': 'This is a Critical Alert'}
         mock_message = Mock()
         mock_message.get_email_object = Mock(return_value=mock_email)
-        with patch('sifter.mailsifter.mailchutes.signals.process_email') \
+        with patch('sifter.mailsifter.mailchutes.models.MailChuteManager.process') \
                 as mock_process:
             message_received.send(sender='message_received',
                                   message=mock_message)
-            mock_process.assert_called_once_with(mock_email)
-
+            assert mock_process.call_count == 1

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -43,8 +43,8 @@ class CustomUserChangeForm(auth_forms.UserChangeForm):
     replaces the password field with a password hash display field.
     """
 
-    def __init__(self, *args, **kargs):
-        super(CustomUserChangeForm, self).__init__(*args, **kargs)
+    def __init__(self, *args, **kwargs):
+        super(CustomUserChangeForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = AppUser

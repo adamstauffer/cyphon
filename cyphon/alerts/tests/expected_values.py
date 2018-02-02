@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -27,14 +27,29 @@ ALERT_DETAIL = {
     'created_date': '2015-03-01T02:42:24.468404Z',
     'location': None,
     'assigned_user': None,
-    'data': {
-        'subject': 'test doc'
-    },
+    'data': {'content': {'link': 'url', 'text': 'foobar'}},
+    'doc_id': '1',
     'incidents': 1,
     'status': 'NEW',
-    'link': 'http://localhost:8000/#/alerts?alertDetail=4',
+    'link': 'http://localhost:8000/app/alerts/4',
     'dispatches': [],
     'level': 'LOW',
+    'tags': [
+        {
+            'id': 2,
+            'name': 'cat',
+            'topic': {
+                'id': 1,
+                'name': 'Animals',
+                'url': 'http://testserver/api/v1/topics/1/'
+            },
+            'article': {
+                'id': 2,
+                'title': 'Cats',
+                'url': 'http://testserver/api/v1/articles/2/'
+            }
+        }
+    ],
     'title': 'Acme Supply Co',
     'url': 'http://testserver/api/v1/alerts/4/',
     'content_date': None,
@@ -242,7 +257,7 @@ ALERT_LIST = {
         'content_date': None,
         'outcome': None
     }, {
-        'title': 'No title available',
+        'title': 'Acme Supply Co',
         'id': 3,
         'url': 'http://testserver/api/v1/alerts/3/',
         'level': 'MEDIUM',

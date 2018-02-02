@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -21,7 +21,6 @@
 import importlib
 
 # third party
-from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
 
@@ -60,3 +59,10 @@ class CustomModelViewSet(ModelViewSet):
             msg = "Could not import '%s'. %s: %s." % \
                   (class_ref, error.__class__.__name__, error)
             raise ImportError(msg)
+
+    def _is_write_request(self):
+        """
+        Checks to see if the request is protected per user.
+        """
+        write_requests = ['PATCH', 'PUT', 'DELETE']
+        return self.request.method in write_requests

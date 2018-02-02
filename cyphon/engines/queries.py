@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -286,7 +286,7 @@ class EngineQueryFieldset(BaseClass):
             If the method has not been implemented.
 
         """
-        return self.raise_attr_not_implemented()
+        return self.raise_method_not_implemented()
 
 
 class EngineQuery(BaseClass):

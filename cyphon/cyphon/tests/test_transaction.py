@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,7 +20,10 @@ Tests for the locking database tables.
 
 # standard library
 from unittest import TestCase
-from unittest.mock import patch, Mock
+try:
+    from unittest.mock import MagicMock, patch
+except ImportError:
+    from mock import MagicMock, patch
 
 # third party
 from django.db import transaction
@@ -51,8 +54,7 @@ class RequireLockTest(TestCase):
 
         command = 'LOCK TABLE %s IN %s MODE' % (self.model._meta.db_table, lock)
 
-        mock_cursor = Mock()
-        mock_cursor.execute = Mock()
+        mock_cursor = MagicMock()
 
         with patch('cyphon.transaction.db.connection.cursor',
                    return_value=mock_cursor):

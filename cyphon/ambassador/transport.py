@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -343,9 +343,10 @@ class Transport(BaseClass):
         methods must be called prior to calling :meth:`~Transport.stop`.
 
         """
-        msg = ('The prepare() and start() methods must be called first')
-        assert self.record is not None, msg
-        assert self.cargo is not None, msg
+        if self.record is None or self.cargo is None:  # pragma: no cover
+            msg = ('The prepare() and start() methods must be called first')
+            raise RuntimeError(msg)
+
         self.record.finalize(self.cargo)
         return self
 
@@ -379,4 +380,3 @@ class Transport(BaseClass):
         self.start(obj)
         self.stop()
         return self
-

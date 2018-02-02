@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -22,14 +22,8 @@
 from django.contrib import admin
 
 # local
-from aggregator.reservoirs.models import Reservoir
+from ambassador.platforms.admin import PlatformAdmin
+from .models import Reservoir
 
 
-class ReservoirAdmin(admin.ModelAdmin):
-    """
-
-    """
-    list_display = ['id', 'name']
-
-
-admin.site.register(Reservoir, ReservoirAdmin)
+admin.site.register(Reservoir, PlatformAdmin)

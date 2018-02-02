@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,10 +20,13 @@ Tests signals in the Watchdog app.
 
 # standard library
 import logging
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 # third party
-from django.test import TransactionTestCase 
+from django.test import TransactionTestCase
 
 # local
 from alerts.models import Alert
@@ -62,9 +65,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         """
 
         # distillery with no categories
-        distillery = Distillery.objects.get_by_natural_key('mongodb',
-                                                           'test_database',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('mongodb.test_database.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
 
         doc_id = distillery._save_and_send_signal(self.data)
@@ -84,9 +85,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         watchdog.save()
 
         # distillery with categories
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
         doc_id = distillery._save_and_send_signal(self.data)
 
@@ -102,9 +101,7 @@ class SignalRecieverTestCase(TransactionTestCase):
         """
 
         # distillery with categories
-        distillery = Distillery.objects.get_by_natural_key('elasticsearch',
-                                                           'test_index',
-                                                           'test_docs')
+        distillery = Distillery.objects.get_by_natural_key('elasticsearch.test_index.test_docs')
         distillery.collection.insert = Mock(return_value=self.mock_doc_id)
         doc_id = distillery._save_and_send_signal(self.data)
         watchdog = Watchdog.objects.get_by_natural_key('inspect_emails')

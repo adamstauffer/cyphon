@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -27,7 +27,10 @@ from warehouses.models import Collection
 
 
 class FieldsetSerializer(serializers.ModelSerializer):
-    class Meta:
+
+    class Meta(object):
+        """Metadata options."""
+
         model = Fieldset
         fields = ['field_name', 'field_type', 'operator', 'value']
 
@@ -43,17 +46,20 @@ class CollectionQuerySerializer(serializers.ModelSerializer):
     # we'll define fieldsets using individual fields
     fieldsets = FieldsetSerializer(many=True)
 
-    class Meta:
+    class Meta(object):
+        """Metadata options."""
+
         model = CollectionQuery
         fields = ['collections', 'fieldsets', 'joiner']
 
         # values for these fields will be added automatically
         read_only_fields = ['created_by', 'created_date']
-        
+
         # include fields for child objects like fieldsets
         depth = 1
 
-    def create(self, validated_data):
+    @staticmethod
+    def create(validated_data):
         """
         Takes validated JSON for a field-based query and returns a CollectionQuery
         object.
@@ -74,4 +80,3 @@ class CollectionQuerySerializer(serializers.ModelSerializer):
             Fieldset.objects.create(query=query, **fieldset)
 
         return query
-

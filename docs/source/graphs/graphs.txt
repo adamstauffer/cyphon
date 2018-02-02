@@ -14,6 +14,7 @@ between Cyphon models. See the section on :ref:`graphing-models` for more info.
    alarms <alarms.graph>
    alerts <alerts.graph>
    appusers <appusers.graph>
+   articles <articles.graph>
    auth <auth.graph>
    bottler <bottler.graph>
    bottles <bottles.graph>

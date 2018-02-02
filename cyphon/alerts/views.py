@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -20,16 +20,15 @@ Provides views for Alerts.
 
 # standard library
 import datetime
-import importlib
 import json
 
 # third party
+from django.db.models import OuterRef
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django.utils import timezone
 from rest_framework.decorators import list_route
-from rest_framework.filters import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.pagination import (
@@ -42,13 +41,14 @@ from cyphon.choices import ALERT_LEVEL_CHOICES, ALERT_STATUS_CHOICES
 from cyphon.views import CustomModelViewSet
 from distilleries.models import Distillery
 from distilleries.serializers import DistilleryListSerializer
-from utils.dbutils.dbutils import count_by_group
+from utils.dbutils.dbutils import count_by_group, SQCount
 from .filters import AlertFilter
-from .models import Alert, Comment
+from .models import Alert, Analysis, Comment
 from .serializers import (
     AlertDetailSerializer,
     AlertListSerializer,
     AlertUpdateSerializer,
+    AnalysisSerializer,
     RedactedAlertDetailSerializer,
     RedactedAlertListSerializer,
     CommentSerializer,
@@ -89,28 +89,39 @@ class AlertViewSet(CustomModelViewSet):
             return self.queryset.all()
 
     def partial_update(self, request, pk):
+        """
+        Performs a patch request to update an alert.
+        """
         alert = self.get_object()
-        serializer = AlertUpdateSerializer(alert, data=request.data)
+        alert_serializer = AlertUpdateSerializer(alert, data=request.data,
+                                                 partial=True)
+        if alert_serializer.is_valid():
+            updated_alert = alert_serializer.save()
 
-        if serializer.is_valid():
-            updated_alert = serializer.save()
+            notes = request.data.get('notes')
+            if notes:
+                Analysis.objects.save_notes(alert=updated_alert, notes=notes)
+
             detail_serializer = AlertDetailSerializer(
                 updated_alert,
                 context={'request': request},
             )
             return Response(detail_serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(alert_serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
     def get_serializer_class(self):
         """
         Overrides the default method for returning the ViewSet's
         serializer.
         """
-        assert self.serializer_class is not None, (
-            "'%s' should either include a `serializer_class` attribute, "
-            "or override the `get_serializer_class()` method."
-            % type(self).__name__
-        )
+        if self.serializer_class is None:  # pragma: no cover
+            msg = ("'%s' should either include a `serializer_class` attribute,"
+                   " or override the `get_serializer_class()` method."
+                   % type(self).__name__)
+            raise RuntimeError(msg)
+
         use_redaction = self.request.user.use_redaction
 
         if self.action is 'list':
@@ -127,11 +138,13 @@ class AlertViewSet(CustomModelViewSet):
     @staticmethod
     def _get_date(days_ago):
         """
-
+        Takes an integer representing a number of days in the past, and
+        returns a datetime for midnight localtime of that day.
         """
         try:
             days = int(days_ago)
-            date_time = timezone.now() - datetime.timedelta(days=days)
+            localtime = timezone.localtime(timezone.now())
+            date_time = localtime - datetime.timedelta(days=days)
             return date_time.replace(hour=0, minute=0,
                                      second=0, microsecond=0)
         except (ValueError, TypeError):
@@ -167,8 +180,7 @@ class AlertViewSet(CustomModelViewSet):
     @staticmethod
     def _counts_by_field(queryset, field_name, choices):
         """
-        Provides a REST API endpoint for GET requests for alert counts
-        by level.
+
         """
         counts = count_by_group(
             queryset=queryset,
@@ -218,14 +230,10 @@ class AlertViewSet(CustomModelViewSet):
         msg = 'A maximum of %s days is permitted' % self.MAX_DAYS
         return Response({'error': msg})
 
-    @list_route(methods=['get'], url_path='levels')
-    def counts_by_level(self, request):
+    def _catch_days_param_error(self, days):
         """
-        Provides a REST API endpoint for GET requests for alert counts
-        by level.
-        """
-        days = request.query_params.get('days')
 
+        """
         try:
             days = int(days)
             if days > self.MAX_DAYS:
@@ -233,13 +241,32 @@ class AlertViewSet(CustomModelViewSet):
         except (TypeError, ValueError):
             return self._handle_missing_days_param()
 
-        queryset = self._filter_by_start_date(days)
-        counts = self._counts_by_field(
-            queryset=queryset,
-            field_name='level',
-            choices=ALERT_LEVEL_CHOICES
-        )
-        return Response(counts)
+    def _get_counts(self, request, field_name, choices):
+        """
+
+        """
+        days = request.query_params.get('days')
+
+        error = self._catch_days_param_error(days)
+
+        if error:
+            return error
+        else:
+            queryset = self._filter_by_start_date(int(days))
+            counts = self._counts_by_field(
+                queryset=queryset,
+                field_name=field_name,
+                choices=choices
+            )
+            return Response(counts)
+
+    @list_route(methods=['get'], url_path='levels')
+    def counts_by_level(self, request):
+        """
+        Provides a REST API endpoint for GET requests for alert counts
+        by level.
+        """
+        return self._get_counts(request, 'level', ALERT_LEVEL_CHOICES)
 
     @list_route(methods=['get'], url_path='statuses')
     def counts_by_status(self, request):
@@ -247,22 +274,7 @@ class AlertViewSet(CustomModelViewSet):
         Provides a REST API endpoint for GET requests for alert counts
         by status.
         """
-        days = request.query_params.get('days')
-
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
-
-        queryset = self._filter_by_start_date(days)
-        counts = self._counts_by_field(
-            queryset=queryset,
-            field_name='status',
-            choices=ALERT_STATUS_CHOICES
-        )
-        return Response(counts)
+        return self._get_counts(request, 'status', ALERT_STATUS_CHOICES)
 
     @list_route(methods=['get'], url_path='collections')
     def counts_by_collection(self, request):
@@ -271,23 +283,23 @@ class AlertViewSet(CustomModelViewSet):
         by Collection.
         """
         days = request.query_params.get('days')
+        error = self._catch_days_param_error(days)
+        date = self._get_date(days)
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
-
-        queryset = self._filter_by_start_date(days)
-        distilleries = Distillery.objects.filter(alerts__in=queryset)
-        counts = {}
-
-        for distillery in distilleries:
-            filtered_qs = queryset.filter(distillery=distillery)
-            counts[str(distillery)] = filtered_qs.count()
-
-        return Response(counts)
+        if error:
+            return error
+        else:
+            alerts = Alert.objects.filter(
+                created_date__gte=date,
+                distillery_id=OuterRef('collection_id'))
+            alerts = Alert.objects.filter_by_user(request.user, alerts)
+            counts = {
+                d.name: d.alert_count
+                for d in Distillery.objects.annotate(
+                    alert_count=SQCount(alerts))
+                if d.alert_count
+            }
+            return Response(counts)
 
     @list_route(methods=['get'], url_path='locations')
     def locations(self, request):
@@ -302,24 +314,22 @@ class AlertViewSet(CustomModelViewSet):
         """
         days = request.query_params.get('days')
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
+        error = self._catch_days_param_error(days)
 
-        queryset = self._filter_by_start_date(days)
-        location_qs = queryset.filter(location__isnull=False)
-        fields = (
-            'pk',
-            'location',
-            'title',
-            'level',
-            'incidents',
-        )
-        geojson = serialize('geojson', location_qs, fields=fields)
-        return Response(json.loads(geojson))
+        if error:
+            return error
+        else:
+            queryset = self._filter_by_start_date(int(days))
+            location_qs = queryset.filter(location__isnull=False)
+            fields = (
+                'pk',
+                'location',
+                'title',
+                'level',
+                'incidents',
+            )
+            geojson = serialize('geojson', location_qs, fields=fields)
+            return Response(json.loads(geojson))
 
     @list_route(methods=['get'], url_path='level-timeseries')
     def level_timeseries(self, request):
@@ -329,19 +339,17 @@ class AlertViewSet(CustomModelViewSet):
         """
         days = request.query_params.get('days')
 
-        try:
-            days = int(days)
-            if days > self.MAX_DAYS:
-                return self._exceeds_max_days()
-        except (TypeError, ValueError):
-            return self._handle_missing_days_param()
+        error = self._catch_days_param_error(days)
 
-        counts = self._timeseries(
-            days=days,
-            field_name='level',
-            choices=ALERT_LEVEL_CHOICES
-        )
-        return Response(counts)
+        if error:
+            return error
+        else:
+            counts = self._timeseries(
+                days=int(days),
+                field_name='level',
+                choices=ALERT_LEVEL_CHOICES
+            )
+            return Response(counts)
 
     @list_route(methods=['get'], url_path='distilleries')
     def distilleries(self, request):
@@ -361,6 +369,32 @@ class AlertViewSet(CustomModelViewSet):
         return Response(serializer.data)
 
 
+class AnalysisViewSet(CustomModelViewSet):
+    """
+    Viewset for viewing and editing Alert Analyses.
+    """
+    queryset = Analysis.objects.all()
+    pagination_class = AlertPagination
+    serializer_class = AnalysisSerializer
+    filter_fields = ['alert', 'alert__assigned_user']
+
+    def get_object(self):
+        """
+        Gets an object for single object views.
+        """
+        queryset = self.get_queryset()
+        primary_key = self.kwargs[self.lookup_field]
+        obj = get_object_or_404(queryset, pk=primary_key)
+        self.check_object_permissions(self.request, obj)
+
+        if self._is_write_request() and \
+                (obj.alert.assigned_user is None or
+                 self.request.user.id != obj.alert.assigned_user.id):
+            raise PermissionDenied()
+
+        return obj
+
+
 class CommentPagination(PageNumberPagination):
     """
     Pagination for comments view.
@@ -377,14 +411,10 @@ class CommentViewSet(CustomModelViewSet):
     serializer_class = CommentSerializer
     filter_fields = ['alert', 'user']
 
-    def _is_user_protected_request(self):
-        """
-        Checks to see if the request is protected per user.
-        """
-        user_protected_requests = ['PATCH', 'PUT', 'DELETE']
-        return self.request.method in user_protected_requests
-
     def get_serializer_class(self):
+        """
+
+        """
         base_serializer_actions = ['create', 'update', 'partial_update']
 
         if self.action in base_serializer_actions:
@@ -402,7 +432,7 @@ class CommentViewSet(CustomModelViewSet):
         self.check_object_permissions(self.request, obj)
         is_comment_user = self.request.user.id is obj.user.id
 
-        if self._is_user_protected_request() and not is_comment_user:
+        if self._is_write_request() and not is_comment_user:
             raise PermissionDenied()
 
         return obj

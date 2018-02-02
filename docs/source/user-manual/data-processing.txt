@@ -57,7 +57,7 @@ Step 1: Configure a Distillery
 
 A Distillery coordinates several aspects of data processing: it specifies the data model for a set of documents, the location where they are stored, and some general info about them. A Distillery can also enhance the data it handles and construct  teasers for the documents it stores.
 
-To create a Distillery, click on the "Distilling Data" panel on Cyphon's main admin page. Then click on the plus sign to go to the page for adding a new Distillery.
+To create a Distillery, click on the "Distilling Data" panel on Cyphon's main admin page. Then click on the plus sign by "Distilleries" to go to the page for adding a new Distillery.
 
 .. image:: ../_static/images/admin/distilling-data-admin.png
 

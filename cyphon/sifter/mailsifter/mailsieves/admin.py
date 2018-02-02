@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -55,4 +55,3 @@ class MailSieveAdmin(SieveAdmin):
 admin.site.register(models.MailRule, MailRuleAdmin)
 admin.site.register(models.MailSieve, MailSieveAdmin)
 admin.site.register(models.MailSieveNode, SieveNodeAdmin)
-

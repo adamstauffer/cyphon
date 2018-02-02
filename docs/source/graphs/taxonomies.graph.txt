@@ -16,7 +16,7 @@ Overview
 
 To graph these models::
 
-    $ python manage.py graph_models categories tags -I Category,Tag,Taxonomy -o taxonomies-graph.png
+    $ python manage.py graph_models categories tags -I Category,Topic,Taxonomy -o taxonomies-graph.png
 
 Related Graphs
 --------------

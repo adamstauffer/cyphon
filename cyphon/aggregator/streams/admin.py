@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -31,9 +31,7 @@ class StreamAdmin(admin.ModelAdmin):
     Customizes admin pages for CodeNames.
     """
     exclude = []
-    # list_display = ['id', 'pipe', 'auth', 'record', 'active']
-    # list_display_links = ['id', 'pipe']
+    readonly_fields = ['pipe', 'auth', 'record', 'active']
 
 
 admin.site.register(Stream, StreamAdmin)
-

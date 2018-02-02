@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -28,8 +28,9 @@ Constant                  Description
 # third party
 from django.dispatch import Signal
 
+
 # pylint: disable=C0103
-document_saved = Signal(providing_args=['doc', 'distillery', 'doc_id'])
+document_saved = Signal(providing_args=['doc_obj'])
 """|Signal|
 
 Send a signal when a |Distillery| saves a document to a |Collection|.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Dunbar Security Solutions, Inc.
+# Copyright 2017-2018 Dunbar Security Solutions, Inc.
 #
 # This file is part of Cyphon Engine.
 #
@@ -26,9 +26,7 @@ from . import views
 
 
 urlpatterns = [
-	url(r'^subscribe/$', views.SubscribeView.as_view(), 
-		name='notifications_subscribe'),
-	url(r'test/$', views.TestNotifications.as_view(), name='notifications_test'),
-	url(r'^$', views.NotificationView.as_view(), name='notifications_get')
+    url(r'^subscribe/$', views.SubscribeView.as_view(),
+        name='notifications_subscribe'),
+    url(r'^$', views.NotificationView.as_view(), name='notifications_get')
 ]
-
