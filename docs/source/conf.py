@@ -105,7 +105,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Cyphon'
-copyright = '2017 Dunbar Security Solutions, Inc.'
+copyright = '2017-2018 Dunbar Security Solutions, Inc.'
 author = 'Leila Hadj-Chikh'
 
 # The version info for the project you're documenting, acts as replacement for
