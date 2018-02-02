@@ -378,7 +378,7 @@ class FieldRule(Rule):
             comparison = self._get_operator_value()
             value = self._get_value(data)
             return operators[comparison](float(value), float(self.value))
-        except ValueError:
+        except (ValueError, TypeError):  # catch TypeError if value is None
             return False
 
     def _check_value(self, value):
