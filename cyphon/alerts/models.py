@@ -79,7 +79,7 @@ class AlertManager(models.Manager):
         Overrides the default get_queryset method to select the related
         Distillery and AppUser.
         """
-        default_queryset = self.api_queryset()
+        default_queryset = self.get_queryset()
         return default_queryset.select_related('distillery__company__codebook')\
                .prefetch_related('distillery__company__codebook__codenames')
 
