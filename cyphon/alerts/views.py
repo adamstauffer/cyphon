@@ -68,7 +68,7 @@ class AlertViewSet(CustomModelViewSet):
     """
     A simple ViewSet for viewing and editing Alerts.
     """
-    queryset = Alert.objects.api_queryset()
+    queryset = Alert.objects.all()
     filter_class = AlertFilter
     pagination_class = AlertPagination
     serializer_class = AlertDetailSerializer
