@@ -21,11 +21,11 @@ var ALERT_PAGE_REGEX = /^\/app\/alerts/;
  * @type {Object<string, string>}
  */
 var ICONS = {
-  CRITICAL: '/static/img/cyphon-push-notification-critical.png',
-  HIGH: '/static/img/cyphon-push-notification-high.png',
-  MEDIUM: '/static/img/cyphon-push-notification-medium.png',
-  LOW: '/static/img/cyphon-push-notification-low.png',
-  INFO: '/static/img/cyphon-push-notification-info.png',
+  CRITICAL: "/static/img/cyphon-push-notification-critical.png",
+  HIGH: "/static/img/cyphon-push-notification-high.png",
+  MEDIUM: "/static/img/cyphon-push-notification-medium.png",
+  LOW: "/static/img/cyphon-push-notification-low.png",
+  INFO: "/static/img/cyphon-push-notification-info.png",
 };
 
 /**
@@ -62,7 +62,7 @@ function getIconUrls() {
 function getNotificationIcon(title) {
   var level = LEVEL_REGEX.exec(title)[1];
 
-  return ICONS[level] || '';
+  return ICONS[level] || "";
 }
 
 /**
@@ -89,7 +89,7 @@ function showNotification(data) {
 }
 
 /**
- * Creates a custom object that stores a promise and it's resolve/reject
+ * Creates a custom object that stores a promise and it"s resolve/reject
  * functions on the same scope.
  * @return {Deferred}
  */
@@ -109,13 +109,13 @@ function defer() {
 // --------------------------------------------------------------------------
 
 // Database constants
-var CACHE_NAME = 'cyphon-cache-v1';
-var DB_NAME = 'cyphonPushNotifications';
+var CACHE_NAME = "cyphon-cache-v1";
+var DB_NAME = "cyphonPushNotifications";
 var DB_VERSION = 1;
 var OBJECT_STORE_NAME = DB_NAME;
-var OBJECT_STORE_KEY_PATH = 'owner';
-var DEFAULT_KEY_VALUE = 'self';
-var NOTIFICATION_URL_KEY = 'notificationUrl';
+var OBJECT_STORE_KEY_PATH = "owner";
+var DEFAULT_KEY_VALUE = "self";
+var NOTIFICATION_URL_KEY = "notificationUrl";
 
 // Globals for database operations
 var db;
@@ -153,13 +153,13 @@ function getDB() {
   }
 
   // If database has not been opened, set the promise to the current
-  // deferred object's promise so that any subsequent calls do not try
+  // deferred object"s promise so that any subsequent calls do not try
   // to open the database again.
   openDBPromise = deferred.promise;
   request = indexedDB.open(DB_NAME, DB_VERSION);
 
   request.onerror = function(event) {
-    // console.error('Opening DB ERROR', event.target.errorCode);
+    // console.error("Opening DB ERROR", event.target.errorCode);
     deferred.reject(event);
   };
 
@@ -196,11 +196,11 @@ function getObjectStore(method) {
 function getNotificationObject() {
   var deferred = defer();
 
-  getObjectStore('readonly').then(function(objectStore) {
+  getObjectStore("readonly").then(function(objectStore) {
     var request = objectStore.get(DEFAULT_KEY_VALUE);
 
     request.onerror = function() {
-      if (this.error.name === 'DataError') { deferred.resolve(); }
+      if (this.error.name === "DataError") { deferred.resolve(); }
       else { deferred.reject(this.error); }
     };
 
@@ -236,7 +236,7 @@ function getNotificationData() {
     })
     .then(function(response) {
       if (!response.ok) {
-        throw new Error('Response status: ' + response.status);
+        throw new Error("Response status: " + response.status);
       }
 
       return response.json();
@@ -274,7 +274,7 @@ function updateNotificationObject(url, object) {
 function addNotificationUrl(url) {
   var deferred = defer();
 
-  getObjectStore('readwrite').then(function(objectStore) {
+  getObjectStore("readwrite").then(function(objectStore) {
     var notificationObject = createNotificationObject(url);
     var request = objectStore.add(notificationObject);
 
@@ -299,7 +299,7 @@ function addNotificationUrl(url) {
 function updateNotificationUrl(url, object) {
   var deferred = defer();
 
-  getObjectStore('readwrite').then(function(objectStore) {
+  getObjectStore("readwrite").then(function(objectStore) {
     var request;
 
     updateNotificationObject(url, object);
@@ -337,9 +337,9 @@ function saveNotificationUrl(url) {
 /**
  * Service worker install step.
  */
-self.addEventListener('install', function(event) {
+self.addEventListener("install", function(event) {
   event.waitUntil(
-    caches.open('cyphon-icon-urls').then(function(cache) {
+    caches.open("cyphon-icon-urls").then(function(cache) {
       return cache.addAll(getIconUrls()).then(function() {
       });
     })
@@ -349,7 +349,7 @@ self.addEventListener('install', function(event) {
 /**
  * Service worker push notification received.
  */
-self.addEventListener('push', function(event) {
+self.addEventListener("push", function(event) {
   event.waitUntil(
     getNotificationData().then(function(json) {
 
@@ -364,13 +364,13 @@ self.addEventListener('push', function(event) {
   );
 });
 
-self.addEventListener('message', function(event) {
+self.addEventListener("message", function(event) {
   saveNotificationUrl(event.data.notificationUrl);
 });
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener("notificationclick", function(event) {
   var alertId = getAlertId(event.notification.tag);
-  var url = '/app/alerts/' + alertId + '/';
+  var url = "/app/alerts/" + alertId + "/";
 
   event.notification.close();
 
