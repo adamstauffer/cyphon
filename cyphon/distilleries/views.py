@@ -66,7 +66,6 @@ class DistilleryViewSet(viewsets.ReadOnlyModelViewSet):
 
         return self.queryset.none()
 
-
     @list_route(methods=['get'], url_path='have-alerts')
     def have_alerts(self, request, *args, **kwargs):
         """Get |Distilleries| that are associated with |Alerts|.

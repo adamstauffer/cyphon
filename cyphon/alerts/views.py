@@ -23,6 +23,7 @@ import datetime
 import json
 
 # third party
+from django.db.models import OuterRef
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
@@ -40,7 +41,7 @@ from cyphon.choices import ALERT_LEVEL_CHOICES, ALERT_STATUS_CHOICES
 from cyphon.views import CustomModelViewSet
 from distilleries.models import Distillery
 from distilleries.serializers import DistilleryListSerializer
-from utils.dbutils.dbutils import count_by_group
+from utils.dbutils.dbutils import count_by_group, SQCount
 from .filters import AlertFilter
 from .models import Alert, Analysis, Comment
 from .serializers import (
@@ -67,7 +68,7 @@ class AlertViewSet(CustomModelViewSet):
     """
     A simple ViewSet for viewing and editing Alerts.
     """
-    queryset = Alert.objects.api_queryset()
+    queryset = Alert.objects.all()
     filter_class = AlertFilter
     pagination_class = AlertPagination
     serializer_class = AlertDetailSerializer
@@ -282,20 +283,22 @@ class AlertViewSet(CustomModelViewSet):
         by Collection.
         """
         days = request.query_params.get('days')
-
         error = self._catch_days_param_error(days)
+        date = self._get_date(days)
 
         if error:
             return error
         else:
-            queryset = self._filter_by_start_date(int(days))
-            distilleries = Distillery.objects.filter(alerts__in=queryset)
-            counts = {}
-
-            for distillery in distilleries:
-                filtered_qs = queryset.filter(distillery=distillery)
-                counts[distillery.name] = filtered_qs.count()
-
+            alerts = Alert.objects.filter(
+                created_date__gte=date,
+                distillery_id=OuterRef('collection_id'))
+            alerts = Alert.objects.filter_by_user(request.user, alerts)
+            counts = {
+                d.name: d.alert_count
+                for d in Distillery.objects.annotate(
+                    alert_count=SQCount(alerts))
+                if d.alert_count
+            }
             return Response(counts)
 
     @list_route(methods=['get'], url_path='locations')

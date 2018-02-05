@@ -49,7 +49,6 @@ import six
 # local
 from cyphon.documents import DocumentObj
 from cyphon.transaction import close_connection, close_old_connections
-from monitors.models import Monitor
 from sifter.datasifter.datachutes.models import DataChute
 from sifter.logsifter.logchutes.models import LogChute
 from watchdogs.models import Watchdog

@@ -29,6 +29,7 @@ import time
 # third party
 from ckeditor_uploader.fields import RichTextUploadingField
 import dateutil.parser
+from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -73,22 +74,12 @@ class AlertManager(models.Manager):
     Adds methods to the default model manager.
     """
 
-    def api_queryset(self):
-        """
-        Overrides the default get_queryset method to select the related
-        Distillery and AppUser.
-        """
-        default_queryset = super(AlertManager, self).get_queryset()
-        return default_queryset.select_related('distillery__collection',
-                                               'distillery__container__bottle',
-                                               'distillery__container__label')
-
     def with_codebooks(self):
         """
         Overrides the default get_queryset method to select the related
         Distillery and AppUser.
         """
-        default_queryset = self.api_queryset()
+        default_queryset = self.get_queryset()
         return default_queryset.select_related('distillery__company__codebook')\
                .prefetch_related('distillery__company__codebook__codenames')
 
@@ -98,19 +89,22 @@ class AlertManager(models.Manager):
 
         """
         user_groups = user.groups.all()
-        annotated_qs = queryset.annotate(
-            monitor__group_cnt=models.Count('monitor__groups'),
-            watchdog__group_cnt=models.Count('watchdog__groups')
-        )
-        no_groups_q = models.Q(monitor__group_cnt=0, watchdog__group_cnt=0)
-        shared_groups_q = models.Q(monitor__groups__in=user_groups) | \
-                          models.Q(watchdog__groups__in=user_groups)
-        if user_groups:
-            filtered_qs = annotated_qs.filter(no_groups_q | shared_groups_q)
-        else:
-            filtered_qs = annotated_qs.filter(no_groups_q)
-
-        return filtered_qs.distinct()
+        Monitor = apps.get_model('monitors', 'Monitor')
+        Watchdog = apps.get_model('watchdogs', 'Watchdog')
+        monitors = models.Subquery(Monitor.objects
+            .annotate(models.Count('groups'))
+            .filter(models.Q(groups__count=0) |
+                    models.Q(groups__in=user_groups))
+            .values('id'))
+        watchdogs = models.Subquery(Watchdog.objects
+            .annotate(models.Count('groups'))
+            .filter(models.Q(groups__count=0) |
+                    models.Q(groups__in=user_groups))
+            .values('id'))
+        return queryset.filter(
+            models.Q(watchdog__isnull=True, monitor__isnull=True) |
+            models.Q(watchdog__in=watchdogs) |
+            models.Q(monitor__in=monitors)).distinct()
 
     @staticmethod
     def _filter_by_company(user, queryset):

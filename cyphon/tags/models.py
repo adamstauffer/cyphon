@@ -214,7 +214,7 @@ class Tag(models.Model):
         Parameters
         ----------
         obj : |Alert| or |Comment|
-            The object to to be tagged.
+            The object to be tagged.
 
         user : |AppUser|
             The user tagging the object.
