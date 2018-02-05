@@ -638,7 +638,7 @@ class AnalysisManager(models.Manager):
         |Analysis|
 
         """
-        (analysis, created) = self.get_or_create(alert=alert)
+        (analysis, dummy_created) = self.get_or_create(alert=alert)
         analysis.notes = notes
         analysis.save()
         return analysis
