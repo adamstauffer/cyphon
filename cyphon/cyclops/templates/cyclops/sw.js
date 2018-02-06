@@ -29,12 +29,6 @@ var ICONS = {
 };
 
 /**
- * Cache name for the stored icon urls.
- * @type {string}
- */
-var ICON_URL_CACHE = 'cyphon-icon-urls';
-
-/**
  * @typedef {Object} AlertNotification
  * @property {string} title Alert level and source.
  * @property {string} message Alert title.
@@ -43,62 +37,6 @@ var ICON_URL_CACHE = 'cyphon-icon-urls';
  * @property {string} icon Icon related to the alert. This has become
  *   deprecated.
  */
-
-// --------------------------------------------------------------------------
-// Listeners
-// --------------------------------------------------------------------------
-
-/**
- * Service worker install step.
- */
-self.addEventListener('install', function(event) {
-  // console.log('Installing service worker.');
-
-  event.waitUntil(
-    caches.open(ICON_URL_CACHE).then(function(cache) {
-      return cache.addAll(getIconUrls()).then(function() {
-        // console.log('Icon URL\'s cached.');
-      });
-    })
-  );
-});
-
-/**
- * Service worker push notification received.
- */
-self.addEventListener('push', function(event) {
-  // console.log('Recieved push notification:', event);
-
-  event.waitUntil(
-    getNotificationData().then(function(json) {
-      // console.log('Parsed notification information:', json);
-
-      return showNotification({
-        title: json.title,
-        body: json.message,
-        tag: json.tag,
-      });
-    }).catch(function(error) {
-      // console.error(error);
-    })
-  );
-});
-
-self.addEventListener('message', function(event) {
-  // console.log('Recieved message:', event);
-  saveNotificationUrl(event.data.notificationUrl);
-});
-
-self.addEventListener('notificationclick', function(event) {
-  // console.log('Notification clicked:', event.notification.tag);
-
-  var alertId = getAlertId(event.notification.tag);
-  var url = '/app/alerts/' + alertId + '/';
-
-  event.notification.close();
-
-  event.waitUntil(clients.openWindow(url));
-});
 
 /**
  * Get the urls of the icons.
@@ -112,23 +50,7 @@ function getIconUrls() {
   });
 }
 
-/**
- * Returns the notification information.
- * @returns {Promise.<AlertNotification>}
- */
-function getNotificationData() {
-  return getNotificationUrl()
-    .then(function(url) {
-      return fetch(url);
-    })
-    .then(function(response) {
-      if (!response.ok) {
-        throw new Error(`Resonse status: ${response.status}`);
-      }
 
-      return response.json();
-    });
-}
 
 /**
  * Gets the notification icon to display based on the alert level in the
@@ -166,7 +88,21 @@ function showNotification(data) {
   });
 }
 
+/**
+ * Creates a custom object that stores a promise and it's resolve/reject
+ * functions on the same scope.
+ * @return {Deferred}
+ */
+function defer() {
+  var deferred = {};
 
+  deferred.promise = new Promise(function(resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+
+  return deferred;
+}
 
 // --------------------------------------------------------------------------
 // Service Worker Database
@@ -186,6 +122,21 @@ var db;
 var openDBPromise;
 
 /**
+ * Creates a database schema on the given database object.
+ * @param {IDBDatabase} db
+ *     https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase
+ */
+function createDatabase(db) {
+  var objectStore = db.createObjectStore(OBJECT_STORE_NAME, {
+    keyPath: OBJECT_STORE_KEY_PATH
+  });
+
+  objectStore.createIndex(NOTIFICATION_URL_KEY, NOTIFICATION_URL_KEY, {
+    unique: true
+  });
+}
+
+/**
  * Returns the database that holds the notification url needed for getting
  * notification data. If there are any errors opening the database, it
  * returns the event data associated with the error.
@@ -198,10 +149,8 @@ function getDB() {
 
   // If database has already been opened, return resolved promise.
   if (openDBPromise) {
-    return openDBPromise
-  };
-
-  // console.log('Opening DB ...');
+    return openDBPromise;
+  }
 
   // If database has not been opened, set the promise to the current
   // deferred object's promise so that any subsequent calls do not try
@@ -217,11 +166,9 @@ function getDB() {
   request.onsuccess = function(event) {
     db = this.result;
     deferred.resolve(db);
-    // console.log('Opening DB DONE');
   };
 
   request.onupgradeneeded = function(event) {
-    // console.log('Opening DB UPGRADE');
     createDatabase(event.currentTarget.result);
   };
 
@@ -250,19 +197,14 @@ function getNotificationObject() {
   var deferred = defer();
 
   getObjectStore('readonly').then(function(objectStore) {
-    console.log('getNotificationObject ...');
     var request = objectStore.get(DEFAULT_KEY_VALUE);
 
     request.onerror = function() {
-      if (this.error.name === 'DataError') deferred.resolve();
-      else {
-        console.error('getNotificationObject ERROR', this.error);
-        deferred.reject(this.error);
-      }
+      if (this.error.name === 'DataError') { deferred.resolve(); }
+      else { deferred.reject(this.error); }
     };
 
     request.onsuccess = function() {
-      console.log('getNotificationObject DONE', this.result);
       deferred.resolve(this.result);
     };
   });
@@ -278,87 +220,27 @@ function getNotificationObject() {
  */
 function getNotificationUrl() {
   return getNotificationObject().then(function(object) {
-    if (!object) return;
+    if (!object) { return; }
     return object[NOTIFICATION_URL_KEY];
   });
 }
 
 /**
- * Saves the given notification url to the database.
- * @param {String} url
- * @return {Promise.<undefined>}
+ * Returns the notification information.
+ * @returns {Promise.<AlertNotification>}
  */
-function saveNotificationUrl(url) {
-  return getNotificationObject().then(function(object) {
-    if (!object) return addNotificationUrl(url);
-    else return updateNotificationUrl(url, object);
-  });
-}
+function getNotificationData() {
+  return getNotificationUrl()
+    .then(function(url) {
+      return fetch(url);
+    })
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Response status: ' + response.status);
+      }
 
-/**
- * Adds a notification object with the given notification url.
- * @param {String} url The url to use as the notification url.
- * @return {Promise.<undefined>}
- */
-function addNotificationUrl(url) {
-  var deferred = defer();
-
-  getObjectStore('readwrite').then(function(objectStore) {
-    console.log('addNotificationUrl ...');
-    var notificationObject = createNotificationObject(url);
-    var request = objectStore.add(notificationObject);
-
-    request.onsuccess = function() {
-      deferred.resolve(this.result);
-      console.log('addNotificationUrl DONE', this.result);
-    };
-
-    request.onerror = function() {
-      console.error('addNotificationUrl ERROR', this.error);
-      deferred.reject(this.error);
-    };
-  });
-
-  return deferred.promise;
-}
-
-/**
- * Updates an existing notification object with a new notification url.
- * @param {String} url The new url to use.
- * @param {NotificationObject} object The notification object to update.
- * @return {Promise.<undefined>}
- */
-function updateNotificationUrl(url, object) {
-  var deferred = defer();
-
-  getObjectStore('readwrite').then(function(objectStore) {
-    console.log('updateNotificationUrl ...');
-    var request;
-
-    updateNotificationObject(url, object);
-    request = objectStore.put(object);
-
-    request.onsuccess = function() {
-      deferred.resolve(this.result);
-      console.log('updateNotificationUrl DONE', this.result);
-    };
-
-    request.onerror = function() {
-      console.error('updateNotificationUrl ERROR', this.error);
-      deferred.reject(this.error);
-    };
-  });
-
-  return deferred.promise;
-}
-
-/**
- * Updates the url of a notification object.
- * @param {String} url The new notification url to use.
- * @param {NotificationObject} object The notification object to update.
- */
-function updateNotificationObject(url, object) {
-  object[NOTIFICATION_URL_KEY] = url;
+      return response.json();
+    });
 }
 
 /**
@@ -376,32 +258,128 @@ function createNotificationObject(url) {
 }
 
 /**
- * Creates a custom object that stores a promise and it's resolve/reject
- * functions on the same scope.
- * @return {Deferred}
+ * Updates the url of a notification object.
+ * @param {String} url The new notification url to use.
+ * @param {NotificationObject} object The notification object to update.
  */
-function defer() {
-  var deferred = {};
-
-  deferred.promise = new Promise(function(resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-
-  return deferred;
+function updateNotificationObject(url, object) {
+  object[NOTIFICATION_URL_KEY] = url;
 }
 
 /**
- * Creates a database schema on the given database object.
- * @param {IDBDatabase} db
- *     https://developer.mozilla.org/en-US/docs/Web/API/IDBDatabase
+ * Adds a notification object with the given notification url.
+ * @param {String} url The url to use as the notification url.
+ * @return {Promise.<undefined>}
  */
-function createDatabase(db) {
-  var objectStore = db.createObjectStore(OBJECT_STORE_NAME, {
-    keyPath: OBJECT_STORE_KEY_PATH
+function addNotificationUrl(url) {
+  var deferred = defer();
+
+  getObjectStore('readwrite').then(function(objectStore) {
+    var notificationObject = createNotificationObject(url);
+    var request = objectStore.add(notificationObject);
+
+    request.onsuccess = function() {
+      deferred.resolve(this.result);
+    };
+
+    request.onerror = function() {
+      deferred.reject(this.error);
+    };
   });
 
-  objectStore.createIndex(NOTIFICATION_URL_KEY, NOTIFICATION_URL_KEY, {
-    unique: true
+  return deferred.promise;
+}
+
+/**
+ * Updates an existing notification object with a new notification url.
+ * @param {String} url The new url to use.
+ * @param {NotificationObject} object The notification object to update.
+ * @return {Promise.<undefined>}
+ */
+function updateNotificationUrl(url, object) {
+  var deferred = defer();
+
+  getObjectStore('readwrite').then(function(objectStore) {
+    var request;
+
+    updateNotificationObject(url, object);
+    request = objectStore.put(object);
+
+    request.onsuccess = function() {
+      deferred.resolve(this.result);
+    };
+
+    request.onerror = function() {
+      deferred.reject(this.error);
+    };
+  });
+
+  return deferred.promise;
+}
+
+/**
+ * Saves the given notification url to the database.
+ * @param {String} url
+ * @return {Promise.<undefined>}
+ */
+function saveNotificationUrl(url) {
+  return getNotificationObject().then(function(object) {
+    if (!object) { return addNotificationUrl(url); }
+    else { return updateNotificationUrl(url, object); }
   });
 }
+
+
+// --------------------------------------------------------------------------
+// Listeners
+// --------------------------------------------------------------------------
+
+/**
+ * Service worker install step.
+ */
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open('cyphon-icon-urls').then(function(cache) {
+      return cache.addAll(getIconUrls()).then(function() {
+      });
+    })
+  );
+});
+
+/**
+ * Service worker push notification received.
+ */
+self.addEventListener('push', function(event) {
+  event.waitUntil(
+    getNotificationData().then(function(json) {
+
+      return showNotification({
+        title: json.title,
+        body: json.message,
+        tag: json.tag,
+      });
+    }).catch(function(error) {
+      // console.error(error);
+    })
+  );
+});
+
+self.addEventListener('message', function(event) {
+  saveNotificationUrl(event.data.notificationUrl);
+});
+
+self.addEventListener('notificationclick', function(event) {
+  var alertId = getAlertId(event.notification.tag);
+  var url = '/app/alerts/' + alertId + '/';
+
+  event.notification.close();
+
+  event.waitUntil(clients.openWindow(url));
+});
+
+
+
+
+
+
+
