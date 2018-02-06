@@ -26,6 +26,8 @@ Analysts can quickly investigate alerts by exploring related data, and annotate 
 
 ![Cyclops UI alert view](https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/screenshots/cyclops-alerts.png)
 
+![Cyclops UI related data panel](https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/screenshots/related-data.png)
+
 ## Use Cases
 
 ### Incident Management
