@@ -9,6 +9,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). This proj
 ## [Unreleased]
 
 
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/dunbarcyber/cyphon/compare/1.6.0...1.6.1) (2018-02-06)
+
+### Added
+
+- **utils.dbutils**: added `SQCount` subquery class [PR #364](https://github.com/dunbarcyber/cyphon/pull/364) ([91d1829](https://github.com/dunbarcyber/cyphon/commit/91d1829))
+
+### Changed
+
+- **cyclops.conf**: updated Cyclops version to 0.5.4 [PR #361](https://github.com/dunbarcyber/cyphon/pull/361) ([6536c91](https://github.com/dunbarcyber/cyphon/commit/6536c91))
+- **utils.dbutils**: optimized `count_by_group()` [PR #364](https://github.com/dunbarcyber/cyphon/pull/364) ([91d1829](https://github.com/dunbarcyber/cyphon/commit/91d1829))
+
+### Fixed
+
+- **alerts.views**: optimized `AlertViewSet.counts_by_collection()` to prevent timeouts [PR #364](https://github.com/dunbarcyber/cyphon/pull/364) ([91d1829](https://github.com/dunbarcyber/cyphon/commit/91d1829))
+- **sieves.models**: catch exception raised by a numeric comparison of a null value [PR #376](https://github.com/dunbarcyber/cyphon/pull/376) ([8352bb2](https://github.com/dunbarcyber/cyphon/commit/8352bb2))
+
+### Removed
+
+- **alerts**: removed `AlertManager.api_queryset()` [PR #377](https://github.com/dunbarcyber/cyphon/pull/377) ([644c270](https://github.com/dunbarcyber/cyphon/commit/644c270))
+- **tox.ini**: removed py27-docs from tests [PR #383](https://github.com/dunbarcyber/cyphon/pull/383) ([2d73123](https://github.com/dunbarcyber/cyphon/commit/2d73123))
+
+
 <a name="1.6.0"></a>
 ## [1.6.0](https://github.com/dunbarcyber/cyphon/compare/1.5.3...1.6.0) (2018-01-11)
 
