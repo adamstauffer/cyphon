@@ -28,15 +28,9 @@ When a |Distillery| saves a document, it sends a |document_saved| signal. The |d
 
 The *distillery* and *doc_id* provide the information needed to retrieve the saved document.
 
-The |document_saved| signal is received by:
-
-    - the |inspect_document| signal reciever in the :ref:`Watchdogs<watchdogs>` app
-    - the |update_monitors| signal receiver in the :ref:`Monitors<monitors>` app
-
-These apps can examine the document contained in the |document_saved| signal and determine whether an |Alert| should be generated. If an |Alert| is created, the *distillery* and *doc_id* contained in the signal are saved to the |distillery| and |doc_id| attributes of the |Alert|. This allows the |Alert| to retrieve the original data when needed.
+The |document_saved| signal is received by the |inspect_document| signal reciever in the :ref:`Watchdogs<watchdogs>` app. |Watchdogs| examine the document contained in the |document_saved| signal and determine whether an |Alert| should be generated. If an |Alert| is created, the *distillery* and *doc_id* contained in the signal are saved to the |distillery| and |doc_id| attributes of the |Alert|. This allows the |Alert| to retrieve the original data when needed.
 
 .. |inspect_document| replace:: :obj:`~watchdogs.signals.inspect_document`
-.. |update_monitors| replace:: :obj:`~monitors.signals.update_monitors`
 .. |distillery| replace:: :attr:`~alerts.models.Alert.distillery`
 .. |doc_id| replace:: :attr:`~alerts.models.Alert.doc_id`
 
