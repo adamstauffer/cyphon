@@ -20,11 +20,11 @@ Cyphon is most easily installed using `Docker`_. We maintain a collection of Doc
 
 .. _virtual-machine:
 
-***************
-Virtual Machine
-***************
+*************
+Installer ISO
+*************
 
-If you'd like a quick way to try out Cyphon, you can download our `virtual machine image <https://www.cyphon.io/cyphon-vm/>`__.
+If you'd like a quick way to try out Cyphon, you can download our `Cyphon installer ISO <https://www.cyphon.io/download/>`__, which creates a `Cyphondock`_ deployment on an Ubuntu Server 16.04.3 LTS.
 
 
 .. _manual-install:
