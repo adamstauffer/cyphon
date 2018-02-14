@@ -20,7 +20,6 @@ import re
 
 # local
 from distilleries.models import Distillery
-from warehouses.models import Collection
 from .search_parameter import SearchParameter, SearchParameterType
 
 

@@ -214,7 +214,7 @@ class Tag(models.Model):
         Parameters
         ----------
         obj : |Alert| or |Comment|
-            The object to to be tagged.
+            The object to be tagged.
 
         user : |AppUser|
             The user tagging the object.
@@ -225,7 +225,7 @@ class Tag(models.Model):
 
         """
         model_type = ContentType.objects.get_for_model(obj)
-        (tag_relation, created) = TagRelation.objects.get_or_create(
+        (tag_relation, dummy_created) = TagRelation.objects.get_or_create(
             content_type=model_type,
             object_id=obj.pk,
             tag=self,
@@ -395,8 +395,8 @@ class DataTagger(models.Model):
         """Create a new Tag from a tag_name."""
         try:
             topic = self.topics.all()[0]
-            (tag, created) = Tag.objects.get_or_create(name=tag_name,
-                                                       topic=topic)
+            (tag, dummy_created) = Tag.objects.get_or_create(name=tag_name,
+                                                             topic=topic)
             return tag
         except (IndexError, ValidationError) as error:
             _LOGGER.error('An error occurred while creating '
