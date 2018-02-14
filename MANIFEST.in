@@ -1,7 +1,7 @@
-include README.txt
-include LICENSE
+include README.rst
+include LICENSE.txt
 include MANIFEST.in
 include requirements.txt
 recursive-include docs *
-recursive-include django *
-recursive-exclude django *.pyc
+recursive-include cyphon *
+recursive-exclude cyphon *.pyc
