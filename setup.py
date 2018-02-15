@@ -38,7 +38,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='cyphon',
-    version='1.5.3',
+    version='1.6.1',
     install_requires=REQUIREMENTS,
     packages=find_packages(),
     include_package_data=True,
@@ -51,7 +51,7 @@ setup(
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.10',  # replace "X.Y" as appropriate
+        'Framework :: Django :: 1.11',  # replace "X.Y" as appropriate
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
