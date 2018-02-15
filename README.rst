@@ -14,8 +14,8 @@
      :target: https://pyup.io/repos/github/dunbarcyber/cyphon/
      :alt: Updates
 
-.. image:: https://readthedocs.org/projects/cyphon/badge/?version=latest
-    :target: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
+.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
+    :target: https://cyphon.readthedocs.io/en/latest/
     :alt: Documentation Status
 
 .. image:: https://badges.gitter.im/gitterHQ/gitter.png
