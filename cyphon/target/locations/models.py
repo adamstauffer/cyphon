@@ -18,21 +18,50 @@
 Defines a class for a location (search area).
 """
 
+# standard library
+import logging
+
 # third party
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 # local
-from cyphon.models import GetByNameMixin
 from utils.geometry import shapes, units
 
+_LOGGER = logging.getLogger(__name__)
 
-class LocationManager(models.GeoManager, GetByNameMixin):
+
+class LocationManager(models.GeoManager):
+    """A GeoManager to allow geoqueries on |Locations|.
+
+    Notes
+    -----
+    We can't use mixins with this class due to issues with mocking
+    `django.contrib.gis.db` when building docs in Python 3.5 on
+    Read The Docs.
+
     """
-    A GeoManager to allow geoqueries on Locations.
-    """
-    pass
+
+    def get_by_natural_key(self, name):
+        """Get an object by its unique `name`.
+
+        Parameters
+        ----------
+        name : str
+            The object's `name`.
+
+        Returns
+        -------
+        |Model|
+            The |Model| object with the specified `name`.
+
+        """
+        try:
+            return self.get(name=name)
+        except ObjectDoesNotExist:
+            _LOGGER.error('%s "%s" does not exist', self.model.__name__, name)
 
 
 class Location(models.Model):
@@ -162,7 +191,7 @@ class Location(models.Model):
 
     def _create_radius(self, point, new_radius):
         """
-        Returns a Location based on the object's radius.
+
         """
         return Location(
             geom=Point(point),
