@@ -100,7 +100,7 @@ def process_msg(channel, method, properties, body):
 
     routing_key : str
         Indicates the type of consumer to use. Options are 'datachutes',
-        'logchutes', 'monitors', 'watchdogs'.
+        'logchutes', 'watchdogs'.
 
     """
     channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -129,7 +129,7 @@ def consume_queue(routing_key='watchdogs'):
     Parameters
     ----------
     routing_key : str
-        Options are 'DATACHUTES', 'LOGCHUTES', 'MONITORS', 'WATCHDOGS'.
+        Options are 'datachutes', 'logchutes', 'watchdogs'.
 
     """
     try:
