@@ -15,7 +15,7 @@
      :alt: Updates
 
 .. image:: https://readthedocs.org/projects/cyphon/badge/?version=latest
-    :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
+    :target: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
     :alt: Documentation Status
 
 .. image:: https://badges.gitter.im/gitterHQ/gitter.png
