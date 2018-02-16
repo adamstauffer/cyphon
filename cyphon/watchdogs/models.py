@@ -170,14 +170,24 @@ class Watchdog(Alarm):
         -------
         |str| or |None|
             If the data matches one of the Watchdog's |triggers|,
-            returns the :attr:`~Trigger.alert_level` for that Ttrigger|.
+            returns the :attr:`~Trigger.alert_level` for that Trigger|.
             Otherwise, returns |None|.
 
         """
         triggers = self.triggers.all()
+        _LOGGER.debug(
+            'Checking {} triggers to determine alert level'.format(
+                len(triggers)))
         for trigger in triggers:
+            _LOGGER.debug('Checking trigger "{}"'.format(trigger.sieve.name))
             if trigger.is_match(data):
+                _LOGGER.debug(
+                    'Trigger "{}" found a match, returning alert level '
+                    '"{}"'.format(trigger.sieve.name, trigger.alert_level))
                 return trigger.alert_level
+            _LOGGER.debug(
+                'Trigger "{}" did not find a match, proceeding...'.format(
+                    trigger.sieve.name))
 
     def process(self, doc_obj):
         """Generate an |Alert| for a document if appropriate.
@@ -197,16 +207,32 @@ class Watchdog(Alarm):
 
         """
         if self.enabled:
+            _LOGGER.debug(
+                'Checking document "{}" for enabled watchdog "{}"'.format(
+                    doc_obj.data, self.name))
             alert_level = self.inspect(doc_obj.data)
             if alert_level is not None:
+                _LOGGER.debug(
+                    'Trying to create an alert for document "{}"'
+                    ' at level "{}"'.format(doc_obj.data, alert_level))
                 alert = self._create_alert(alert_level, doc_obj)
 
                 # save the alert or increment incidents on a previous
                 # alert it duplicates
                 try:
                     return self._save_alert(alert)
+                    _LOGGER.debug(
+                        'Created new alert with ID "{}"'.format(alert.id))
                 except IntegrityError:
+                    _LOGGER.debug(
+                        'Creating incident for alert "{}"'.format(alert.id))
                     return self._increment_incidents(alert)
+            _LOGGER.debug(
+                'Did not create an alert or incident for "{}" because no '
+                'triggers were matched'.format(doc_obj.data))
+        _LOGGER.debug(
+            'Watchdog "{}" is not enabled, not checking data "{}"'.format(
+                self.name, doc_obj.data))
 
 
 class TriggerManager(models.Manager):
@@ -283,8 +309,8 @@ class Trigger(models.Model):
     alert_level = models.CharField(
         max_length=255,
         choices=ALERT_LEVEL_CHOICES,
-        help_text=_('The Alert level to be returned if the DataSieve returns True '
-                    'for the data examined.')
+        help_text=_('The Alert level to be returned if the DataSieve returns '
+                    'True for the data examined.')
     )
     rank = models.IntegerField(
         default=0,
