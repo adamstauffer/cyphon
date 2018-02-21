@@ -4,7 +4,7 @@ backoff==1.4.3
 beautifulsoup4==4.6.0
 billiard==3.5.0.3
 bleach==2.1.2
-boto3==1.5.31
+boto3==1.5.33
 celery==4.1.0
 cryptography==2.1.4
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
