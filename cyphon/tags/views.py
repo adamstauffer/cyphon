@@ -31,11 +31,12 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 # local
-from .models import Tag, Topic
+from .models import Tag, Topic, TagRelation
 from .serializers import (
     TagDetailSerializer,
     TagListSerializer,
-    TopicSerializer
+    TopicSerializer,
+    TagRelationSerializer,
 )
 
 
@@ -71,6 +72,13 @@ class TagViewSet(viewsets.ModelViewSet):
             return TagListSerializer
         else:
             return self.serializer_class
+
+
+class TagRelationViewSet(viewsets.ModelViewSet):
+    """REST API views for TagRelations."""
+
+    queryset = TagRelation.objects.all()
+    serializer_class = TagRelationSerializer
 
 
 class TopicViewSet(viewsets.ModelViewSet):

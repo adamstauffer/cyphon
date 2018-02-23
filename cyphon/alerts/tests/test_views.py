@@ -250,18 +250,6 @@ class UpdateAlertAPITests(AlertBaseAPITests):
         analysis = Analysis.objects.get(pk=3)
         self.assertEqual(analysis.notes, notes)
 
-    def test_add_tag(self):
-        """
-        Tests that adding a tag returns an updated tag list.
-        """
-        response = self.patch_to_api('1/', {'tags': [1]})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['tags'], [{
-            'id': 1,
-        }])
-        relations = TagRelation.objects.filter(tag=1)
-        self.assertEqual(relations.count(), 1)
-
 
 class AlertCollectionAPITests(AlertBaseAPITests):
     """
