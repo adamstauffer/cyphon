@@ -179,7 +179,7 @@ class Monitor(Alarm):
 
     def _get_interval_in_seconds(self):
         """
-        Returns the number of minutes in the Monitor's time interval.
+        Returns the number of seconds in the Monitor's time interval.
         """
         return dt.convert_time_to_seconds(self.time_interval, self.time_unit)
 

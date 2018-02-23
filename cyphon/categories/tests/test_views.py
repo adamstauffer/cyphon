@@ -23,7 +23,7 @@ Tests for Categories REST API.
 from rest_framework import status
 
 # local
-from ..models import Category
+from categories.models import Category
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 

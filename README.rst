@@ -14,8 +14,8 @@
      :target: https://pyup.io/repos/github/dunbarcyber/cyphon/
      :alt: Updates
 
-.. image:: https://readthedocs.org/projects/cyphon/badge/?version=latest
-    :target: http://cyphon.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
+    :target: https://cyphon.readthedocs.io/en/latest/
     :alt: Documentation Status
 
 .. image:: https://badges.gitter.im/gitterHQ/gitter.png
@@ -47,6 +47,15 @@ Cyphon is an incident-response platform that receives, processes, and triages ev
     **Respond**
         Analysts can quickly investigate alerts by exploring related data, and annotate alerts with their findings. With JIRA integration, they can escalate important alerts by creating a ticket in Service Desk.
 
+.. container:: clearfix
+
+    .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/screenshots/cyclops-alerts.png
+        :alt: Cyclops UI alert view
+
+.. container:: clearfix
+
+    .. image:: https://github.com/dunbarcyber/cyphon/blob/master/docs/source/_static/images/screenshots/related-data.png
+        :alt: Cyclops UI related data panel
 
 *********
 Use Cases
