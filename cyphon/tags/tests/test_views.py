@@ -110,6 +110,9 @@ class TagRelationAPITestCase(CyphonAPITestCase):
     model_url = 'tagrelations/'
 
     def test_get_tag_relation(self):
+        """
+        Tests the GET /api/v1/tagrelations/1/ endpoint
+        """
         response = self.get_api_response('1/')
         expected = {
             'id': 1,
@@ -122,7 +125,21 @@ class TagRelationAPITestCase(CyphonAPITestCase):
         self.assertEqual(response.json(), expected)
 
     def test_get_tag_relations(self):
+        """
+        Tests the GET /api/v1/tagrelations/ endpoint
+        """
         response = self.get_api_response()
         data = response.json()
         self.assertEqual(data['count'], 7)
         self.assertEqual(len(data['results']), 7)
+
+    def test_get_tag_filters(self):
+        """
+        Tests the GET /api/v1/tagrelations/ endpoint query parameters
+        """
+        response = self.get_api_response(
+            '?content_type=alert&tag=1&object_id=3')
+        data = response.json()
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(len(data['results']), 1)
+        self.assertEqual(data['results'][0]['id'], 2)

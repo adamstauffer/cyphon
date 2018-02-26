@@ -29,6 +29,8 @@ Class                           Description
 # third party
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from django_filters import rest_framework as filters
+from django.contrib.contenttypes.models import ContentType
 
 # local
 from .models import Tag, Topic, TagRelation
@@ -74,11 +76,22 @@ class TagViewSet(viewsets.ModelViewSet):
             return self.serializer_class
 
 
+class TagRelationFilter(filters.FilterSet):
+    content_type = filters.ModelChoiceFilter(
+        queryset=ContentType.objects.filter(app_label='alerts'),
+        to_field_name='model')
+
+    class Meta:
+        model = TagRelation
+        fields = ['content_type', 'object_id', 'tag']
+
+
 class TagRelationViewSet(viewsets.ModelViewSet):
     """REST API views for TagRelations."""
 
     queryset = TagRelation.objects.all()
     serializer_class = TagRelationSerializer
+    filter_class = TagRelationFilter
 
 
 class TopicViewSet(viewsets.ModelViewSet):
