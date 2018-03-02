@@ -53,5 +53,5 @@ six==1.11.0
 testfixtures==5.4.0
 textblob==0.15.1
 tlslite==0.4.9
-tweepy==3.5.0
+tweepy==3.6.0
 urllib3==1.22
