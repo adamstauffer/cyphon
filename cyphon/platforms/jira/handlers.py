@@ -196,8 +196,8 @@ class IssueAPI(JiraHandler):
 
     def _add_comment(self, issue, body):
         """
-        Takes an Alert, creates a JIRA issue, and returns the JIRA issue
-        Resource.
+        Takes a JIRA issue and the body of a comment, and adds a
+        comment to the issue.
         """
         kwargs = {
             'issue': issue,
