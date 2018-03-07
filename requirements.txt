@@ -16,7 +16,7 @@ django-grappelli==2.11.1
 django-mailbox==4.7.1
 django-picklefield==1.0.0
 django-s3-storage==0.12.4
-Django==1.11.10  # pyup: >=1.0.0,<2.0.0
+Django==1.11.11  # pyup: >=1.0.0,<2.0.0
 djangorestframework-jwt==1.11.0
 djangorestframework==3.7.7
 docutils==0.14
