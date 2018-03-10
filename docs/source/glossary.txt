@@ -7,6 +7,9 @@ Glossary
     **Action**
         Sends a REST API request to a Destination in response to an Alert.
 
+    **AutoAction**
+        Performs an Action automatically when an Alert is generated.
+
     **Account**
         An account on a social media platform associated with a Followee.
 

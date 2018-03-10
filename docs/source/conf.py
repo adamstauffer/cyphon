@@ -437,6 +437,8 @@ rst_epilog = """
 .. |Accounts| replace:: :class:`Accounts<target.followees.models.Account>`
 .. |Action| replace:: :class:`~responder.actions.models.Action`
 .. |Actions| replace:: :class:`Actions<responder.actions.models.Action>`
+.. |AutoAction| replace:: :class:`~responder.actions.models.AutoAction`
+.. |AutoActions| replace:: :class:`AutoActions<responder.actions.models.AutoAction>`
 .. |Alarm| replace:: :class:`~alarms.models.Alarm`
 .. |Alarms| replace:: :class:`Alarms<alarms.models.Alarm>`
 .. |Alias| replace:: :class:`~target.followees.models.Alias`
