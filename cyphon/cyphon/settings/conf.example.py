@@ -184,6 +184,12 @@ JIRA = {
     },
 }
 
+MATTERMOST = {
+    'SERVER': '',                          # Mattermost url
+    'GENERATED_KEY': '',                   # Mattermost webhook key
+    'DISPLAYED_USERNAME': 'Cyphon Alert',  # Username displayed in message
+}
+
 LOGSIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,

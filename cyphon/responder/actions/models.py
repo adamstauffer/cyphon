@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 # local
 from ambassador.endpoints.models import Endpoint, EndpointManager
 from responder.destinations.models import Destination
+from sifter.datasifter.datasieves.models import DataSieve
 
 
 class Action(Endpoint):
@@ -121,3 +122,43 @@ class Action(Endpoint):
         transport = self.create_request_handler(user=user)
         transport.run(alert)
         return transport.record
+
+
+class AutoAction(models.Model):
+    """
+    Specifies an |Action| that is performed on every alert creation.
+    Optionally references a |DataSieve| that can examine alert data
+    before performing the action.
+
+    Attributes
+    ----------
+    action : Action
+        The |Action| that is performed at each alert creation.
+
+    sieve : DataSieve
+        The |DataSieve| to use to determine if the action should be
+        performed.
+
+    enabled : bool
+        Global switch for the |AutoAction|.
+
+    """
+
+    action = models.ForeignKey(
+        Action,
+        on_delete=models.PROTECT,
+        help_text=_('The Action to perform.')
+    )
+    sieve = models.ForeignKey(
+        DataSieve,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        help_text=_('The DataSieve used to inspect the data during this step.')
+    )
+    enabled = models.BooleanField(
+        default=True
+    )
+
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.action)

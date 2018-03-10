@@ -23,7 +23,7 @@ the `Django admin site`_.
 from django.contrib import admin
 
 # local
-from .models import Action
+from .models import Action, AutoAction
 
 
 class ActionAdmin(admin.ModelAdmin):
@@ -40,4 +40,15 @@ class ActionAdmin(admin.ModelAdmin):
     ]
 
 
+class AutoActionAdmin(admin.ModelAdmin):
+    """
+    Customizes admin pages for AutoActions.
+    """
+    fields = [
+        'action',
+        'sieve',
+        'enabled',
+    ]
+
 admin.site.register(Action, ActionAdmin)
+admin.site.register(AutoAction, AutoActionAdmin)
