@@ -23,6 +23,5 @@ class Migration(migrations.Migration):
                 ('action', models.ForeignKey(help_text='The Action to perform.', on_delete=django.db.models.deletion.PROTECT, to='actions.Action')),
                 ('sieve', models.ForeignKey(blank=True, help_text='The DataSieve used to inspect the data during this step.', null=True, on_delete=django.db.models.deletion.PROTECT, to='datasieves.DataSieve')),
             ],
-            bases=(models.Model),
         ),
     ]
