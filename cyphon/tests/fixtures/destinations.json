@@ -14,5 +14,13 @@
       "name": "twitter",
       "enabled": true
     }
+  },
+  {
+    "model": "destinations.destination",
+    "fields": {
+      "id": 3,
+      "name": "mattermost",
+      "enabled": true
+    }
   }
 ]

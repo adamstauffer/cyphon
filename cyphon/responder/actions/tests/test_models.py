@@ -29,7 +29,7 @@ from django.test import TestCase
 
 # local
 import platforms.jira.handlers as jira_module
-from responder.actions.models import Action
+from responder.actions.models import Action, AutoAction
 from tests.fixture_manager import get_fixtures
 
 
@@ -51,7 +51,7 @@ class ActionTestCase(ActionsBaseTestCase):
 
     def test_str(self):
         """
-        Tests the string representation of a Pipe.
+        Tests the string representation of an Action.
         """
         self.assertEqual(str(self.action), 'Jira IssueAPI')
 
@@ -120,3 +120,26 @@ class ActionTestCase(ActionsBaseTestCase):
                                              user=mock_user)
             mock_handler.run.assert_called_once_with(mock_alert)
             self.assertEqual(result, mock_record)
+
+
+class AutoActionsBaseTestCase(TestCase):
+    """
+    Base class for testing AutoActions.
+    """
+
+    fixtures = get_fixtures(['autoactions'])
+
+    def setUp(self):
+        self.autoaction = AutoAction.objects.get(pk=1)
+
+
+class AutoActionTestCase(AutoActionsBaseTestCase):
+    """
+    Tests the AutoAction class.
+    """
+
+    def test_str(self):
+        """
+        Tests the string representation of an AutoAction.
+        """
+        self.assertEqual(str(self.autoaction), '1 - Jira IssueAPI')
