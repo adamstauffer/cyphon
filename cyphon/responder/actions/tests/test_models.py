@@ -142,4 +142,4 @@ class AutoActionTestCase(AutoActionsBaseTestCase):
         """
         Tests the string representation of an AutoAction.
         """
-        self.assertEqual(str(self.autoaction), '1 - Jira IssueAPI')
+        self.assertEqual(str(self.autoaction), '1 - Mattermost WebHookHandler')
