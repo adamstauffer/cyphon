@@ -184,12 +184,6 @@ JIRA = {
     },
 }
 
-MATTERMOST = {
-    'SERVER': '',                          # Mattermost url
-    'GENERATED_KEY': '',                   # Mattermost webhook key
-    'DISPLAYED_USERNAME': 'Cyphon Alert',  # Username displayed in message
-}
-
 LOGSIFTER = {
     'DEFAULT_MUNGER': 'default',
     'DEFAULT_MUNGER_ENABLED': True,
@@ -203,6 +197,12 @@ MAILSIFTER = {
     'ALLOWED_EMAIL_ATTACHMENTS': ('text/plain', 'application/pdf', 'image/jpeg', 'image/png'),
     'ALLOWED_FILE_EXTENSIONS': ('.txt', '.pdf', '.jpeg', '.jpg', '.png'),
     'ATTACHMENTS_FOLDER': 'attachments/%Y/%m/%d/',
+}
+
+MATTERMOST = {
+    'SERVER': '',                          # Mattermost url
+    'GENERATED_KEY': '',                   # Mattermost webhook key
+    'DISPLAYED_USERNAME': 'Cyphon Alert',  # Username displayed in message
 }
 
 MONGODB = {
