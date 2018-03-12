@@ -31,6 +31,15 @@ from responder.carrier import Carrier
 
 _MATTERMOST_SETTINGS = settings.MATTERMOST
 
+# message colors mapped to alert levels
+COLOR_LEVEL = {
+    'CRITICAL': '#c168a6',
+    'HIGH': '#d6705c',
+    'MEDIUM': '#ffc578',
+    'LOW': '#6ca887',
+    'INFO': '#80b8d6'
+}
+
 
 class WebHookHandler(Carrier):
     """
@@ -65,8 +74,38 @@ class WebHookHandler(Carrier):
             },
             data=json.dumps({
                 'username': self.display_username,
-                'text': '#### New Cyphon Alert! \n'
-                        'Title: {}\nLink: {}'.format(obj.title, obj.link)
+                'attachments': [
+                    {
+                        'fallback': '#### New Cyphon Alert! \nTitle: '
+                                    '{}\nLink: {}'.format(obj.title, obj.link),
+                        'color': '{}'.format(COLOR_LEVEL.get(obj.level)),
+                        'text': 'A new alert was created in Cyphon',
+                        'author_name': 'Cyphon',
+                        'title': '{}'.format(obj.title),
+                        'title_link': '{}'.format(obj.link),
+                        'fields': [
+                            {
+                                'short': True,
+                                'title': 'Source',
+                                'value': '{}'.format(obj.distillery)
+                            },
+                            {
+                                'short': True,
+                                'title': 'Level',
+                                'value': '{}'.format(obj.level)
+                            },
+                            {
+                                'short': True,
+                                'title': 'Status',
+                                'value': '{}'.format(obj.status)
+                            },
+                            {
+                                'short': True,
+                                'title': 'Incidents',
+                                'value': '{}'.format(obj.incidents)
+                            }]
+                    }
+                ]
             }))
 
         return Cargo(status_code=response.status_code, data=response.text)
