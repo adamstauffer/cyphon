@@ -94,5 +94,6 @@ class CondenserPage(ConfigToolPage):
         """
         Deletes the first inline fitting.
         """
+        self.scroll_to_bottom()
         element = self.driver.find_element(*CondenserPageLocators.DELETE_FITTING_0)
         element.click()
