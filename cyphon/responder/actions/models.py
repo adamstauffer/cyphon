@@ -24,6 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from ambassador.endpoints.models import Endpoint, EndpointManager
+from cyphon.models import FindEnabledMixin
 from responder.destinations.models import Destination
 from sifter.datasifter.datasieves.models import DataSieve
 
@@ -124,6 +125,13 @@ class Action(Endpoint):
         return transport.record
 
 
+class AutoActionManager(models.Manager, FindEnabledMixin):
+    """
+    Adds methods to the default model manager.
+    """
+    pass
+
+
 class AutoAction(models.Model):
     """
     Specifies an |Action| that is performed on every alert creation.
@@ -159,6 +167,8 @@ class AutoAction(models.Model):
     enabled = models.BooleanField(
         default=True
     )
+
+    objects = AutoActionManager()
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.action)

@@ -133,6 +133,21 @@ class AutoActionsBaseTestCase(TestCase):
         self.autoaction = AutoAction.objects.get(pk=1)
 
 
+class AutoActionManagerTestCase(AutoActionsBaseTestCase):
+    """
+    Tests the AutoActionManager class.
+    """
+
+    def test_find_enabled(self):
+        """
+        Tests the find_enabled method.
+        """
+        self.assertEqual(AutoAction.objects.find_enabled().count(), 1)
+        self.autoaction.enabled = False
+        self.autoaction.save()
+        self.assertEqual(AutoAction.objects.find_enabled().count(), 0)
+
+
 class AutoActionTestCase(AutoActionsBaseTestCase):
     """
     Tests the AutoAction class.
