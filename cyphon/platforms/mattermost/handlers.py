@@ -67,6 +67,10 @@ class WebHookHandler(Carrier):
                 'username': self.display_username,
                 'text': '#### New Cyphon Alert! \n'
                         'Title: {}\nLink: {}'.format(obj.title, obj.link)
-            }))
+            })
+        )
 
-        return Cargo(status_code=response.status_code, data=response.text)
+        return Cargo(
+            status_code=response.status_code,
+            data={'response': response.text}
+        )

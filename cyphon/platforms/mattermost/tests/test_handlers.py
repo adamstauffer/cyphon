@@ -29,33 +29,20 @@ from django.test import TransactionTestCase
 from httmock import urlmatch, HTTMock
 
 # local
-from cyphon.documents import DocumentObj
+from alerts.models import Alert
+from distilleries.models import Distillery
 from responder.dispatches.models import Dispatch
 from tests.fixture_manager import get_fixtures
+from tests.mock import patch_find_by_id
 from watchdogs.models import Watchdog
-
-
-DOC_ID = '666f6f2d6261722d71757578'
-
-DATA = {
-    '_meta': {
-        'priority': 'HIGH',
-    },
-    '_raw_data': {
-        'backend': 'mongodb',
-        'distillery': 'test',
-        'doc_id': DOC_ID
-    },
-    'content': {
-        'subject': '[CRIT-111]'
-    }
-}
 
 
 @urlmatch(netloc='mattermost.example.com')
 def mattermost_mock(url, request):
-    return {'status_code': 200,
-            'content': 'Test response'}
+    return {
+        'status_code': 200,
+        'content': 'Test response'
+    }
 
 
 class MattermostTestCase(TransactionTestCase):
@@ -63,32 +50,32 @@ class MattermostTestCase(TransactionTestCase):
     Base class for testing the Mattermost handler classes.
     """
 
-    fixtures = get_fixtures([
-        'watchdogs', 'distilleries', 'autoactions'])
-
-    doc_id = DOC_ID
-    data = DATA
-    doc_obj = DocumentObj(
-        data=DATA,
-        doc_id=DOC_ID,
-        collection='mongodb.test_database.test_docs'
-    )
+    fixtures = get_fixtures(['autoactions', 'distilleries', 'watchdogs'])
 
     def setUp(self):
-        self.email_wdog = Watchdog.objects.get_by_natural_key('inspect_emails')
+        self.alert = Alert(
+            level='HIGH',
+            status=0,
+            distillery=Distillery.objects.get(pk=1),
+            doc_id=1,
+            alarm=Watchdog.objects.get(pk=1)
+        )
         self.mock_settings = {
             'SERVER': 'https://mattermost.example.com',
             'GENERATED_KEY': 'xxx-mattermost-xxx',
             'DISPLAYED_USERNAME': 'Test Username'
         }
 
+    @patch_find_by_id()
     def test_run_autoaction(self):
         """
-        Tests the Watchdog's process method runs autoactions.
+        Tests the Mattermost AutoAction.
         """
         with patch.dict('platforms.mattermost.handlers.settings.MATTERMOST',
                         self.mock_settings):
             with HTTMock(mattermost_mock):
                 dispatch_count = Dispatch.objects.count()
-                self.email_wdog.process(self.doc_obj)
+                self.alert.save()
                 self.assertEqual(Dispatch.objects.count(), dispatch_count + 1)
+                dispatch = Dispatch.objects.all()[0]
+                self.assertEqual(dispatch.data, {'response': 'Test response'})
