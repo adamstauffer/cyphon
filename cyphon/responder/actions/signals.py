@@ -19,18 +19,21 @@ Defines a reciever for the Distillery app's document_saved signal.
 """
 
 # third party
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # local
 from alerts.models import Alert
-from distilleries.signals import document_saved
 from .models import AutoAction
 
 
-@receiver(post_save, sender=Alert)
 def process_autoaction(sender, instance, created, **kwargs):
     """Perform applicable |AutoActions| when a new |alert| is saved."""
 
     if created:
         AutoAction.objects.process(instance)
+
+
+if not settings.TEST:
+    post_save.connect(process_autoaction, sender=Alert)

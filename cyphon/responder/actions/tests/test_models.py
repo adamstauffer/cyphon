@@ -25,15 +25,19 @@ except ImportError:
     from mock import Mock, patch
 
 # third party
-from django.test import TestCase
+from django.db.models.signals import post_save
+from django.test import TestCase, TransactionTestCase
 
 # local
 from alerts.models import Alert
+from distilleries.models import Distillery
 import platforms.jira.handlers as jira_module
 from responder.actions.models import Action, AutoAction
+from responder.actions.signals import process_autoaction
 from sifter.datasifter.datasieves.models import DataSieve
 from tests.fixture_manager import get_fixtures
 from tests.mock import patch_find_by_id
+from watchdogs.models import Watchdog
 
 
 class ActionsBaseTestCase(TestCase):
@@ -125,15 +129,16 @@ class ActionTestCase(ActionsBaseTestCase):
             self.assertEqual(result, mock_record)
 
 
-class AutoActionsBaseTestCase(TestCase):
+class AutoActionsBaseTestCase(TransactionTestCase):
     """
     Base class for testing AutoActions.
     """
 
-    fixtures = get_fixtures(['alerts', 'autoactions'])
+    fixtures = get_fixtures(['autoactions', 'distilleries', 'watchdogs'])
 
     def setUp(self):
         self.autoaction = AutoAction.objects.get(pk=1)
+        post_save.connect(process_autoaction, sender=Alert)
 
 
 class AutoActionManagerTestCase(AutoActionsBaseTestCase):
@@ -159,9 +164,15 @@ class AutoActionTestCase(AutoActionsBaseTestCase):
     def setUp(self):
         super(AutoActionTestCase, self).setUp()
         self.sieve = DataSieve.objects.get(pk=4)  # loaded from watchdogs.json
-        self.alert = Alert.objects.get(pk=4)
-        self.alert.pk = None
+        self.alert = Alert(
+            level='HIGH',
+            status=0,
+            distillery=Distillery.objects.get(pk=1),
+            doc_id=1,
+            alarm=Watchdog.objects.get(pk=1)
+        )
         self.mock_handler = Mock()
+        post_save.connect(process_autoaction, sender=Alert)
 
     def test_str(self):
         """

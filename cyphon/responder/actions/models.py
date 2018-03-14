@@ -131,7 +131,7 @@ class AutoActionManager(models.Manager, FindEnabledMixin):
     Adds methods to the default model manager.
     """
 
-    # @close_old_connections
+    @close_old_connections
     def process(self, alert):
         """Performs applicable |AutoActions| on an |Alert|.
 
