@@ -208,14 +208,6 @@ class Watchdog(Alarm):
                     self._save_alert(alert)
                     _LOGGER.debug(
                         'Created new alert with ID "{}"'.format(alert.id))
-                    # run autoactions
-                    for autoaction in AutoAction.objects.filter(enabled=True):
-                        if (not autoaction.sieve or
-                                autoaction.sieve.is_match(doc_obj.data)):
-                            transport = (
-                                autoaction.action.create_request_handler(
-                                    user=None))
-                            transport.run(alert)
                     return alert
                 except IntegrityError:
                     return self._increment_incidents(alert)

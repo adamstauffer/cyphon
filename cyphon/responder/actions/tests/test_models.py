@@ -28,9 +28,12 @@ except ImportError:
 from django.test import TestCase
 
 # local
+from alerts.models import Alert
 import platforms.jira.handlers as jira_module
 from responder.actions.models import Action, AutoAction
+from sifter.datasifter.datasieves.models import DataSieve
 from tests.fixture_manager import get_fixtures
+from tests.mock import patch_find_by_id
 
 
 class ActionsBaseTestCase(TestCase):
@@ -127,7 +130,7 @@ class AutoActionsBaseTestCase(TestCase):
     Base class for testing AutoActions.
     """
 
-    fixtures = get_fixtures(['autoactions'])
+    fixtures = get_fixtures(['alerts', 'autoactions'])
 
     def setUp(self):
         self.autoaction = AutoAction.objects.get(pk=1)
@@ -153,8 +156,52 @@ class AutoActionTestCase(AutoActionsBaseTestCase):
     Tests the AutoAction class.
     """
 
+    def setUp(self):
+        super(AutoActionTestCase, self).setUp()
+        self.sieve = DataSieve.objects.get(pk=4)  # loaded from watchdogs.json
+        self.alert = Alert.objects.get(pk=4)
+        self.alert.pk = None
+        self.mock_handler = Mock()
+
     def test_str(self):
         """
         Tests the string representation of an AutoAction.
         """
         self.assertEqual(str(self.autoaction), '1 - Mattermost WebHookHandler')
+
+    @patch_find_by_id()
+    def test_nonmatching_sieve(self):
+        """
+        Tests the process method for an AutoAction with a DataSieve that
+        doesn't match the Alert data.
+        """
+        with patch('responder.actions.models.Action.create_request_handler',
+                   return_value=self.mock_handler):
+            self.autoaction.sieve = self.sieve
+            self.autoaction.save()
+            self.alert.save()
+            self.mock_handler.run.assert_not_called()
+
+    @patch_find_by_id()
+    def test_matching_sieve(self):
+        """
+        Tests the process method for an AutoAction with a DataSieve that
+        matches the Alert data.
+        """
+        with patch('responder.actions.models.Action.create_request_handler',
+                   return_value=self.mock_handler):
+            self.autoaction.sieve = self.sieve
+            self.autoaction.save()
+            self.alert.data = {'message': 'CRIT-'}
+            self.alert.save()
+            self.mock_handler.run.assert_called_once_with(self.alert)
+
+    @patch_find_by_id()
+    def test_no_sieve(self):
+        """
+        Tests the process method for an AutoAction without a DataSieve.
+        """
+        with patch('responder.actions.models.Action.create_request_handler',
+                   return_value=self.mock_handler):
+            self.alert.save()
+            self.mock_handler.run.assert_called_once_with(self.alert)

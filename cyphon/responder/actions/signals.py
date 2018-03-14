@@ -14,4 +14,23 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
-default_app_config = 'responder.actions.apps.ActionsConfig'
+"""
+Defines a reciever for the Distillery app's document_saved signal.
+"""
+
+# third party
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# local
+from alerts.models import Alert
+from distilleries.signals import document_saved
+from .models import AutoAction
+
+
+@receiver(post_save, sender=Alert)
+def process_autoaction(sender, instance, created, **kwargs):
+    """Perform applicable |AutoActions| when a new |alert| is saved."""
+
+    if created:
+        AutoAction.objects.process(instance)
