@@ -32,7 +32,6 @@ from alarms.models import Alarm, AlarmManager
 from alerts.models import Alert
 from categories.models import Category
 from cyphon.choices import ALERT_LEVEL_CHOICES, TIME_UNIT_CHOICES
-from responder.actions.models import AutoAction
 from utils.dbutils.dbutils import json_encodeable
 from sifter.datasifter.datasieves.models import DataSieve
 
