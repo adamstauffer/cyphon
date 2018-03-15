@@ -28,7 +28,7 @@ from alerts.models import Alert
 from .models import AutoAction
 
 
-def process_autoaction(sender, instance, created, **kwargs):
+def process_autoactions(sender, instance, created, **kwargs):
     """Perform applicable |AutoActions| when a new |alert| is saved."""
 
     if created:
@@ -36,4 +36,4 @@ def process_autoaction(sender, instance, created, **kwargs):
 
 
 if not settings.TEST:
-    post_save.connect(process_autoaction, sender=Alert)
+    post_save.connect(process_autoactions, sender=Alert)
