@@ -21,7 +21,6 @@ Defines a reciever for the Distillery app's document_saved signal.
 # third party
 from django.conf import settings
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 # local
 from alerts.models import Alert
