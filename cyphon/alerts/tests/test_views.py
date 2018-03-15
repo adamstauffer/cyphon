@@ -34,6 +34,7 @@ from rest_framework import status
 # local
 from appusers.models import AppUser
 from alerts.models import Alert, Analysis
+from tags.models import TagRelation
 from tests.api_tests import CyphonAPITestCase
 from tests.fixture_manager import get_fixtures
 from .expected_values import ALERT_DETAIL, ALERT_LIST

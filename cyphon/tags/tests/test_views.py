@@ -64,10 +64,82 @@ class TagAPITests(CyphonAPITestCase):
         response = self.get_api_response()
         actual = response.data['results']
         expected = [
-            {'id': 1, 'name': 'bird'},
-            {'id': 2, 'name': 'cat'},
-            {'id': 3, 'name': 'dog'},
-            {'id': 4, 'name': 'turtle'}
+            {
+                'id': 1,
+                'name': 'bird',
+                'topic': {
+                    'id': 1,
+                    'name': 'Animals',
+                    'url': 'http://testserver/api/v1/topics/1/',
+                },
+            },
+            {
+                'id': 2,
+                'name': 'cat',
+                'topic': {
+                    'id': 1,
+                    'name': 'Animals',
+                    'url': 'http://testserver/api/v1/topics/1/',
+                },
+            },
+            {
+                'id': 3,
+                'name': 'dog',
+                'topic': {
+                    'id': 1,
+                    'name': 'Animals',
+                    'url': 'http://testserver/api/v1/topics/1/',
+                },
+            },
+            {
+                'id': 4,
+                'name': 'turtle',
+                'topic': {
+                    'id': 1,
+                    'name': 'Animals',
+                    'url': 'http://testserver/api/v1/topics/1/',
+                },
+            }
         ]
         self.assertEqual(actual, expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TagRelationAPITestCase(CyphonAPITestCase):
+    fixtures = get_fixtures(['tags', 'alerts'])
+    model_url = 'tagrelations/'
+
+    def test_get_tag_relation(self):
+        """
+        Tests the GET /api/v1/tagrelations/1/ endpoint
+        """
+        response = self.get_api_response('1/')
+        expected = {
+            'id': 1,
+            'content_type': 'alert',
+            'object_id': 1,
+            'tag': 2,
+            'tag_date': None,
+            'tagged_by': None,
+        }
+        self.assertEqual(response.json(), expected)
+
+    def test_get_tag_relations(self):
+        """
+        Tests the GET /api/v1/tagrelations/ endpoint
+        """
+        response = self.get_api_response()
+        data = response.json()
+        self.assertEqual(data['count'], 7)
+        self.assertEqual(len(data['results']), 7)
+
+    def test_get_tag_filters(self):
+        """
+        Tests the GET /api/v1/tagrelations/ endpoint query parameters
+        """
+        response = self.get_api_response(
+            '?content_type=alert&tag=1&object_id=3')
+        data = response.json()
+        self.assertEqual(data['count'], 1)
+        self.assertEqual(len(data['results']), 1)
+        self.assertEqual(data['results'][0]['id'], 2)

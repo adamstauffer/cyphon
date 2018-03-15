@@ -75,10 +75,20 @@ class ArticlesAPITestCase(CyphonAPITestCase):
             'tags': [
                 {
                     'id': 1,
-                    'name': 'bird'
+                    'name': 'bird',
+                    'topic': {
+                        'id': 1,
+                        'name': 'Animals',
+                        'url': 'http://testserver/api/v1/topics/1/',
+                    },
                 }, {
                     'id': 5,
-                    'name': 'falcon'
+                    'name': 'falcon',
+                    'topic': {
+                        'id': 1,
+                        'name': 'Animals',
+                        'url': 'http://testserver/api/v1/topics/1/',
+                    },
                 }
             ],
         }

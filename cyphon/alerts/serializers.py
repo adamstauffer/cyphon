@@ -29,6 +29,7 @@ from distilleries.serializers import (
     DistilleryListSerializer,
 )
 from tags.serializers import TagDetailSerializer
+from tags.models import Tag, TagRelation
 from responder.dispatches.serializers import DispatchSerializer
 from .models import Alert, Analysis, Comment
 
@@ -116,8 +117,7 @@ class AlertUpdateSerializer(serializers.ModelSerializer):
     """
     level = serializers.ChoiceField(
         required=False,
-        choices=ALERT_LEVEL_CHOICES,
-    )
+        choices=ALERT_LEVEL_CHOICES)
     notes = serializers.CharField(source='analysis__notes')
 
     class Meta(object):

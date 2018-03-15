@@ -3,20 +3,20 @@ anyjson==0.3.3
 backoff==1.4.3
 beautifulsoup4==4.6.0
 billiard==3.5.0.3
-bleach==2.1.2
-boto3==1.5.29
+bleach==2.1.3
+boto3==1.6.8
 celery==4.1.0
 cryptography==2.1.4
 django-autocomplete-light==2.3.3  # pyup: >=2.0.0,<3.0.0
 django-ckeditor==5.4.0
 django-constance==2.1.0
-django-extensions==1.9.9
+django-extensions==2.0.5
 django-filter==1.1.0
 django-grappelli==2.11.1
 django-mailbox==4.7.1
 django-picklefield==1.0.0
 django-s3-storage==0.12.4
-Django==1.11.10  # pyup: >=1.0.0,<2.0.0
+Django==1.11.11  # pyup: >=1.0.0,<2.0.0
 djangorestframework-jwt==1.11.0
 djangorestframework==3.7.7
 docutils==0.14
@@ -25,12 +25,12 @@ ec2-metadata==1.6.0
 elasticsearch==5.5.2  # pyup: >=5.0.0,<6.0.0
 feedparser==5.2.1
 geoip2==2.7.0
-geopy==1.11.0
+geopy==1.12.0
 gunicorn==19.7.1
 html5lib==1.0.1
 httmock==1.2.6
 httplib2==0.10.3
-jira==1.0.11
+jira==1.0.14
 kombu==4.1.0
 langdetect==1.0.7
 maxminddb==1.3.0
@@ -40,18 +40,18 @@ oauthlib==2.0.6
 pika==0.11.2
 Pillow==5.0.0
 psycopg2==2.7.4
-PyJWT==1.5.3
-pymongo==3.6.0
-python-dateutil==2.6.1
+PyJWT==1.6.0
+pymongo==3.6.1
+python-dateutil==2.7.0
 pytz==2018.3
 requests-oauthlib==0.8.0
 requests-toolbelt==0.8.0
 requests==2.18.4
 sauceclient==1.0.0
-selenium==3.9.0
+selenium==3.11.0
 six==1.11.0
 testfixtures==5.4.0
 textblob==0.15.1
 tlslite==0.4.9
-tweepy==3.5.0
+tweepy==3.6.0
 urllib3==1.22

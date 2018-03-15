@@ -28,10 +28,12 @@ Class                                 Description
 
 # third party
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from django.contrib.contenttypes.models import ContentType
 
 # local
 from articles.models import Article
-from .models import Tag, Topic
+from .models import Tag, Topic, TagRelation
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -83,6 +85,8 @@ class TagDetailSerializer(serializers.HyperlinkedModelSerializer):
 class TagListSerializer(serializers.ModelSerializer):
     """Serializer for a list of |Tag| objects."""
 
+    topic = TopicSerializer()
+
     class Meta(object):
         """Metadata options."""
 
@@ -90,4 +94,48 @@ class TagListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'topic',
+        )
+
+
+class TagRelationContentTypeField(serializers.ChoiceField):
+    """Field type for |TagRelation| content_type field."""
+
+    ALERT = 'alert'
+    ANALYSIS = 'analysis'
+    COMMENT = 'comment'
+    CHOICES = (
+        (ALERT, 'Alert'),
+        (ANALYSIS, 'Analysis'),
+        (COMMENT, 'Comment'),
+    )
+
+    def __init__(self):
+        super().__init__(choices=self.CHOICES)
+
+    def to_representation(self, value):
+        return str(value)
+
+    def to_internal_value(self, data):
+        model = super().to_internal_value(data)
+
+        return ContentType.objects.get(app_label='alerts', model=model)
+
+
+class TagRelationSerializer(serializers.ModelSerializer):
+    """Serializer for a list of |TagRelation| objects."""
+
+    content_type = TagRelationContentTypeField()
+
+    class Meta(object):
+        """Metadata options."""
+
+        model = TagRelation
+        fields = (
+            'id',
+            'content_type',
+            'object_id',
+            'tag',
+            'tag_date',
+            'tagged_by',
         )
