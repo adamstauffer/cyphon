@@ -25,12 +25,14 @@ except ImportError:
     from mock import patch
 
 # third party
+from django.db.models.signals import post_save
 from django.test import TransactionTestCase
 from httmock import urlmatch, HTTMock
 
 # local
 from alerts.models import Alert
 from distilleries.models import Distillery
+from responder.actions.signals import process_autoactions
 from responder.dispatches.models import Dispatch
 from tests.fixture_manager import get_fixtures
 from tests.mock import patch_find_by_id
@@ -65,6 +67,11 @@ class MattermostTestCase(TransactionTestCase):
             'GENERATED_KEY': 'xxx-mattermost-xxx',
             'DISPLAYED_USERNAME': 'Test Username'
         }
+        post_save.connect(process_autoactions, sender=Alert)
+
+    def tearDown(self):
+        super(MattermostTestCase, self).tearDown()
+        post_save.disconnect(process_autoactions, sender=Alert)
 
     @patch_find_by_id()
     def test_run_autoaction(self):
