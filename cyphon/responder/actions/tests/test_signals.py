@@ -60,6 +60,10 @@ class ProcessAutoActionsTestCase(TransactionTestCase):
         )
         post_save.connect(process_autoactions, sender=Alert)
 
+    def tearDown(self):
+        super(ProcessAutoActionsTestCase, self).tearDown()
+        post_save.disconnect(process_autoactions, sender=Alert)
+
     @patch_find_by_id()
     @patch('responder.actions.models.AutoActionManager.process')
     def test_new_alert(self, mock_process):
