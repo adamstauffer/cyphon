@@ -26,6 +26,7 @@ except ImportError:
 
 # third party
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 # local
@@ -46,6 +47,10 @@ class AlertAdminTestCase(TestCase):
         self.queryset_multi = Mock()
         self.queryset_multi.update = Mock(return_value=2)
         self.request = Mock()
+        user_model = get_user_model()
+        self.username = 'user@example.com'
+        self.user_id = '10'
+        self.request.user = user_model(id=self.user_id, email=self.username)
 
     def test_set_status_to_new_single(self):
         """
@@ -227,3 +232,24 @@ class AlertAdminTestCase(TestCase):
             self.request,
             '2 alerts were successfully marked as False.')
 
+    def test_assign_to_current_user_single(self):
+        """
+        Tests the assign_to_current_user method for one updated alert.
+        """
+        self.modeladmin.assign_to_current_user(self.request, self.queryset_single)
+        self.queryset_single.update.assert_called_once_with(
+            assigned_user=self.user_id)
+        self.modeladmin.message_user.assert_called_once_with(
+            self.request,
+            '1 alert was successfully assigned to %s.' % self.username)
+
+    def test_assign_to_current_user_multi(self):
+        """
+        Tests the assign_to_current_user method for multiple updated alerts.
+        """
+        self.modeladmin.assign_to_current_user(self.request, self.queryset_multi)
+        self.queryset_multi.update.assert_called_once_with(
+            assigned_user=self.user_id)
+        self.modeladmin.message_user.assert_called_once_with(
+            self.request,
+            '2 alerts were successfully assigned to %s.' % self.username)
