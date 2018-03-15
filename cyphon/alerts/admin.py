@@ -251,12 +251,12 @@ class AlertAdmin(admin.ModelAdmin):
 
     def set_assign_to_me(self, request, queryset):
         """
-        Allow bulk assign user of alerts to current logged user
-        """ 
+        Allow bulk assign user of alerts to current logged user.
+        """
         user_id = request.user.id
         username = request.user.get_username()
         rows_updated = queryset.update(assigned_user=user_id)
-        self.message_user(request, '%s successfully assigned to %s'
+        self.message_user(request, '%s successfully assigned to %s.'
                           % (self._format_msg(rows_updated), username))
 
     # define option text for actions
