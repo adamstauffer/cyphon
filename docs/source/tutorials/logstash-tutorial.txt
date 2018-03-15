@@ -309,6 +309,7 @@ Under the "Distilling Data" panel on the main admin page, create a Distillery th
     =====================  ==========================
     Distillery.collection  elasticsearch.cyphon.snort
     Distillery.container   snort
+    Distillery.is_shell    True
     =====================  ==========================
 
 Watchdog
@@ -331,7 +332,7 @@ Let's start by making some DataRules to identify Snort Alerts of different prior
     =================  ===========  =========  =======
     DataRule Name      Field Name   Operator   Value
     =================  ===========  =========  =======
-    type_equals_snort  snort        equals     snort
+    type_equals_snort  type         equals     snort
     priority_equals_1  priority     equals     1
     priority_equals_2  priority     equals     2
     priority_equals_3  priority     equals     3
@@ -377,7 +378,11 @@ It's important that the "Snort alert - unknown priority" rule has the lowest ran
 Step 4: Receiver
 ****************
 
-Now all we have to do is start some queue consumers for Logstash's RabbitMQ output. If you're using a Docker deployment, you'll create one or more Docker containers for this. See `Cyphondock <https://github.com/dunbarcyber/cyphondock/blob/master/docker-compose.yml>`__ for an example. Otherwise, from the project directory, you can enter this command::
+Now all we have to do is start some queue consumers for Logstash's RabbitMQ output.
+
+If you're using `Cyphondock <https://github.com/dunbarcyber/cyphondock/blob/master/docker-compose.yml>`__ or installed Cyphon from our `ISO <https://www.cyphon.io/download/>`__ (which uses Cyphondock), you don't need to do anything more; you should already have watchdog containers running, which will act as queue consumers.
+
+If you're running a manual install, though, you'll need to create some watchdog queue consumers using the command line. From the Cyphon project directory, you can enter this command::
 
     python receiver/receiver.py watchdogs 4
 
@@ -390,5 +395,4 @@ You should now start to see Cyphon Alerts from Snort!
 Conclusion
 **********
 
-In this tutorial, we've shown how you can use Logstash to quickly deliver data to Cyphon's Watchdogs. Although we only used a log message in our example, Logstash has a number of `input plugins <https://www.elastic.co/guide/en/logstash/current/input-plugins.html>`__ that 
-handle a variety of other forms of data, which you can send to Cyphon as well!
+In this tutorial, we've shown how you can use Logstash to quickly deliver data to Cyphon's Watchdogs. Although we only used a log message in our example, Logstash has a number of `input plugins <https://www.elastic.co/guide/en/logstash/current/input-plugins.html>`__ that handle a variety of other forms of data, which you can send to Cyphon as well!
