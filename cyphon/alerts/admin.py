@@ -249,9 +249,9 @@ class AlertAdmin(admin.ModelAdmin):
         self.message_user(request, '%s successfully marked as False.'
                           % self._format_msg(rows_updated))
 
-    def set_assign_to_me(self, request, queryset):
+    def assign_to_current_user(self, request, queryset):
         """
-        Allow bulk assign user of alerts to current logged user.
+        Allow bulk assign user of alerts to current logged in user.
         """
         user_id = request.user.id
         username = request.user.get_username()
@@ -269,7 +269,7 @@ class AlertAdmin(admin.ModelAdmin):
     set_level_to_high.short_description = 'Mark as High'
     set_level_to_medium.short_description = 'Mark as Medium'
     set_level_to_low.short_description = 'Mark as Low'
-    set_assign_to_me.short_description = 'Assign to Me'
+    assign_to_current_user.short_description = 'Assign to Me'
 
 
 admin.site.register(Comment)
