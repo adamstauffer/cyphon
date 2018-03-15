@@ -35,6 +35,7 @@ FIXTURE_DEPENDENCIES = {
     'actions': ['destinations'],
     'alerts': ['distilleries', 'watchdogs', 'users'],
     'articles': [],
+    'autoactions': ['actions', 'datasieves'],
     'bottles': [],
     'categories': [],
     'codebooks': ['companies'],

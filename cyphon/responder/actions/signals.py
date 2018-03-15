@@ -15,40 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Defines a |ModelAdmin| subclass for |Actions| and registers it with
-the `Django admin site`_.
+Defines a reciever for the Distillery app's document_saved signal.
 """
 
 # third party
-from django.contrib import admin
+from django.conf import settings
+from django.db.models.signals import post_save
 
 # local
-from .models import Action, AutoAction
+from alerts.models import Alert
+from .models import AutoAction
 
 
-class ActionAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for Actions.
-    """
-    fields = [
-        'title',
-        'description',
-        'platform',
-        'api_module',
-        'api_class',
-        'visa_required',
-    ]
+def process_autoactions(sender, instance, created, **kwargs):
+    """Perform applicable |AutoActions| when a new |alert| is saved."""
+
+    if created:
+        AutoAction.objects.process(instance)
 
 
-class AutoActionAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for AutoActions.
-    """
-    fields = [
-        'action',
-        'sieve',
-        'enabled',
-    ]
-
-admin.site.register(Action, ActionAdmin)
-admin.site.register(AutoAction, AutoActionAdmin)
+if not settings.TEST:
+    post_save.connect(process_autoactions, sender=Alert)

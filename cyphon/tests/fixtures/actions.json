@@ -18,5 +18,15 @@
       "api_class": "UsersAPI",
       "visa_required": true
     }
+  },
+  {
+    "model": "actions.action",
+    "fields": {
+      "id": 3,
+      "platform": ["mattermost"],
+      "api_module": "handlers",
+      "api_class": "WebHookHandler",
+      "visa_required": false
+    }
   }
 ]

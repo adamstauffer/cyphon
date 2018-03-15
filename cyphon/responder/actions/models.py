@@ -24,7 +24,10 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from ambassador.endpoints.models import Endpoint, EndpointManager
+from cyphon.models import FindEnabledMixin
 from responder.destinations.models import Destination
+from sifter.datasifter.datasieves.models import DataSieve
+from cyphon.transaction import close_old_connections
 
 
 class Action(Endpoint):
@@ -121,3 +124,99 @@ class Action(Endpoint):
         transport = self.create_request_handler(user=user)
         transport.run(alert)
         return transport.record
+
+
+class AutoActionManager(models.Manager, FindEnabledMixin):
+    """
+    Adds methods to the default model manager.
+    """
+
+    @close_old_connections
+    def process(self, alert):
+        """Performs applicable |AutoActions| on an |Alert|.
+
+        Parameters
+        ----------
+        alert : |Alert|
+            The |Alert| to process.
+
+        Returns
+        -------
+        None
+
+        """
+        autoactions = self.find_enabled()
+        for autoaction in autoactions:
+            autoaction.process(alert)
+
+
+class AutoAction(models.Model):
+    """
+    Specifies an |Action| that is performed on every alert creation.
+    Optionally references a |DataSieve| that can examine alert data
+    before performing the action.
+
+    Attributes
+    ----------
+    action : Action
+        The |Action| that is performed at each alert creation.
+
+    sieve : DataSieve
+        The |DataSieve| to use to determine if the action should be
+        performed.
+
+    enabled : bool
+        Global switch for the |AutoAction|.
+
+    """
+
+    action = models.ForeignKey(
+        Action,
+        on_delete=models.PROTECT,
+        help_text=_('The Action to perform.')
+    )
+    sieve = models.ForeignKey(
+        DataSieve,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        help_text=_('The DataSieve used to inspect the data during this step.')
+    )
+    enabled = models.BooleanField(
+        default=True
+    )
+
+    objects = AutoActionManager()
+
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.action)
+
+    def _is_applicable(self, alert):
+        """
+        Takes an Alert and returns a Boolean indicating whether the
+        AutoAction is applicable.
+        """
+        return not self.sieve or self.sieve.is_match(alert.data)
+
+    def _create_request_handler(self):
+        """
+        Returns a Carrier to handle the API request for the AutoAction.
+        """
+        return self.action.create_request_handler(user=None)
+
+    def process(self, alert):
+        """Process the given |Alert| if the |AutoAction| is applicable.
+
+        Parameters
+        ----------
+        alert : |Alert|
+            The |Alert| which the AutoAction should process.
+
+        Returns
+        -------
+        None
+
+        """
+        if self._is_applicable(alert):
+            transport = self._create_request_handler()
+            transport.run(alert)

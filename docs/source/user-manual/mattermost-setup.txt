@@ -1,0 +1,127 @@
+.. _mattermost-setup:
+
+######################
+Mattermost Integration
+######################
+
+You may wish to configure an AutoAction to post messages to a `Mattermost <https://about.mattermost.com/>`_ room when new Alerts are generated.
+
+
+*************************
+Create Mattermost Webhook
+*************************
+
+Follow the Mattermost documentation to `create an incoming webhook <https://docs.mattermost.com/developer/webhooks-incoming.html>`_. Once it has been created, record the fully generated URL `http://mattermost.example.com/hooks/xxx-generatedkey-xxx`.
+
+
+*****************
+Modify App Config
+*****************
+
+Modify the `MATTERMOST` section in your Cyphon configuration file (``conf.py``):
+
+.. code-block:: python
+
+    MATTERMOST = {
+        'SERVER': '',                          # Mattermost url
+        'GENERATED_KEY': '',                   # Mattermost webhook key
+        'DISPLAYED_USERNAME': 'Cyphon Alert',  # Username displayed in message
+    }
+
+
+The ``SERVER`` should include the full scheme to your Mattermost server (ex. 'https://mattermost.example.com') and the ``GENERATED_KEY`` should only contain the webhook's key (ex. 'xxx-generatedkey-xxx').
+
+
+*****************
+Create a Passport
+*****************
+
+.. image:: ../_static/images/icons/passport.png
+    :width: 80px
+    :align: left
+    :alt: Passport
+
+Passports provide authentication credentials for REST API requests. Because Mattermost webhooks do not require authentication, the passport will be empty and should be made public.
+
+To create a Passport for Mattermost, open the "App Configurations" panel on Cyphon's main admin page. Click the "+" sign by "Passports" to go the form for adding a Passport.
+
+Follow these steps to create the Passport:
+
+    1. Enter a name for the Passport.
+    2. Check 'Public' to make the Passport available to any user.
+
+Click "Save" to save the Passport.
+
+
+****************
+Create an Action
+****************
+
+.. image:: ../_static/images/icons/action.png
+    :width: 100px
+    :align: left
+    :alt: Action
+
+To create an Action, open the "App Configurations" panel on Cyphon's main admin page. Click the "+" sign by "Actions" to go the form for adding an Action.
+
+Fill in the form with the following values:
+
+    =============  ===================
+    Field          Value
+    =============  ===================
+    Title          Mattermost Message
+    Description    Send a Mattermost message
+    Platform       mattermost
+    API module     handlers
+    API class      WebHookHandler
+    Visa required  False
+    =============  ===================
+
+This tells Cyphon where to find the code for interacting with Mattermost.
+
+Click "Save" to save the new Action.
+
+.. note::
+
+    If "mattermost" is not avaiable as a Platform option, click the "+" sign. This will open a popup window where you can add Mattermost as a new Destination.
+
+
+****************
+Create a Courier
+****************
+
+.. image:: ../_static/images/icons/courier.png
+    :width: 100px
+    :align: left
+    :alt: Courier
+
+Couriers help to carry out Actions by delivering authentication credentials for REST API requests. Despite Mattermost not requiring any authentication, a Courier is still required to carry out the request with an empty Passport.
+
+To create a Courier for the Mattermost Action, open the "App Configurations" panel on Cyphon's main admin page. Click the "+" sign by "Couriers" to go to the form for adding a Courier.
+
+Follow these steps to create the Courier:
+
+    1. Enter a name for the Courier.
+    2. Select the "Mattermost" Passport.
+    3. Leave the `Visa` field blank.
+    4. Select the "Mattermost WebHookHandler" Action.
+
+Click "Save" to save the Courier.
+
+
+********************
+Create an AutoAction
+********************
+
+The AutoAction will carry out the Action created on each alert generation.
+
+To create an AutoAction for the Mattermost Action, open the "App Configurations" panel on Cyphon's main admin page. Click the "+" sign by "Auto actions" to go to the form for adding an AutoAction.
+
+Follow these steps to create the AutoAction:
+
+    1. Select the "Mattermost WebHookHandler" Action.
+    2. Optionally, select a Sieve that will be used to only perform AutoActions on certain alerts.
+
+Click "Save" to save the AutoAction.
+
+You should now be receiving Mattermost messages via WebHook for newly created Cyphon Alerts.

@@ -1,0 +1,35 @@
+[
+  {
+    "model": "actions.autoaction",
+    "fields": {
+      "id": 1,
+      "action": 3,
+      "enabled": true
+    }
+  },
+  {
+    "model": "actions.autoaction",
+    "fields": {
+      "id": 2,
+      "action": 3,
+      "enabled": false
+    }
+  },
+  {
+    "model": "passports.passport",
+    "fields": {
+        "id": 1,
+        "name": "mattermost",
+        "public": true
+    }
+  },
+  {
+    "model": "couriers.courier",
+    "fields": {
+      "id": 1,
+      "name": "mattermost",
+      "endpoints": [3],
+      "passport": 1
+    }
+  }
+]

@@ -15,40 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Cyphon Engine. If not, see <http://www.gnu.org/licenses/>.
 """
-Defines a |ModelAdmin| subclass for |Actions| and registers it with
-the `Django admin site`_.
+
 """
 
 # third party
-from django.contrib import admin
-
-# local
-from .models import Action, AutoAction
+from django.apps import AppConfig
+from django.utils.translation import ugettext_lazy as _
 
 
-class ActionAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for Actions.
-    """
-    fields = [
-        'title',
-        'description',
-        'platform',
-        'api_module',
-        'api_class',
-        'visa_required',
-    ]
+class ActionsConfig(AppConfig):
+    """Store metadata for the Actions application."""
 
+    name = 'responder.actions'
+    verbose_name = _('Actions')
 
-class AutoActionAdmin(admin.ModelAdmin):
-    """
-    Customizes admin pages for AutoActions.
-    """
-    fields = [
-        'action',
-        'sieve',
-        'enabled',
-    ]
-
-admin.site.register(Action, ActionAdmin)
-admin.site.register(AutoAction, AutoActionAdmin)
+    def ready(self):
+        """Perform initialization tasks."""
+        import responder.actions.signals

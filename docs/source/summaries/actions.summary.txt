@@ -1,1 +1,3 @@
 |Actions| send REST API requests to :ref:`Destinations<destinations>`, such as JIRA. |Actions| are used to respond to :ref:`Alerts<alerts>`. They are performed with the help of :ref:`Couriers<couriers>`, which authenticate the calls to the REST APIs.
+
+|AutoActions| perform |Actions| automatically when alerts are generated. |AutoActions| can optionally reference a |DataSieve| to only perform automatic actions on certain alerts.

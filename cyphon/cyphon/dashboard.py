@@ -262,6 +262,7 @@ class CyphonIndexDashboard(Dashboard):
                     css_classes=('grp-collapse grp-open',),
                     models=(
                         'responder.actions.models.Action',
+                        'responder.actions.models.AutoAction',
                         'responder.couriers.models.Courier',
                         'responder.destinations.models.Destination',
                     ),

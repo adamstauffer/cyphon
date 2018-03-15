@@ -202,6 +202,12 @@ MAILSIFTER = {
     'ATTACHMENTS_FOLDER': 'attachments/%Y/%m/%d/',
 }
 
+MATTERMOST = {
+    'SERVER': '',                          # Mattermost url
+    'GENERATED_KEY': '',                   # Mattermost webhook key
+    'DISPLAYED_USERNAME': 'Cyphon Alert',  # Username displayed in message
+}
+
 MONGODB = {
     'HOST': '{0}:{1}'.format(os.getenv('MONGODB_HOST', 'localhost'),
                              os.getenv('MONGODB_PORT', '27017')),

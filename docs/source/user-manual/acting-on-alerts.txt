@@ -20,12 +20,16 @@ Actions
 
 An Action takes an Alert and asks a REST API to perform an operation based on some part of it. The type of operation depends on the REST API that is called.
 
-|
-|
+A user can perform an Action manually when examining an alert, such as creating a JIRA issue. See the guide on :ref:`jira-setup` for setup instructions.
 
-.. note::
 
-    Currently, Cyphon is only set up to allow an Action for creating a JIRA Issue. We plan to support other Actions in the future. If you'd like to help out or have some ideas, please let us know! See our section on :ref:`contributing` for more details.
+************
+AutoActions
+************
+
+An AutoAction performs an Action on every Alert creation. Optionally, a DataSieve can also be configured to conditionally perform the Action.
+
+This is useful for sending alert notifications to a chat server. See the guide on :ref:`mattermost-setup` for setup instructions on sending Alert notifications to Mattermost.
 
 
 **********
@@ -49,3 +53,4 @@ Setup Instructions
 ******************
 
     * :ref:`jira-setup`
+    * :ref:`mattermost-setup`

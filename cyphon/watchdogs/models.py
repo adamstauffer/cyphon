@@ -204,7 +204,10 @@ class Watchdog(Alarm):
                 # save the alert or increment incidents on a previous
                 # alert it duplicates
                 try:
-                    return self._save_alert(alert)
+                    self._save_alert(alert)
+                    _LOGGER.debug(
+                        'Created new alert with ID "{}"'.format(alert.id))
+                    return alert
                 except IntegrityError:
                     return self._increment_incidents(alert)
 
