@@ -17,7 +17,6 @@
 """
 Defines a ModelAdmin subclass for Alerts and registers Alerts with Django Admin.
 """
-
 # third party
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
@@ -163,6 +162,7 @@ class AlertAdmin(admin.ModelAdmin):
         'set_level_to_low',
         'set_outcome_to_true',
         'set_outcome_to_false',
+        'set_assign_to_me',
     ]
     inlines = [AnalysisInLineAdmin, TagRelationInlineAdmin, ]
 
@@ -249,6 +249,16 @@ class AlertAdmin(admin.ModelAdmin):
         self.message_user(request, '%s successfully marked as False.'
                           % self._format_msg(rows_updated))
 
+    def assign_to_current_user(self, request, queryset):
+        """
+        Allow bulk assign user of alerts to current logged in user.
+        """
+        user_id = request.user.id
+        username = request.user.get_username()
+        rows_updated = queryset.update(assigned_user=user_id)
+        self.message_user(request, '%s successfully assigned to %s.'
+                          % (self._format_msg(rows_updated), username))
+
     # define option text for actions
     set_outcome_to_true.short_description = 'Mark as True'
     set_outcome_to_false.short_description = 'Mark as False'
@@ -259,6 +269,7 @@ class AlertAdmin(admin.ModelAdmin):
     set_level_to_high.short_description = 'Mark as High'
     set_level_to_medium.short_description = 'Mark as Medium'
     set_level_to_low.short_description = 'Mark as Low'
+    assign_to_current_user.short_description = 'Assign to Me'
 
 
 admin.site.register(Comment)
