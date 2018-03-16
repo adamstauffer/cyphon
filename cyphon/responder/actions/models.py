@@ -24,8 +24,10 @@ from django.utils.translation import ugettext_lazy as _
 
 # local
 from ambassador.endpoints.models import Endpoint, EndpointManager
+from cyphon.models import FindEnabledMixin
 from responder.destinations.models import Destination
 from sifter.datasifter.datasieves.models import DataSieve
+from cyphon.transaction import close_old_connections
 
 
 class Action(Endpoint):
@@ -124,6 +126,30 @@ class Action(Endpoint):
         return transport.record
 
 
+class AutoActionManager(models.Manager, FindEnabledMixin):
+    """
+    Adds methods to the default model manager.
+    """
+
+    @close_old_connections
+    def process(self, alert):
+        """Performs applicable |AutoActions| on an |Alert|.
+
+        Parameters
+        ----------
+        alert : |Alert|
+            The |Alert| to process.
+
+        Returns
+        -------
+        None
+
+        """
+        autoactions = self.find_enabled()
+        for autoaction in autoactions:
+            autoaction.process(alert)
+
+
 class AutoAction(models.Model):
     """
     Specifies an |Action| that is performed on every alert creation.
@@ -160,5 +186,37 @@ class AutoAction(models.Model):
         default=True
     )
 
+    objects = AutoActionManager()
+
     def __str__(self):
         return '{} - {}'.format(self.id, self.action)
+
+    def _is_applicable(self, alert):
+        """
+        Takes an Alert and returns a Boolean indicating whether the
+        AutoAction is applicable.
+        """
+        return not self.sieve or self.sieve.is_match(alert.data)
+
+    def _create_request_handler(self):
+        """
+        Returns a Carrier to handle the API request for the AutoAction.
+        """
+        return self.action.create_request_handler(user=None)
+
+    def process(self, alert):
+        """Process the given |Alert| if the |AutoAction| is applicable.
+
+        Parameters
+        ----------
+        alert : |Alert|
+            The |Alert| which the AutoAction should process.
+
+        Returns
+        -------
+        None
+
+        """
+        if self._is_applicable(alert):
+            transport = self._create_request_handler()
+            transport.run(alert)

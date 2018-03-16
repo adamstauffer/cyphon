@@ -106,6 +106,10 @@ class WebHookHandler(Carrier):
                             }]
                     }
                 ]
-            }))
+            })
+        )
 
-        return Cargo(status_code=response.status_code, data=response.text)
+        return Cargo(
+            status_code=response.status_code,
+            data={'response': response.text}
+        )

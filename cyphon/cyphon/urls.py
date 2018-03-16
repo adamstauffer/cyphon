@@ -49,7 +49,7 @@ from query.collectionqueries.views import (
 from responder.actions.views import ActionViewSet
 from responder.destinations.views import DestinationViewSet
 from responder.dispatches.views import DispatchViewSet
-from tags.views import TagViewSet, TopicViewSet
+from tags.views import TagViewSet, TopicViewSet, TagRelationViewSet
 from warehouses.views import WarehouseViewSet, CollectionViewSet
 
 
@@ -112,6 +112,7 @@ router.register(r'labels', LabelViewSet)
 router.register(r'labelfields', LabelFieldViewSet)
 router.register(r'monitors', MonitorViewSet)
 router.register(r'tags', TagViewSet)
+router.register(r'tagrelations', TagRelationViewSet)
 router.register(r'tastes', TasteViewSet)
 router.register(r'topics', TopicViewSet)
 router.register(r'users', AppUserViewSet)
@@ -140,9 +141,9 @@ urlpatterns += [
     url(r'^api/v1/auth/',
         include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v1/notifications/', include('notifications.urls')),
-    url(r'^api/v1/api-token-auth/', rest_views.obtain_jwt_token),
-    url(r'^api/v1/api-token-verify/', rest_views.verify_jwt_token),
-    url(r'^api/v1/api-token-refresh/', rest_views.refresh_jwt_token),
+    url(r'^api/v1/token-auth/', rest_views.obtain_jwt_token),
+    url(r'^api/v1/token-verify/', rest_views.verify_jwt_token),
+    url(r'^api/v1/token-refresh/', rest_views.refresh_jwt_token),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = 'Cyphon'
